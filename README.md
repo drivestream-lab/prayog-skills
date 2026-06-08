@@ -8,6 +8,8 @@ Lab-owned **Cursor Agent skills** for [drivestream-lab](https://github.com/drive
 |-------|------|---------|
 | **validate-requirements** | `skills/requirements/validate-requirements/` | PRD / requirements validation (15 checks, incremental reports) |
 | **review-findings** | `skills/requirements/review-findings/` | Interactive walkthrough of validation report findings → resolution summary |
+| **update-documents** | `skills/requirements/update-documents/` | Apply resolution summary across PRD + integration stubs |
+| **github-issue-classifier** | `skills/requirements/github-issue-classifier/` | Classify issues into epic/story/task/defect hierarchy (gh or local dump) |
 
 ## Install (project)
 
@@ -23,7 +25,7 @@ Verify:
 npx skills list
 ```
 
-Invoke in Cursor Agent: `/validate-requirements`, `/review-findings`
+Invoke in Cursor Agent: `/validate-requirements`, `/review-findings`, `/update-documents`, `/github-issue-classifier`
 
 ## Lab workflow
 
@@ -31,7 +33,7 @@ Documented in [prayog-meta/playbook/skills-matrix.md](https://github.com/drivest
 
 ## Provenance
 
-**validate-requirements** and **review-findings** were vendored from `rushikeshpol02/ai-skills` (upstream unavailable). Maintained by drivestream-lab.
+**validate-requirements**, **review-findings**, **update-documents**, and **github-issue-classifier** were vendored from `rushikeshpol02/ai-skills` (upstream unavailable). Maintained by drivestream-lab.
 
 ## Adding skills
 
