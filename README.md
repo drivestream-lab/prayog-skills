@@ -9,15 +9,17 @@ Lab-owned **Cursor Agent skills** for [drivestream-lab](https://github.com/drive
 | **validate-requirements** | `skills/requirements/validate-requirements/` | PRD / requirements validation (15 checks, incremental reports) |
 | **review-findings** | `skills/requirements/review-findings/` | Interactive walkthrough of validation report findings → resolution summary |
 | **update-documents** | `skills/requirements/update-documents/` | Apply resolution summary across PRD + integration stubs |
-| **github-issue-classifier** | `skills/requirements/github-issue-classifier/` | Classify issues into epic/story/task/defect hierarchy (gh or local dump) |
 | **generate-work-manifest** | `skills/backlog/generate-work-manifest/` | PRD → `work/INIT-*.yaml` for `seed-work` (draft only) |
+
+Backlog creation uses **generate-work-manifest** + **seed-work** — not issue classification of existing dumps.
 
 ## Install (project)
 
-From a consumer repo (e.g. `prayog-meta`):
+From a consumer repo (e.g. `prayog-meta`, `drivestream-meta`):
 
 ```bash
-npx skills add drivestream-lab/prayog-skills --skill validate-requirements -a cursor -y
+npx skills add drivestream-lab/prayog-skills --skill '*' -a cursor -y
+npx skills add github/awesome-copilot --skill prd -a cursor -y
 ```
 
 Verify:
@@ -26,7 +28,7 @@ Verify:
 npx skills list
 ```
 
-Invoke in Cursor Agent: `/validate-requirements`, `/review-findings`, `/update-documents`, `/github-issue-classifier`, `/generate-work-manifest`
+Invoke in Cursor Agent: `/validate-requirements`, `/review-findings`, `/update-documents`, `/generate-work-manifest`
 
 ## Lab workflow
 
@@ -34,7 +36,7 @@ Documented in [prayog-meta/playbook/skills-matrix.md](https://github.com/drivest
 
 ## Provenance
 
-**validate-requirements**, **review-findings**, **update-documents**, and **github-issue-classifier** were vendored from `rushikeshpol02/ai-skills` (upstream unavailable). Maintained by drivestream-lab.
+**validate-requirements**, **review-findings**, and **update-documents** were vendored from `rushikeshpol02/ai-skills` (upstream unavailable). Maintained by drivestream-lab.
 
 ## Adding skills
 
