@@ -10,6 +10,7 @@ Lab-owned **Cursor Agent skills** for [drivestream-lab](https://github.com/drive
 | **review-findings** | `skills/requirements/review-findings/` | Interactive walkthrough of validation report findings → resolution summary |
 | **update-documents** | `skills/requirements/update-documents/` | Apply resolution summary across PRD + integration stubs |
 | **github-issue-classifier** | `skills/requirements/github-issue-classifier/` | Classify issues into epic/story/task/defect hierarchy (gh or local dump) |
+| **generate-work-manifest** | `skills/backlog/generate-work-manifest/` | PRD → `work/INIT-*.yaml` for `seed-work` (draft only) |
 
 ## Install (project)
 
@@ -25,7 +26,7 @@ Verify:
 npx skills list
 ```
 
-Invoke in Cursor Agent: `/validate-requirements`, `/review-findings`, `/update-documents`, `/github-issue-classifier`
+Invoke in Cursor Agent: `/validate-requirements`, `/review-findings`, `/update-documents`, `/github-issue-classifier`, `/generate-work-manifest`
 
 ## Lab workflow
 
