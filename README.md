@@ -1,43 +1,73 @@
 # prayog-skills
 
-Lab-owned **Cursor Agent skills** for [drivestream-lab](https://github.com/drivestream-lab). Skills are installable via the [skills CLI](https://skills.sh) or committed under `.cursor/skills/` in consumer repos.
+Lab-owned **Cursor Agent skills** for spec-driven Python backend workflows. Install via [skills CLI](https://skills.sh) or **meta harness** (`sync-harness`) in app repos.
 
-## Skills
+**Version:** see [`VERSION`](VERSION) (currently **0.2.0**)
 
-| Skill | Path | Purpose |
-|-------|------|---------|
-| **validate-requirements** | `skills/requirements/validate-requirements/` | PRD / requirements validation (15 checks, incremental reports) |
-| **review-findings** | `skills/requirements/review-findings/` | Interactive walkthrough of validation report findings → resolution summary |
-| **update-documents** | `skills/requirements/update-documents/` | Apply resolution summary across PRD + integration stubs |
-| **generate-work-manifest** | `skills/backlog/generate-work-manifest/` | PRD → `work/INIT-*.yaml` for `seed-work` (draft only) |
+## Skill bundles
 
-Backlog creation uses **generate-work-manifest** + **seed-work** — not issue classification of existing dumps.
+### Requirements & backlog (PM workspace)
 
-## Install (project)
+| Skill | Path |
+|-------|------|
+| **validate-requirements** | `skills/requirements/validate-requirements/` |
+| **review-findings** | `skills/requirements/review-findings/` |
+| **update-documents** | `skills/requirements/update-documents/` |
+| **generate-work-manifest** | `skills/backlog/generate-work-manifest/` |
 
-From a consumer repo (e.g. `prayog-meta`, `drivestream-meta`):
+### Development (app repos — harness seed)
+
+| Skill | Path |
+|-------|------|
+| **spec-feasibility-review** | `skills/development/spec-feasibility-review/` |
+| **spec-implementation-plan** | `skills/development/spec-implementation-plan/` |
+| **pre-implement** | `skills/development/pre-implement/` |
+| **verify** | `skills/development/verify/` |
+
+Profile defaults: [`profiles/python-backend.yaml`](profiles/python-backend.yaml) — copied to `.harness/profile.yaml` on harness sync.
+
+## Install (PM — drivestream-meta)
 
 ```bash
-npx skills add drivestream-lab/prayog-skills --skill '*' -a cursor -y
 npx skills add github/awesome-copilot --skill prd -a cursor -y
+npx skills add drivestream-lab/prayog-skills --skill '*' -a cursor -y
 ```
 
-Verify:
+## Install (dev — app repo)
+
+Harness (recommended):
 
 ```bash
-npx skills list
+./scripts/meta sync-harness --repo <service> --apply
 ```
 
-Invoke in Cursor Agent: `/validate-requirements`, `/review-findings`, `/update-documents`, `/generate-work-manifest`
+Manual dev bundle only:
 
-## Lab workflow
+```bash
+npx skills add drivestream-lab/prayog-skills \
+  --skill spec-feasibility-review \
+  --skill spec-implementation-plan \
+  --skill pre-implement \
+  --skill verify \
+  -a cursor -y
+```
 
-Documented in [prayog-meta/playbook/skills-matrix.md](https://github.com/drivestream-lab/prayog-meta/blob/develop/playbook/skills-matrix.md) and [skills-audition.md](https://github.com/drivestream-lab/prayog-meta/blob/develop/playbook/skills-audition.md).
+Commit **`skills-lock.json`** and **`.harness/profile.yaml`** after sync. Keep **`.agents/`** gitignored.
+
+## Dev workflow
+
+```text
+spec PR  → /spec-feasibility-review
+merged   → /spec-implementation-plan
+slice    → /pre-implement → implement → /verify
+```
 
 ## Provenance
 
-**validate-requirements**, **review-findings**, and **update-documents** were vendored from `rushikeshpol02/ai-skills` (upstream unavailable). Maintained by drivestream-lab.
+- **validate-requirements**, **review-findings**, **update-documents** — vendored from rushikeshpol02/ai-skills
+- **pre-implement**, **verify** — adapted from prayog-meta; formerly python-services-skills
+- **spec-feasibility-review**, **spec-implementation-plan** — patterns from awesome-copilot (unmet-spec loop, implementation-plan tables)
 
 ## Adding skills
 
-Place new skills under `skills/<category>/<skill-name>/SKILL.md` matching [Agent Skills](https://cursor.com/docs/skills) layout. Open a PR in this repo; bump consumer install or submodule reference in `prayog-meta`.
+`skills/<category>/<skill-name>/SKILL.md` per [Agent Skills](https://cursor.com/docs/skills). Tag releases (`v0.2.0`) and bump harness `agent_skills.ref` in drivestream-meta.
