@@ -1,6 +1,6 @@
 ---
 name: generate-work-manifest
-description: "Drafts a prayog WorkManifest YAML (apiVersion prayog.meta/v1) from a signed-off PRD and per-repo spec slices. Produces work/INIT-<id>.yaml for prayog-meta — compatible with ./scripts/prayog seed-work --dry-run|--apply. v1 granularity: one Epic + one task per app repo in merge order. Does not create GitHub issues. Use after PM↔dev handoff Phase 2 merges and spec conformance is clean, before seed-work."
+description: "Drafts a WorkManifest YAML from a signed-off PRD and per-repo spec slices. Reads PRD delivery_model: waves → one Epic + one task per wave (W0…Wn, PRE*); repo-slice → one task per repo. Produces work/INIT-<id>.yaml — compatible with seed-work --dry-run|--apply. Does not create GitHub issues. Use after Phase 2 merges, before seed-work."
 ---
 
 # Generate Work Manifest — PRD → seed-work YAML
@@ -10,7 +10,7 @@ description: "Drafts a prayog WorkManifest YAML (apiVersion prayog.meta/v1) from
 1. **Draft only — never run `seed-work --apply`.** This skill writes YAML; the PM runs `seed-work` after PR review.
 2. **Schema lock:** Output must be `apiVersion: prayog.meta/v1`, `kind: WorkManifest`, matching [references/work-manifest-schema.md](references/work-manifest-schema.md).
 3. **Merged truth only:** Cite paths on **`develop`** (post handoff Phase 2). Do not reference draft PR branches.
-4. **v1 granularity:** One **Epic** + **one task per repo** in the initiative delivery map (see [references/v1-granularity.md](references/v1-granularity.md)). Do not fan out into sub-tasks unless the user explicitly requests finer granularity.
+4. **Granularity from PRD:** Read §4.0 `delivery_model`. **`waves`** → one task per wave ([references/wave-granularity.md](references/wave-granularity.md)). **`repo-slice`** → one task per repo ([references/v1-granularity.md](references/v1-granularity.md)). If §4.5 wave table exists without §4.0, infer `waves`.
 5. **Dual output:** Chat summary (epic + task table) **and** saved manifest file under `prayog-meta/work/`.
 6. **Depends_on = merge order:** Task dependencies must reflect PRD Appendix A / handoff merge order — not runtime verify order.
 7. **Field completeness:** Every work item needs `repo`, `title`, `codebase`, `spec_path`, `verify_command`, `branch_hint`, and `body` (see [references/field-rules.md](references/field-rules.md)).
@@ -55,7 +55,8 @@ Gather before starting (all on **`develop`** unless noted):
 | **Compose seed doc** | If in §10 | `prayog-compose/docs/INIT-*-seed.md` |
 | **Schema template** | Yes | `prayog-meta/bootstrap/BOOTSTRAP-PRAYOG-000.yaml` (structure only) |
 | **Project config** | Reference | `prayog-meta/scripts/config/project-drivestream-lab.yaml` — Codebase options |
-| **Granularity mode** | Default v1 | `v1` = 1 epic + 1 task/repo; `fine` only if user requests |
+| **delivery_model** | From PRD §4.0 | `waves` \| `repo-slice`; see [wave-granularity.md](references/wave-granularity.md) |
+| **delivery-model playbook** | autrio10x | `drivestream-meta/playbook/delivery-model.md` when present |
 
 **Workspace:** `prayog-meta` (read sibling repos via multi-root workspace or absolute paths).
 
@@ -66,8 +67,8 @@ Gather before starting (all on **`develop`** unless noted):
 Create and maintain this checklist. Exactly one item `in_progress` at a time.
 
 1. **T0 Gather** — Inventory inputs; note missing files
-2. **T1 Understand** — Confirm initiative id, granularity (v1 vs fine), output path
-3. **T2 Analyze** — Extract §10 repo map, §11 verify table, Appendix A merge order
+2. **T1 Understand** — Confirm initiative id, `delivery_model` (waves vs repo-slice), output path
+3. **T2 Analyze** — Extract §4.0 delivery model + §4.5 wave table (waves) OR §10 repo map (repo-slice)
 4. **T3 Plan** — Draft epic + task ids, `depends_on` graph, branch hints
 5. **T4 Execute** — Write YAML; populate bodies with deliverables + PRD pointers
 6. **T5 Verify** — Schema/field checklist; save file; publish chat summary
@@ -90,9 +91,16 @@ Never publish until **T5 Verify** is `completed`.
 
 ### Phase 2: Plan work breakdown
 
-Read [references/v1-granularity.md](references/v1-granularity.md).
+**If `delivery_model: waves`** — read [references/wave-granularity.md](references/wave-granularity.md):
 
-**v1 default (INIT-PRAYOG-001 and similar):**
+1. Parse PRD §4.0 `board_units` and §4.5 wave table.
+2. Read merged repo spec wave table — add **PRE*** gates if spec defines them.
+3. Build linear `depends_on`: W0 → PRE* → W1 → … → Wn.
+4. One `work[]` item per wave id; `id` field = wave id (`W0`, not `A1`).
+
+**If `delivery_model: repo-slice`** — read [references/v1-granularity.md](references/v1-granularity.md):
+
+**Repo-slice default (multi-repo product INIT):**
 
 | id | repo | depends_on | Notes |
 |----|------|------------|-------|
@@ -102,7 +110,7 @@ Read [references/v1-granularity.md](references/v1-granularity.md).
 | `A1` | prayog-abhilekh | `[P1]` | JWT contract from parichay |
 | `O1` | prayog-ops | `[A1]` | BFF depends on abhilekh API |
 
-Adjust ids/titles for the initiative; keep **one task per repo** unless user chose `fine` granularity.
+Adjust ids/titles for the initiative; keep **one task per repo** in repo-slice mode only.
 
 ### Phase 3: Draft YAML
 
@@ -177,7 +185,7 @@ Epic body: initiative objective, repo table from §10, §11 demo checklist refer
 |-------|---------|
 | Schema | `apiVersion`, `kind`, `initiative`, `target.org`, `target.project` present |
 | Epic | `epic.id` = `EPIC`; `defaults.parent` = `EPIC` |
-| Tasks | Every §10 repo has exactly one task (v1) |
+| Tasks | **waves:** every PRD/spec wave id has exactly one task; **repo-slice:** every §10 repo has one task |
 | Fields | Each item has `codebase`, `spec_path`, `verify_command`, `branch_hint` |
 | Codebase | Values ∈ project config Codebase options |
 | Depends | `A1` → `P1`, `O1` → `A1`; compose independent |
@@ -246,4 +254,5 @@ See [skills-matrix.md](https://github.com/drivestream-lab/prayog-meta/blob/devel
 
 - [references/work-manifest-schema.md](references/work-manifest-schema.md) — YAML shape + example excerpts
 - [references/field-rules.md](references/field-rules.md) — Project field mapping + defaults
+- [references/wave-granularity.md](references/wave-granularity.md) — Epic + per-wave task rules
 - [references/v1-granularity.md](references/v1-granularity.md) — Epic + per-repo task rules
