@@ -1,8 +1,12 @@
-# v1 granularity — Epic + one task per repo
+# Repo-slice granularity — Epic + one task per repo
 
-## Default for INIT initiatives
+## When to use
 
-Unless the user explicitly requests **fine** granularity, produce:
+When PRD **`delivery_model: repo-slice`** (or multi-repo product INIT **without** a wave table). For **`delivery_model: waves`**, use [wave-granularity.md](wave-granularity.md) instead — do not collapse waves into one repo task.
+
+## Default for multi-repo product INITs
+
+Unless PRD declares `waves`, produce:
 
 ```
 EPIC (prayog-meta)
@@ -21,16 +25,11 @@ EPIC (prayog-meta)
 - `seed-work` + Project hierarchy still gives epic → task tree.
 - Finer breakdown (login vs assets vs BFF routes) belongs in **implementation PRs** or a future `fine` mode — not v1 manifest.
 
-## When to use fine granularity
+## Wave mode (preferred for harness INITs)
 
-Only when the user says e.g. "split parichay into login + session tasks" or "bootstrap-style multi-issue manifest".
+When PRD §4.0 says `delivery_model: waves` — see [wave-granularity.md](wave-granularity.md). **No user override required.**
 
-Fine mode rules:
-
-- Keep epic as parent for all items.
-- Preserve merge-order `depends_on` across repos.
-- Within a repo, order items by dependency (spec before code, API before verify).
-- Do not exceed **8 tasks** without explicit PM approval (board noise).
+Legacy "fine granularity" within a single repo (non-wave) — only when PM explicitly requests sub-splitting inside one repo slice; prefer wave table in PRD instead.
 
 ## INIT-PRAYOG-001 task content guide
 
