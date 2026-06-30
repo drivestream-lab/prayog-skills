@@ -2,7 +2,7 @@
 
 Run every check. PASS = zero findings. SKIPPED = missing input (state reason).
 
-Governance detail: [../references/governance.md](../references/governance.md).
+Governance detail: [governance.md](governance.md).
 
 | ID | Check | Evidence required |
 |----|-------|-------------------|

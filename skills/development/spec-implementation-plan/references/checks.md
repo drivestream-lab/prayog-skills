@@ -1,6 +1,6 @@
 # Plan checks (P1–P12)
 
-Governance detail: [../references/governance.md](../references/governance.md).
+Governance detail: [governance.md](governance.md).
 
 | ID | Check |
 |----|-------|

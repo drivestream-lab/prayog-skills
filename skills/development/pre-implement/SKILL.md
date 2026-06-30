@@ -17,7 +17,7 @@ Design the **pre-flight checklist** for one implementation slice. **Do not write
 
 1. Resolve paths from `.harness/profile.yaml` when present; else [references/layout-defaults.md](references/layout-defaults.md).
 2. Read `rules_glob` — do not edit rules in the app repo.
-3. Read relevant ADRs from `adr_dir` per [../references/governance.md](../references/governance.md) — list ids in output.
+3. Read relevant ADRs from `adr_dir` per [references/governance.md](references/governance.md) — list ids in output.
 4. Output the checklist only unless the user asks to implement.
 5. Cite concrete file paths for this repo and slice.
 

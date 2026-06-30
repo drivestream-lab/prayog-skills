@@ -1,6 +1,6 @@
 # Architecture governance (MDC + ADR)
 
-Resolve paths from `.harness/profile.yaml` when present; else skill `references/layout-defaults.md`.
+Resolve paths from `.harness/profile.yaml` when present; else [layout-defaults.md](layout-defaults.md).
 
 | Key | Typical path | Role |
 |-----|--------------|------|

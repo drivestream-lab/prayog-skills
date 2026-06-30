@@ -35,7 +35,7 @@ Gather before starting. Resolve paths from `.harness/profile.yaml` or [reference
 6. **Prior feasibility report** — for incremental re-run (OPTIONAL)
 7. **Layout** — `.harness/profile.yaml` or [references/layout-defaults.md](references/layout-defaults.md)
 8. **`rules_glob`** — workspace MDC rules (REQUIRED). Read before T2 Analyze.
-9. **`adr_dir`** — architecture decision records (REQUIRED). Run relevant-ADR pass per [../references/governance.md](../references/governance.md) before T2 Analyze.
+9. **`adr_dir`** — architecture decision records (REQUIRED). Run relevant-ADR pass per [references/governance.md](references/governance.md) before T2 Analyze.
 
 ## When to use
 
