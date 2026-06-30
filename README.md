@@ -1,8 +1,8 @@
 # prayog-skills
 
-Lab-owned **Cursor Agent skills** for spec-driven Python backend workflows. Install via [skills CLI](https://skills.sh) or **meta harness** (`sync-harness`) in app repos.
+Lab-owned **Cursor Agent skills** for spec-driven development workflows. Install via [skills CLI](https://skills.sh) or **launchpad harness** (`sync-harness`) in app repos.
 
-**Version:** see [`VERSION`](VERSION) (currently **0.2.0**)
+**Version:** see [`VERSION`](VERSION) (currently **0.2.1**)
 
 ## Skill bundles
 
@@ -24,7 +24,7 @@ Lab-owned **Cursor Agent skills** for spec-driven Python backend workflows. Inst
 | **pre-implement** | `skills/development/pre-implement/` |
 | **verify** | `skills/development/verify/` |
 
-Profile defaults: [`profiles/python-backend.yaml`](profiles/python-backend.yaml) — copied to `.harness/profile.yaml` on harness sync.
+**Harness profiles:** [`profiles/`](profiles/) — `launchpad sync-harness` copies `profiles/{profile}.yaml` → `.harness/profile.yaml` in the consumer repo (`python-backend`, `frontend`, …).
 
 ## Install (PM — drivestream-meta)
 
@@ -38,7 +38,7 @@ npx skills add drivestream-lab/prayog-skills --skill '*' -a cursor -y
 Harness (recommended):
 
 ```bash
-./scripts/meta sync-harness --repo <service> --apply
+launchpad sync-harness --repo <service> --apply
 ```
 
 Manual dev bundle only:
@@ -70,4 +70,4 @@ slice    → /pre-implement → implement → /verify
 
 ## Adding skills
 
-`skills/<category>/<skill-name>/SKILL.md` per [Agent Skills](https://cursor.com/docs/skills). Tag releases (`v0.2.0`) and bump harness `agent_skills.ref` in drivestream-meta.
+`skills/<category>/<skill-name>/SKILL.md` per [Agent Skills](https://cursor.com/docs/skills). Tag releases (`v0.2.1`) and bump harness `agent_skills.ref` in launchpad / drivestream-meta.
