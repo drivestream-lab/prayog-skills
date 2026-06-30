@@ -31,7 +31,7 @@ Resolve paths from `.harness/profile.yaml` or [references/layout-defaults.md](re
 3. **As-built**, **tests_readme**, **live_verify_dir** layout (REQUIRED for test tasks)
 4. **Layout** — `.harness/profile.yaml` or [references/layout-defaults.md](references/layout-defaults.md)
 5. **`rules_glob`** — workspace MDC rules (REQUIRED). Read before T2 Analyze.
-6. **`adr_dir`** — architecture decision records (REQUIRED). Run relevant-ADR pass per [../references/governance.md](../references/governance.md) before T2 Analyze.
+6. **`adr_dir`** — architecture decision records (REQUIRED). Run relevant-ADR pass per [references/governance.md](references/governance.md) before T2 Analyze.
 
 ## Prerequisite
 
