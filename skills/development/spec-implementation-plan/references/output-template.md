@@ -21,9 +21,9 @@ feasibility_report: {FEASIBILITY_PATH or N/A}
 
 **GOAL-W0:** …
 
-| Task | Description | Done when | Branch |
-|------|-------------|-----------|--------|
-| TASK-W0-01 | | | |
+| Task | Description | Done when | MDC notes | ADR notes | Branch |
+|------|-------------|-----------|-----------|-----------|--------|
+| TASK-W0-01 | | | | | |
 
 #### Files (W0)
 
@@ -35,7 +35,7 @@ feasibility_report: {FEASIBILITY_PATH or N/A}
 
 | ID | Layer | Command | Proves |
 |----|-------|---------|--------|
-| TEST-W0-U | unit | make test | |
+| TEST-W0-U | unit | (from tests_readme / profile) | |
 
 (Repeat per wave.)
 
@@ -57,4 +57,4 @@ feasibility_report: {FEASIBILITY_PATH or N/A}
 
 | Check | Status |
 |-------|--------|
-| P1–P10 | |
+| P1–P12 | |
