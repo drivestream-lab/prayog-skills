@@ -1,4 +1,4 @@
-# Layout defaults (python-backend)
+# Layout defaults
 
 Used when `.harness/profile.yaml` is absent.
 
@@ -11,5 +11,7 @@ Used when `.harness/profile.yaml` is absent.
 | adr_dir | docs/specification/adr |
 | reports_dir | docs/specification/reports |
 | tests_readme | tests/README.md |
+| source_roots | src/ |
 | unit_tests_dir | tests/unit |
 | live_verify_dir | tests/verify |
+| debug_tests_dir | tests/debug |

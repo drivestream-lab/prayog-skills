@@ -28,6 +28,18 @@
 |-----------------|------------|---------------|------|--------|--------|
 | | | | | | exists / gap / partial / drift |
 
+## ADR traceability (F13)
+
+| Spec ref / wave | Relevant ADR(s) | Status | Finding |
+|-----------------|-----------------|--------|---------|
+| | ADR-… / NEW-ADR / N/A | aligned / conflict / missing ADR | |
+
+## Governance findings (F13–F14)
+
+| ID | Check | Spec quote | Governing doc | Finding |
+|----|-------|------------|---------------|---------|
+| | F13 / F14 | | ADR-… / rule file | |
+
 ## Findings by severity
 
 ### Critical
@@ -65,4 +77,4 @@
 
 | Check | Status | Findings |
 |-------|--------|----------|
-| F1–F12 | PASS/FAIL/SKIPPED | |
+| F1–F14 | PASS/FAIL/SKIPPED | |
