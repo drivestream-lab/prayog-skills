@@ -1,4 +1,6 @@
-# Plan checks (P1–P10)
+# Plan checks (P1–P12)
+
+Governance detail: [../references/governance.md](../references/governance.md).
 
 | ID | Check |
 |----|-------|
@@ -6,9 +8,11 @@
 | P2 | Every REQ has ≥1 TASK |
 | P3 | Every TASK has FILE paths or explicit "docs only" |
 | P4 | Every TASK has **done when** (observable) |
-| P5 | Test TASKs name unit module and/or verify script + command |
+| P5 | Test TASKs name unit target and/or live-verify artifact + command from profile toolchain |
 | P6 | No product scope beyond initiative spec |
 | P7 | Feasibility blockers addressed or explicitly deferred |
 | P8 | Wave order and dependencies documented |
 | P9 | As-built / README updates listed in same PR as code tasks |
 | P10 | Plan is self-contained (fresh agent can execute one wave) |
+| P11 | **MDC conformance** — per `rules_glob`; discrepancies in TASK **MDC notes** and RISK table |
+| P12 | **ADR conformance** — architectural TASKs cite ADR id or `NEW-ADR`; draft-ADR TASK in same or earlier wave when required; discrepancies in TASK **ADR notes** and RISK table |
