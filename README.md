@@ -17,7 +17,7 @@ Lab-owned **Cursor Agent skills** for spec-driven development workflows. Install
 | **validate-requirements** | Auditing PRD completeness | `skills/requirements/validate-requirements/` |
 | **review-findings** | PM decides on findings | `skills/requirements/review-findings/` |
 | **update-documents** | PM refines PRD after findings | `skills/requirements/update-documents/` |
-| **prd-impact-map** | Maps PRD to affected repos | prayog-skills (meta workspace) |
+| **prd-impact-map** | Maps PRD to affected repos | `skills/requirements/prd-impact-map/` |
 | **generate-work-manifest** | Multi-repo board seed YAML | `skills/backlog/generate-work-manifest/` |
 
 ### Development (app repos — harness seeded by launchpad)

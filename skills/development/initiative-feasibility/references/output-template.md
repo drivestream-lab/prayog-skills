@@ -6,7 +6,7 @@
 | Spec | {SPEC_PATH} |
 | Repo | {REPO} |
 | Date | {YYYY-MM-DD} |
-| Branch | prd-handoff PR branch (no separate chore branch — see PR instructions below) |
+| Branch | prd-handoff PR branch (no separate chore branch — see Next steps below) |
 | Short-code | {COMPONENT}-{NUMBER} — service branch_code from service-catalog.yaml |
 | Status | Draft |
 | Review deadline | {YYYY-MM-DD + 3 business days} |
