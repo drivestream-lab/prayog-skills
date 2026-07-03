@@ -6,8 +6,7 @@ date_created: {YYYY-MM-DD}
 source_spec: {SPEC_PATH}
 feasibility_report: {FEASIBILITY_PATH or N/A}
 technical_review: {TECHNICAL_REVIEW_PATH or N/A}
-short_code: {sc}
-branch: chore/{sc}-plan
+branch: chore/INIT-{COMPONENT}-{NUMBER}-plan
 review_deadline: {YYYY-MM-DD + 3 business days}
 deciders: Dev team lead — explicit LGTM required
 ---
@@ -127,8 +126,8 @@ deciders: Dev team lead — explicit LGTM required
 > Team lead GitHub Approve = gate satisfied. Merge before running seed-work.
 
 ```
-Branch:   chore/{sc}-plan
-PR title: "[{sc}] Implementation plan — team review"
+Branch:   chore/INIT-{COMPONENT}-{NUMBER}-plan
+PR title: "[INIT-{COMPONENT}-{NUMBER}] Implementation plan — team review"
 PR body:  paste §1 Requirements table + wave goals summary
 
 Required reviewers (CODEOWNERS): @{dev-team-lead}
@@ -167,13 +166,10 @@ apiVersion: launchpad/v1
 kind: WorkManifest
 
 initiative: {INITIATIVE}
-short_code: {sc}
-# short_code rules:
-#   - Required when initiative ID > 12 characters
-#   - Format: {AREA-ABBREV}-{NNN}  e.g. MNT-T1-001, KOL-002, PLT-003
-#   - Must be unique per org
-#   - Used in ALL branch names: chore/{sc}-*, feature/{sc}-w{N}-{slug}
-#   - Register here once — never change after first branch is created
+# Branch naming: feature/INIT-{COMPONENT}-{NUMBER}-{slug}
+#   COMPONENT = service branch_code from service-catalog.yaml (2-7 uppercase chars)
+#   NUMBER    = initiative sequence number (1-7 digits, e.g. 001, 0012)
+#   slug      = lowercase description including wave info (e.g. w1-jwt-login)
 
 metadata:
   title: {INITIATIVE} — {spec title}
