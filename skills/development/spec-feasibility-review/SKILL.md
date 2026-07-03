@@ -7,6 +7,8 @@ description: >-
   what it takes to build.
 disable-model-invocation: true
 paths: AGENTS.md, docs/specification/**, .cursor/rules/**
+background_eligible: true
+background_trigger: "spec-handoff PR opened in app repo"
 ---
 
 # Spec feasibility review
@@ -58,9 +60,15 @@ Save to `{reports_dir}/{feasibility_prefix}-{initiative}.md` (from profile).
 
 Use [references/output-template.md](references/output-template.md).
 
-## PM questions
+## Open items — 4-lane triage (replaces flat PM questions)
 
-End with numbered questions:
+End with four lanes (see output template):
 
-- **Blocking** — must resolve before spec merge
-- **Defer** — can proceed with documented assumption
+- **PM questions** — product scope, UX, priority; blocking vs defer
+- **PE questions** — engineering decisions, ADR gaps, test policy; resolved by
+  `/spec-technical-review` before `/spec-implementation-plan` runs
+- **Domain clarifications** — business source-of-truth; route to named SME
+- **Auto-fixable** — naming drift, inferred cross-references; agent resolves
+
+Do **not** route engineering decisions to PM. Apply the routing rubric in
+the `spec-technical-review` skill's `references/governance.md`.

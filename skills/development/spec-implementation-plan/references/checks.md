@@ -16,3 +16,5 @@ Governance detail: [governance.md](governance.md).
 | P10 | Plan is self-contained (fresh agent can execute one wave) |
 | P11 | **MDC conformance** — per `rules_glob`; discrepancies in TASK **MDC notes** and RISK table |
 | P12 | **ADR conformance** — architectural TASKs cite ADR id or `NEW-ADR`; draft-ADR TASK in same or earlier wave when required; discrepancies in TASK **ADR notes** and RISK table |
+| P13 | **Technical design reference** — §0 present; technical review path populated or explicitly N/A with reason; PE sign-off status stated |
+| P14 | **WorkManifest seed** — §8 present; wave IDs (`W0`, `W1`, …) match plan waves exactly; every TASK row has `codebase`, `spec_path`, and `verify_command`; YAML is syntactically valid |
