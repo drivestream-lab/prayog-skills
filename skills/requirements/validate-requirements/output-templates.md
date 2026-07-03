@@ -75,8 +75,6 @@ Would you like to use `review-findings` to walk through these interactively?
 
 Save as `Validation-Report-[Feature].md` in the same directory as the requirements document.
 
-After the file is saved, if the local traceability pilot is enabled for `validate-requirements`, record the `report-saved` checkpoint before publishing the chat summary. After the chat summary is published, record `summary-published`. These trace records are hidden/operator-facing only and must not be shown in the normal chat output unless explicitly requested.
-
 **Determine output path (in order of precedence):**
 
 1. **Parent skill provided a path** (e.g., called from `/requirements-pipeline` with an established `[output]` folder): save inside that folder as `stage_output/Stage9-Validation-Report.md`.

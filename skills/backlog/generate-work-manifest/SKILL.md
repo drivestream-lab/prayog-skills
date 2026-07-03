@@ -221,7 +221,11 @@ Project → Table → **Show hierarchy** after apply.
 
 ---
 
-## INIT-PRAYOG-001 quick reference
+## Worked examples (illustrative — not conventions to copy commands from)
+
+`verify_command` and `spec_path` always come from that repo's own PRD/spec/harness profile on `develop` (Phase 1) — never invent or reuse a command from another initiative. The two examples below exist only to show what populated fields look like under the two `delivery_model` modes and on two different stacks; the manifest schema, field rules, and `depends_on` rules are identical regardless of stack.
+
+### Example 1 — INIT-PRAYOG-001 (repo-slice mode, Python + Node stack)
 
 When initiative is `INIT-PRAYOG-001`, use these merged paths and verify commands unless `develop` differs:
 
@@ -233,6 +237,19 @@ When initiative is `INIT-PRAYOG-001`, use these merged paths and verify commands
 | prayog-ops | `docs/specification/product/INIT-PRAYOG-001.md` | `npm run verify:assets` |
 
 Merge order: `parichay → abhilekh → ops`; compose parallel with parichay.
+
+### Example 2 — illustrative wave-mode initiative on a non-Python/Node stack
+
+**Fictional example** — `prayog-ledger` does not exist; this only demonstrates that wave mode and the manifest schema are stack-agnostic. When `delivery_model: waves` and the primary repo is a Go or JVM service, only `verify_command` and `spec_path` change — everything else (id = wave id, `depends_on` chain, field rules) is identical to a Python/Node repo:
+
+| id | repo | title prefix | verify_command | depends_on |
+|----|------|--------------|-----------------|------------|
+| W0 | prayog-ledger (Go) | `[W0]` structure | `make check` | [] |
+| PRE1 | prayog-ledger (Go) | `[PRE1]` unit test matrix | `go test ./... -run TestMatrix` | [W0] |
+| W1 | prayog-ledger (Go) | `[W1]` ledger domain | `go test ./...` | [PRE1] |
+| W2 | prayog-ledger (Go) | `[W2]` reconciliation API | `go test ./... && golangci-lint run` | [W1] |
+
+For a JVM stack, the same rows would use `verify_command: ./gradlew check` (Gradle) or `mvn -q verify` (Maven) instead. `spec_path` still follows the standard convention (`docs/specification/product/INIT-*.md`) — only the verify tooling differs.
 
 ---
 
