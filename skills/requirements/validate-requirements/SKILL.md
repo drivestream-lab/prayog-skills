@@ -34,43 +34,6 @@ This skill replaces the need to run `validate-requirements` and `document-audit`
 12. **Incremental mode: tag carried-forward findings.** Every finding reused from a prior report must include `(carried from [date])` in its Finding cell. The user must be able to distinguish new discoveries from surviving prior findings at a glance.
 13. **Checklist is mandatory.** Every run must maintain the six-item control loop (`T0 Gather`, `T1 Understand`, `T2 Analyze`, `T3 Plan`, `T4 Execute`, `T5 Verify`) with explicit status transitions. Do not skip directly from analysis to output.
 
-## Local Traceability Pilot
-
-When local traceability is enabled on this machine, emit hidden semantic checkpoint records for this skill. These traces are operator-facing only and must never be added to the requirements document, the validation report, or the normal chat summary unless the user explicitly asks for trace output.
-
-**Enable check:**
-- Check for `/Users/rushi/.cursor/traceability/config.json`
-- If it exists and local traceability is enabled for `validate-requirements`, record the checkpoints below
-- If the trace write fails, continue the validation workflow; tracing must not block the skill
-
-**Trace command:**
-
-```sh
-node "/Users/rushi/.cursor/traceability/bin/record-semantic-trace.mjs" --skill validate-requirements --checkpoint "<checkpoint>" --phase "<phase>" --status "<status>" --mode "<mode>" --artifact-path "<path>" --metadata-json '{"key":"value"}'
-```
-
-Use only the flags that are relevant to the checkpoint. Keep metadata concise and factual.
-
-**Required semantic checkpoints for this pilot:**
-- `inputs-gathered` — after `T0 Gather` is completed
-- `mode-selected` — after `T1 Understand` is completed
-- `incremental-plan-ready` — after Phase 0.5 completes in incremental mode
-- `setup-complete` — after Phase 1 setup is completed
-- `execution-complete` — after Phase 2a and 2b are completed
-- `report-saved` — immediately after the full report file is saved
-- `summary-published` — after the chat summary is published and `T5 Verify` is completed
-
-**Recommended metadata by checkpoint:**
-- `inputs-gathered`: requirements doc path, source folder provided or missing, sibling docs availability, stage artifacts availability, prior report availability
-- `mode-selected`: selected mode and reason (`full` or `incremental`)
-- `incremental-plan-ready`: checks re-run, checks carried forward, prior findings resolved, prior findings surviving
-- `setup-complete`: source count, sibling doc count, stage artifact availability
-- `execution-complete`: finding counts by severity, semantic checks run, structural checks run
-- `report-saved`: report path and document path
-- `summary-published`: total findings, final status, whether next steps were published
-
----
-
 ## When to Use
 
 - After generating requirements (as part of the pipeline at Stage 9, or standalone)
@@ -138,8 +101,6 @@ Before Phase 0/1 begins, create and maintain a todo list. This is not optional.
 
 **Checklist bootstrap (mandatory):** Before Phase 0/1, set `T0 Gather` to `in_progress`, collect and inventory all provided/discovered inputs, mark `T0 Gather` `completed`, then set `T1 Understand` to `in_progress`. Mark `T1 Understand` `completed` only after mode (Full vs Incremental) is explicitly justified from gathered inputs.
 
-**Trace checkpoint:** After `T0 Gather` completes, record `inputs-gathered`. After `T1 Understand` completes, record `mode-selected`.
-
 ### Phase 0: Change Detection (incremental mode only)
 
 *Skip this phase entirely in full mode — proceed directly to Phase 1.*
@@ -159,8 +120,6 @@ Follow that file's instructions completely. When Phase 0 is complete, return her
 5. Locate stage artifacts: scan for `Stage4_Scenario_Matrix.md` and `Stage6_User_Flows.md` (or equivalent) in the project's Artifacts or stage folders. Note whether each is found or unavailable.
 
 **Checklist update:** In full mode (where Phase 0 is skipped), set `T2 Analyze` to `in_progress` at Phase 1 start and mark `completed` after setup evidence collection is finished. Then set `T3 Plan` to `in_progress` and `completed` once the check run plan is explicit (all checks in full mode; selective plan in incremental mode).
-
-**Trace checkpoint:** After Phase 1 setup is completed, record `setup-complete`. In full mode, include the final check run plan in concise metadata.
 
 ### Phase 2a: Semantic Checks (content accuracy)
 
@@ -197,8 +156,6 @@ Read and follow:
 
 Run all 4 checks (S1–S4) in order. **Structural checks always run in both full and incremental mode** — they are cheap, operate on the document alone, and catch editing artifacts that are invisible to the change manifest. Use the same severity classifications as Phase 2a.
 
-**Trace checkpoint:** After Phase 2b completes, record `execution-complete`.
-
 ### Phase 3: Generate Output
 
 Produce two outputs: a chat summary and a full report file.
@@ -210,10 +167,6 @@ Produce two outputs: a chat summary and a full report file.
 - output file path rules were followed.
 
 Mark `T5 Verify` as `completed` only after report is saved and chat summary is published.
-
-**Trace checkpoints:**
-- Immediately after the full report file is saved, record `report-saved`
-- After the chat summary is published and `T5 Verify` is completed, record `summary-published`
 
 Read the file:
 

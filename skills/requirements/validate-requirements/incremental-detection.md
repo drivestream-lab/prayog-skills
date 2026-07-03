@@ -69,6 +69,4 @@ For every finding in the prior report, classify it into one of three buckets:
 
 ---
 
-**Trace checkpoint:** After Phase 0.5 is complete, record `incremental-plan-ready` with concise metadata for checks re-run, checks carried forward, resolved findings, and surviving findings.
-
 Phase 0 complete. Return to `SKILL.md` and proceed to Phase 1: Setup.
