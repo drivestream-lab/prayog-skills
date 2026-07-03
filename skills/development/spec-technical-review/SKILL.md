@@ -11,7 +11,7 @@ disable-model-invocation: true
 paths: AGENTS.md, docs/specification/**, .cursor/rules/**
 metadata:
   background_eligible: true
-  background_trigger: "spec-handoff PR opened and feasibility report produced"
+  background_trigger: "prd-handoff branch: spec slice committed + initiative-feasibility report produced"
 ---
 
 # Spec technical review

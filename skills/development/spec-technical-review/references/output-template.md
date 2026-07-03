@@ -7,8 +7,8 @@
 | Feasibility report | {FEASIBILITY_PATH} |
 | Repo | {REPO} |
 | Date | {YYYY-MM-DD} |
-| Branch | `chore/{sc}-technical-review` |
-| Short-code | {sc} — see WorkManifest `short_code:` field |
+| Branch | `chore/INIT-{COMPONENT}-{NUMBER}-technical-review` |
+| Short-code | {COMPONENT}-{NUMBER} — service branch_code from service-catalog.yaml |
 | Status | Draft |
 | Review deadline | {YYYY-MM-DD + 5 business days} |
 | Deciders | PE: {name} — explicit LGTM required, not approval by silence |
@@ -202,8 +202,8 @@ cross-references, spec typos). These are **done** — no action required.
 > CODEOWNERS enforces PE as a required reviewer — the PR cannot merge without it.
 
 ```
-Branch:   chore/{sc}-technical-review
-PR title: "[{sc}] Technical Design Document — PE review required"
+Branch:   chore/INIT-{COMPONENT}-{NUMBER}-technical-review
+PR title: "[INIT-{COMPONENT}-{NUMBER}] Technical Design Document — PE review required"
 PR body:  paste §13 Implementation readiness verdict as the description
 
 Required reviewers (enforced by CODEOWNERS):

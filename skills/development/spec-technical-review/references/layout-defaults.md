@@ -15,5 +15,5 @@ Used when `.harness/profile.yaml` is absent.
 | unit_tests_dir | tests/unit |
 | live_verify_dir | tests/verify |
 | debug_tests_dir | tests/debug |
-| feasibility_prefix | Feasibility-Report |
+| feasibility_prefix | Initiative-Feasibility-Report |
 | technical_review_prefix | Technical-Review |

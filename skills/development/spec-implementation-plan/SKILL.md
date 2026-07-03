@@ -9,7 +9,7 @@ disable-model-invocation: true
 paths: AGENTS.md, docs/specification/**, .cursor/rules/**
 metadata:
   background_eligible: true
-  background_trigger: "spec-handoff PR opened and feasibility + technical review produced"
+  background_trigger: "prd-handoff branch: initiative-feasibility + PE sign-off on spec-technical-review complete"
 ---
 
 # Spec implementation plan

@@ -1,4 +1,4 @@
-<!-- SYNC-COPY: byte-identical across pre-implement, spec-feasibility-review, and
+<!-- SYNC-COPY: byte-identical across pre-implement, initiative-feasibility, and
      spec-implementation-plan (skills/development/*/references/governance.md). Each dev
      skill must stay standalone-installable (npx skills add --skill <name>), so this
      content cannot be extracted to a shared folder outside the skill directory. If you

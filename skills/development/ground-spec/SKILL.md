@@ -73,7 +73,7 @@ Save report to `{reports_dir}/Ground-Report-{SPEC}-W{N}.md` (from profile or lay
 | Wave | W{N} — {wave title} |
 | Spec | {SPEC_PATH} |
 | Date | {YYYY-MM-DD} |
-| Branch | `feature/{sc}-w{N}-{slug}` — same branch as wave code |
+| Branch | `feature/INIT-{COMPONENT}-{NUMBER}-w{N}-{slug}` — same branch as wave code |
 | Status | Draft |
 | Review deadline | {YYYY-MM-DD + 2 business days} |
 | Deciders | Tech lead / reviewer: {name} — explicit LGTM required |
@@ -116,8 +116,8 @@ output shape, invariants. Do NOT use language-specific syntax.)
 > before PR is marked ready). Ground report and code are reviewed together
 > on the same PR — do not open a separate PR for the ground report.
 
-Branch:   feature/{sc}-w{N}-{slug}  ← same branch as wave code
-PR title: "[{sc} W{N}] {slug} — implementation + ground report"
+Branch:   feature/INIT-{COMPONENT}-{NUMBER}-w{N}-{slug}  ← same branch as wave code
+PR title: "[INIT-{COMPONENT}-{NUMBER} W{N}] {slug} — implementation + ground report"
 PR body:  paste FR checklist summary + §Contracts produced table
 
 Required reviewer: per CODEOWNERS in this repo

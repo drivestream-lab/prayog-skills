@@ -6,8 +6,8 @@
 | Spec | {SPEC_PATH} |
 | Repo | {REPO} |
 | Date | {YYYY-MM-DD} |
-| Branch | `chore/{sc}-feasibility` |
-| Short-code | {sc} — see WorkManifest `short_code:` field |
+| Branch | prd-handoff PR branch (no separate chore branch — see PR instructions below) |
+| Short-code | {COMPONENT}-{NUMBER} — service branch_code from service-catalog.yaml |
 | Status | Draft |
 | Review deadline | {YYYY-MM-DD + 3 business days} |
 | Deciders | PM: {name} · Domain SME: {name or team} |
@@ -123,29 +123,28 @@
 
 ---
 
-## PR instructions
+## Next steps
 
-> Commit this report, then open a PR to get blocking items resolved.
-> The gate is satisfied when the PR is merged.
+> This report lives on the prd-handoff branch alongside the spec draft.
+> No separate chore PR — the prd-handoff PR is the single review surface.
+
+**PM questions** → post as a comment on the prd-handoff PR (plain English).
+  PM reads and answers on the same PR they opened.
+
+**PE questions** → run `/spec-technical-review` next (separate chore PR for TDD + ADRs).
+
+**Domain clarifications** → Slack/email to named SME; record answers in `open-questions.md`
+  and commit to prd-handoff branch.
+
+**Auto-fixable items** → fix and commit to prd-handoff branch now.
 
 ```
-Branch:   chore/{sc}-feasibility
-PR title: "[{sc}] Feasibility report — {N} blocking items"
-PR body:  paste the "Open items by lane" section above as the description
-          so PM/Domain SME see their questions without opening the file
-
-Required reviewers (set in PR):
-  PM lane questions    → @{pm-name}
-  Domain clarifications → @{domain-sme-name-or-team}
-  (PE questions need no reviewer here — they go to /spec-technical-review)
-
-Review deadline: {date from report header}
-Merge when:
-  [ ] All blocking PM questions answered in PR comments
-  [ ] All blocking Domain clarifications answered in PR comments
-  [ ] Spec updated to reflect answers (committed to same branch)
-  [ ] Incremental re-run of feasibility on updated spec is clean
+Prd-handoff branch: chore/INIT-{COMPONENT}-{NUMBER}-prd-handoff
+When ready:
+  [ ] All blocking PM questions answered in prd-handoff PR comments
+  [ ] All blocking Domain clarifications answered and committed
+  [ ] Spec updated to reflect answers (same branch)
+  [ ] Incremental re-run of /initiative-feasibility on updated spec is clean
+  [ ] Proceed: /spec-technical-review (PE questions exist)
+               OR /spec-implementation-plan (no PE questions)
 ```
-
-After merge: proceed to `/spec-technical-review` (if PE questions exist)
-or `/spec-implementation-plan` (if no PE questions).
