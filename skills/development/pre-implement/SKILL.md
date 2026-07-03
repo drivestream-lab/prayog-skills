@@ -8,8 +8,9 @@ description: >-
   before coding.
 disable-model-invocation: true
 paths: AGENTS.md, docs/specification/**, .cursor/rules/**
-background_eligible: true
-background_trigger: "wave issue moved to In Progress on board"
+metadata:
+  background_eligible: true
+  background_trigger: "wave issue moved to In Progress on board"
 ---
 
 # Pre-implement

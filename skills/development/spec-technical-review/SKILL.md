@@ -9,8 +9,9 @@ description: >-
   module boundaries.
 disable-model-invocation: true
 paths: AGENTS.md, docs/specification/**, .cursor/rules/**
-background_eligible: true
-background_trigger: "spec-handoff PR opened and feasibility report produced"
+metadata:
+  background_eligible: true
+  background_trigger: "spec-handoff PR opened and feasibility report produced"
 ---
 
 # Spec technical review

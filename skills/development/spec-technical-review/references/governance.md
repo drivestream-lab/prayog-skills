@@ -60,8 +60,8 @@ decisions to PE.
 
 ## Examples
 
-Derive examples from the actual feasibility report findings for this repo.
-Apply the routing table above to classify each finding.
+Derive examples from the actual initiative-feasibility report findings for
+this repo. Apply the routing table above to classify each finding.
 Do not use examples from other repos or stacks.
 
 ## PE decision vs PM confirmation pattern

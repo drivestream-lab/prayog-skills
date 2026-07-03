@@ -1,3 +1,9 @@
+<!-- SYNC-COPY: byte-identical across pre-implement, spec-feasibility-review, and
+     spec-implementation-plan (skills/development/*/references/governance.md). Each dev
+     skill must stay standalone-installable (npx skills add --skill <name>), so this
+     content cannot be extracted to a shared folder outside the skill directory. If you
+     edit this file, apply the identical edit to the other two copies in the same commit. -->
+
 # Architecture governance (MDC + ADR)
 
 Resolve paths from `.harness/profile.yaml` when present; else [layout-defaults.md](layout-defaults.md).

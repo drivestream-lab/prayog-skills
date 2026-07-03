@@ -26,7 +26,11 @@ as_built:
   harness_section: "## Testing harness"
 
 development_skills:
-  - spec-feasibility-review
+  - spec-draft
+  - initiative-feasibility
+  - spec-technical-review
   - spec-implementation-plan
   - pre-implement
+  - loop-spec
+  - ground-spec
   - verify

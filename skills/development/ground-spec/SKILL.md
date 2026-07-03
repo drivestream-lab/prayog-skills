@@ -8,8 +8,9 @@ description: >-
   when asked to ground a spec.
 disable-model-invocation: true
 paths: AGENTS.md, docs/specification/**, src/**
-background_eligible: true
-background_trigger: "all wave tasks complete (loop-spec exits green)"
+metadata:
+  background_eligible: true
+  background_trigger: "all wave tasks complete (loop-spec exits green)"
 ---
 
 # Ground spec

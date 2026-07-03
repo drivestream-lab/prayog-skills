@@ -7,8 +7,9 @@ description: >-
   needs an execution plan before feature branches, or after spec merge.
 disable-model-invocation: true
 paths: AGENTS.md, docs/specification/**, .cursor/rules/**
-background_eligible: true
-background_trigger: "spec-handoff PR opened and feasibility + technical review produced"
+metadata:
+  background_eligible: true
+  background_trigger: "spec-handoff PR opened and feasibility + technical review produced"
 ---
 
 # Spec implementation plan

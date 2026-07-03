@@ -7,8 +7,9 @@ description: >-
   checkpoint; does not advance to the next wave.
 disable-model-invocation: true
 paths: AGENTS.md, docs/specification/**, src/**
-background_eligible: true
-background_trigger: "wave issue moved to In Progress on board"
+metadata:
+  background_eligible: true
+  background_trigger: "wave issue moved to In Progress on board"
 ---
 
 # Loop spec
