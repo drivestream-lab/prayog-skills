@@ -2,7 +2,7 @@
 
 Lab-owned **Cursor Agent skills** for spec-driven development workflows. Install via [skills CLI](https://skills.sh) or **launchpad harness** (`sync-harness`) in app repos.
 
-**Version:** see [`VERSION`](VERSION) (currently **0.3.1**)
+**Version:** see [`VERSION`](VERSION) (currently **0.3.2**)
 
 ## Role → skill mapping
 

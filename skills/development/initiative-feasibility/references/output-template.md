@@ -7,7 +7,7 @@
 | Repo | {REPO} |
 | Date | {YYYY-MM-DD} |
 | Branch | prd-handoff PR branch (no separate chore branch — see Next steps below) |
-| Short-code | {COMPONENT}-{NUMBER} — service branch_code from service-catalog.yaml |
+| Initiative segment | `INIT-{COMPONENT}-{NUMBER}` — COMPONENT is service branch_code from service-catalog.yaml |
 | Status | Draft |
 | Review deadline | {YYYY-MM-DD + 3 business days} |
 | Deciders | PM: {name} · Domain SME: {name or team} |
