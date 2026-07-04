@@ -165,10 +165,11 @@ apiVersion: launchpad/v1
 kind: WorkManifest
 
 initiative: {INITIATIVE}
-# Branch naming: feature/INIT-{COMPONENT}-{NUMBER}-{slug}
+# Branch naming: feature/INIT-{COMPONENT}-{NUMBER}-w{N}-{slug}
 #   COMPONENT = service branch_code from service-catalog.yaml (2-7 uppercase chars)
 #   NUMBER    = initiative sequence number (1-7 digits, e.g. 001, 0012)
-#   slug      = lowercase description including wave info (e.g. w1-jwt-login)
+#   N         = wave number (0, 1, 2, …) — expected by convention; advisory in CI regex
+#   slug      = lowercase kebab description (e.g. ingestion-pipeline, jwt-login)
 
 metadata:
   title: {INITIATIVE} — {spec title}
