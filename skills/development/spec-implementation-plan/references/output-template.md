@@ -123,7 +123,7 @@ deciders: Dev team lead — explicit LGTM required
 ## 8. PR instructions
 
 > Commit this plan, then open a PR for team review.
-> Team lead GitHub Approve = gate satisfied. Merge before running seed-work.
+> Team lead GitHub Approve = gate satisfied. Merge before seeding the board.
 
 ```
 Branch:   chore/INIT-{COMPONENT}-{NUMBER}-plan
@@ -137,26 +137,25 @@ Reviewer checklist:
   [ ] §0 PE sign-off on TDD is marked complete (or N/A with reason)
   [ ] Wave order and dependencies make sense
   [ ] Done-when criteria are observable and testable
-  [ ] WorkManifest YAML (§9) looks correct — wave IDs match waves above
+  [ ] WorkManifest YAML (§9) looks correct — wave IDs are W0, W1, … (one issue per wave)
   [ ] P1–P14 checks all pass
 
-After merge:
-  Copy §9 WorkManifest YAML to work/{INITIATIVE}.yaml in meta/tenant repo
-  Run: launchpad seed-work --config work/{INITIATIVE}.yaml --dry-run
-  Run: launchpad seed-work --config work/{INITIATIVE}.yaml --apply
+After merge — dev seeds board from §9:
+  Create one GitHub Issue per wave (W0, W1, …) using §9 titles, bodies, depends_on
+  Optional bulk: copy §9 YAML to work/{INITIATIVE}.yaml and run launchpad seed-work
 ```
 
 ---
 
 ## 9. WorkManifest seed
 
-> Copy this section to `work/{INITIATIVE}.yaml` in the meta/tenant repo.
-> Run with launchpad:
-> ```
-> launchpad seed-work --config work/{INITIATIVE}.yaml --dry-run
-> launchpad seed-work --config work/{INITIATIVE}.yaml --apply
-> ```
-> One task row = one GitHub Issue. Wave hierarchy is expressed via `depends_on`.
+> **Primary:** dev creates **one GitHub Issue per wave** (`W0`, `W1`, …) from this section.
+> Use §9 `title`, `body`, and `depends_on` when running `gh issue create`.
+>
+> **Optional (multi-repo bulk):** copy YAML to `work/{INITIATIVE}.yaml` and run
+> `launchpad seed-work --config work/{INITIATIVE}.yaml --dry-run` then `--apply`.
+>
+> Wave `id` must be exactly `W0`, `W1`, … — one issue per wave, not per TASK row.
 > Update `target.org` and `target.project` to match the GitHub org and Project name.
 
 ```yaml
@@ -216,45 +215,61 @@ epic:
     - Technical review: docs/specification/reports/Technical-Review-{INITIATIVE}.md (if applicable)
 
 work:
-  # ── Wave W0 ──────────────────────────────────────────────────────────────
-  - id: W0-DESIGN
+  # ── Wave W0 (one issue per wave — id must be W0, not W0-DESIGN) ─────────
+  - id: W0
     kind: issue
     repo: {codebase repo}
-    title: "[{INITIATIVE} W0] {TASK-W0-01 title}"
+    title: "[{INITIATIVE} W0] {wave W0 goal or summary title}"
     depends_on: []
     codebase: {repo}
     spec_path: {SPEC_PATH}
-    verify_command: {done-when verify command}
+    verify_command: {wave W0 verify command or make verify}
     status: Backlog
     body: |
+      ## Wave goal
+
+      {GOAL-W0 from spec}
+
+      ## Tasks (from plan §2)
+
+      - {TASK-W0-01}: {done-when summary}
+      - {TASK-W0-02}: {done-when summary}
+
       ## Done when
 
-      - [ ] {done-when criterion 1}
-      - [ ] {done-when criterion 2}
+      - [ ] All W0 tasks complete per plan
 
       ## Spec reference
 
-      {SPEC_PATH} — {wave/FR reference}
+      {SPEC_PATH}
 
   # ── Wave W1 ──────────────────────────────────────────────────────────────
-  - id: W1-IMPL
+  - id: W1
     kind: issue
     repo: {codebase repo}
-    title: "[{INITIATIVE} W1] {TASK-W1-01 title}"
+    title: "[{INITIATIVE} W1] {wave W1 goal or summary title}"
     depends_on:
-      - W0-DESIGN
+      - W0
     codebase: {repo}
     spec_path: {SPEC_PATH}
-    verify_command: {done-when verify command}
+    verify_command: {wave W1 verify command}
     status: Backlog
     body: |
+      ## Wave goal
+
+      {GOAL-W1 from spec}
+
+      ## Tasks (from plan §2)
+
+      - {TASK-W1-01}: {done-when summary}
+
       ## Done when
 
-      - [ ] {done-when criterion 1}
+      - [ ] All W1 tasks complete per plan
 
       ## Spec reference
 
-      {SPEC_PATH} — {wave/FR reference}
+      {SPEC_PATH}
 
-  # (one entry per TASK row in the plan above)
+  # (one work: entry per wave — NOT one per TASK row)
 ```

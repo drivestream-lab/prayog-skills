@@ -3,8 +3,9 @@ name: spec-implementation-plan
 description: >-
   After feasibility (and technical review when applicable), produce a
   wave-level implementation plan with REQ/TASK/FILE/TEST tables and a
-  WorkManifest YAML seed section for launchpad seed-work. Use when the dev
-  needs an execution plan before feature branches, or after spec merge.
+  WorkManifest YAML seed section (§9) for board seeding via gh issue create.
+  Use when the dev needs an execution plan before feature branches, or after
+  spec merge.
 disable-model-invocation: true
 paths: AGENTS.md, docs/specification/**, .cursor/rules/**
 metadata:
@@ -19,8 +20,8 @@ present) into an **executable plan with a board-seed artifact**. **Do not
 implement** — plan only.
 
 Table shape borrowed from awesome-copilot `create-implementation-plan`
-(REQ/TASK/FILE/TEST/RISK). WorkManifest YAML section feeds
-`launchpad seed-work` directly.
+(REQ/TASK/FILE/TEST/RISK). §9 WorkManifest YAML is the **board-seed artifact**
+— dev creates GitHub Issues from it (one issue per wave: `W0`, `W1`, …).
 
 ## NON-NEGOTIABLE
 
@@ -29,7 +30,7 @@ Table shape borrowed from awesome-copilot `create-implementation-plan`
 3. Plan scope must not exceed the initiative spec.
 4. Dual output: chat summary + saved plan file.
 5. Run T0–T5 control loop.
-6. Wave IDs must use `W0`, `W1`, … (matching launchpad WorkManifest `id:` convention).
+6. Wave IDs must use `W0`, `W1`, … (one GitHub Issue per wave; launchpad WorkManifest `id:` convention).
 7. Every TASK row must include `codebase`, `spec_path`, and `verify_command` — required for WorkManifest generation.
 
 ## Inputs
@@ -69,14 +70,22 @@ Use [references/output-template.md](references/output-template.md).
 
 ## WorkManifest integration
 
-The plan's final section (§8) emits a ready-to-use WorkManifest YAML stub.
+The plan's final section (§9) emits a ready-to-use WorkManifest YAML stub.
 
-After PE review and spec merge, the dev team runs:
+After PE review and spec merge, the **dev team seeds the board** from §9:
+
 ```bash
-# Copy §8 YAML to work/{initiative}.yaml, then:
-launchpad seed-work --config work/{initiative}.yaml --dry-run
-launchpad seed-work --config work/{initiative}.yaml --apply
+# One GitHub Issue per wave (W0, W1, …) — primary path
+gh issue create --repo {org}/{repo} \
+  --title "[{INITIATIVE} W0] {wave goal}" \
+  --body-file /tmp/w0-body.md \
+  --label "{initiative-label}"
+
+# Optional multi-repo / bulk: copy §9 to work/{initiative}.yaml, then:
+# launchpad seed-work --config work/{initiative}.yaml --dry-run
+# launchpad seed-work --config work/{initiative}.yaml --apply
 ```
 
-One TASK in the plan = one `work:` item in the manifest. Wave grouping is
-preserved via `depends_on` chaining. The epic wraps the entire initiative.
+One TASK row in the plan maps to work described in the wave issue body.
+Wave hierarchy is expressed via `depends_on` in §9 YAML (and GitHub issue links
+in issue bodies when seeding manually).
