@@ -2,14 +2,14 @@
 
 Lab-owned **Cursor Agent skills** for spec-driven development workflows. Install via [skills CLI](https://skills.sh) or **launchpad harness** (`sync-harness`) in app repos.
 
-**Version:** see [`VERSION`](VERSION) (currently **0.3.0**)
+**Version:** see [`VERSION`](VERSION) (currently **0.3.1**)
 
 ## Role → skill mapping
 
 **PM owns (meta workspace):** writes PRD, maps to repos, opens prd-handoff PRs.  
 **Dev/Engineering owns (app repo):** writes spec, reviews feasibility, plans, builds.
 
-### Requirements & backlog (PM workspace — `<client>-meta`)
+### Requirements (PM workspace — `<client>-meta`)
 
 | Skill | When | Path |
 |-------|------|------|
@@ -18,7 +18,6 @@ Lab-owned **Cursor Agent skills** for spec-driven development workflows. Install
 | **review-findings** | PM decides on findings | `skills/requirements/review-findings/` |
 | **update-documents** | PM refines PRD after findings | `skills/requirements/update-documents/` |
 | **prd-impact-map** | Maps PRD to affected repos | `skills/requirements/prd-impact-map/` |
-| **generate-work-manifest** | Multi-repo board seed YAML | `skills/backlog/generate-work-manifest/` |
 
 ### Development (app repos — harness seeded by launchpad)
 
@@ -27,7 +26,7 @@ Lab-owned **Cursor Agent skills** for spec-driven development workflows. Install
 | **spec-draft** | Dev translates PRD → spec slice for this repo | `skills/development/spec-draft/` |
 | **initiative-feasibility** | Dev reviews spec slice for buildability | `skills/development/initiative-feasibility/` |
 | **spec-technical-review** | PE resolves engineering decisions + drafts ADRs | `skills/development/spec-technical-review/` |
-| **spec-implementation-plan** | Dev produces wave plan + WorkManifest YAML | `skills/development/spec-implementation-plan/` |
+| **spec-implementation-plan** | Dev produces wave plan + board-seed YAML (§9) | `skills/development/spec-implementation-plan/` |
 | **pre-implement** | Pre-flight before each wave | `skills/development/pre-implement/` |
 | **loop-spec** | Implementation loop (implement → verify → fix) | `skills/development/loop-spec/` |
 | **ground-spec** | Validates wave FRs + produces §Contracts produced | `skills/development/ground-spec/` |
@@ -46,8 +45,8 @@ prd-handoff PR opened
     ↓ (if PE/engineering blockers)
 /spec-technical-review   ← PE resolves decisions, drafts ADRs
     ↓
-/spec-implementation-plan ← wave plan + WorkManifest YAML
-gh issue create / launchpad seed-work ← dev seeds board
+/spec-implementation-plan ← wave plan + §9 board-seed YAML
+gh issue create ← dev seeds board (one issue per wave W0, W1, …)
     ↓
 per wave:
 /pre-implement → /loop-spec → /ground-spec → human checkpoint
