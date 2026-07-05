@@ -20,7 +20,7 @@ Propagates verified corrections and new information across a set of related docu
 
 **Lab handoff:** `review-findings` produces `prd/reports/Resolution-*.md`. Use rows under **Approved Fixes**, **Confirmed Items**, **Rejected Items**, and **Added as Open Questions** as the change set (Phase 1). Typical scope: `prd/INIT-*.md`, `docs/cross-service-lab.md`, per-repo `03-integrations.md` / route maps.
 
-**Spec handoff (autrio10x):** When drafting `docs/specification/product/INIT-*.md` on an app repo, start from **`drivestream-meta/templates/INIT-spec-handoff.md`**. Wave IDs must match PRD §4.0 / §4.5. Gate: `playbook/spec-layout.md` § INIT spec handoff + `playbook/delivery-model.md`.
+**Spec PR (app repo):** When drafting `docs/specification/product/INIT-*.md`, engineering uses `/spec-draft` on branch `chore/INIT-*-spec-{repo}`. Wave IDs must match PRD §4.0 / §4.5. Gate: launchpad `playbook/delivery-workflow.md` + `playbook/spec-layout.md`.
 
 ---
 

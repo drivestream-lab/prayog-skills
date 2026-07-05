@@ -1,14 +1,14 @@
 ---
 name: spec-draft
 description: >-
-  Translate the PRD handoff into a spec slice for this repo. Reads the PRD
-  from the prd-handoff PR branch, extracts the capabilities relevant to this
-  repo, and drafts docs/specification/product/INIT-*.md. Use immediately after
-  the prd-handoff PR is opened and before /initiative-feasibility.
+  Translate the PRD into a spec slice for this repo. Reads the PRD from the
+  meta PRD PR branch or merged develop, extracts capabilities relevant to this
+  repo, and drafts docs/specification/product/INIT-*.md. Use after engineering
+  opens the spec PR and before /initiative-feasibility.
 disable-model-invocation: true
 paths: AGENTS.md, docs/specification/**, .cursor/rules/**
 background_eligible: true
-background_trigger: "prd-handoff PR opened in this repo"
+background_trigger: "spec PR opened in this repo (chore/INIT-*-spec-*)"
 ---
 
 # Spec draft
@@ -35,15 +35,20 @@ that the dev team can review, edit, and then run `/initiative-feasibility` on.
 5. Flag anything in the PRD that is **ambiguous for this repo** — do not guess.
    Put ambiguities in a "Spec questions" section at the bottom.
 
+## Prerequisites
+
+- Meta PRD PR exists (merged or open) with impact map tech-lead LGTM
+- Engineering has opened spec PR on branch `chore/INIT-{COMPONENT}-{NUMBER}-spec-{repo}`
+
 ## Inputs
 
 Resolve paths from `.harness/profile.yaml` or [references/layout-defaults.md](references/layout-defaults.md).
 
-1. **PRD** — (REQUIRED) from `<client>-meta/prd/INIT-*.md`. Developer provides
-   the path or pastes the URL of the prd-handoff PR. Read from the PR branch,
-   not `<client>-meta/develop` (PRD may not be merged yet).
-2. **prd-handoff PR body** — (REQUIRED) PM's plain-English description of what
-   this repo needs to deliver. This is the scope boundary.
+1. **PRD** — (REQUIRED) from `<client>-meta/prd/INIT-*.md`. Read from the meta
+   PRD PR branch or merged `develop`. Do not assume PRD is on develop if PR is
+   still open — use PR branch when iterating in parallel.
+2. **Impact map** — (RECOMMENDED) PR comment from `/prd-impact-map` confirming
+   this repo's scope.
 3. **As-built** — `implementation-status.md` (REQUIRED) — understand what
    already exists before writing FRs.
 4. **Source** — `source_roots` from profile — understand current module structure.
@@ -54,14 +59,14 @@ Resolve paths from `.harness/profile.yaml` or [references/layout-defaults.md](re
 
 ## Process
 
-1. **T0 Gather** — PRD path, prd-handoff PR body, as-built, source, service profile
+1. **T0 Gather** — PRD path, impact map scope, as-built, source, service profile
 2. **T1 Understand** — initiative id; what capabilities land in this repo per PRD
-   and prd-handoff PR body; what already exists (as-built + source scan)
+   and impact map; what already exists (as-built + source scan)
 3. **T2 Scope** — list ONLY what this repo owns. Explicitly exclude what belongs
    to other repos. Cross-service contracts are noted but not spec'd here.
 4. **T3 Draft** — write INIT-*.md using [references/output-template.md](references/output-template.md)
 5. **T4 Flag** — list ambiguities, open questions, and anything that needs PM
-   confirmation before this spec is used for feasibility
+   confirmation (route to meta PRD PR — see feasibility skill)
 6. **T5 Present** — show draft to dev for review; do NOT commit until dev confirms
 
 ## Output

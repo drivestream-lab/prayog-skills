@@ -2,12 +2,12 @@
 
 Lab-owned **Cursor Agent skills** for spec-driven development workflows. Install via [skills CLI](https://skills.sh) or **launchpad harness** (`sync-harness`) in app repos.
 
-**Version:** see [`VERSION`](VERSION) (currently **0.3.2**)
+**Version:** see [`VERSION`](VERSION) (currently **0.4.0**)
 
 ## Role → skill mapping
 
-**PM owns (meta workspace):** writes PRD, maps to repos, opens prd-handoff PRs.  
-**Dev/Engineering owns (app repo):** writes spec, reviews feasibility, plans, builds.
+**PM owns (meta workspace):** PRD PR — writes PRD, validates, impact map.  
+**Dev/Engineering owns (app repo):** spec PR — spec, feasibility, TDD, plan, build.
 
 ### Requirements (PM workspace — `<client>-meta`)
 
@@ -37,23 +37,26 @@ Lab-owned **Cursor Agent skills** for spec-driven development workflows. Install
 ## Dev workflow
 
 ```
-prd-handoff PR opened
+Eng opens spec PR (chore/INIT-*-spec-{repo}) — may parallel meta PRD PR after impact map LGTM
     ↓
 /spec-draft          ← dev writes spec slice from PRD
     ↓
-/initiative-feasibility  ← dev reviews spec for buildability; 4-lane triage
+/initiative-feasibility  ← dev reviews spec; PM Q&A on meta PRD PR; PE Q&A on spec PR
     ↓ (if PE/engineering blockers)
-/spec-technical-review   ← PE resolves decisions, drafts ADRs
+/spec-technical-review   ← PE resolves decisions; TDD on spec branch; PE Approve on spec PR
     ↓
-/spec-implementation-plan ← wave plan + §9 board-seed YAML
-gh issue create ← dev seeds board (one issue per wave W0, W1, …)
+/spec-implementation-plan ← wave plan + §9 WorkManifest YAML on spec branch
+    ↓
+Merge spec PR → develop
+    ↓
+gh issue create ← dev seeds board from §9 (one issue per wave W0, W1, …)
     ↓
 per wave:
 /pre-implement → /loop-spec → /ground-spec → human checkpoint
     ↓ (next wave reads prior /ground-spec §Contracts produced)
 ```
 
-## Install (PM — drivestream-meta)
+## Install (PM — `<client>-meta`)
 
 ```bash
 npx skills add github/awesome-copilot --skill prd -a cursor -y
@@ -90,9 +93,9 @@ Commit **`skills-lock.json`** and **`.harness/profile.yaml`** after sync. Keep *
 - **validate-requirements**, **review-findings**, **update-documents** — vendored from rushikeshpol02/ai-skills
 - **pre-implement**, **verify** — adapted from prayog-meta; formerly python-services-skills
 - **initiative-feasibility**, **spec-implementation-plan** — patterns from awesome-copilot (unmet-spec loop, implementation-plan tables)
-- **spec-technical-review**, **loop-spec**, **ground-spec** — v0.3.0; benchmarked against Stripe/Cloudflare/Oxide RFC process, Sentry design-first gate, `agentic_development_workflow` multi-role review, GitHub Spec Kit `/speckit.plan`
-- **spec-draft** — v0.3.0; dev-side PRD → spec translation (PM writes PRD, engineering owns spec)
+- **spec-technical-review**, **loop-spec**, **ground-spec** — benchmarked against Stripe/Cloudflare/Oxide RFC process, Sentry design-first gate, `agentic_development_workflow` multi-role review, GitHub Spec Kit `/speckit.plan`
+- **spec-draft** — dev-side PRD → spec translation (PM writes PRD, engineering owns spec)
 
 ## Adding skills
 
-`skills/<category>/<skill-name>/SKILL.md` per [Agent Skills](https://cursor.com/docs/skills). Tag releases and bump harness `agent_skills.ref` in launchpad / drivestream-meta. **When adding or removing a development skill, also update `development_skills:` in every `profiles/*.yaml`** — `launchpad sync-harness` seeds consumer repos from that list.
+`skills/<category>/<skill-name>/SKILL.md` per [Agent Skills](https://cursor.com/docs/skills). Tag releases and bump harness `agent_skills.ref` in launchpad / `<client>-meta`. **When adding or removing a development skill, also update `development_skills:` in every `profiles/*.yaml`** — `launchpad sync-harness` seeds consumer repos from that list.

@@ -50,6 +50,18 @@ SINGLE_VALUE_INVARIANTS = [
         "**/development/**/references/output-template.md",
     ),
     (
+        "No stale prd-handoff references",
+        r'prd-handoff',
+        set(),  # must not appear
+        "**/*.md",
+    ),
+    (
+        "No stale generate-work-manifest references",
+        r'generate-work-manifest',
+        set(),  # must not appear
+        "**/*.md",
+    ),
+    (
         "No stale spec-handoff PR trigger strings",
         r'background_trigger:.*spec-handoff',
         set(),  # must not appear

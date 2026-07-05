@@ -6,7 +6,7 @@
 | Spec | {SPEC_PATH} |
 | Repo | {REPO} |
 | Date | {YYYY-MM-DD} |
-| Branch | prd-handoff PR branch (no separate chore branch — see Next steps below) |
+| Branch | `chore/INIT-{COMPONENT}-{NUMBER}-spec-{repo}` — spec PR (single review surface) |
 | Initiative segment | `INIT-{COMPONENT}-{NUMBER}` — COMPONENT is service branch_code from service-catalog.yaml |
 | Status | Draft |
 | Review deadline | {YYYY-MM-DD + 3 business days} |
@@ -125,26 +125,29 @@
 
 ## Next steps
 
-> This report lives on the prd-handoff branch alongside the spec draft.
-> No separate chore PR — the prd-handoff PR is the single review surface.
+> This report lives on the spec PR branch alongside the spec draft.
+> The spec PR is the engineering review surface; product Q&A uses the meta PRD PR.
 
-**PM questions** → post as a comment on the prd-handoff PR (plain English).
-  PM reads and answers on the same PR they opened.
+**PM questions** → post as numbered comments on the **meta PRD PR** (plain English).
+  Link from a spec PR comment if helpful. PM answers on meta PRD PR.
 
-**PE questions** → run `/spec-technical-review` next (separate chore PR for TDD + ADRs).
+**PE questions** → discuss on the **spec PR**; run `/spec-technical-review` next.
+  Commit TDD to spec branch; PE Approve on the same spec PR.
 
-**Domain clarifications** → Slack/email to named SME; record answers in `open-questions.md`
-  and commit to prd-handoff branch.
+**Domain clarifications** → meta PRD PR comment or tracked issue; record answers in
+  `open-questions.md` and commit to spec branch.
 
-**Auto-fixable items** → fix and commit to prd-handoff branch now.
+**Auto-fixable items** → fix and commit to spec branch now.
 
 ```
-Prd-handoff branch: chore/INIT-{COMPONENT}-{NUMBER}-prd-handoff
+Spec branch: chore/INIT-{COMPONENT}-{NUMBER}-spec-{repo}
 When ready:
-  [ ] All blocking PM questions answered in prd-handoff PR comments
+  [ ] All blocking PM questions answered on meta PRD PR
   [ ] All blocking Domain clarifications answered and committed
   [ ] Spec updated to reflect answers (same branch)
   [ ] Incremental re-run of /initiative-feasibility on updated spec is clean
   [ ] Proceed: /spec-technical-review (PE questions exist)
                OR /spec-implementation-plan (no PE questions)
+  [ ] After spec + feasibility + TDD (if any) + plan on branch: merge spec PR
+  [ ] After merge: seed board from plan §9 — then start wave coding
 ```
