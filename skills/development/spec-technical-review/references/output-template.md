@@ -7,7 +7,7 @@
 | Feasibility report | {FEASIBILITY_PATH} |
 | Repo | {REPO} |
 | Date | {YYYY-MM-DD} |
-| Branch | `chore/INIT-{COMPONENT}-{NUMBER}-technical-review` |
+| Branch | `chore/INIT-{COMPONENT}-{NUMBER}-spec-{repo}` (spec PR — TDD committed here) |
 | Initiative segment | `INIT-{COMPONENT}-{NUMBER}` — COMPONENT is service branch_code from service-catalog.yaml |
 | Status | Draft |
 | Review deadline | {YYYY-MM-DD + 5 business days} |
@@ -197,20 +197,20 @@ cross-references, spec typos). These are **done** — no action required.
 
 ## PR instructions
 
-> Commit this TDD, then open a PR for PE review.
-> PE GitHub Approve = sign-off. The gate is satisfied when the PR is merged.
-> CODEOWNERS enforces PE as a required reviewer — the PR cannot merge without it.
+> Commit this TDD to the spec PR branch. PE reviews on the **same spec PR**.
+> PE GitHub Approve = sign-off. Spec PR cannot merge until PE approves (when TDD present).
+> CODEOWNERS enforces PE as a required reviewer on `Technical-Review-*`.
 
 ```
-Branch:   chore/INIT-{COMPONENT}-{NUMBER}-technical-review
-PR title: "[INIT-{COMPONENT}-{NUMBER}] Technical Design Document — PE review required"
-PR body:  paste §13 Implementation readiness verdict as the description
+Branch:   chore/INIT-{COMPONENT}-{NUMBER}-spec-{repo}
+PR title: "[INIT-{COMPONENT}-{NUMBER}] Spec — {repo}"
+PR body:  link meta PRD PR; paste §13 Implementation readiness verdict when TDD is ready
 
-Required reviewers (enforced by CODEOWNERS):
-  @{pe-name-or-pe-team}  ← must give explicit LGTM, not just silence
+Required reviewers (enforced by CODEOWNERS when TDD file is present):
+  @{pe-name-or-pe-team}  ← must give explicit Approve, not just silence
 
 Review deadline: {date from report header}
-PE review checklist (PE works through this on the PR):
+PE review checklist (PE works through this on the spec PR):
   [ ] T1 Module boundaries — can I draw the box?
   [ ] T2 Interface contracts — are shapes and invariants specified?
   [ ] T3 Draft ADRs — do recommendations make sense given existing ADRs?
@@ -218,12 +218,11 @@ PE review checklist (PE works through this on the PR):
   [ ] T9 Zero unresolved PE items?
 
 PE action:
-  Option A: approve → click GitHub "Approve"
-  Option B: request changes → PR thread with specific T-check item to fix
-            (do not use "Request changes" for preferences — only for blocking issues)
+  Approve → GitHub "Approve" on spec PR
+  Request changes → spec PR thread with specific T-check item to fix
 
 After PE approves:
   Dev updates §Status in this file: "Accepted — @{pe-name}  {date}"
-  Dev merges PR
-  → /spec-implementation-plan can now run
+  → /spec-implementation-plan can now run on the same branch
+  → after plan is committed: merge spec PR, then seed board from plan §9
 ```

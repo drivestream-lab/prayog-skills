@@ -40,5 +40,6 @@ Scope boundary: what is OUT of scope for this repo.}
 ## References
 
 - PRD: `{client-meta}/prd/{INIT-id}.md`
-- prd-handoff PR: #{PR number}
+- Meta PRD PR: #{PR number or URL}
+- Spec PR: #{PR number or URL}
 - Service profile: `docs/specification/product/00-service-profile.md`

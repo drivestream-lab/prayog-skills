@@ -1,15 +1,15 @@
 ---
 name: initiative-feasibility
 description: >-
-  After the dev team has written their spec slice from the PRD handoff, review
-  it against the current codebase — baseline, gaps, impact, test harness,
+  After the dev team has written their spec slice from the PRD, review it
+  against the current codebase — baseline, gaps, impact, test harness,
   architecture governance (ADR + MDC), risks, and 4-lane triage. Use when
   the dev has drafted the spec and wants to check buildability before technical
-  review and planning.
+  review and planning. Runs while the spec PR is open.
 disable-model-invocation: true
 paths: AGENTS.md, docs/specification/**, .cursor/rules/**
 background_eligible: true
-background_trigger: "spec slice committed to prd-handoff branch"
+background_trigger: "spec slice committed to spec PR branch (chore/INIT-*-spec-*)"
 ---
 
 # Initiative feasibility
@@ -46,7 +46,7 @@ Gather before starting. Resolve paths from `.harness/profile.yaml` or [reference
 
 ## When to use
 
-- Dev has written spec slice from PRD handoff and wants to check buildability
+- Dev has written spec slice and wants to check buildability before spec PR merge
 - After dev updates spec — re-run on changed sections
 - User asks: feasibility, impact, gap analysis, spec vs codebase
 
@@ -69,10 +69,10 @@ Use [references/output-template.md](references/output-template.md).
 
 End with four lanes (see output template):
 
-- **PM questions** — product scope, UX, priority; comment on prd-handoff PR (plain English)
-- **PE questions** — engineering decisions, ADR gaps, test policy; resolved by `/spec-technical-review`
-- **Domain clarifications** — business source-of-truth; route to named SME
-- **Auto-fixable** — naming drift, inferred cross-references; agent resolves
+- **PM questions** — product scope, UX, priority; comment on **meta PRD PR** (plain English)
+- **PE questions** — engineering decisions, ADR gaps, test policy; comment on **spec PR**; resolved by `/spec-technical-review`
+- **Domain clarifications** — business source-of-truth; route to named SME (meta PRD PR or issue)
+- **Auto-fixable** — naming drift, inferred cross-references; agent resolves on spec branch
 
 Do **not** route engineering decisions to PM. Apply the routing rubric in
 the `spec-technical-review` skill's `references/governance.md`.

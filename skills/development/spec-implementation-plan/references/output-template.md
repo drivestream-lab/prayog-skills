@@ -6,7 +6,7 @@ date_created: {YYYY-MM-DD}
 source_spec: {SPEC_PATH}
 feasibility_report: {FEASIBILITY_PATH or N/A}
 technical_review: {TECHNICAL_REVIEW_PATH or N/A}
-branch: chore/INIT-{COMPONENT}-{NUMBER}-plan
+branch: chore/INIT-{COMPONENT}-{NUMBER}-spec-{repo}
 review_deadline: {YYYY-MM-DD + 3 business days}
 deciders: Dev team lead — explicit LGTM required
 ---
@@ -122,15 +122,15 @@ deciders: Dev team lead — explicit LGTM required
 
 ## 8. PR instructions
 
-> Commit this plan, then open a PR for team review.
-> Team lead GitHub Approve = gate satisfied. Merge before seeding the board.
+> Commit this plan to the spec PR branch alongside spec, feasibility, and TDD.
+> Dev lead GitHub Approve on spec PR = gate satisfied. **Merge spec PR**, then seed board.
 
 ```
-Branch:   chore/INIT-{COMPONENT}-{NUMBER}-plan
-PR title: "[INIT-{COMPONENT}-{NUMBER}] Implementation plan — team review"
-PR body:  paste §1 Requirements table + wave goals summary
+Branch:   chore/INIT-{COMPONENT}-{NUMBER}-spec-{repo}
+PR title: "[INIT-{COMPONENT}-{NUMBER}] Spec — {repo}"
+PR body:  link meta PRD PR; paste §1 Requirements table + wave goals summary
 
-Required reviewers (CODEOWNERS): @{dev-team-lead}
+Required reviewers (CODEOWNERS): @{dev-team-lead} · @{pe-team} (when TDD present)
 Review deadline: {date from front matter}
 
 Reviewer checklist:
@@ -140,9 +140,10 @@ Reviewer checklist:
   [ ] WorkManifest YAML (§9) looks correct — wave IDs are W0, W1, … (one issue per wave)
   [ ] P1–P14 checks all pass
 
-After merge — dev seeds board from §9:
+After spec PR merge — dev seeds board from §9 (post-merge only):
   Create one GitHub Issue per wave (W0, W1, …) using §9 titles, bodies, depends_on
   Optional bulk: copy §9 YAML to work/{INITIATIVE}.yaml and run launchpad seed-work
+  Then start wave coding: /pre-implement → /loop-spec → /ground-spec → /verify
 ```
 
 ---
