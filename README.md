@@ -1,77 +1,104 @@
 # prayog-skills
 
-Lab-owned **Cursor Agent skills** for spec-driven development workflows. Install via [skills CLI](https://skills.sh) or **launchpad harness** (`sync-harness`) in app repos.
+**Cursor Agent skills for specification-driven development** — procedural workflows for PM and engineering lanes in a [Launchpad](https://github.com/drivestream-lab/launchpad) harness.
 
-**Version:** see [`VERSION`](VERSION) (currently **0.4.0**)
+Skills answer **what steps an agent runs** (validate PRD, draft spec, pre-implement gate, live verify). They complement **rules** repos (`.mdc` coding constitution at `.cursor/rules/`) and **launchpad** (factory CLI + playbook).
 
-## Role → skill mapping
+| | |
+|---|---|
+| **License** | [MIT](LICENSE) |
+| **Version** | see [`VERSION`](VERSION) (currently **0.4.0**) |
+| **Install** | [skills CLI](https://skills.sh) or `launchpad sync-harness-*` |
+| **Pairs with** | [launchpad](https://github.com/drivestream-lab/launchpad) · `*-rules` repos |
 
-**PM owns (meta workspace):** PRD PR — writes PRD, validates, impact map.  
-**Dev/Engineering owns (app repo):** spec PR — spec, feasibility, TDD, plan, build.
+---
 
-### Requirements (PM workspace — `<client>-meta`)
+## Two lanes — do not mix
 
-| Skill | When | Path |
-|-------|------|------|
-| **prd** (community) | Writing a new initiative PRD | community/awesome-copilot |
-| **validate-requirements** | Auditing PRD completeness | `skills/requirements/validate-requirements/` |
-| **review-findings** | PM decides on findings | `skills/requirements/review-findings/` |
-| **update-documents** | PM refines PRD after findings | `skills/requirements/update-documents/` |
-| **prd-impact-map** | Maps PRD to affected repos | `skills/requirements/prd-impact-map/` |
+| Lane | Workspace | Skills | Rules submodule |
+|------|-----------|--------|-----------------|
+| **PM** | `<client>-meta` | Requirements pipeline below | None |
+| **Dev** | App repos | Development pipeline below | `python-services-rules`, `nextjs-bff-rules`, or `data-platform-rules` |
 
-### Development (app repos — harness seeded by launchpad)
+PM skills validate and refine PRDs. Dev skills implement spec slices in service repos. Collapsing lanes causes agents to run against the wrong tree.
 
-| Skill | When | Path |
-|-------|------|------|
-| **spec-draft** | Dev translates PRD → spec slice for this repo | `skills/development/spec-draft/` |
-| **initiative-feasibility** | Dev reviews spec slice for buildability | `skills/development/initiative-feasibility/` |
-| **spec-technical-review** | PE resolves engineering decisions + drafts ADRs | `skills/development/spec-technical-review/` |
-| **spec-implementation-plan** | Dev produces wave plan + board-seed YAML (§9) | `skills/development/spec-implementation-plan/` |
-| **pre-implement** | Pre-flight before each wave | `skills/development/pre-implement/` |
-| **loop-spec** | Implementation loop (implement → verify → fix) | `skills/development/loop-spec/` |
-| **ground-spec** | Validates wave FRs + produces §Contracts produced | `skills/development/ground-spec/` |
-| **verify** | Live CLI/API verification | `skills/development/verify/` |
+---
 
-**`background_eligible` / `background_trigger`:** Development skills carry these keys as launchpad-side conventions marking which skills can be invoked unattended and on what trigger. Not a Cursor feature — launchpad reads them when wiring background automation.
+## Skill catalog
 
-## Dev workflow
+### Requirements (PM — `<client>-meta`)
 
+| Skill | When |
+|-------|------|
+| **prd** (community) | Writing a new initiative PRD |
+| **validate-requirements** | Auditing PRD completeness |
+| **review-findings** | PM decides on findings |
+| **update-documents** | PM refines PRD after findings |
+| **prd-impact-map** | Maps PRD to affected repos |
+
+### Development (app repos — harness seeded)
+
+| Skill | When |
+|-------|------|
+| **spec-draft** | Dev translates PRD → spec slice for this repo |
+| **initiative-feasibility** | Dev reviews spec for buildability |
+| **spec-technical-review** | PE resolves engineering decisions + drafts ADRs |
+| **spec-implementation-plan** | Wave plan + board-seed YAML (§9) |
+| **pre-implement** | Pre-flight before each implementation wave |
+| **loop-spec** | Implement → verify → fix per task |
+| **ground-spec** | Wave complete — FR validation + contracts for next wave |
+| **verify** | Live CLI/API verification |
+
+Profile manifests (`profiles/*.yaml`) list which dev skills apply per harness profile (`python-backend`, `frontend`, `data-platform`, `meta-pm`). **Launchpad** reads these at sync time — when adding or removing a dev skill, update every relevant `profiles/*.yaml` and bump the harness `agent_skills.ref`.
+
+---
+
+## Dev workflow (high level)
+
+```text
+Eng opens spec PR (chore/INIT-*-spec-{repo})
+    ↓
+/spec-draft  →  /initiative-feasibility  →  [/spec-technical-review]
+    ↓
+/spec-implementation-plan  (§9 WorkManifest YAML on spec branch)
+    ↓
+Merge spec PR → develop → seed board issues per wave
+    ↓
+Per wave:  /pre-implement  →  /loop-spec  →  /ground-spec  →  human checkpoint
 ```
-Eng opens spec PR (chore/INIT-*-spec-{repo}) — may parallel meta PRD PR after impact map LGTM
-    ↓
-/spec-draft          ← dev writes spec slice from PRD
-    ↓
-/initiative-feasibility  ← dev reviews spec; PM Q&A on meta PRD PR; PE Q&A on spec PR
-    ↓ (if PE/engineering blockers)
-/spec-technical-review   ← PE resolves decisions; TDD on spec branch; PE Approve on spec PR
-    ↓
-/spec-implementation-plan ← wave plan + §9 WorkManifest YAML on spec branch
-    ↓
-Merge spec PR → develop
-    ↓
-gh issue create ← dev seeds board from §9 (one issue per wave W0, W1, …)
-    ↓
-per wave:
-/pre-implement → /loop-spec → /ground-spec → human checkpoint
-    ↓ (next wave reads prior /ground-spec §Contracts produced)
+
+Full process: [launchpad delivery workflow](https://github.com/drivestream-lab/launchpad/blob/main/playbook/delivery-workflow.md).
+
+---
+
+## Installation
+
+### With Launchpad (recommended)
+
+**PM meta workspace:**
+
+```bash
+launchpad sync-harness-meta --apply
+launchpad verify-harness-meta
 ```
 
-## Install (PM — `<client>-meta`)
+**App repo:**
+
+```bash
+launchpad sync-harness-app --repo <service> --apply
+launchpad verify-harness-app --repo <service>
+```
+
+Harness writes `.harness-pin.yaml`, seeds `.agents/skills/`, and optionally commits `skills-lock.json`. Keep **`.agents/`** gitignored in consumers.
+
+### Manual — PM workspace
 
 ```bash
 npx skills add github/awesome-copilot --skill prd -a cursor -y
 npx skills add drivestream-lab/prayog-skills --skill '*' -a cursor -y
 ```
 
-## Install (dev — app repo)
-
-Harness (recommended):
-
-```bash
-launchpad sync-harness --repo <service> --apply
-```
-
-Manual dev bundle:
+### Manual — dev bundle (python-backend example)
 
 ```bash
 npx skills add drivestream-lab/prayog-skills \
@@ -86,16 +113,59 @@ npx skills add drivestream-lab/prayog-skills \
   -a cursor -y
 ```
 
-Commit **`skills-lock.json`** and **`.harness/profile.yaml`** after sync. Keep **`.agents/`** gitignored.
+---
+
+## Layout
+
+```text
+prayog-skills/
+  VERSION
+  profiles/           # SSOT skill lists per harness profile
+    python-backend.yaml
+    frontend.yaml
+    meta-pm.yaml
+  skills/
+    requirements/     # PM lane
+    development/      # Dev lane
+  scripts/            # Consistency checks (CI)
+```
+
+Each skill: `skills/<category>/<name>/SKILL.md` per [Agent Skills](https://cursor.com/docs/skills).
+
+---
+
+## Release process (maintainers)
+
+1. Change skills on a branch; run `scripts/check_consistency.py`
+2. Bump `VERSION` and tag (`v0.4.0`)
+3. PR → `develop` → `main`
+4. Update tenant `config/harness-<org>.yaml` approved pairs (`agent_skills.ref`)
+5. Consumers run `sync-harness-meta` / `sync-harness-app` or bump pin manually
+
+---
 
 ## Provenance
 
-- **validate-requirements**, **review-findings**, **update-documents** — vendored from rushikeshpol02/ai-skills
-- **pre-implement**, **verify** — adapted from prayog-meta; formerly python-services-skills
-- **initiative-feasibility**, **spec-implementation-plan** — patterns from awesome-copilot (unmet-spec loop, implementation-plan tables)
-- **spec-technical-review**, **loop-spec**, **ground-spec** — benchmarked against Stripe/Cloudflare/Oxide RFC process, Sentry design-first gate, `agentic_development_workflow` multi-role review, GitHub Spec Kit `/speckit.plan`
-- **spec-draft** — dev-side PRD → spec translation (PM writes PRD, engineering owns spec)
+| Skill area | Origin |
+|------------|--------|
+| validate-requirements, review-findings, update-documents | Vendored from rushikeshpol02/ai-skills |
+| pre-implement, verify | Adapted from early platform skills work |
+| initiative-feasibility, spec-implementation-plan | Patterns from awesome-copilot |
+| spec-technical-review, loop-spec, ground-spec, spec-draft | Platform SDD design (RFC-style review, spec kit patterns) |
 
-## Adding skills
+---
 
-`skills/<category>/<skill-name>/SKILL.md` per [Agent Skills](https://cursor.com/docs/skills). Tag releases and bump harness `agent_skills.ref` in launchpad / `<client>-meta`. **When adding or removing a development skill, also update `development_skills:` in every `profiles/*.yaml`** — `launchpad sync-harness` seeds consumer repos from that list.
+## Related repositories
+
+| Repo | Role |
+|------|------|
+| [launchpad](https://github.com/drivestream-lab/launchpad) | Sync/verify harness; playbook SSOT |
+| [python-services-rules](https://github.com/drivestream-lab/python-services-rules) | Python coding constitution |
+| [nextjs-bff-rules](https://github.com/drivestream-lab/nextjs-bff-rules) | Frontend BFF constitution |
+| [data-platform-rules](https://github.com/drivestream-lab/data-platform-rules) | Flink/Java constitution |
+
+---
+
+## License
+
+MIT — see [LICENSE](LICENSE).
