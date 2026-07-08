@@ -7,7 +7,7 @@ Skills answer **what steps an agent runs** (validate PRD, draft spec, pre-implem
 | | |
 |---|---|
 | **License** | [MIT](LICENSE) |
-| **Version** | see [`VERSION`](VERSION) (currently **0.4.0**) |
+| **Version** | see [`VERSION`](VERSION) (currently **0.4.1**) |
 | **Install** | [skills CLI](https://skills.sh) or `launchpad sync-harness-*` |
 | **Pairs with** | [launchpad](https://github.com/drivestream-lab/launchpad) · `*-rules` repos |
 

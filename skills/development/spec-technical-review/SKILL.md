@@ -108,8 +108,11 @@ Quick rule:
 
 ## Draft ADR format
 
-For each NEW-ADR finding, produce a draft section (not a file — the PE or human
-commits the ADR file after sign-off):
+For each NEW-ADR finding, produce a draft section (not a file during PE review).
+After PE Approve, `/spec-implementation-plan` must include a pre-W0
+`TASK-SPEC-ADR-NN` that promotes each TDD §4 draft to
+`{adr_dir}/adr-NNN-{slug}.md` with status Accepted, PE name, and date. Manual
+promotion by PE or human is a valid fallback if the plan has not run yet.
 
 ```markdown
 ### Draft ADR — {short title}

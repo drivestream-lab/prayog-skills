@@ -52,12 +52,20 @@ Run **while spec PR is open**, **before spec merge**, after:
 - Feasibility accepted (no blocking PM questions on meta PRD PR)
 - PE Approve on spec PR when TDD was required (NEW-ADR findings)
 
+> **How to confirm PE Approve reached the skill chain:**
+> There is no automatic signal from GitHub. After PE clicks Approve on the spec PR,
+> the dev must commit a TDD status update to the spec branch:
+>   `| Status | Accepted — @{pe-name}  {YYYY-MM-DD} |`  (document header)
+>   `**Status:** Accepted — @{pe-name}  {YYYY-MM-DD}`   (each §4.N draft ADR)
+> This committed file state is what `/spec-implementation-plan` reads to verify
+> sign-off. P13 will FAIL if the TDD Status field still reads `Draft`.
+
 ## Process
 
 1. **T0 Gather** — spec waves, feasibility findings, technical review (if exists), repo layout
 2. **T1 Understand** — initiative id, wave boundaries, PR granularity from spec
 3. **T2 Analyze** — map each wave to concrete files and tests; cross-reference `rules_glob` and relevant ADRs; flag spec wording that conflicts with MDC patterns or Accepted ADRs as **MDC notes** / **ADR notes** in the TASK table
-4. **T3 Plan** — build REQ/TASK/FILE tables per wave; add draft-ADR TASK when plan flags `NEW-ADR`; collect `codebase`/`spec_path`/`verify_command` per TASK
+4. **T3 Plan** — build REQ/TASK/FILE tables per wave; when TDD contains §4 draft ADRs or feasibility flagged `NEW-ADR`, add a mandatory pre-W0 `TASK-SPEC-ADR-NN` for each draft: promote TDD §4 section → `{adr_dir}/adr-NNN-{slug}.md` with status Accepted, PE name, and date; collect `codebase`/`spec_path`/`verify_command` per TASK
 5. **T4 Execute** — write plan; build WorkManifest seed section; run P1–P14 checks; commit to spec branch
 6. **T5 Verify** — self-contained plan readable by a fresh session; WorkManifest YAML is valid
 
