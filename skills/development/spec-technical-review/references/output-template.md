@@ -64,10 +64,22 @@ engineering terms (stack-agnostic — describe shapes and invariants, not syntax
 
 One subsection per `NEW-ADR` finding from the feasibility report.
 
+> **ADR status lifecycle:**
+> - **Draft** — written here during technical review; open for PE discussion.
+> - **Accepted** — the moment PE gives GitHub Approve on this spec PR. That
+>   Approve is the decision gate; no separate acceptance step exists.
+> - **Record-keeping after Approve (two required steps):**
+>   1. Dev updates the `**Status:**` line in this §4.N section to
+>      `Accepted — @{pe-name}  {YYYY-MM-DD}`.
+>   2. `/spec-implementation-plan` adds `TASK-SPEC-ADR-NN` to write
+>      `{adr_dir}/adr-NNN-{slug}.md` with status Accepted + PE name + date.
+>      Manual promotion by PE/human is valid if plan has not run yet.
+
 ### 4.{n} Draft ADR — {short title}
 
 **Feasibility finding:** {C-id or G-id}
 **Status:** Draft — requires PE sign-off
+**Target file:** `{adr_dir}/adr-{NNN}-{slug}.md` (written by TASK-SPEC-ADR-NN after PE Approve)
 
 **Problem:**
 {1–2 sentences.}
@@ -192,6 +204,7 @@ cross-references, spec typos). These are **done** — no action required.
 | T8 Dependency graph | | |
 | T9 Engineering questions zero | | |
 | T10 PE sign-off gate | | |
+| T11 ADR promotion path | | |
 
 ---
 
@@ -216,6 +229,7 @@ PE review checklist (PE works through this on the spec PR):
   [ ] T3 Draft ADRs — do recommendations make sense given existing ADRs?
   [ ] T4 Test policy — is determinism policy acceptable?
   [ ] T9 Zero unresolved PE items?
+  [ ] T11 ADR promotion path — each §4 draft states how it will reach adr_dir
 
 PE action:
   Approve → GitHub "Approve" on spec PR

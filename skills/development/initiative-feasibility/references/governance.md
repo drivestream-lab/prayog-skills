@@ -73,6 +73,11 @@ cross-service contracts, deployment, storage model, CLI shape):
   PE question (feasibility; route to `/spec-technical-review`) or
   DEP/RISK + draft-ADR TASK (plan).
 
+> **Accepted ADR SSOT** = files in `{adr_dir}`. TDD §4 draft sections are not
+> substitutes for Accepted ADR files at implementation time. A `draft-ADR TASK`
+> must produce a file at `{adr_dir}/adr-NNN-{slug}.md`; linking a TDD section
+> in §0 "Resolved ADRs" does not satisfy P12.
+
 ---
 
 ## F14 / P11 — MDC conformance
