@@ -16,9 +16,10 @@ Governance and routing detail: [governance.md](governance.md).
 | T8 | **Dependency graph integrity** | No circular dependencies introduced; no ADR violations; import layer order consistent with `rules_glob` layering constraints |
 | T9 | **Engineering questions — zero PE-lane items unresolved** | All items routed to PE lane are resolved or deferred with defaults; PM/domain items explicitly listed as out-of-scope for this review |
 | T10 | **PE sign-off gate** | Document explicitly marks human PE review as required; states what a PE approver must check; does not self-approve |
+| T11 | **ADR promotion path** | Each TDD §4 draft ADR states how it will reach `{adr_dir}` — either via a `/spec-implementation-plan` `TASK-SPEC-ADR-NN` or an explicit human step; both options are valid; absence of any promotion path is a finding |
 
 Severity: **Blocking** (PE cannot sign off until resolved), **Should fix**, **Verify**.
 
 **Blocking** when: T3 has an unresolved NEW-ADR with no default; T9 has PE-lane
 items still pending a decision; T2 is missing for a boundary that implementation
-will cross.
+will cross; T11 has no promotion path documented for any draft ADR.

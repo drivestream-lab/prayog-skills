@@ -1,0 +1,87 @@
+# Changelog
+
+All notable changes to prayog-skills are documented here.
+Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
+
+---
+
+## [0.4.1] — 2026-07-08
+
+### Fixed — ADR promotion gap between `/spec-technical-review` and `/spec-implementation-plan`
+
+Draft ADRs written in TDD §4 were not being promoted to Accepted files in
+`{adr_dir}` after PE sign-off. No skill enforced the promotion step, so
+`docs/specification/adr/` remained empty even after PE Approve. Downstream
+skills (`/pre-implement`, `/ground-spec`) read from `adr_dir` and silently
+consumed nothing.
+
+Root cause: responsibility for promotion was delegated to "PE or human" in
+`spec-technical-review` with no corresponding TASK template, check, or file
+format in `spec-implementation-plan`.
+
+#### `spec-implementation-plan/references/checks.md`
+- **P12** — strengthened: now requires a pre-W0 `TASK-SPEC-ADR-NN` per
+  `NEW-ADR` that produces a file at `{adr_dir}/adr-NNN-{slug}.md`; §0
+  "Resolved ADRs" must link to `adr_dir` file paths, not TDD section refs;
+  explicit **FAIL** if `NEW-ADR` findings exist but no `adr_dir` file is
+  created or planned.
+- **P13** — strengthened: now requires PE sign-off to be `[x] complete —
+  {date}` (not merely "stated"); explicit **FAIL** if TDD Status field still
+  reads `Draft` when the plan runs.
+- **Title** — corrected file heading from `P1–P12` to `P1–P14`.
+
+#### `spec-implementation-plan/SKILL.md`
+- **T3 Plan** — now specifies a mandatory pre-W0 `TASK-SPEC-ADR-NN` for each
+  TDD §4 draft ADR: promote to `{adr_dir}/adr-NNN-{slug}.md` with status
+  Accepted, PE name, and date.
+- **Prerequisite** — added explicit prose explaining that PE GitHub Approve has
+  no automatic signal to the skill chain; the dev must commit an updated TDD
+  Status field (`Accepted — @{pe-name}  {date}`) to the spec branch before
+  running this skill. P13 reads that field to verify sign-off.
+
+#### `spec-implementation-plan/references/output-template.md`
+- **§0 "Resolved ADRs"** — clarified to require `adr_dir` file paths; TDD
+  section refs are explicitly not sufficient.
+- **§6 As-built and docs tasks** — added conditional `TASK-SPEC-ADR-NN` row
+  (one per `NEW-ADR`) with a full **Accepted ADR file format** callout
+  (Status, Date, PE, TDD fields); states that the acceptance date comes from
+  the GitHub Approve event, not the file write date.
+
+#### `spec-technical-review/SKILL.md`
+- **Draft ADR format** — removed "PE or human commits the ADR file" with no
+  further guidance; replaced with explicit handoff: `/spec-implementation-plan`
+  owns `TASK-SPEC-ADR-NN`; manual promotion by PE/human is a valid fallback.
+
+#### `spec-technical-review/references/checks.md`
+- **T11 ADR promotion path** (new check) — each TDD §4 draft ADR must state
+  how it will reach `{adr_dir}`: via a plan `TASK-SPEC-ADR-NN` or an explicit
+  human step. Absence of any promotion path is a blocking finding.
+- **Blocking condition** updated to include T11.
+
+#### `spec-technical-review/references/output-template.md`
+- **§4 ADR resolutions** — added normative lifecycle callout at section top:
+  Draft → PE Approve → two required record-keeping steps (TDD status update +
+  `adr_dir` file). Each `§4.N` draft block now carries a `**Target file:**`
+  field.
+- **Check summary table** — added T11 row.
+- **PE review checklist** — added T11 item.
+
+#### `governance.md` (SYNC-COPY — three files)
+- `spec-implementation-plan/references/governance.md`
+- `pre-implement/references/governance.md`
+- `initiative-feasibility/references/governance.md`
+
+Added **Accepted ADR SSOT** callout under F13/P12: TDD §4 draft sections are
+not substitutes for Accepted ADR files at implementation time; a `draft-ADR
+TASK` must produce a file at `{adr_dir}/adr-NNN-{slug}.md`. All three copies
+remain byte-identical (SYNC-COPY constraint verified).
+
+---
+
+## [0.4.0] — 2026-06-xx
+
+Two-PR delivery model. See PR #17.
+
+## [0.3.2] — prior
+
+See git log.

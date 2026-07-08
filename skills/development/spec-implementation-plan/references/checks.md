@@ -1,4 +1,4 @@
-# Plan checks (P1–P12)
+# Plan checks (P1–P14)
 
 Governance detail: [governance.md](governance.md).
 
@@ -15,6 +15,6 @@ Governance detail: [governance.md](governance.md).
 | P9 | As-built / README updates listed in same PR as code tasks |
 | P10 | Plan is self-contained (fresh agent can execute one wave) |
 | P11 | **MDC conformance** — per `rules_glob`; discrepancies in TASK **MDC notes** and RISK table |
-| P12 | **ADR conformance** — architectural TASKs cite ADR id or `NEW-ADR`; draft-ADR TASK in same or earlier wave when required; discrepancies in TASK **ADR notes** and RISK table |
-| P13 | **Technical design reference** — §0 present; technical review path populated or explicitly N/A with reason; PE sign-off status stated |
+| P12 | **ADR conformance** — architectural TASKs cite ADR id or `NEW-ADR`; when NEW-ADR findings exist, a pre-W0 `TASK-SPEC-ADR-NN` must promote each TDD §4 draft to a file at `{adr_dir}/adr-NNN-{slug}.md` with status Accepted; §0 "Resolved ADRs" must link to `adr_dir` file paths, not TDD section refs; discrepancies in TASK **ADR notes** and RISK table. **FAIL** if NEW-ADR findings exist but no `adr_dir` file is created or planned. |
+| P13 | **Technical design reference** — §0 present; technical review path populated or explicitly N/A with reason; PE sign-off status stated as `[x] complete — {date}` (not `[ ] required`) when TDD was produced; **FAIL** if TDD Status field in `Technical-Review-{initiative}.md` still reads `Draft` — this means the dev has not committed the post-Approve TDD status update and the plan must not proceed |
 | P14 | **WorkManifest seed** — §8 present; wave IDs (`W0`, `W1`, …) match plan waves exactly; every TASK row has `codebase`, `spec_path`, and `verify_command`; YAML is syntactically valid |
