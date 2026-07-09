@@ -2,9 +2,11 @@
 
 Stack-specific layout keys for development skills. **launchpad `sync-harness`** copies `profiles/{profile}.yaml` → `.harness/profile.yaml` in the consumer app repo (profile name from `.harness-pin.yaml`).
 
-| Profile | Consumer repos | `source_roots` |
+| Profile | Consumer repos | Skill list key |
 |---------|----------------|----------------|
-| [python-backend.yaml](python-backend.yaml) | FastAPI microservices | `src/` |
-| [frontend.yaml](frontend.yaml) | Next.js BFF portals | `app/`, `lib/`, `components/`, `hooks/` |
+| [meta-pm.yaml](meta-pm.yaml) | `<slug>-meta` (PM lane) | `requirements_skills` |
+| [python-backend.yaml](python-backend.yaml) | FastAPI microservices | `development_skills` |
+| [frontend.yaml](frontend.yaml) | Next.js BFF portals | `development_skills` |
 
-Skills resolve paths from `.harness/profile.yaml` when present; else per-skill `references/layout-defaults.md` (generic fallback only).
+Stack-specific layout keys live in each profile YAML. **launchpad `apply-harness`** copies
+`profiles/{profile}.yaml` → `.harness/profile.yaml` in app repos only (not meta).
