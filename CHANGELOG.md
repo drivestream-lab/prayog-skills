@@ -5,6 +5,19 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [0.4.2] — 2026-07-09
+
+### Added — `profiles/meta-pm.yaml` for launchpad PM harness lane
+
+- **`profiles/meta-pm.yaml`** — declares `requirements_skills` for meta workspace
+  (`validate-requirements`, `review-findings`, `update-documents`, `prd-impact-map`)
+  and PM layout paths (`prd/`, `prd/reports/`).
+- **`scripts/check_consistency.py`** — validates `requirements_skills` entries resolve
+  under `skills/requirements/`.
+- **`profiles/README.md`** — documents meta-pm profile for harness consumers.
+
+---
+
 ## [0.4.1] — 2026-07-08
 
 ### Fixed — ADR promotion gap between `/spec-technical-review` and `/spec-implementation-plan`
