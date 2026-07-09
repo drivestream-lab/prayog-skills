@@ -191,6 +191,8 @@ def check_profile_registry() -> list[str]:
 
     for pf in profile_files:
         text = pf.read_text(encoding="utf-8")
+        if "requirements_skills:" in text and "development_skills:" not in text:
+            continue
         m = block_re.search(text)
         if not m:
             errors.append(f"  {pf.relative_to(ROOT)}: no development_skills: list found")
@@ -206,6 +208,46 @@ def check_profile_registry() -> list[str]:
                 f"  {pf.relative_to(ROOT)}: stale entry {skill!r} "
                 f"(listed in development_skills: but skills/development/{skill}/ does not exist)"
             )
+    return errors
+
+
+def check_requirements_profile_registry() -> list[str]:
+    """Every skills/requirements/*/SKILL.md must be listed in profiles that
+    declare requirements_skills (meta-pm), with no stale entries."""
+    errors: list[str] = []
+    req_dir = SKILLS_DIR / "requirements"
+    if not req_dir.exists():
+        return errors
+    actual_skills = {p.parent.name for p in req_dir.glob("*/SKILL.md")}
+
+    profile_files = list((ROOT / "profiles").glob("*.yaml"))
+    block_re = re.compile(r"requirements_skills:\s*\n((?:[ \t]*-[ \t]*\S+[ \t]*\n?)+)")
+    item_re = re.compile(r"-\s*(\S+)")
+
+    listed_any: set[str] = set()
+    for pf in profile_files:
+        text = pf.read_text(encoding="utf-8")
+        m = block_re.search(text)
+        if not m:
+            continue
+        listed = set(item_re.findall(m.group(1)))
+        listed_any |= listed
+        for skill in sorted(actual_skills - listed):
+            errors.append(
+                f"  {pf.relative_to(ROOT)}: missing {skill!r} "
+                f"(exists at skills/requirements/{skill}/SKILL.md but not in requirements_skills:)"
+            )
+        for skill in sorted(listed - actual_skills):
+            errors.append(
+                f"  {pf.relative_to(ROOT)}: stale entry {skill!r} "
+                f"(listed in requirements_skills: but skills/requirements/{skill}/ does not exist)"
+            )
+
+    if not listed_any and actual_skills:
+        errors.append(
+            "  no profiles/*.yaml declares requirements_skills: "
+            f"but skills/requirements/ contains {sorted(actual_skills)}"
+        )
     return errors
 
 
@@ -232,6 +274,10 @@ def main() -> int:
     errors = check_profile_registry()
     if errors:
         all_errors.append(("Every skills/development/*/ must be listed in every profiles/*.yaml development_skills:", errors))
+
+    errors = check_requirements_profile_registry()
+    if errors:
+        all_errors.append(("Every skills/requirements/*/ must be listed in profiles requirements_skills:", errors))
 
     if all_errors:
         print("prayog-skills consistency check FAILED\n")
