@@ -21,3 +21,30 @@ principles:
   - external-writes-require-authorization
   - human-gates-never-auto-transition
   - artifacts-not-chat-are-durable-state
+
+github:
+  labels:
+    - name: impact-map-pending
+      color: BFD4F2
+      description: Gate 1 awaiting PE review
+      profiles: [meta-pm]
+    - name: impact-map-blocked
+      color: D73A4A
+      description: Gate 1 blocked or changes requested
+      profiles: [meta-pm]
+    - name: impact-map-lgtm
+      color: 0E8A16
+      description: Gate 1 approved for current PR head
+      profiles: [meta-pm]
+    - name: impact-map-revised
+      color: FBCA04
+      description: Impact map revised; re-review required
+      profiles: [meta-pm]
+    - name: impact-map-stale
+      color: E99695
+      description: PRD or impact-map approval is stale
+      profiles: [meta-pm]
+  review_roles:
+    gate-1:
+      role: engineering-gate
+      profiles: [meta-pm]

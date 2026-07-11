@@ -200,6 +200,17 @@ artifact: prd/reports/Impact-Map-{INIT-id}.md
 The gate remains closed until the review, current PR head SHA, PRD digest, map
 revision, and artifact path all match.
 
+All Gate 1 labels must be provisioned before PR creation/update:
+
+```bash
+launchpad apply-gates --meta --apply
+```
+
+Apply labels through the GitHub REST issues-label endpoint and request team
+review through the REST `requested_reviewers` endpoint. Do not use `gh pr edit`
+for these operations because its GraphQL path may fail on deprecated Projects
+Classic fields.
+
 PE updates labels as follows:
 
 | Decision | Remove | Add |

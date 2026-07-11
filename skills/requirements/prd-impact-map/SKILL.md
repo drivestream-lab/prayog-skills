@@ -142,9 +142,14 @@ If the user explicitly authorizes it and `gh` is configured, the agent may:
 2. commit the approved PRD/report files,
 3. push the branch,
 4. create or update the Draft PR,
-5. apply `impact-map-pending`,
-6. remove obsolete Gate 1 labels,
-7. request PE/tech-lead review.
+5. verify Gate 1 labels provisioned by Launchpad are present; if missing, stop
+   and instruct the user to run `launchpad apply-gates --meta --apply`,
+6. apply `impact-map-pending` and remove obsolete Gate 1 labels through GitHub
+   REST issue-label endpoints (do not use `gh pr edit`),
+7. verify the PE team exists and has repository access,
+8. request PE/tech-lead review through GitHub REST
+   `POST repos/{owner}/{repo}/pulls/{number}/requested_reviewers` with the team
+   slug, then verify the request is present.
 
 This is a separate, user-authorized agent action—not an automatic side effect
 of `/prd-impact-map`.
