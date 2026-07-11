@@ -4,14 +4,39 @@ initiative: {INITIATIVE}
 status: Planned
 date_created: {YYYY-MM-DD}
 source_spec: {SPEC_PATH}
+source_spec_digest: sha256:{hex}
 feasibility_report: {FEASIBILITY_PATH or N/A}
+feasibility_digest: sha256:{hex or N/A}
 technical_review: {TECHNICAL_REVIEW_PATH or N/A}
+technical_review_digest: sha256:{hex or N/A}
+prd_digest: sha256:{hex}
+impact_map: {IMPACT_MAP_PATH}
+impact_map_revision: {N}
+repo_scope_digest: sha256:{hex}
+approved_meta_pr_head: {SHA}
 branch: chore/INIT-{COMPONENT}-{NUMBER}-spec-{repo}
 review_deadline: {YYYY-MM-DD + 3 business days}
 deciders: Dev team lead — explicit LGTM required
 ---
 
 # Implementation plan — {INITIATIVE}
+
+## Source freshness and command contract
+
+| Item | Value | Status |
+|------|-------|--------|
+| Spec / digest | `{SPEC_PATH}` / `sha256:{hex}` | CURRENT / STALE |
+| Feasibility / digest | `{FEASIBILITY_PATH}` / `sha256:{hex}` | CURRENT / STALE |
+| Technical review / digest | `{TECHNICAL_REVIEW_PATH or N/A}` / `sha256:{hex or N/A}` | CURRENT / STALE / N/A |
+| Impact map / revision | `{IMPACT_MAP_PATH}` / `{N}` | CURRENT / STALE |
+| Repo scope digest | `sha256:{hex}` | CURRENT / STALE |
+| Approved meta PR head | `{SHA}` | CURRENT / STALE |
+| `check_command` | `{command}` | RESOLVED / MISSING |
+| `test_command` | `{command}` | RESOLVED / MISSING |
+| `verify_command` | `{command or N/A — reason}` | RESOLVED / N/A / MISSING |
+| `ground_command` | `{command or N/A — reason}` | RESOLVED / N/A / MISSING |
+
+> Do not continue if any source is STALE or required command is MISSING.
 
 ## 0. Technical design reference
 
@@ -41,9 +66,9 @@ deciders: Dev team lead — explicit LGTM required
 
 **GOAL-W0:** …
 
-| Task | Description | Codebase | Done when | Verify command | MDC notes | ADR notes | Branch |
-|------|-------------|----------|-----------|----------------|-----------|-----------|--------|
-| TASK-W0-01 | | {repo} | | `{make check}` | | | |
+| Task | Description | Codebase | Spec path | Done when | Verify command | MDC notes | ADR notes | Branch |
+|------|-------------|----------|-----------|-----------|----------------|-----------|-----------|--------|
+| TASK-W0-01 | | {repo} | {SPEC_PATH} | | `{check_command}` | | | |
 
 #### Files (W0)
 
@@ -63,9 +88,9 @@ deciders: Dev team lead — explicit LGTM required
 
 **GOAL-W1:** …
 
-| Task | Description | Codebase | Done when | Verify command | MDC notes | ADR notes | Branch |
-|------|-------------|----------|-----------|----------------|-----------|-----------|--------|
-| TASK-W1-01 | | {repo} | | | | | |
+| Task | Description | Codebase | Spec path | Done when | Verify command | MDC notes | ADR notes | Branch |
+|------|-------------|----------|-----------|-----------|----------------|-----------|-----------|--------|
+| TASK-W1-01 | | {repo} | {SPEC_PATH} | | | | | |
 
 #### Files (W1)
 
@@ -168,8 +193,8 @@ Reviewer checklist:
 
 After spec PR merge — dev seeds board from §9 (post-merge only):
   Create one GitHub Issue per wave (W0, W1, …) using §9 titles, bodies, depends_on
-  Optional bulk: copy §9 YAML to work/{INITIATIVE}.yaml and run launchpad seed-work
-  Then start wave coding: /pre-implement → /loop-spec → /ground-spec → /verify
+  Search for existing initiative/wave issues first; create only missing issues
+  Then start wave coding: /pre-implement → /loop-spec → /verify (when applicable) → /ground-spec
 ```
 
 ---
@@ -179,8 +204,9 @@ After spec PR merge — dev seeds board from §9 (post-merge only):
 > **Primary:** dev creates **one GitHub Issue per wave** (`W0`, `W1`, …) from this section.
 > Use §9 `title`, `body`, and `depends_on` when running `gh issue create`.
 >
-> **Optional (multi-repo bulk):** copy YAML to `work/{INITIATIVE}.yaml` and run
-> `launchpad seed-work --config work/{INITIATIVE}.yaml --dry-run` then `--apply`.
+> Before creation, run `gh auth status` and search existing issues by initiative
+> plus wave id. With explicit developer authorization, create only missing
+> issues. If `gh` is unavailable, output exact commands and stop.
 >
 > Wave `id` must be exactly `W0`, `W1`, … — one issue per wave, not per TASK row.
 > Update `target.org` and `target.project` to match the GitHub org and Project name.

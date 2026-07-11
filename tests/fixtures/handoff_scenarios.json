@@ -1,0 +1,93 @@
+{
+  "state_scenarios": [
+    {
+      "name": "clean approval",
+      "current_head_sha": "head-v1",
+      "current_prd_digest": "prd-v1",
+      "artifact": {"map_revision": 1, "source_prd_digest": "prd-v1"},
+      "approvals": [{"state": "APPROVED", "commit_id": "head-v1", "map_revision": 1, "prd_digest": "prd-v1"}],
+      "expected": "approved"
+    },
+    {
+      "name": "material PRD change",
+      "current_head_sha": "head-v2",
+      "current_prd_digest": "prd-v2",
+      "artifact": {"map_revision": 1, "source_prd_digest": "prd-v1"},
+      "approvals": [{"state": "APPROVED", "commit_id": "head-v1", "map_revision": 1, "prd_digest": "prd-v1"}],
+      "expected": "stale"
+    },
+    {
+      "name": "map revision awaits approval",
+      "current_head_sha": "head-v2",
+      "current_prd_digest": "prd-v1",
+      "artifact": {"map_revision": 2, "source_prd_digest": "prd-v1"},
+      "approvals": [{"state": "APPROVED", "commit_id": "head-v1", "map_revision": 1, "prd_digest": "prd-v1"}],
+      "expected": "stale"
+    },
+    {
+      "name": "approval revoked",
+      "current_head_sha": "head-v1",
+      "current_prd_digest": "prd-v1",
+      "artifact": {"map_revision": 1, "source_prd_digest": "prd-v1"},
+      "approvals": [{"state": "APPROVED", "commit_id": "head-v1", "map_revision": 1, "prd_digest": "prd-v1"}],
+      "blocked": true,
+      "expected": "blocked"
+    },
+    {
+      "name": "conflicting old approval and new map",
+      "current_head_sha": "head-v3",
+      "current_prd_digest": "prd-v1",
+      "artifact": {"map_revision": 2, "source_prd_digest": "prd-v1"},
+      "approvals": [
+        {"state": "APPROVED", "commit_id": "head-v1", "map_revision": 1, "prd_digest": "prd-v1"},
+        {"state": "COMMENTED", "commit_id": "head-v3", "map_revision": 2, "prd_digest": "prd-v1"}
+      ],
+      "expected": "stale"
+    }
+  ],
+  "ripple_scenarios": [
+    {
+      "name": "repo added",
+      "previous": null,
+      "current": {"status": "affected", "scope_digest": "scope-v1"},
+      "in_flight": "none",
+      "expected": ["open"]
+    },
+    {
+      "name": "repo removed with open spec",
+      "previous": {"status": "affected", "scope_digest": "scope-v1"},
+      "current": {"status": "deferred"},
+      "in_flight": "spec",
+      "expected": ["hold", "close"]
+    },
+    {
+      "name": "scope digest changed after plan",
+      "previous": {"status": "affected", "scope_digest": "scope-v1"},
+      "current": {"status": "affected", "scope_digest": "scope-v2"},
+      "in_flight": "plan",
+      "expected": ["re-draft", "re-feasibility", "re-plan"]
+    },
+    {
+      "name": "unchanged repo continues",
+      "previous": {"status": "affected", "scope_digest": "scope-v1"},
+      "current": {"status": "affected", "scope_digest": "scope-v1"},
+      "in_flight": "feasibility",
+      "expected": ["continue"]
+    },
+    {
+      "name": "dependency order changed",
+      "previous": {"status": "affected", "scope_digest": "scope-v1"},
+      "current": {"status": "affected", "scope_digest": "scope-v1"},
+      "in_flight": "plan",
+      "dependency_order_changed": true,
+      "expected": ["re-plan"]
+    },
+    {
+      "name": "removed repo already merged",
+      "previous": {"status": "affected", "scope_digest": "scope-v1"},
+      "current": null,
+      "in_flight": "merged",
+      "expected": ["human-decision"]
+    }
+  ]
+}

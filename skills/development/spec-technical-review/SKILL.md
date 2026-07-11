@@ -41,6 +41,8 @@ gate, `agentic_development_workflow` multi-role review, GitHub Spec Kit
 6. Run T0–T5 control loop (Gather → Understand → Analyze → Design → Execute → Verify).
 7. Human PE sign-off is **required** before the implementation plan runs — PE
    **Approve** on the spec PR, not a separate merge gate after spec merge.
+8. Verify that spec, feasibility report, PRD digest, impact-map revision, repo
+   scope digest, and approved meta PR head agree. Stop on stale inputs.
 
 ## Inputs
 
@@ -54,6 +56,8 @@ Resolve paths from `.harness/profile.yaml` or
 4. **`rules_glob`** — workspace MDC rules (REQUIRED). Read before T2 Analyze.
 5. **As-built** — `implementation-status.md` (REQUIRED)
 6. **`.harness/profile.yaml`** or layout defaults (REQUIRED)
+7. **Canonical handoff references** — PRD digest, impact-map revision/scope
+   digest, approved meta PR head, and tech-lead review (REQUIRED)
 
 ## When to use
 
@@ -65,7 +69,9 @@ Resolve paths from `.harness/profile.yaml` or
 
 ## Process
 
-1. **T0 Gather** — feasibility report, spec, ADRs, rules_glob, as-built
+1. **T0 Gather and freshness gate** — feasibility report, spec, canonical
+   handoff references, ADRs, rules_glob, as-built; stop if any source digest or
+   approval reference is stale
 2. **T1 Understand** — list all NEW-ADR items, Critical/Should-fix engineering
    findings, and open engineering questions from feasibility
 3. **T2 Analyze** — read relevant Accepted ADRs; read rules_glob; map each
@@ -74,7 +80,7 @@ Resolve paths from `.harness/profile.yaml` or
 4. **T3 Design** — for each engineering decision: state options, state
    recommended choice with rationale, write draft ADR if required; produce
    module boundary diagram; specify public interface contracts
-5. **T4 Execute** — write TDD; run T1–T10 checks; commit to spec branch
+5. **T4 Execute** — write TDD; run T1–T11 checks; commit to spec branch
 6. **T5 Verify** — all engineering blockers resolved or deferred with defaults;
    only genuine PM/domain questions remain outstanding (routed to meta PRD PR)
 
@@ -88,7 +94,7 @@ Use [references/output-template.md](references/output-template.md).
 
 Commit TDD to the spec PR branch. PE reviews on the **same spec PR**:
 - Discuss engineering decisions in spec PR comments
-- Submit GitHub **Approve** when T1–T10 checks pass
+- Submit GitHub **Approve** when T1–T11 checks pass
 - CODEOWNERS on `Technical-Review-*` enforces PE as required reviewer
 
 After PE approves, dev runs `/spec-implementation-plan` on the same branch.
@@ -125,3 +131,15 @@ promotion by PE or human is a valid fallback if the plan has not run yet.
 **Consequences:** …
 **Open for review by:** {PE name or "PE checkpoint"}
 ```
+
+## Workflow handoff
+
+Append the envelope from `../../../references/handoff-envelope.md` to the TDD.
+Use stage `spec-technical-review`.
+
+- `pass` → `spec-implementation-plan`
+- `findings` / `needs-input` / `blocked` → human decision
+- `stale` → `initiative-feasibility`
+- `failed` → stop
+
+Set `human_checkpoint: true` until the required PE review is recorded.

@@ -5,6 +5,41 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [0.4.3-rc.1] — local RC
+
+### Added — versioned SDD handoff and freshness contracts
+
+- Root `delivery-contract.yaml` and `workflow.yaml` define portable existing-skill
+  chaining; every skill now emits the shared persistent handoff envelope.
+- `/prd-impact-map` now produces a canonical, revisioned impact-map artifact
+  with PRD and per-repo scope digests, SHA-bound tech-lead approval, explicit
+  effective states, and downstream ripple actions.
+- `/prd-impact-map` now generates its artifact before a PR exists, emits a
+  complete Draft-PR readiness handoff, and forbids GitHub side effects until
+  explicit user authorization. Gate 1 uses PE-controlled pending/blocked/LGTM
+  labels with revised/stale invalidation labels.
+- `/spec-draft` now fails closed on stale/unapproved handoffs and runs D1–D12
+  completeness checks covering traceability, acceptance, negative paths,
+  contracts, NFR applicability, assumptions, and blocking questions.
+- Feasibility, technical review, planning, and pre-implement templates now
+  carry source freshness and command contracts.
+- CI now validates check ranges, template contracts, links, profile keys, and
+  deterministic handoff/ripple scenarios.
+- Added a team-first pilot playbook with scenario coverage, scorecard metrics,
+  and review-graduation criteria.
+- `update-documents` now separates Resolution and Ad-hoc modes, requires every
+  propagated edit to cite an approved decision source, and routes new semantic
+  choices back to `review-findings` instead of requesting retrospective sign-off.
+
+### Fixed
+
+- Aligned technical-review references on T1–T11.
+- Corrected WorkManifest P14 from §8 to §9 and added `spec_path` to TASK rows.
+- Corrected wave ordering so grounding precedes human approval.
+- Fixed the verify-policy link to shared layout defaults.
+
+---
+
 ## [0.4.2] — 2026-07-09
 
 ### Added — `profiles/meta-pm.yaml` for launchpad PM harness lane

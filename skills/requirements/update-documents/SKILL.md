@@ -1,13 +1,15 @@
 ---
 name: update-documents
-description: "Propagates corrections, new information, terminology changes, and scope changes across multiple related documents. Structures changes, verifies with user, performs impact analysis, presents a change manifest for approval, applies edits preserving each document's format and tone, and runs document-audit as a final consistency check. Use when a fact, assumption, or decision changes and multiple documents need updating, or when new information (e.g., from a design review, stakeholder feedback, or discovery session) must be reflected across a document set."
+description: "Propagates approved corrections, decisions, terminology changes, and scope changes across related documents. In Resolution mode it consumes a review-findings Resolution file without re-deciding semantic choices; in Ad-hoc mode it first confirms the user-provided change set. Both modes perform impact analysis, present an exact change manifest for approval, apply only approved edits, and run inline consistency verification. Use after review-findings or when the user supplies a verified change."
 ---
 
 # Update Documents — Cross-Document Change Propagation
 
 ## Purpose
 
-Propagates verified corrections and new information across a set of related documents. Ensures every affected document is updated consistently, in the correct order, with user approval at two mandatory checkpoints.
+Propagates verified corrections and decisions across a set of related documents.
+It determines **where an approved decision must be reflected**; it does not
+decide **what the decision should be**.
 
 **When to use:**
 - A fact or assumption was wrong and multiple documents reference it
@@ -24,11 +26,52 @@ Propagates verified corrections and new information across a set of related docu
 
 ---
 
+## Operating modes
+
+Select exactly one mode during intake.
+
+### Resolution mode (preferred after `review-findings`)
+
+Use when the input is a `Resolution-*.md` file.
+
+- The Resolution file is the semantic decision source.
+- Apply only **Approved Fixes**, **Confirmed Items**, **Rejected Items**,
+  **Added as Open Questions**, and **Modified Recommendations**.
+- Exclude **Skipped** items.
+- Do not ask the user to re-decide completed resolution rows.
+- If a row lacks exact action text, ownership, or other information required to
+  apply it, classify it `NEEDS DECISION` and return it to `review-findings`.
+- Present the resolved change-set summary for visibility, then use the detailed
+  change manifest as the single approval gate before editing.
+
+### Ad-hoc mode
+
+Use when the user directly supplies a verified correction or decision.
+
+- Structure the proposed change set.
+- Require the Step 2 change-set approval.
+- Require the Step 5 detailed manifest approval before editing.
+
+### Decision boundary
+
+This skill must not independently:
+
+- create a new requirement or open question,
+- assign or change an owner,
+- choose product behaviour, priority, or scope,
+- choose an engineering design,
+- convert a finding into a requirement or deferral.
+
+Those are semantic decisions. Route them to `review-findings` or obtain an
+explicit user decision in Ad-hoc mode before impact analysis continues.
+
+---
+
 ## Phase 1: Intake
 
 ### Step 1: Receive and structure the change set
 
-Gather the corrections or new information from the user. For each change, capture:
+Gather approved changes from the Resolution file or user. For each change, capture:
 
 | Field | Description |
 |-------|-------------|
@@ -37,6 +80,8 @@ Gather the corrections or new information from the user. For each change, captur
 | **What is wrong / missing** | The current incorrect or absent content |
 | **What is correct / new** | The verified replacement or addition |
 | **Source / evidence** | Why the new information is correct — user statement, design file, meeting, data |
+| **Decision source** | Resolution row, explicit user statement, or other approved record |
+| **Decision status** | APPROVED / NEEDS DECISION |
 
 #### Change type reference
 
@@ -51,7 +96,7 @@ If the user provides changes informally, reformat them into the structured table
 
 ---
 
-### Step 2: User verification checkpoint (MANDATORY STOP)
+### Step 2: Change-set presentation
 
 Present the structured change set back to the user:
 
@@ -63,12 +108,16 @@ Present the structured change set back to the user:
 | C1 | ...  | ...                    | ...                   | ...   |
 | C2 | ...  | ...                    | ...                   | ...   |
 
+Mode: Ad-hoc
 Is this complete and correct? Any changes to add, modify, or remove?
 ```
 
-**Do NOT proceed until the user confirms the change set.**
+**Ad-hoc mode:** mandatory stop. Do not proceed until the user confirms.
 
-If the user adds or modifies changes, update the table and re-present for confirmation.
+**Resolution mode:** present the same table for visibility, with each Resolution
+row cited under Decision source. Do not ask the user to reconfirm already
+approved decisions. If any row is `NEEDS DECISION`, stop and produce a
+supplemental finding for `review-findings`; do not infer the missing decision.
 
 ---
 
@@ -103,15 +152,20 @@ For each change in the change set:
    - **DERIVED statements** — text that is based on or implies the incorrect information, even if it doesn't contain the exact words (e.g., a pain point that only makes sense if the wrong fact is true)
    - **CROSS-REFERENCES** — references to the incorrect information from other documents or sections
 
-3. **Categorize each finding:**
+3. **Categorize each impact:**
 
 | Category | Meaning | Action |
 |----------|---------|--------|
 | DIRECT | Text explicitly contains the incorrect information | Will be updated |
-| DERIVED | Text is based on / implies the incorrect fact | Will be updated (rewritten to reflect correct fact) |
-| POTENTIAL | Text might be affected but intent is ambiguous | Presented as a question to user in Step 5 |
+| DERIVED-ENTAILED | The edit is a necessary consequence of the approved decision and introduces no new semantic choice | Will be updated; cite the decision source |
+| POTENTIAL-MECHANICAL | The approved decision is clear, but placement, formatting, or cross-reference handling is ambiguous | Ask a focused mechanical question in Step 5 |
+| NEEDS-DECISION | Applying the edit requires new product, ownership, scope, priority, domain, or engineering judgment | Stop; route back to `review-findings` |
 
-4. Record each finding with: document path, section heading, line reference, current text, proposed replacement, category.
+`DERIVED-ENTAILED` is not permission to invent. If the replacement is not
+fully entailed by the approved decision, use `NEEDS-DECISION`.
+
+4. Record each impact with: document path, section heading, line reference,
+current text, proposed replacement, category, and decision source.
 
 ---
 
@@ -124,17 +178,21 @@ Present all planned changes, grouped by document in dependency order:
 
 ### Document: [path] (Update order: 1 of N)
 
-| # | Section | Category | Current text | Proposed text | Change ID |
-|---|---------|----------|-------------|---------------|-----------|
-| 1 | ...     | DIRECT   | "..."       | "..."         | C1        |
-| 2 | ...     | DERIVED  | "..."       | "..."         | C1        |
-| 3 | ...     | POTENTIAL | "..."      | "..." (?)     | C2        |
+| # | Section | Category | Current text | Proposed text | Change ID | Decision source |
+|---|---------|----------|-------------|---------------|-----------|-----------------|
+| 1 | ...     | DIRECT   | "..."       | "..."         | C1        | Resolution §… row … |
+| 2 | ...     | DERIVED-ENTAILED | "..." | "..."       | C1        | Resolution §… row … |
+| 3 | ...     | POTENTIAL-MECHANICAL | "..." | "..." (?) | C2      | Resolution §… row … |
 
 ### Document: [path] (Update order: 2 of N)
 ...
 
-**POTENTIAL items (need your decision):**
-- Item 3 in [document]: [explain why this might need updating] — Update? (Y/N)
+**Mechanical clarifications:**
+- Item 3 in [document]: [placement/format/cross-reference question]
+
+**NEEDS-DECISION items:**
+- None. If any exist, stop before requesting manifest approval and send them
+  back through `review-findings`.
 
 Total: [N] changes across [M] documents.
 Confirm to proceed, or adjust individual items.
@@ -142,7 +200,9 @@ Confirm to proceed, or adjust individual items.
 
 **Do NOT apply any edits until the user approves the manifest.**
 
-If the user rejects or modifies items, update the manifest and re-present.
+If the user answers a mechanical clarification, rejects, or modifies an item,
+regenerate the full manifest and re-present it. If the answer introduces a new
+semantic decision, stop and route it through the decision flow first.
 
 ---
 
@@ -159,7 +219,8 @@ Apply approved changes in dependency order (upstream documents first).
    - For table updates: match column format, alignment, and row style
    - For new content: place it in the contextually correct section — do not create new sections unless the document structure requires it
    - For removals: remove cleanly without leaving orphaned references or empty sections
-3. **Update change history** — if the document has a version/changelog section, add a new entry:
+3. **Update change history** — only when the approved manifest includes it and
+   the document has a version/changelog section:
    - Date, author (from the change set source), one-line summary of what changed
    - If the document has no changelog, skip — do not add one
 
@@ -208,21 +269,50 @@ Present a final summary:
 [List issues fixed inline during the pass]
 ```
 
-- Fix clear contradictions or broken cross-references immediately before closing.
-- Present ambiguous items to the user for decision.
+- Fix only contradictions or broken cross-references whose exact correction was
+  already present in the approved manifest.
+- For any newly discovered edit, produce a **Supplemental Change Manifest** and
+  obtain approval before applying it.
+- Route newly discovered semantic ambiguity to `review-findings`; do not decide
+  it during verification.
 - If `validate-requirements` reports new Critical findings, stop and resolve before sign-off.
 
 ---
 
 ## Critical Rules
 
-1. **Never update without user confirmation.** Both the change set (Step 2) and the change manifest (Step 5) are mandatory stop gates. No edits happen without explicit approval.
+1. **Never update without manifest approval.** Ad-hoc mode requires both Step 2
+   change-set approval and Step 5 manifest approval. Resolution mode presents
+   the approved change set for visibility and requires Step 5 manifest approval.
 2. **Never invent corrected text.** If the user hasn't provided the correct information for a finding, flag it as "needs user input" — do not guess or fabricate replacements.
 3. **Preserve document voice.** Each document may have a different tone, format, and level of detail. Match it. Do not impose a uniform style across documents.
 4. **Dependency order matters.** If Document A is cited by Document B, update A first so B's references remain valid during the update process.
 5. **Domain-agnostic.** Do not assume a specific industry, document format, or technology. The skill works on any structured document.
 6. **Additive by default.** When adding new information, place it in the contextually correct existing section rather than creating new sections — unless the document's structure genuinely requires a new section.
-7. **Change history is not optional.** If a document has a version/changelog section, it must be updated. If it doesn't have one, skip it — do not add one.
+7. **Manifest change history.** If a document has a version/changelog section,
+   include its history entry in the manifest. If it has none, do not add one.
 8. **Read before editing.** Always read the full document before making changes. Never edit from memory or partial reads.
 9. **One change at a time.** Apply changes sequentially within each document. Do not batch multiple edits into a single operation that would be hard to verify or undo.
-10. **DERIVED requires judgment.** When rewriting derived text, the new text must be factually correct AND preserve the original intent of the section. If you cannot preserve both, flag it for user review instead of guessing.
+10. **DERIVED-ENTAILED is narrow.** Apply it only when the replacement is
+    factually correct, preserves intent, and is fully entailed by the approved
+    decision. Otherwise classify it `NEEDS-DECISION`.
+11. **Propagation is not decision-making.** Never create an open question,
+    assign ownership, choose scope, or make product/engineering decisions unless
+    the exact choice appears in the Resolution file or an explicit approved
+    Ad-hoc change set.
+12. **No retrospective sign-off.** Do not make a semantic choice and then ask
+    the user to approve it in the manifest. Ask first through the decision flow.
+13. **Comments are not sufficient evidence.** Cite the committed Resolution
+    artifact or explicit user-approved change set as the decision source.
+
+## Workflow handoff
+
+Append the envelope from `../../../references/handoff-envelope.md` to the
+Update Summary. Use stage `update-documents`.
+
+- `pass` → `validate-requirements` in incremental mode
+- `findings` / `needs-input` → `review-findings`
+- `failed` → human checkpoint
+
+List any supplemental decision ids under `blockers`; do not continue into
+validation when a semantic decision is still missing.

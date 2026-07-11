@@ -1,6 +1,6 @@
 # Verify policy
 
-Resolve paths from `.harness/profile.yaml` or [pre-implement layout defaults](../pre-implement/references/layout-defaults.md).
+Resolve paths from `.harness/profile.yaml` or [pre-implement layout defaults](../../pre-implement/references/layout-defaults.md).
 
 | Layer | Location (profile key) | Proves |
 |-------|------------------------|--------|

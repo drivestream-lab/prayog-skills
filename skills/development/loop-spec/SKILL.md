@@ -17,7 +17,8 @@ metadata:
 Execute the per-wave loop:
 
 ```
-implement → verify → fix → repeat → human checkpoint
+implement → check/test → fix → repeat → live verify (when applicable)
+→ ground report → human checkpoint
 ```
 
 ## NON-NEGOTIABLE
@@ -27,8 +28,9 @@ implement → verify → fix → repeat → human checkpoint
 2. After each task, run `{check_command}` and `{test_command}` from the
    harness profile (or `tests_readme`). Both must pass before committing.
 3. Fix failures before moving to the next task — do not accumulate failures.
-4. When all tasks are green: stop and request **human checkpoint** via
-   `/ground-spec`. Do not self-approve.
+4. When all tasks are green: hand off to `/ground-spec`. The Ground Report is
+   produced **before** the human checkpoint. Do not request or record human
+   approval before grounding evidence exists, and do not self-approve.
 5. Do not skip verification steps to save time — failures caught here are
    cheaper than failures caught in `/ground-spec` or the wave PR review.
 
@@ -38,7 +40,8 @@ implement → verify → fix → repeat → human checkpoint
 - Pre-implement checklist — produced by `/pre-implement` for this wave
 - `{check_command}` — static checks (from harness profile or `AGENTS.md`)
 - `{test_command}` — unit verification (from harness profile or `tests_readme`)
-- `{ground_command}` — spec ground check (optional; from harness profile if defined)
+- `{verify_command}` — live verification (when applicable; from the plan and `tests_readme`)
+- `{ground_command}` — automated input to `/ground-spec` (optional; from harness profile if defined)
 
 ## Loop body (each task iteration)
 
@@ -47,16 +50,19 @@ implement → verify → fix → repeat → human checkpoint
 3. Run `{test_command}` — all tests pass required.
 4. If any failure: fix and repeat from step 2.
 5. When task is green: commit and move to next task.
-6. After all tasks green: run `{ground_command}` if defined.
-7. When everything is green: stop and hand off to `/ground-spec`.
+6. After all tasks are green, run `{verify_command}` when the plan marks live
+   verification applicable; fix failures and repeat.
+7. Stop and hand off to `/ground-spec`; that skill runs `{ground_command}` when
+   defined and produces the Ground Report.
 
 ## Stop conditions
 
 - All wave tasks complete
 - `{check_command}` exits 0
 - `{test_command}` exits 0
-- `{ground_command}` exits 0 (if defined)
-- Human explicitly approves → `/ground-spec` runs → as-built status updated
+- `{verify_command}` exits 0 (when applicable)
+- `/ground-spec` is the next action; human review happens only after its report
+- Human approves Ground Report → as-built status updated → wave PR may merge
 
 ## Chain position
 
@@ -67,9 +73,11 @@ implement → verify → fix → repeat → human checkpoint
   implement task → verify → fix → repeat
   human never sees intermediate failures
     ↓
-  all green
+  checks/tests/live verify green
     ↓
 /ground-spec (validates wave against spec FRs, produces §Contracts produced)
+    ↓
+  human checkpoint → as-built human_approved → merge
 ```
 
 ## Usage with /loop timer (optional)
@@ -79,3 +87,15 @@ implement → verify → fix → repeat → human checkpoint
 run {check_command} and {test_command} after each task,
 fix failures before moving on, stop when all tasks green.
 ```
+
+## Workflow handoff
+
+Emit the envelope from `../../../references/handoff-envelope.md` in the final
+task summary and persist the same state in the wave tracker/commits. Use stage
+`loop-spec`.
+
+- `pass` → `verify` (the verify skill may return `skipped` when inapplicable)
+- `findings` / `failed` → repeat `loop-spec`
+- `blocked` → human decision
+
+List failed commands/tasks under `blockers`; do not advance while any remain.

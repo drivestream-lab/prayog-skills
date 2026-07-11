@@ -33,6 +33,14 @@ product code** unless the user explicitly asks after the checklist.
 6. Cite concrete file paths for this repo and slice.
 7. Describe contracts in engineering terms — entry points, input/output shapes,
    invariants. Do not use language-specific syntax.
+8. Verify the plan's source-freshness table is CURRENT and its impact-map
+   revision/scope digest still match the canonical handoff. Stop on stale input.
+9. Resolve `check_command` and `test_command`; resolve `verify_command` and
+   `ground_command` when applicable. If the plan/profile/`AGENTS.md`/
+   `tests_readme` cannot supply a required command, stop with MISSING command.
+10. Confirm the current wave has a GitHub issue created from plan §9 and every
+    declared predecessor wave issue exists. A missing/partial board seed blocks
+    pre-implementation.
 
 ## Chain position
 
@@ -53,8 +61,9 @@ product code** unless the user explicitly asks after the checklist.
 
 ## Read order
 
-1. **Gate check** — `as-built/implementation-status.md`: prior wave =
-   `human_approved`? If no: stop.
+1. **Source and gate check** — plan sources CURRENT; impact-map scope current;
+   canonical commands resolved; `as-built/implementation-status.md` prior wave
+   = `human_approved`? If any answer is no: stop.
 2. **Contracts consumed** — `reports/Ground-Report-W{N-1}.md` §Contracts
    produced: for each contract this wave depends on, read the entry point,
    input shape, output shape, and invariants as verified by the prior Ground
@@ -65,7 +74,8 @@ product code** unless the user explicitly asks after the checklist.
 5. **Relevant ADRs** — keyword-match slice scope; read matched Accepted ADRs
 6. Initiative / slice spec — path from tracker Spec path or plan wave section
 7. Plan wave section — `reports/Implementation-Plan-{initiative}.md` W{N}:
-   carry forward MDC notes and ADR notes from TASK rows
+   carry forward source digests, command contract, MDC notes, and ADR notes
+   from TASK rows
 8. `tests_readme` — when the slice adds or changes verification
 
 **Gate for W0 (first wave):** no prior Ground Report exists. The gate is
@@ -81,3 +91,15 @@ interface.
 
 Use [references/output-template.md](references/output-template.md). Fill
 concrete paths for this repo and slice.
+
+## Workflow handoff
+
+Append the envelope from `../../../references/handoff-envelope.md` to the
+checklist output. Use stage `pre-implement`.
+
+- `pass` → `loop-spec`
+- `needs-input` / `blocked` → human decision
+- `stale` → `spec-implementation-plan`
+- `failed` → stop
+
+Record the board issue URL/id and resolved command contract in `signals`.

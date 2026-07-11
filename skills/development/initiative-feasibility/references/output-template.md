@@ -4,6 +4,13 @@
 |-------|-------|
 | Initiative | {INITIATIVE} |
 | Spec | {SPEC_PATH} |
+| Spec digest | `sha256:{hex}` |
+| PRD digest | `sha256:{hex}` |
+| Impact map / revision | `{path}` / `{N}` |
+| Repo scope digest | `sha256:{hex}` |
+| Approved meta PR head | `{SHA}` |
+| Impact-map approval | {review URL/id, approver, submitted_at} |
+| Source freshness | CURRENT / STALE — reason |
 | Repo | {REPO} |
 | Date | {YYYY-MM-DD} |
 | Branch | `chore/INIT-{COMPONENT}-{NUMBER}-spec-{repo}` — spec PR (single review surface) |
@@ -77,6 +84,13 @@
 > business source-of-truth → Domain SME · naming drift / inferred fixes → Auto-fix.
 > Full rubric: `.agents/skills/spec-technical-review/references/governance.md`
 
+This table is the canonical open-item handoff. The lane-specific sections
+below may add narrative but must not contradict it.
+
+| ID | Lane | Question / item | Blocking | Owner | Status | Required by | Default if deferred | Evidence | Resolution reference |
+|----|------|-----------------|----------|-------|--------|-------------|---------------------|----------|----------------------|
+| {ID} | PM / PE / domain / auto-fix | {item} | yes/no | {owner} | open/resolved/deferred | spec merge / technical review / plan / wave | {safe default or none} | {spec/repo evidence} | {URL/path or pending} |
+
 ### PM questions (product scope, UX, priority)
 
 #### Blocking — must resolve before spec merge
@@ -142,6 +156,7 @@
 ```
 Spec branch: chore/INIT-{COMPONENT}-{NUMBER}-spec-{repo}
 When ready:
+  [ ] Source freshness is CURRENT
   [ ] All blocking PM questions answered on meta PRD PR
   [ ] All blocking Domain clarifications answered and committed
   [ ] Spec updated to reflect answers (same branch)

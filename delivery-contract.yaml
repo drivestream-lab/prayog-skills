@@ -1,0 +1,23 @@
+apiVersion: prayog/v1
+kind: DeliveryContract
+
+id: sdd-delivery
+version: 2
+status: rc
+workflow: workflow.yaml
+handoff_spec: references/handoff-envelope.md
+
+outcomes:
+  - pass
+  - findings
+  - needs-input
+  - blocked
+  - stale
+  - failed
+  - skipped
+
+principles:
+  - navigation-is-read-only
+  - external-writes-require-authorization
+  - human-gates-never-auto-transition
+  - artifacts-not-chat-are-durable-state

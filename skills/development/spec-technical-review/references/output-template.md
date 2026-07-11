@@ -4,7 +4,14 @@
 |-------|-------|
 | Initiative | {INITIATIVE} |
 | Spec | {SPEC_PATH} |
+| Spec digest | `sha256:{hex}` |
 | Feasibility report | {FEASIBILITY_PATH} |
+| Feasibility digest | `sha256:{hex}` |
+| PRD digest | `sha256:{hex}` |
+| Impact map / revision | `{path}` / `{N}` |
+| Repo scope digest | `sha256:{hex}` |
+| Approved meta PR head | `{SHA}` |
+| Source freshness | CURRENT / STALE — reason |
 | Repo | {REPO} |
 | Date | {YYYY-MM-DD} |
 | Branch | `chore/INIT-{COMPONENT}-{NUMBER}-spec-{repo}` (spec PR — TDD committed here) |
@@ -141,9 +148,9 @@ One subsection per `NEW-ADR` finding from the feasibility report.
 
 All items from feasibility routed to PE lane. Every row must show a resolution.
 
-| Finding ID | Question | Resolution | Default assumption if deferred |
-|------------|----------|------------|-------------------------------|
-| {C1/G1/…} | {engineering question} | {resolved: option chosen} / {deferred: reason} | {default} |
+| Finding ID | Owner | Status | Question | Resolution | Required by | Default if deferred | Evidence / reference |
+|------------|-------|--------|----------|------------|-------------|---------------------|----------------------|
+| {C1/G1/…} | {PE} | resolved/deferred | {engineering question} | {option chosen / defer reason} | plan | {safe default} | {finding/ADR/comment} |
 
 ---
 
@@ -152,17 +159,17 @@ All items from feasibility routed to PE lane. Every row must show a resolution.
 These items remain open and require PM input before the implementation plan
 is considered unblocked.
 
-| # | Question | Blocks |
-|---|----------|--------|
-| PM-{n} | {product question — user-visible behaviour or scope} | {plan wave} |
+| ID | Owner | Status | Question | Blocking | Required by | Default if deferred | Evidence | Resolution reference |
+|----|-------|--------|----------|----------|-------------|---------------------|----------|----------------------|
+| PM-{n} | {PM} | open/resolved/deferred | {product question — user-visible behaviour or scope} | yes/no | {plan wave/stage} | {safe default or none} | {spec/PRD ref} | {meta PR URL or pending} |
 
 ---
 
 ## 11. Routed out — domain clarifications (SME)
 
-| # | Question | SME / owner | Blocks |
-|---|----------|-------------|--------|
-| D-{n} | {business source-of-truth question} | {name / team} | {plan wave} |
+| ID | Owner | Status | Question | Blocking | Required by | Default if deferred | Evidence | Resolution reference |
+|----|-------|--------|----------|----------|-------------|---------------------|----------|----------------------|
+| D-{n} | {SME/team} | open/resolved/deferred | {business source-of-truth question} | yes/no | {plan wave/stage} | {safe default or none} | {source ref} | {URL/path or pending} |
 
 ---
 
@@ -181,7 +188,7 @@ cross-references, spec typos). These are **done** — no action required.
 
 | Gate | Status |
 |------|--------|
-| All T1–T10 checks | {PASS / FAIL — list blocking items} |
+| All T1–T11 checks | {PASS / FAIL — list blocking items} |
 | Engineering decisions resolved | {N resolved, N deferred with defaults} |
 | Draft ADRs written | {N drafts} |
 | PM questions outstanding | {N — list} |

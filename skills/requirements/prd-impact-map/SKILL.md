@@ -3,13 +3,14 @@ name: prd-impact-map
 description: >-
   Map a PRD to affected repos using the service catalog. Reads the PRD and
   config/service-catalog.yaml from <client>-meta, matches PRD capabilities
-  to service descriptions, and posts an impact map as a PR comment on the
-  meta PRD PR for tech lead confirmation. Run in <client>-meta Cursor session
-  after PRD is validated and before engineering opens spec PRs in app repos.
+  to service descriptions, generates a versioned impact-map artifact locally,
+  and produces a PR-readiness handoff. After explicit user authorization, the
+  agent may use gh to create/update the Draft PR and initialize Gate 1 labels.
+  Run in <client>-meta after PRD validation and before app spec PRs.
 disable-model-invocation: true
 paths: prd/**, config/service-catalog.yaml
 background_eligible: true
-background_trigger: "meta PRD PR opened with PRD"
+background_trigger: "validated PRD is ready for impact mapping"
 ---
 
 # PRD impact map
@@ -28,59 +29,198 @@ opens those after tech lead confirms the map.
    depends on repo A and the PRD touches A, flag B as potentially affected.
 4. Explicitly list repos that are **not** affected and why — this is as
    important as the affected list.
-5. Mark the impact map as **requiring tech lead confirmation** — do not
-   treat it as authoritative without LGTM.
+5. Save the canonical map at `reports_dir/Impact-Map-{INIT-id}.md`. A PR
+   comment or label is never the source of truth.
+6. Increment `map_revision` for every changed map and record the prior
+   revision plus change reason. Do not edit history to make a revision appear
+   unchanged.
+7. Record a PRD digest and one `scope_digest` per affected repo. A tech-lead
+   approval is valid only for the exact meta PR head SHA carrying those values.
+8. Treat `impact-map-*` labels as projections. If artifact, review, and label
+   disagree, the gate is closed.
+9. A material PRD/map change or tech-lead revocation invalidates approval.
+   Produce a downstream ripple action for every repo already in flight.
+10. **No GitHub side effects during generation.** Do not create a branch,
+    commit, push, PR, comment, review request, or label until the completed
+    PR-readiness handoff is shown and the user explicitly authorizes PR action.
+11. Gate labels are a visible workflow projection, not authority. Exactly one
+    PE gate label may be active: `impact-map-pending`, `impact-map-lgtm`, or
+    `impact-map-blocked`. `impact-map-revised` and `impact-map-stale` are
+    additional invalidation labels and always close the gate.
 
 ## Inputs
 
 1. **PRD** — (REQUIRED) `prd/INIT-{id}.md` in `<client>-meta`
 2. **Service catalog** — (REQUIRED) `config/service-catalog.yaml` in `<client>-meta`
-3. **Meta PRD PR body** — (OPTIONAL) PM's description of initiative scope
+3. **Git state** — (REQUIRED) current branch/base, changed files, and whether a
+   meta PR already exists; an existing PR is not required for the initial map
+4. **Meta PR state** — (OPTIONAL) URL/head/reviews/labels when revising an open PR
+5. **Prior impact map** — (OPTIONAL) required when revising an existing map
+6. **In-flight app artifacts** — (OPTIONAL) spec/TDD/plan status for ripple actions
+7. **Layout** — `reports_dir` from `.harness/profile.yaml`; default `prd/reports`
+
+## Initiative identity and PR collision gate
+
+Before mapping, search local files/branches and, when `gh` is configured, open
+PRs for:
+
+- the canonical initiative id,
+- legacy/short initiative ids referenced by the PRD or filenames,
+- PRD titles/slugs that may represent the same business initiative,
+- prior `Impact-Map-*` artifacts.
+
+Classify the result:
+
+| Outcome | Meaning | Action |
+|---------|---------|--------|
+| `no-collision` | No competing initiative/PR found | Continue |
+| `reconcile-existing` | Existing PR/branch is the same initiative | Use that branch; update/rename artifacts before mapping |
+| `supersede-existing` | Existing work is obsolete | Stop for explicit authorization to comment/close it |
+| `unrelated` | Similar id/title is a different initiative | Record evidence and continue |
+| `needs-input` | Identity cannot be determined | Stop; do not generate PR readiness |
+
+Never propose a second PR while identity is unresolved. Closing, commenting on,
+or updating an existing PR is an external action requiring explicit user
+authorization.
 
 ## Process
 
-1. **T0 Gather** — PRD + service-catalog.yaml
+1. **T0 Gather and identity gate** — PRD, service catalog, local git state,
+   optional meta PR state, prior map, in-flight app artifacts; run the collision
+   classification above and stop on `needs-input` or an undecided reconcile/
+   supersede outcome
 2. **T1 Understand** — list PRD capability areas (data flows, user actions,
    integrations, storage, auth, notifications, etc.)
 3. **T2 Match** — for each capability, match to service `description` + `owns`;
    include transitive via `depends_on`
-4. **T3 Order** — derive build/merge order from `depends_on` graph
-5. **T4 Output** — produce impact map comment body
-6. **T5 Post** — add as PR comment on the open meta PRD PR
+4. **T3 Diff and order** — compare prior revision; derive build/merge order;
+   classify each repo as added, removed, unchanged, narrowed, widened, or reordered
+5. **T4 Output** — write the canonical artifact using
+   [references/output-template.md](references/output-template.md); compute the
+   PRD digest and per-repo scope digests from normalized content
+6. **T5 Verify and hand off** — verify artifact completeness; present:
+   - generated/changed files,
+   - impact summary and blockers,
+   - proposed branch, base, Draft PR title/body, reviewers, and initial labels,
+   - `PR READY` or `PR BLOCKED` verdict.
+   Stop without GitHub side effects.
 
-## Output format
+## PR creation handoff
 
-Post as a PR comment on the meta PRD PR (not committed as a file).
+After T5, ask the user whether to create or update the Draft PR.
 
-```markdown
-## Impact map — {INIT-id}
-_Generated by /prd-impact-map — {date}_
+If the user explicitly authorizes it and `gh` is configured, the agent may:
 
-### Affected services
+1. create/switch to the proposed branch when needed,
+2. commit the approved PRD/report files,
+3. push the branch,
+4. create or update the Draft PR,
+5. apply `impact-map-pending`,
+6. remove obsolete Gate 1 labels,
+7. request PE/tech-lead review.
 
-| Service | Repo | Why | Team | Spec to create |
-|---------|------|-----|------|---------------|
-| {name} | {org}/{repo} | {capability matched} | @{org}/{team} | INIT-{id}-{slug}.md |
+This is a separate, user-authorized agent action—not an automatic side effect
+of `/prd-impact-map`.
 
-### Transitively affected (via depends_on)
+If `gh` is not configured, provide exact manual commands and do not report that
+the PR exists.
 
-| Service | Depends on | Potential impact |
-|---------|-----------|-----------------|
+## Output and approval contract
 
-### Not affected
+Generated canonical file:
 
-| Service | Reason |
-|---------|--------|
+`{reports_dir}/Impact-Map-{INIT-id}.md`
 
-### Suggested merge/build order
-{repo-A} → {repo-B} → {repo-C}
+Use [references/output-template.md](references/output-template.md).
 
-### Confidence
-| Match | Confidence | Notes |
-|-------|-----------|-------|
-| {service} | High/Medium/Low | {rationale} |
+Before PR creation, `meta_pr` and approval fields are `pending`. After the
+user-authorized PR action, the PR body contains the impact summary, artifact
+path, map revision, PRD digest, Gate 1 checklist, and PE review request.
+Clarification comments may discuss the map, but decisions must be committed to
+the PRD/map artifact.
 
----
-**@{tech-lead}** — please confirm or correct before engineering opens spec PRs.
-Review deadline: 2 business days.
+Effective state is derived:
+
+| State | Condition | Engineering gate |
+|-------|-----------|------------------|
+| `draft` | Artifact is being generated or revised | closed |
+| `pending_review` | Local artifact is PR-ready or Draft PR awaits matching approval | closed |
+| `approved` | Latest tech-lead APPROVED review matches current head SHA and artifact/PRD digests | open for affected repo scopes only |
+| `stale` | PRD or map content changed after approval | closed for changed scope |
+| `blocked` | Tech lead explicitly revoked or paused | closed |
+| `superseded` | A newer map revision exists | permanently closed for old revision |
+
+Labels mirror the effective state. PE controls the Gate 1 label:
+
+- `impact-map-pending` — Draft PR awaits PE decision
+- `impact-map-lgtm` — matching approval exists
+- `impact-map-blocked` — PE requests changes or explicitly holds the handoff
+
+Agent/PM invalidation labels:
+
+- `impact-map-revised` — new map revision awaiting review
+- `impact-map-stale` — source PRD changed after approval
+
+Exactly one of `impact-map-pending`, `impact-map-lgtm`, or
+`impact-map-blocked` may be active. `impact-map-revised` or
+`impact-map-stale` always closes the gate even if `impact-map-lgtm` was not
+removed. Any contradiction fails closed.
+
+PE transitions:
+
+| PE action | Remove | Add | Gate |
+|-----------|--------|-----|------|
+| Review starts / new revision | `impact-map-lgtm`, `impact-map-blocked` | `impact-map-pending` | closed |
+| Request changes / hold | `impact-map-pending`, `impact-map-lgtm` | `impact-map-blocked` | closed |
+| Approve exact current head | `impact-map-pending`, `impact-map-blocked`, `impact-map-revised`, `impact-map-stale` | `impact-map-lgtm` | open |
+
+Never infer approval from labels alone; a matching GitHub APPROVED review and
+current artifact/head values are also required.
+
+## Material change and ripple policy
+
+Any scope, capability, contract, dependency-order, affected/deferred status,
+or acceptance-meaning change is material. A typo-only edit may retain the map
+only when the artifact records `material_change: false` with a reason; the
+current head still requires a matching review under the conservative pilot
+policy.
+
+For each prior affected repo, emit one action:
+
+| Change | Required action |
+|--------|-----------------|
+| removed / deferred | `hold` or `close`; never run feasibility/TDD/plan |
+| added | `open` after latest approval |
+| unchanged scope digest | `continue` after recording revision check |
+| narrowed / widened | `re-draft` then `re-feasibility` |
+| dependency order changed | `re-plan` for affected dependents |
+| removed scope already merged | human decision: revert, corrective PR, or follow-up initiative |
+
+## Approval attestation
+
+The requested GitHub review body is:
+
+```text
+Impact map approved
+initiative: {INIT-id}
+map_revision: {N}
+meta_pr_head_sha: {SHA}
+prd_digest: {DIGEST}
+artifact: {reports_dir}/Impact-Map-{INIT-id}.md
 ```
+
+Approval is stale when the latest approved review's commit SHA differs from
+the current meta PR head SHA or any attested value differs from the artifact.
+
+## Workflow handoff
+
+Append the envelope from `../../../references/handoff-envelope.md` to the
+impact-map artifact. Use stage `prd-impact-map`.
+
+- `pass` with `signals.pr_ready: true` → authorized `prd-pr-action`
+- `findings` / `needs-input` / `blocked` → human decision
+- `stale` → rerun this skill
+- `failed` → stop
+
+Set `external_action: true` when PR creation/update is the candidate next node.
+The handoff never authorizes GitHub mutation.

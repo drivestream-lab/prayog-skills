@@ -8,6 +8,12 @@
 
 | Item | Required | Status |
 |------|----------|--------|
+| Plan source freshness | all upstream rows `CURRENT` | [ ] current / stale |
+| Impact-map repo scope | revision and scope digest match canonical handoff | [ ] match / stale |
+| `check_command` | resolved | [ ] command / missing |
+| `test_command` | resolved | [ ] command / missing |
+| `verify_command` | resolved or N/A with reason | [ ] command / N/A / missing |
+| `ground_command` | resolved or N/A with reason | [ ] command / N/A / missing |
 | Prior wave as-built row | `human_approved` | [ ] {wave id} = {status} |
 | Prior Ground Report exists | `reports/Ground-Report-{SPEC}-W{N-1}.md` | [ ] exists / missing |
 | Plan PE sign-off (W0 only) | Implementation-Plan §0 marked complete | [ ] complete / pending |
@@ -79,9 +85,10 @@
 
 | Layer | What it proves | Command (from tests_readme / profile) |
 |-------|----------------|---------------------------------------|
-| Unit | Module logic, boundary behaviour, edge cases (no external I/O) | {from profile} |
-| Live verify | Product behaviour on running stack | {from tests_readme} |
-| Ground check | All FRs satisfied; boundaries respected | {from profile} |
+| Static check | Formatting, linting, types, or equivalent repository checks | `{check_command}` |
+| Unit | Module logic, boundary behaviour, edge cases (no external I/O) | `{test_command}` |
+| Live verify | Product behaviour on running stack | `{verify_command}` or N/A — reason |
+| Ground check | All FRs satisfied; boundaries respected | `{ground_command}` or N/A — reason |
 
 ---
 
