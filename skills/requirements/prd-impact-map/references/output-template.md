@@ -18,6 +18,39 @@ generated_at: {YYYY-MM-DDTHH:MM:SSZ}
 > GitHub APPROVED review on the exact current meta PR head SHA; dynamic PR state
 > is not stored in this artifact's frontmatter.
 
+## T0 collision report (blocking alternative)
+
+When detection is `same-initiative` or `ambiguous`, do **not** create this
+impact-map artifact or render sections 1–12. Return only:
+
+```yaml
+identity_collision:
+  detection: same-initiative | ambiguous
+  evidence:
+    - {PR/branch/file evidence}
+  recommended_resolution: reconcile-existing | supersede-existing | unrelated-confirmed
+  human_decision: pending
+  external_action_authorized: false
+
+handoff:
+  contract: sdd-delivery/v2
+  stage: prd-impact-map
+  outcome: needs-input
+  artifact:
+    path: null
+    digest: null
+  blockers:
+    - IDENTITY-COLLISION
+  signals:
+    collision_detection: {detection}
+    recommended_resolution: {recommendation}
+    human_decision: pending
+  next_candidates:
+    - requirements-human-decision
+  human_checkpoint: true
+  external_action: false
+```
+
 ## 1. Source and revision
 
 | Field | Value |
@@ -109,8 +142,10 @@ Every repository from the prior revision must have a row.
 | Item | Value |
 |------|-------|
 | Verdict | PR READY / PR BLOCKED |
-| Identity collision | no-collision / reconcile-existing / supersede-existing / unrelated / needs-input |
-| Collision evidence / decision | {PRs, branches, files searched; user decision when required} |
+| Collision detection | no-collision / unrelated |
+| Collision evidence | {PRs, branches, files searched} |
+| Human resolution | none / reconcile-existing / supersede-existing / unrelated-confirmed |
+| Resolution completed | yes — T0 was rerun after completion |
 | Existing PR | none / {URL} |
 | Proposed branch | `chore/{INIT-id}-prd` |
 | Proposed base | `develop` |

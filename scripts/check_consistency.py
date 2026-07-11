@@ -135,6 +135,8 @@ REQUIRED_TOKENS = {
         "source_prd_digest:",
         "Scope digest",
         "## 9. Downstream ripple ledger",
+        "## T0 collision report",
+        "human_decision: pending",
         "## 11. PR readiness handoff",
         "## 12. Approval request",
         "No GitHub side effects have occurred",

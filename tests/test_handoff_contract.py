@@ -4,7 +4,13 @@ import json
 import unittest
 from pathlib import Path
 
-from scripts.handoff_contract import EFFECTIVE_STATES, RIPPLE_ACTIONS, effective_state, ripple_actions
+from scripts.handoff_contract import (
+    EFFECTIVE_STATES,
+    RIPPLE_ACTIONS,
+    effective_state,
+    identity_gate,
+    ripple_actions,
+)
 
 
 ROOT = Path(__file__).parent.parent
@@ -28,6 +34,16 @@ class HandoffContractTest(unittest.TestCase):
                     superseded=scenario.get("superseded", False),
                 )
                 self.assertIn(actual, EFFECTIVE_STATES)
+                self.assertEqual(scenario["expected"], actual)
+
+    def test_identity_gate_scenarios(self) -> None:
+        for scenario in self.scenarios["identity_scenarios"]:
+            with self.subTest(scenario=scenario["name"]):
+                actual = identity_gate(
+                    detection=scenario["detection"],
+                    human_decision=scenario["human_decision"],
+                    external_action_completed=scenario["external_action_completed"],
+                )
                 self.assertEqual(scenario["expected"], actual)
 
     def test_ripple_scenarios(self) -> None:

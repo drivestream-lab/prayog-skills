@@ -26,6 +26,41 @@ RIPPLE_ACTIONS = {
     "human-decision",
 }
 
+IDENTITY_DETECTIONS = {"no-collision", "same-initiative", "unrelated", "ambiguous"}
+IDENTITY_DECISIONS = {
+    "pending",
+    "reconcile-existing",
+    "supersede-existing",
+    "unrelated-confirmed",
+}
+
+
+def identity_gate(
+    *,
+    detection: str,
+    human_decision: str = "pending",
+    external_action_completed: bool = False,
+) -> dict[str, Any]:
+    """Return fail-closed T0 routing for initiative identity collisions."""
+    if detection not in IDENTITY_DETECTIONS:
+        raise ValueError(f"unknown identity detection: {detection}")
+    if human_decision not in IDENTITY_DECISIONS:
+        raise ValueError(f"unknown identity decision: {human_decision}")
+
+    if detection in {"no-collision", "unrelated"}:
+        return {"outcome": "pass", "can_map": True, "external_action": False}
+
+    if human_decision == "pending":
+        return {"outcome": "needs-input", "can_map": False, "external_action": False}
+
+    if human_decision == "unrelated-confirmed":
+        return {"outcome": "pass", "can_map": True, "external_action": False}
+
+    if not external_action_completed:
+        return {"outcome": "blocked", "can_map": False, "external_action": True}
+
+    return {"outcome": "pass", "can_map": True, "external_action": False}
+
 
 def effective_state(
     *,

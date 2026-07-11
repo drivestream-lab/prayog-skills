@@ -69,26 +69,53 @@ PRs for:
 - PRD titles/slugs that may represent the same business initiative,
 - prior `Impact-Map-*` artifacts.
 
-Classify the result:
+Classify detection separately from the human decision:
 
-| Outcome | Meaning | Action |
-|---------|---------|--------|
+| Detection | Meaning | T0 result |
+|-----------|---------|-----------|
 | `no-collision` | No competing initiative/PR found | Continue |
-| `reconcile-existing` | Existing PR/branch is the same initiative | Use that branch; update/rename artifacts before mapping |
-| `supersede-existing` | Existing work is obsolete | Stop for explicit authorization to comment/close it |
-| `unrelated` | Similar id/title is a different initiative | Record evidence and continue |
-| `needs-input` | Identity cannot be determined | Stop; do not generate PR readiness |
+| `same-initiative` | Existing PR/branch represents this product initiative | `needs-input` |
+| `unrelated` | Similar id/title is demonstrably a different initiative | Continue with evidence |
+| `ambiguous` | Identity cannot be determined | `needs-input` |
+
+For `same-initiative` or `ambiguous`, the agent may recommend—but never select—
+one human resolution:
+
+- `reconcile-existing`
+- `supersede-existing`
+- `unrelated-confirmed`
+
+Persist the distinction in the response:
+
+```yaml
+identity_collision:
+  detection: same-initiative
+  evidence: [...]
+  recommended_resolution: supersede-existing
+  human_decision: pending
+  external_action_authorized: false
+```
 
 Never propose a second PR while identity is unresolved. Closing, commenting on,
 or updating an existing PR is an external action requiring explicit user
 authorization.
 
+**HARD STOP:** while `human_decision: pending`, do not execute T1–T5, assign
+impact-map question ids, compute repo scope digests, write/update an impact-map
+artifact, or produce PR readiness. Emit only the collision report and a
+`needs-input` workflow handoff.
+
+Choosing a resolution does not by itself authorize GitHub action. Present the
+exact comment/close/update operations and obtain separate explicit
+authorization. After reconciliation/supersession is complete, restart at T0;
+do not resume a partial mapping run.
+
 ## Process
 
 1. **T0 Gather and identity gate** — PRD, service catalog, local git state,
-   optional meta PR state, prior map, in-flight app artifacts; run the collision
-   classification above and stop on `needs-input` or an undecided reconcile/
-   supersede outcome
+   optional meta PR state, prior map, in-flight app artifacts; run detection
+   above and continue only for `no-collision`, evidenced `unrelated`, or a fully
+   completed human resolution. Otherwise emit `needs-input` and stop.
 2. **T1 Understand** — list PRD capability areas (data flows, user actions,
    integrations, storage, auth, notifications, etc.)
 3. **T2 Match** — for each capability, match to service `description` + `owns`;

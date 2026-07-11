@@ -1,4 +1,41 @@
 {
+  "identity_scenarios": [
+    {
+      "name": "same initiative requires human decision",
+      "detection": "same-initiative",
+      "human_decision": "pending",
+      "external_action_completed": false,
+      "expected": {"outcome": "needs-input", "can_map": false, "external_action": false}
+    },
+    {
+      "name": "recommendation does not count as decision",
+      "detection": "same-initiative",
+      "human_decision": "pending",
+      "external_action_completed": false,
+      "expected": {"outcome": "needs-input", "can_map": false, "external_action": false}
+    },
+    {
+      "name": "supersede decision still needs external action",
+      "detection": "same-initiative",
+      "human_decision": "supersede-existing",
+      "external_action_completed": false,
+      "expected": {"outcome": "blocked", "can_map": false, "external_action": true}
+    },
+    {
+      "name": "supersede completed allows fresh mapping",
+      "detection": "same-initiative",
+      "human_decision": "supersede-existing",
+      "external_action_completed": true,
+      "expected": {"outcome": "pass", "can_map": true, "external_action": false}
+    },
+    {
+      "name": "unrelated evidence allows mapping",
+      "detection": "unrelated",
+      "human_decision": "pending",
+      "external_action_completed": false,
+      "expected": {"outcome": "pass", "can_map": true, "external_action": false}
+    }
+  ],
   "state_scenarios": [
     {
       "name": "clean approval",
