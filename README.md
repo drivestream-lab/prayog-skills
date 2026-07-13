@@ -64,28 +64,32 @@ Profile manifests (`profiles/*.yaml`) list which dev skills apply per harness pr
 PM: validated PRD → generate Impact-Map-{INIT}.md locally
     → review PR-readiness handoff → user authorizes Draft PR creation
     → agent uses gh when configured; initializes impact-map-pending
-    → product clarification on PR; PE sets Gate 1 label
-    → tech-lead Approve on exact meta PR head SHA + impact-map-lgtm
+    → product clarification on PR; PE sets impact-map-lgtm
+    → tech-lead Approve on exact meta PR head SHA
     → merge PRD PR to develop
     ↓
-Eng opens spec PR only for current approved repo scope
+Eng: Draft spec PR (entire spec lifecycle) for approved repo scope
+    → spec-pending; Q&A on Draft PR
     ↓
 /spec-draft  →  /initiative-feasibility  →  [/spec-technical-review]
     ↓
 /spec-implementation-plan  (§9 WorkManifest YAML on spec branch)
     ↓
-Merge spec PR → develop → seed board issues per wave
+PE sets spec-lgtm on exact head → Ready for review → Approve → merge
+    ↓
+Merge spec PR → develop → board-seed (automation on merge in pilot)
     ↓
 Per wave:  /pre-implement  →  /loop-spec  →  /ground-spec  →  human checkpoint
 ```
 
 Full process: [launchpad delivery workflow](https://github.com/drivestream-lab/launchpad/blob/main/playbook/delivery-workflow.md).
 
-The impact-map file is the scope source of truth. GitHub labels are status
-projections only. PE moves Gate 1 through `impact-map-pending`,
-`impact-map-blocked`, and `impact-map-lgtm`; `impact-map-revised` or
-`impact-map-stale` closes the gate. Stale PRD/map digests also close it. Pilot and
-review-graduation policy: [docs/team-first-pilot.md](docs/team-first-pilot.md).
+Artifacts are the source of truth. GitHub labels are status projections only.
+PE moves Gate 1 through `impact-map-pending`, `impact-map-blocked`, and
+`impact-map-lgtm`; Gate 2 through `spec-pending`, `spec-blocked`, and
+`spec-lgtm`. Revised or stale labels close the gate. Never infer approval from
+labels alone — require matching GitHub Approve and artifact digests on the exact
+PR head.
 
 ---
 
