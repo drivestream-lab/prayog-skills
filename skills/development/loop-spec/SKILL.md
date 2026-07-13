@@ -25,13 +25,17 @@ implement → check/test → fix → repeat → live verify (when applicable)
 
 1. Implement against the product spec only — do not implement scope from
    the next wave.
-2. After each task, run `{check_command}` and `{test_command}` from the
+2. **Prerequisites** — run only after `/pre-implement` produced a checklist
+   with gate verdict PASS on the current wave. Do not run on an open Draft spec
+   PR branch (`chore/*-spec-*`). The implementation plan must exist on
+   `develop` (spec package merged with `spec-lgtm` on merge head).
+3. After each task, run `{check_command}` and `{test_command}` from the
    harness profile (or `tests_readme`). Both must pass before committing.
-3. Fix failures before moving to the next task — do not accumulate failures.
-4. When all tasks are green: hand off to `/ground-spec`. The Ground Report is
+4. Fix failures before moving to the next task — do not accumulate failures.
+5. When all tasks are green: hand off to `/ground-spec`. The Ground Report is
    produced **before** the human checkpoint. Do not request or record human
    approval before grounding evidence exists, and do not self-approve.
-5. Do not skip verification steps to save time — failures caught here are
+6. Do not skip verification steps to save time — failures caught here are
    cheaper than failures caught in `/ground-spec` or the wave PR review.
 
 ## Inputs

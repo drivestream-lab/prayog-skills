@@ -6,8 +6,9 @@ description: >-
   boundaries), draft any required ADRs, and route only true product questions
   back to PM on the meta PRD PR. Use before /spec-implementation-plan when the
   feasibility report contains NEW-ADR findings, Critical/Should-fix engineering
-  items, or unclear module boundaries. TDD commits on the spec PR branch; PE
-  gives GitHub Approve on the same spec PR.
+  items, or unclear module boundaries. Commits TDD and Draft ADRs to the Draft
+  spec PR; PE accepts architecture in files before planning. Final Gate 2
+  unlock (spec-lgtm) happens only after the implementation plan exists.
 disable-model-invocation: true
 paths: AGENTS.md, docs/specification/**, .cursor/rules/**
 metadata:
@@ -20,8 +21,10 @@ metadata:
 Resolve all **engineering decisions** that block the implementation plan.
 **Do not implement.** Produce a Technical Design Document (TDD) and draft ADRs.
 
-Runs **while the spec PR is open** — commit TDD to the spec branch. PE sign-off
-is a **GitHub Approve on the spec PR** (CODEOWNERS on `Technical-Review-*`).
+Runs **while the Draft spec PR is open** — commit TDD and ADR files to the spec
+branch. Gate 2 label remains **`spec-pending`**. PE architecture acceptance is
+recorded in **artifact metadata** (`Draft` → `Accepted`); **`spec-lgtm`** is
+set only after the full spec package (including plan) is on head.
 
 Benchmarked against: Stripe/Cloudflare/Oxide RFC process, Sentry design-first
 gate, `agentic_development_workflow` multi-role review, GitHub Spec Kit
@@ -40,9 +43,10 @@ gate, `agentic_development_workflow` multi-role review, GitHub Spec Kit
    or `DEFERRED_WITH_DEFAULT` with risk and revisit trigger.
 5. Dual output: chat summary + saved TDD file committed to spec branch.
 6. Run T0–T5 control loop (Gather → Understand → Analyze → Design → Execute → Verify).
-7. Human PE sign-off is **required** before the implementation plan runs.
+7. Human PE acceptance is **required** before the implementation plan runs.
    Technical review creates Draft ADR files first; planning consumes only
-   accepted decisions with final PE approval on the exact current PR head.
+   **Accepted** files in `{adr_dir}`. Mid-lane PE work updates files on the
+   spec branch — it does **not** set `spec-lgtm`.
 8. Verify that spec, feasibility report, PRD digest, impact-map revision, repo
    scope digest, and approved meta PR head agree. Stop on stale inputs.
 
@@ -95,24 +99,23 @@ Save to `{reports_dir}/Technical-Review-{initiative}.md` (from profile).
 
 Use [references/output-template.md](references/output-template.md).
 
-## PE sign-off
+## PE acceptance (artifact gate — not Gate 2 unlock)
 
-Commit TDD + Draft ADR files to the spec PR. PE reviews both:
+Commit TDD + Draft ADR files to the Draft spec PR. PE reviews on the **same PR**:
 - Discuss engineering decisions in spec PR comments
 - Request changes until decisions and artifacts are correct
-- CODEOWNERS on `Technical-Review-*` enforces PE as required reviewer
+- CODEOWNERS on `Technical-Review-*` may request PE review when the TDD file is present
 
 When PE explicitly states decisions are ready for acceptance:
 
 1. update required ADR files `Draft` → `Accepted` with PE/date/review evidence,
-2. update the TDD ADR index and handoff to `ready_for_final_approval: true`,
-3. commit the final TDD + Accepted ADR metadata,
-4. PE gives the formal GitHub **Approve** on that exact final head,
-5. no files change after approval; the workflow approval node may then route to
-   `/spec-implementation-plan`.
+2. update the TDD `Status` field to **Accepted** and TDD §4 ADR index rows,
+3. commit the acceptance package to the spec branch,
+4. record the approved head SHA in TDD/ADR metadata when helpful.
 
-This avoids a post-approval metadata commit invalidating stale-review
-protection.
+**Do not set `spec-lgtm` at this stage.** `/spec-implementation-plan` reads
+Accepted files (P12/P13). The GitHub Gate 2 unlock (`spec-lgtm` + Approve +
+attestation) happens only after the plan is committed to the same PR head.
 
 ## Routing rubric
 

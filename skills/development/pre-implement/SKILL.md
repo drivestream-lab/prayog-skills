@@ -41,29 +41,44 @@ product code** unless the user explicitly asks after the checklist.
 10. Confirm the current wave has a GitHub issue created from plan §9 and every
     declared predecessor wave issue exists. A missing/partial board seed blocks
     pre-implementation.
+11. **Spec merge gate** — before W0 (and before any `/loop-spec`), confirm:
+    - current branch is the **integration branch** (`develop`) or a
+      `feature/INIT-*-w{N}-*` wave branch cut from it — **not** an open
+      `chore/*-spec-*` Draft spec PR branch;
+    - `docs/specification/reports/Implementation-Plan-{initiative}.md` exists on
+      the integration branch (spec PR was merged);
+    - the merged spec PR head carried **`spec-lgtm`** (verify via `gh pr view`
+      on the closed spec PR: label present and `mergeCommit`/`headRefOid`
+      matches attestation or Approve `commit_id`);
+    - board-seed completed (wave issues exist per rule 10).
+    If any check fails: stop — do not produce a checklist or write product code.
 
 ## Chain position
 
 ```
-/ground-spec (prior wave) → human_approved in as-built
+spec merge (spec-lgtm on head) → board-seed → wave issue In Progress
+    ↓
+/ground-spec (prior wave) → human_approved in as-built   [Wn>0 only]
     ↓
 /pre-implement               ← YOU ARE HERE
-  gate: prior wave = human_approved?
+  gate: spec merged + board seeded + prior wave human_approved?
   reads: Ground-Report-W{N-1}.md §Contracts produced
   produces: pre-flight checklist with confirmed contract baselines
     ↓
-  developer: checklist reviewed, branch opened
-    ↓
-[implementation]
+  developer: checklist reviewed, branch opened (feature/INIT-*-w{N}-*)
     ↓
 /loop-spec → /ground-spec (this wave)
 ```
 
+**Do not run on an open Draft spec PR branch** (`chore/*-spec-*`). Coding
+starts only after the spec package is merged to `develop`.
+
 ## Read order
 
-1. **Source and gate check** — plan sources CURRENT; impact-map scope current;
-   canonical commands resolved; `as-built/implementation-status.md` prior wave
-   = `human_approved`? If any answer is no: stop.
+1. **Source and gate check** — spec merge gate (rule 11); plan on integration
+   branch; plan sources CURRENT; impact-map scope current; canonical commands
+   resolved; board issues exist; `as-built/implementation-status.md` prior wave
+   = `human_approved` (Wn>0)? If any answer is no: stop.
 2. **Contracts consumed** — `reports/Ground-Report-W{N-1}.md` §Contracts
    produced: for each contract this wave depends on, read the entry point,
    input shape, output shape, and invariants as verified by the prior Ground

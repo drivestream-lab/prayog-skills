@@ -201,9 +201,10 @@ use `planned-auto-fix` or `suggested-fix`.
 
 ## PR instructions
 
-> Commit this TDD to the spec PR branch. PE reviews on the **same spec PR**.
-> PE GitHub Approve = sign-off. Spec PR cannot merge until PE approves (when TDD present).
-> CODEOWNERS enforces PE as a required reviewer on `Technical-Review-*`.
+> Commit this TDD to the **Draft spec PR** branch. PE reviews on the **same PR**.
+> Gate 2 label stays **`spec-pending`** until the implementation plan exists.
+> PE accepts architecture by committing **Accepted** TDD/ADR files — not by
+> setting `spec-lgtm` yet. CODEOWNERS may request PE review on `Technical-Review-*`.
 
 ```
 Branch:   chore/INIT-{COMPONENT}-{NUMBER}-spec-{repo}
@@ -222,14 +223,14 @@ PE review checklist (PE works through this on the spec PR):
   [ ] T9 Zero unresolved PE items?
   [ ] T11 ADR artifact integrity — every required file/link/digest is valid
 
-PE action:
+PE action (artifact acceptance — mid-lane):
   Review/comment or Request changes → developer updates TDD/ADR files
   Explicitly state when decisions are ready for acceptance
-  Developer updates ADR metadata Draft → Accepted and commits final package
-  Final GitHub Approve → exact final head, no later file changes
+  Developer/PE updates ADR metadata Draft → Accepted and TDD Status → Accepted
+  Commit acceptance package to spec branch (label remains spec-pending)
 
-After final approval:
-  → technical-review-approval node records current approved head
+After artifact acceptance:
   → /spec-implementation-plan may run on the same branch
-  → after plan review/merge: seed board from merged plan §9
+  → after plan on head: PE sets spec-lgtm + Approve + attestation
+  → Ready for review → merge → board-seed from merged plan §9
 ```

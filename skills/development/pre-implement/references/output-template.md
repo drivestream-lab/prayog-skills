@@ -8,6 +8,10 @@
 
 | Item | Required | Status |
 |------|----------|--------|
+| Branch context | `develop` or `feature/INIT-*-w{N}-*` — not open `chore/*-spec-*` | [ ] ok / blocked |
+| Spec PR merged | Implementation plan on integration branch | [ ] yes / no |
+| Gate 2 at merge | Merged spec PR had `spec-lgtm` on head | [ ] verified / missing |
+| Board seed | Wave issue(s) from plan §9 exist | [ ] seeded / partial / missing |
 | Plan source freshness | all upstream rows `CURRENT` | [ ] current / stale |
 | Impact-map repo scope | revision and scope digest match canonical handoff | [ ] match / stale |
 | `check_command` | resolved | [ ] command / missing |

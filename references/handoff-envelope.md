@@ -48,9 +48,14 @@ handoff:
    next skill.
 8. `next_candidates` never bypasses `human_checkpoint: true`.
 9. Technical review reports `ready_for_pe_review: true` and
-   `ready_for_plan: false` until final exact-head PE approval is observed by the
-   `technical-review-approval` node.
-10. ADR signals contain actual file paths/digests; target paths or future
+   `ready_for_plan: false` until Accepted TDD/ADR files exist on the spec
+   branch. Mid-lane PE acceptance updates files only — not `spec-lgtm`.
+10. `/spec-implementation-plan` may run when TDD/ADR files are **Accepted**;
+    **`spec-lgtm`** is set only after the plan is on head (Gate 2 unlock).
+11. `/pre-implement` and `/loop-spec` require spec PR **merged** with
+    `spec-lgtm` on merge head and board-seed complete — not an open Draft spec
+    PR branch.
+12. ADR signals contain actual file paths/digests; target paths or future
     promotion tasks are not artifacts.
 
 ## Outcome vocabulary

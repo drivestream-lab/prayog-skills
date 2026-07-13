@@ -16,7 +16,7 @@ repo_scope_digest: sha256:{hex}
 approved_meta_pr_head: {SHA}
 branch: chore/INIT-{COMPONENT}-{NUMBER}-spec-{repo}
 review_deadline: {YYYY-MM-DD + 3 business days}
-deciders: Dev team lead — explicit LGTM required
+deciders: PE — spec-lgtm + Approve on exact head after full package
 ---
 
 # Implementation plan — {INITIATIVE}
@@ -151,29 +151,86 @@ deciders: Dev team lead — explicit LGTM required
 
 ## 8. PR instructions
 
-> Commit this plan to the spec PR branch alongside spec, feasibility, and TDD.
-> Dev lead GitHub Approve on spec PR = gate satisfied. **Merge spec PR**, then seed board.
+> Commit this plan to the **Draft spec PR** branch alongside spec, feasibility,
+> and TDD. Label remains **`spec-pending`** until PE completes §10.
 
 ```
-Branch:   chore/INIT-{COMPONENT}-{NUMBER}-spec-{repo}
+Branch:   chore/INIT-{COMPONENT}-{NUMBER}-spec-{repo}  (Draft PR)
 PR title: "[INIT-{COMPONENT}-{NUMBER}] Spec — {repo}"
 PR body:  link meta PRD PR; paste §1 Requirements table + wave goals summary
 
-Required reviewers (CODEOWNERS): @{dev-team-lead} · @{pe-team} (when TDD present)
+Required reviewers: @{pe-team}
 Review deadline: {date from front matter}
 
-Reviewer checklist:
-  [ ] §0 PE sign-off on TDD is marked complete (or N/A with reason)
+PE checklist (before spec-lgtm):
+  [ ] Spec + feasibility + TDD + Accepted ADRs + this plan on current head
+  [ ] §0 PE sign-off on TDD marked complete (or N/A with reason)
   [ ] Wave order and dependencies make sense
   [ ] Done-when criteria are observable and testable
-  [ ] WorkManifest YAML (§9) looks correct — wave IDs are W0, W1, … (one issue per wave)
+  [ ] WorkManifest YAML (§9) correct — wave IDs W0, W1, … (one issue per wave)
   [ ] P1–P14 checks all pass
 
-After spec PR merge — dev seeds board from §9 (post-merge only):
+After spec-lgtm + Approve + merge — board-seed from §9 (post-merge only):
   Create one GitHub Issue per wave (W0, W1, …) using §9 titles, bodies, depends_on
   Search for existing initiative/wave issues first; create only missing issues
-  Then start wave coding: /pre-implement → /loop-spec → /verify (when applicable) → /ground-spec
+  Then: /pre-implement → /loop-spec → /verify (when applicable) → /ground-spec
 ```
+
+---
+
+## 10. Gate 2 unlock (PE — after plan on head)
+
+Present this section in chat when the plan is committed. **No GitHub side
+effects** until PE completes the unlock.
+
+| Item | Value |
+|------|-------|
+| Verdict | GATE OPEN REQUEST / BLOCKED |
+| Spec PR | {URL} |
+| Spec PR head SHA | `{SHA}` |
+| Gate label (current) | `spec-pending` |
+| Gate label (target) | `spec-lgtm` |
+| Blocking items | none / {reason} |
+
+Provision labels when missing:
+
+```bash
+launchpad apply-gates --repo <name> --apply
+```
+
+PE actions (all on **exact current head**):
+
+1. Remove `spec-pending`, `spec-blocked`, `spec-revised`, `spec-stale`; add **`spec-lgtm`**
+2. Submit GitHub **Approve** with attestation body (below)
+3. Mark Draft PR **Ready for review**
+4. Authorize merge (human or policy); then board-seed from §9
+
+### Approve attestation body
+
+```text
+Spec package approved
+initiative: {INIT-id}
+spec_pr_head_sha: {SHA}
+meta_pr_head_sha: {SHA}
+impact_map_revision: {N}
+prd_digest: sha256:{hex}
+scope_digest: sha256:{hex}
+plan_digest: sha256:{hex}
+artifacts:
+  - docs/specification/product/INIT-{id}.md
+  - docs/specification/reports/Initiative-Feasibility-Report-{INIT-id}.md
+  - docs/specification/reports/Technical-Review-{INIT-id}.md
+  - docs/specification/reports/Implementation-Plan-{INIT-id}.md
+```
+
+Never infer approval from `spec-lgtm` alone — Approve, label, and artifact
+digests must match the same head SHA.
+
+| PE action | Remove | Add |
+|-----------|--------|-----|
+| Pending/new revision | `spec-lgtm`, `spec-blocked` | `spec-pending` |
+| Request changes/hold | `spec-pending`, `spec-lgtm` | `spec-blocked` |
+| Approve full package | `spec-pending`, `spec-blocked`, `spec-revised`, `spec-stale` | `spec-lgtm` |
 
 ---
 

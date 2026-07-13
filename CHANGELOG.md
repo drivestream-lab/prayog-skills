@@ -24,12 +24,21 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `/spec-draft` now mirrors the PM lane: generate the spec slice locally, emit a
   Draft-PR readiness handoff in chat, and open the Draft spec PR with
   `spec-pending` only after explicit user authorization.
+- Gate 2 labels (`spec-pending`, `spec-lgtm`, …) for app repos in
+  `delivery-contract.yaml`; `review_roles.gate-2` for PE-controlled unlock.
+- Downstream spec skills aligned: Draft PR + `spec-pending` through feasibility,
+  TDD, and planning; **`spec-lgtm`** only after full package on head.
+- `spec-implementation-plan` §10: PE Gate 2 unlock checklist and Approve
+  attestation body (mirrors meta impact-map pattern).
+- `pre-implement` and `loop-spec` block coding until spec merge with
+  `spec-lgtm` on head and board-seed complete.
 - Feasibility, technical review, planning, and pre-implement templates now
   carry source freshness and command contracts.
 - CI now validates check ranges, template contracts, links, profile keys, and
   deterministic handoff/ripple scenarios.
 - Added a team-first pilot playbook with scenario coverage, scorecard metrics,
-  and review-graduation criteria.
+  and review-graduation criteria. (Removed — process lives in skills and
+  launchpad playbook.)
 - `update-documents` now separates Resolution and Ad-hoc modes, requires every
   propagated edit to cite an approved decision source, and routes new semantic
   choices back to `review-findings` instead of requesting retrospective sign-off.

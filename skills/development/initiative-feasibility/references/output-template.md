@@ -145,8 +145,9 @@ below may add narrative but must not contradict it.
 **PM questions** → post as numbered comments on the **meta PRD PR** (plain English).
   Link from a spec PR comment if helpful. PM answers on meta PRD PR.
 
-**PE questions** → discuss on the **spec PR**; run `/spec-technical-review` next.
-  Commit TDD to spec branch; PE Approve on the same spec PR.
+**PE questions** → discuss on the **Draft spec PR**; run `/spec-technical-review` next.
+  PE accepts TDD/ADRs in **files** (`Draft` → `Accepted`); do **not** set
+  `spec-lgtm` until the full package includes the implementation plan.
 
 **Domain clarifications** → meta PRD PR comment or tracked issue; record answers in
   `open-questions.md` and commit to spec branch.
@@ -154,7 +155,7 @@ below may add narrative but must not contradict it.
 **Auto-fixable items** → fix and commit to spec branch now.
 
 ```
-Spec branch: chore/INIT-{COMPONENT}-{NUMBER}-spec-{repo}
+Draft spec PR: chore/INIT-{COMPONENT}-{NUMBER}-spec-{repo}  (spec-pending)
 When ready:
   [ ] Source freshness is CURRENT
   [ ] All blocking PM questions answered on meta PRD PR
@@ -163,6 +164,7 @@ When ready:
   [ ] Incremental re-run of /initiative-feasibility on updated spec is clean
   [ ] Proceed: /spec-technical-review (PE questions exist)
                OR /spec-implementation-plan (no PE questions)
-  [ ] After spec + feasibility + TDD (if any) + plan on branch: merge spec PR
-  [ ] After merge: seed board from plan §9 — then start wave coding
+  [ ] After spec + feasibility + TDD (if any) + plan on branch:
+      PE sets spec-lgtm + Approve on exact head → Ready for review → merge
+  [ ] After merge: board-seed from plan §9 — then /pre-implement → /loop-spec
 ```

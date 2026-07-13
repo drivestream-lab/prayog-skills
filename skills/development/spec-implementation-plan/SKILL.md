@@ -10,7 +10,7 @@ disable-model-invocation: true
 paths: AGENTS.md, docs/specification/**, .cursor/rules/**
 metadata:
   background_eligible: true
-  background_trigger: "spec PR branch: initiative-feasibility clean + PE Approve on TDD (when required)"
+  background_trigger: "spec PR branch: Accepted TDD/ADRs on head when required; spec-pending"
 ---
 
 # Spec implementation plan
@@ -39,6 +39,9 @@ the board after spec PR merge**.
    `ground_command` before planning. Required commands may come from the
    consumer profile, `AGENTS.md`, or `tests_readme`; missing required commands
    block the plan. Use N/A with reason only when a layer is not applicable.
+10. Commit the plan to the **same Draft spec PR**. Gate 2 label stays
+    **`spec-pending`**. After T5, present the **Gate 2 unlock checklist** from
+    the output template so PE knows when to set `spec-lgtm`.
 
 ## Inputs
 
@@ -58,26 +61,17 @@ Resolve paths from `.harness/profile.yaml` or [references/layout-defaults.md](re
 
 ## Prerequisite
 
-Run **while spec PR is open**, **before spec merge**, after:
+Run **while the Draft spec PR is open**, **before spec merge**, after:
 - Feasibility accepted (no blocking PM questions on meta PRD PR)
 - `/spec-technical-review` completed when feasibility had NEW-ADR or PE-lane items
-- `technical-review-approval` satisfied — final PE GitHub Approve on the exact
-  head that contains Accepted ADR metadata
+- **`technical-review-approval` satisfied in files** — TDD `Status: Accepted`
+  and every required ADR file in `{adr_dir}` is `Accepted` on the current head
 - All upstream source digests and approval references are CURRENT
 
-> **How to confirm PE Approve reached the skill chain:**
-> There is no automatic signal from GitHub. Before the final PE Approve, the dev
-> commits the acceptance package to the spec branch:
->   `| Status | Accepted — @{pe-name}  {YYYY-MM-DD} |`  (TDD header)
->   TDD §4 index rows updated `Draft` → `Accepted`
->   Each `{adr_dir}/adr-NNN-{slug}.md` updated per
->   [spec-technical-review adr-template](../spec-technical-review/references/adr-template.md)
->   Acceptance finalization block (`Status: Accepted`, PE, approval evidence,
->   approved head)
-> PE then gives the formal GitHub **Approve** on that exact final head with no
-> further file changes. P12/P13 read those files to verify sign-off. P13 will
-> FAIL if the TDD Status field still reads `Draft` or any required ADR file is
-> still `Draft`.
+> **Artifact gate vs GitHub gate**
+> Planning requires **Accepted TDD/ADR files** (P12/P13). It does **not**
+> require `spec-lgtm`. PE sets **`spec-lgtm` + GitHub Approve + attestation**
+> only after this plan is committed — that unlocks merge and board-seed.
 
 ## Process
 
@@ -92,7 +86,7 @@ Run **while spec PR is open**, **before spec merge**, after:
    tasks); cite those ADR ids in TASK **ADR notes**; collect
    `codebase`/`spec_path`/`verify_command` per TASK
 5. **T4 Execute** — write plan; build WorkManifest seed section; run P1–P14 checks; commit to spec branch
-6. **T5 Verify** — self-contained plan readable by a fresh session; WorkManifest YAML is valid
+6. **T5 Verify** — self-contained plan readable by a fresh session; WorkManifest YAML is valid; present Gate 2 unlock checklist (§10) in chat for PE
 
 ## Output
 

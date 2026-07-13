@@ -3,9 +3,10 @@ name: initiative-feasibility
 description: >-
   After the dev team has written their spec slice from the PRD, review it
   against the current codebase — baseline, gaps, impact, test harness,
-  architecture governance (ADR + MDC), risks, and 4-lane triage. Use when
+  architecture governance (ADR + MDC), risks, and 4-lane triage. Commits to
+  the open Draft spec PR while Gate 2 label remains spec-pending. Use when
   the dev has drafted the spec and wants to check buildability before technical
-  review and planning. Runs while the spec PR is open.
+  review and planning.
 disable-model-invocation: true
 paths: AGENTS.md, docs/specification/**, .cursor/rules/**
 background_eligible: true
@@ -34,6 +35,10 @@ Pattern borrowed from awesome-copilot `create-github-issues-for-unmet-specificat
    must still match the canonical handoff. Stop on stale input.
 7. Every open item must record lane, blocking, owner, status, required-by
    stage, default-if-deferred, evidence, and resolution reference.
+8. Commit the feasibility report to the **same Draft spec PR** branch opened by
+   `/spec-draft`. Do not open a second spec PR. Gate 2 label stays
+   **`spec-pending`** — do not set `spec-lgtm` during feasibility.
+9. **Do not implement** product code. Spec-only artifacts on the spec PR.
 
 ## Inputs
 
