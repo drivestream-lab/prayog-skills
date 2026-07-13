@@ -21,6 +21,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `/spec-draft` now fails closed on stale/unapproved handoffs and runs D1–D12
   completeness checks covering traceability, acceptance, negative paths,
   contracts, NFR applicability, assumptions, and blocking questions.
+- `/spec-draft` now mirrors the PM lane: generate the spec slice locally, emit a
+  Draft-PR readiness handoff in chat, and open the Draft spec PR with
+  `spec-pending` only after explicit user authorization.
 - Feasibility, technical review, planning, and pre-implement templates now
   carry source freshness and command contracts.
 - CI now validates check ranges, template contracts, links, profile keys, and

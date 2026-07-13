@@ -3,12 +3,14 @@ name: spec-draft
 description: >-
   Translate the PRD into a spec slice for this repo. Reads the PRD from the
   meta PRD PR branch or merged develop, extracts capabilities relevant to this
-  repo, and drafts docs/specification/product/INIT-*.md. Use after engineering
-  opens the spec PR and before /initiative-feasibility.
+  repo, drafts docs/specification/product/INIT-*.md locally, and produces a
+  Draft-PR readiness handoff. After explicit user authorization, the agent may
+  use gh to create/update the Draft spec PR and initialize Gate 2 labels. Run
+  after Gate 1 approval and before /initiative-feasibility.
 disable-model-invocation: true
 paths: AGENTS.md, docs/specification/**, .cursor/rules/**
 background_eligible: true
-background_trigger: "spec PR opened in this repo (chore/INIT-*-spec-*)"
+background_trigger: "Gate 1 approved for this repo scope; spec slice not yet on a Draft spec PR"
 ---
 
 # Spec draft
@@ -39,6 +41,13 @@ that the dev team can review, edit, and then run `/initiative-feasibility` on.
    A label or old LGTM alone is not approval.
 7. This repo must be `affected` in the latest map and not deferred or blocked.
    Record the repo's `scope_digest` in the spec. If any gate fails: stop.
+8. **No GitHub side effects during generation.** Do not create a branch,
+   commit, push, PR, comment, review request, or label until the completed
+   PR-readiness handoff is shown and the user explicitly authorizes PR action.
+9. Treat `spec-*` labels as projections. If artifact, review, and label
+   disagree, the gate is closed. Exactly one PE gate label may be active:
+   `spec-pending`, `spec-lgtm`, or `spec-blocked`. `spec-revised` and
+   `spec-stale` are additional invalidation labels and always close the gate.
 
 ## Prerequisites
 
@@ -47,7 +56,8 @@ that the dev team can review, edit, and then run `/initiative-feasibility` on.
 - Latest tech-lead APPROVED review is bound to the current meta PR head SHA
   carrying that map revision and PRD digest
 - This repo is affected in that revision and has a `scope_digest`
-- Engineering has opened spec PR on branch `chore/INIT-{COMPONENT}-{NUMBER}-spec-{repo}`
+- An existing Draft spec PR is optional when revising; it is not required to
+  start `/spec-draft`
 
 ## Inputs
 
@@ -85,15 +95,52 @@ Resolve paths from `.harness/profile.yaml` or [references/layout-defaults.md](re
 4. **T3 Draft** — write INIT-*.md using [references/output-template.md](references/output-template.md)
 5. **T4 Flag** — list ambiguities, open questions, and anything that needs PM
    confirmation (route to meta PRD PR — see feasibility skill)
-6. **T5 Verify and present** — run D1–D12 from
-   [references/checks.md](references/checks.md); show draft to dev for review;
-   do NOT commit until checks pass and dev confirms
+6. **T5 Verify and hand off** — run D1–D12 from
+   [references/checks.md](references/checks.md); present in chat:
+   - generated/changed files,
+   - gate verification summary,
+   - spec summary and open questions,
+   - proposed branch, base, Draft PR title/body, reviewers, and initial labels,
+   - `PR READY` or `PR BLOCKED` verdict.
+   Stop without GitHub side effects.
+
+## PR creation handoff
+
+After T5, **always** present the PR readiness section from
+[references/output-template.md](references/output-template.md) and ask the user
+whether to create or update the Draft spec PR.
+
+If the user explicitly authorizes it and `gh` is configured, the agent may:
+
+1. create/switch to the proposed branch when needed,
+2. commit the approved spec file(s),
+3. push the branch,
+4. create or update the **Draft** spec PR,
+5. verify Gate 2 labels provisioned by Launchpad are present; if missing, stop
+   and instruct the user to run
+   `launchpad apply-gates --repo <name> --apply`,
+6. apply `spec-pending` and remove obsolete Gate 2 labels through GitHub REST
+   issue-label endpoints (do not use `gh pr edit`),
+7. verify the PE team exists and has repository access,
+8. request PE review through GitHub REST
+   `POST repos/{owner}/{repo}/pulls/{number}/requested_reviewers` with the team
+   slug, then verify the request is present.
+
+This is a separate, user-authorized agent action—not an automatic side effect
+of `/spec-draft`.
+
+If `gh` is not configured, provide exact manual commands and do not report that
+the PR exists.
 
 ## Output
 
 Draft saved to `{product_spec_dir}/INIT-{id}.md` (from profile).
 
 Use [references/output-template.md](references/output-template.md).
+
+Before PR creation, `spec_pr` and Gate 2 fields are `pending`. After the
+user-authorized PR action, the PR body contains the spec summary, artifact path,
+meta handoff digests, Gate 2 checklist, and PE review request.
 
 ## Revision handling
 
@@ -109,13 +156,16 @@ When a newer approved impact-map revision appears:
 
 ## Next step
 
-After dev reviews and edits the spec draft:
+After dev reviews the local draft:
 
-```
-git add docs/specification/product/INIT-{id}.md
-git commit -m "feat: spec slice for INIT-{id}"
-/initiative-feasibility   ← run this on the committed spec
-```
+1. authorize Draft spec PR creation when the PR-readiness verdict is `PR READY`
+2. commit the spec slice to the Draft spec PR branch (during authorized PR action
+   or immediately after)
+3. run `/initiative-feasibility` on the committed spec on that branch
+
+Do not skip the PR-readiness handoff or jump straight to feasibility on a local
+file only — the Draft spec PR is the engineering review surface for the whole
+lane.
 
 ## Workflow handoff
 

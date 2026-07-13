@@ -93,6 +93,63 @@ Every row is required. Use N/A only with a concrete reason.
 Do not advance to `/initiative-feasibility` unless the verdict is PASS and the
 developer review below is complete.
 
+## PR readiness handoff
+
+| Item | Value |
+|------|-------|
+| Verdict | PR READY / PR BLOCKED |
+| Existing spec PR | none / {URL} |
+| Proposed branch | `chore/INIT-{COMPONENT}-{NUMBER}-spec-{repo}` |
+| Proposed base | `develop` |
+| Proposed title | `[INIT-{COMPONENT}-{NUMBER}] Spec — {repo}` |
+| PR type | **Draft** (entire spec lifecycle) |
+| Files to commit | `docs/specification/product/INIT-{id}.md`, `docs/specification/README.md` if new |
+| Reviewer | @{pe-team} |
+| Initial Gate 2 label | `spec-pending` |
+| Additional invalidation label | none / `spec-revised` / `spec-stale` |
+| Blocking items | none / {IDs and reasons} |
+
+**No GitHub side effects have occurred.** The agent must present this section in
+chat and ask whether to create or update the Draft spec PR. Continue only after
+explicit authorization.
+
+### Proposed Draft PR body
+
+```markdown
+## Initiative
+
+{INIT-id} — {short title}
+
+## Meta handoff
+
+- Meta PRD PR: {URL}
+- Approved meta head: `{SHA}`
+- Impact-map revision: {N}
+- PRD digest: `sha256:{hex}`
+- Repo scope digest: `sha256:{hex}`
+
+## Spec path
+
+`docs/specification/product/INIT-{id}.md`
+
+## Summary
+
+- {bullet summary of FR count and scope}
+- Open engineering questions: {Q-ids or none}
+
+## Gate 2 — spec package readiness
+
+Initial label: `spec-pending`
+
+- [ ] Spec slice committed on this PR head
+- [ ] Feasibility report (later commit)
+- [ ] Technical design + ADRs (later commit)
+- [ ] Implementation plan §9 (later commit)
+- [ ] PE sets `spec-lgtm` on exact final head before merge
+
+Requested reviewer: @{pe-team}
+```
+
 ## Developer review
 
 - [ ] Scope matches the approved impact-map repo scope digest
@@ -100,6 +157,23 @@ developer review below is complete.
 - [ ] Contracts and NFR applicability are explicit
 - [ ] No blocking question remains
 - [ ] Developer confirmed draft is ready for feasibility
+
+## After Draft PR creation
+
+PE controls Gate 2 labels on the spec PR. Never infer approval from labels
+alone — `spec-lgtm` requires matching artifacts on the exact PR head.
+
+Provision labels before PR creation when missing:
+
+```bash
+launchpad apply-gates --repo <name> --apply
+```
+
+| PE action | Remove | Add |
+|-----------|--------|-----|
+| Pending/new revision | `spec-lgtm`, `spec-blocked` | `spec-pending` |
+| Request changes/hold | `spec-pending`, `spec-lgtm` | `spec-blocked` |
+| Approve full package | `spec-pending`, `spec-blocked`, `spec-revised`, `spec-stale` | `spec-lgtm` |
 
 ## References
 

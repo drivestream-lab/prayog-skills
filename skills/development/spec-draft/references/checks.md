@@ -17,7 +17,7 @@ applicability rationale. D1, D2, D3, D4, D7, and D11 are blocking.
 | D9 | **As-built alignment** | Proposed changes distinguish existing, changed, and new behavior using as-built/source evidence |
 | D10 | **Dependency order** | Consumed contracts and dependency/build order agree with the approved impact map; discrepancies are blocking questions |
 | D11 | **Zero unresolved blockers** | No open blocking PM, PE, or domain question remains; safe defaults are explicit only for non-blocking deferrals |
-| D12 | **Output completeness** | Required header references, tables, check summary, and explicit dev-review status are present with no placeholders presented as facts |
+| D12 | **Output completeness** | Required header references, tables, check summary, PR readiness handoff, and explicit dev-review status are present with no placeholders presented as facts |
 
 ## Verdict
 
