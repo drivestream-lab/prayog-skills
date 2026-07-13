@@ -38,9 +38,10 @@ product code** unless the user explicitly asks after the checklist.
 9. Resolve `check_command` and `test_command`; resolve `verify_command` and
    `ground_command` when applicable. If the plan/profile/`AGENTS.md`/
    `tests_readme` cannot supply a required command, stop with MISSING command.
-10. Confirm the current wave has a GitHub issue created from plan §9 and every
-    declared predecessor wave issue exists. A missing/partial board seed blocks
-    pre-implementation.
+10. Confirm board seed from plan §9: **EPIC** issue exists, every declared wave
+    issue exists, and waves are **sub-issues of the EPIC** on the programme
+    board (governance `project_board.name`). Run `/board-seed` if missing.
+    A missing/partial seed blocks pre-implementation.
 11. **Spec merge gate** — before W0 (and before any `/loop-spec`), confirm:
     - current branch is the **integration branch** (`develop`) or a
       `feature/INIT-*-w{N}-*` wave branch cut from it — **not** an open
@@ -56,7 +57,7 @@ product code** unless the user explicitly asks after the checklist.
 ## Chain position
 
 ```
-spec merge (spec-lgtm on head) → board-seed → wave issue In Progress
+spec merge (spec-lgtm on head) → /board-seed → wave issue In Progress
     ↓
 /ground-spec (prior wave) → human_approved in as-built   [Wn>0 only]
     ↓

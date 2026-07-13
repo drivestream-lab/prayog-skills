@@ -157,10 +157,8 @@ nodes:
       failed: workflow-stop
 
   board-seed:
-    type: external-action
-    owner: engineering
-    provider: github
-    authorization: explicit
+    type: skill
+    profile: development
     requires:
       - spec-pr-merged
       - implementation-plan-current

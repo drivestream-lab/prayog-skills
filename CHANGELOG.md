@@ -5,6 +5,22 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [0.4.3-rc.3] — local RC
+
+### Added
+
+- **`/board-seed`** skill — stack-agnostic post-merge board seeding: governance
+  board binding (read-only meta), EPIC parent + wave sub-issues on org Project,
+  initiative grouping. Registered on all app profiles and in `workflow.yaml`.
+- Delivery contract `profiles: [app]` token for Gate 2 labels (any non-meta-pm stack).
+
+### Changed
+
+- `spec-implementation-plan` delegates post-merge seeding to `/board-seed`; §9
+  `target.project` must match `governance.project_board.name`.
+- `pre-implement` rule 10 requires EPIC + wave sub-issue tree on programme board.
+- `workflow.yaml` `board-seed` node is now `type: skill` (development lane).
+
 ## [0.4.3-rc.1] — local RC
 
 ### Added — versioned SDD handoff and freshness contracts

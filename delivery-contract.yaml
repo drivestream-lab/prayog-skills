@@ -47,27 +47,27 @@ github:
     - name: spec-pending
       color: BFD4F2
       description: Gate 2 awaiting PE review
-      profiles: [python-backend, frontend, terraform-iac]
+      profiles: [app]
     - name: spec-blocked
       color: D73A4A
       description: Gate 2 blocked or changes requested
-      profiles: [python-backend, frontend, terraform-iac]
+      profiles: [app]
     - name: spec-lgtm
       color: 0E8A16
       description: Gate 2 approved for current spec PR head
-      profiles: [python-backend, frontend, terraform-iac]
+      profiles: [app]
     - name: spec-revised
       color: FBCA04
       description: Spec package revised; re-review required
-      profiles: [python-backend, frontend, terraform-iac]
+      profiles: [app]
     - name: spec-stale
       color: E99695
       description: Upstream meta or PRD approval is stale
-      profiles: [python-backend, frontend, terraform-iac]
+      profiles: [app]
   review_roles:
     gate-1:
       role: engineering-gate
       profiles: [meta-pm]
     gate-2:
       role: engineering-gate
-      profiles: [python-backend, frontend, terraform-iac]
+      profiles: [app]

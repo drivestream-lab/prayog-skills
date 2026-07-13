@@ -48,7 +48,8 @@ PM skills validate and refine PRDs. Dev skills implement spec slices in service 
 | **spec-draft** | Dev translates PRD → spec slice for this repo |
 | **initiative-feasibility** | Dev reviews spec for buildability |
 | **spec-technical-review** | PE resolves engineering decisions + drafts ADRs |
-| **spec-implementation-plan** | Wave plan + board-seed YAML (§9) |
+| **spec-implementation-plan** | Wave plan + §9 WorkManifest YAML on spec branch |
+| **board-seed** | EPIC + wave tree on programme board after spec merge (all app stacks) |
 | **pre-implement** | Pre-flight before each implementation wave |
 | **loop-spec** | Implement → verify → fix per task |
 | **ground-spec** | Wave complete — FR validation + contracts for next wave |
@@ -77,7 +78,7 @@ Eng: Draft spec PR (entire spec lifecycle) for approved repo scope
     ↓
 PE sets spec-lgtm on exact head → Ready for review → Approve → merge
     ↓
-Merge spec PR → develop → board-seed (automation on merge in pilot)
+Merge spec PR → develop → **`/board-seed`** (governance board + EPIC/wave tree)
     ↓
 Per wave:  /pre-implement  →  /loop-spec  →  /ground-spec  →  human checkpoint
 ```

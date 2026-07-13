@@ -98,42 +98,14 @@ Use [references/output-template.md](references/output-template.md).
 
 The plan's final section (§9) emits a ready-to-use WorkManifest YAML stub.
 
-**After spec PR merge** — not before — the dev team seeds the board from §9:
+**After spec PR merge** — not before — run **`/board-seed`** (development lane,
+stack-agnostic). That skill reads §9, governance board binding from read-only
+meta, creates EPIC + wave sub-issues on the programme Project, and hands off to
+`/pre-implement`.
 
-```bash
-# One GitHub Issue per wave (W0, W1, …) — primary path
-gh issue create --repo {org}/{repo} \
-  --title "[{INITIATIVE} W0] {wave goal}" \
-  --body-file /tmp/w0-body.md \
-  --label "{initiative-label}"
-```
-
-One TASK row in the plan maps to work described in the wave issue body.
-Wave hierarchy is expressed via `depends_on` in §9 YAML (and GitHub issue links
-in issue bodies when seeding manually).
-
-### Engineering board-seed action
-
-This is an external workflow action, not a skill and not part of plan creation.
-After spec merge, the engineering agent:
-
-1. confirms the merged plan and P14-valid §9 are current,
-2. searches existing issues by initiative + wave id to avoid duplicates,
-3. runs `gh auth status`,
-4. presents the create/existing issue plan,
-5. after explicit developer authorization, creates only missing issues,
-6. applies initiative labels and writes dependency links,
-7. reports every created/existing issue URL.
-
-Outcomes:
-
-- `seeded` / `already-seeded` → workflow `pass`
-- `auth-unavailable` / `partial` → workflow `blocked`
-- command/API failure → workflow `failed`
-
-When `gh` is unavailable, print exact commands and do not claim seeding
-completed. `/pre-implement` must not start until every expected wave has an
-issue.
+When authoring §9, set `target.org` and `target.project` from governance
+(`project_board.name` in `{meta_repo}/config/governance-*.yaml`). Do not invent
+board names.
 
 ## Workflow handoff
 
