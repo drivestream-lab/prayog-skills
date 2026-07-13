@@ -37,6 +37,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Corrected WorkManifest P14 from §8 to §9 and added `spec_path` to TASK rows.
 - Corrected wave ordering so grounding precedes human approval.
 - Fixed the verify-policy link to shared layout defaults.
+- **ADR lifecycle** — `/spec-technical-review` now creates Draft ADR files under
+  `{adr_dir}` and TDD §4 is an index only. PE acceptance (`Draft` → `Accepted`)
+  happens on the spec PR before `/spec-implementation-plan`. Removed obsolete
+  `TASK-SPEC-ADR-NN` promotion tasks from planning; P12/P13 verify Accepted ADR
+  files exist instead.
 
 ---
 

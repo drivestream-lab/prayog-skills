@@ -55,8 +55,8 @@
 
 - [ ] Slice spec does not contradict any listed ADR
 - [ ] Plan TASK MDC notes and ADR notes for this wave reviewed
-- [ ] Any NEW-ADR from the plan has a draft-ADR task scheduled before the
-  decision is encoded in code
+- [ ] Every initiative ADR cited for this wave is **Accepted** in `{adr_dir}`
+  (created during `/spec-technical-review`, not promoted during planning)
 
 ---
 
@@ -67,7 +67,7 @@
 - [ ] `tests_readme` — feature map row if verification coverage changes
 - [ ] Unit verification scope — edges and boundary behaviour (mocked dependencies)
 - [ ] Live verification — one end-to-end happy path per feature
-- [ ] ADR — draft or update when plan flags NEW-ADR or a decision changed
+- [ ] ADR — update when this wave supersedes an Accepted ADR (requires PE review)
 
 ---
 

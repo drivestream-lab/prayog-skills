@@ -105,12 +105,21 @@ nodes:
     type: skill
     profile: development
     outcomes:
-      pass: spec-implementation-plan
+      pass: technical-review-approval
       findings: spec-human-decision
       needs-input: spec-human-decision
       blocked: spec-human-decision
       stale: initiative-feasibility
       failed: workflow-stop
+
+  technical-review-approval:
+    type: human-checkpoint
+    owner: engineering-gate
+    outcomes:
+      pass: spec-implementation-plan
+      findings: spec-technical-review
+      blocked: spec-human-decision
+      stale: initiative-feasibility
 
   spec-human-decision:
     type: human-checkpoint

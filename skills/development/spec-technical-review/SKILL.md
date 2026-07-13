@@ -35,12 +35,14 @@ gate, `agentic_development_workflow` multi-role review, GitHub Spec Kit
 3. Do not ask PM to choose architecture. Route only product-scope and
    user-visible behaviour questions to the **meta PRD PR**. See
    [references/governance.md](references/governance.md) for the routing rubric.
-4. Every `NEW-ADR` from the feasibility report must map to a **draft ADR** or
-   an explicit defer entry in this document.
+4. Every `NEW-ADR` from feasibility maps to exactly one disposition:
+   `ADR_REQUIRED` with a Draft file under `adr_dir`, `TDD_ONLY` with rationale,
+   or `DEFERRED_WITH_DEFAULT` with risk and revisit trigger.
 5. Dual output: chat summary + saved TDD file committed to spec branch.
 6. Run T0–T5 control loop (Gather → Understand → Analyze → Design → Execute → Verify).
-7. Human PE sign-off is **required** before the implementation plan runs — PE
-   **Approve** on the spec PR, not a separate merge gate after spec merge.
+7. Human PE sign-off is **required** before the implementation plan runs.
+   Technical review creates Draft ADR files first; planning consumes only
+   accepted decisions with final PE approval on the exact current PR head.
 8. Verify that spec, feasibility report, PRD digest, impact-map revision, repo
    scope digest, and approved meta PR head agree. Stop on stale inputs.
 
@@ -77,12 +79,15 @@ Resolve paths from `.harness/profile.yaml` or
 3. **T2 Analyze** — read relevant Accepted ADRs; read rules_glob; map each
    finding to an engineering decision, a PM question, or a domain clarification
    (routing rubric in [references/governance.md](references/governance.md))
-4. **T3 Design** — for each engineering decision: state options, state
-   recommended choice with rationale, write draft ADR if required; produce
-   module boundary diagram; specify public interface contracts
-5. **T4 Execute** — write TDD; run T1–T11 checks; commit to spec branch
-6. **T5 Verify** — all engineering blockers resolved or deferred with defaults;
-   only genuine PM/domain questions remain outstanding (routed to meta PRD PR)
+4. **T3 Design** — classify every NEW-ADR using the rubric below; for each
+   `ADR_REQUIRED`, allocate a stable file path and render
+   [references/adr-template.md](references/adr-template.md); produce module
+   boundaries and public interface contracts
+5. **T4 Execute** — write TDD + every Draft ADR file; make TDD §4 an ADR
+   index; run T1–T11 checks
+6. **T5 Verify** — all required ADR files exist and are linked; all engineering
+   blockers are resolved/deferred; only genuine PM/domain questions remain;
+   emit `ready_for_pe_review: true` and `ready_for_plan: false`
 
 ## Output
 
@@ -92,12 +97,22 @@ Use [references/output-template.md](references/output-template.md).
 
 ## PE sign-off
 
-Commit TDD to the spec PR branch. PE reviews on the **same spec PR**:
+Commit TDD + Draft ADR files to the spec PR. PE reviews both:
 - Discuss engineering decisions in spec PR comments
-- Submit GitHub **Approve** when T1–T11 checks pass
+- Request changes until decisions and artifacts are correct
 - CODEOWNERS on `Technical-Review-*` enforces PE as required reviewer
 
-After PE approves, dev runs `/spec-implementation-plan` on the same branch.
+When PE explicitly states decisions are ready for acceptance:
+
+1. update required ADR files `Draft` → `Accepted` with PE/date/review evidence,
+2. update the TDD ADR index and handoff to `ready_for_final_approval: true`,
+3. commit the final TDD + Accepted ADR metadata,
+4. PE gives the formal GitHub **Approve** on that exact final head,
+5. no files change after approval; the workflow approval node may then route to
+   `/spec-implementation-plan`.
+
+This avoids a post-approval metadata commit invalidating stale-review
+protection.
 
 ## Routing rubric
 
@@ -112,34 +127,30 @@ Quick rule:
 - **Auto-fixable** — naming drift, enum value mismatches with spec → agent fixes
   without human, note in TDD
 
-## Draft ADR format
+## ADR qualification rubric
 
-For each NEW-ADR finding, produce a draft section (not a file during PE review).
-After PE Approve, `/spec-implementation-plan` must include a pre-W0
-`TASK-SPEC-ADR-NN` that promotes each TDD §4 draft to
-`{adr_dir}/adr-NNN-{slug}.md` with status Accepted, PE name, and date. Manual
-promotion by PE or human is a valid fallback if the plan has not run yet.
+Use `ADR_REQUIRED` when the decision is cross-module/service, security/privacy
+relevant, chooses data/storage authority or deployment architecture, is hard to
+reverse, constrains later initiatives, or deliberately departs from the
+constitution.
 
-```markdown
-### Draft ADR — {short title}
-**Status:** Draft (requires PE sign-off)
-**Problem:** …
-**Options considered:**
-  A. … (pros / cons)
-  B. … (pros / cons)
-**Recommendation:** Option A — {one-sentence rationale}
-**Consequences:** …
-**Open for review by:** {PE name or "PE checkpoint"}
-```
+Use `TDD_ONLY` for a local, easily reversible implementation choice already
+bounded by rules. Use `DEFERRED_WITH_DEFAULT` only with a named risk, safe
+default, and observable revisit trigger.
+
+Every disposition remains traceable to its feasibility finding. Never satisfy
+T11 with a future promotion task or a target path alone.
 
 ## Workflow handoff
 
 Append the envelope from `../../../references/handoff-envelope.md` to the TDD.
 Use stage `spec-technical-review`.
 
-- `pass` → `spec-implementation-plan`
+- `pass` → `technical-review-approval`
 - `findings` / `needs-input` / `blocked` → human decision
 - `stale` → `initiative-feasibility`
 - `failed` → stop
 
-Set `human_checkpoint: true` until the required PE review is recorded.
+Before final approval, signals must include actual Draft ADR paths/digests,
+`ready_for_pe_review: true`, and `ready_for_plan: false`. After the final
+exact-head approval, the approval node—not this skill—enables planning.

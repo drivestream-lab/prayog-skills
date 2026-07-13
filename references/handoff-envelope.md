@@ -46,6 +46,12 @@ handoff:
 6. Never perform an external action without explicit authorization.
 7. A stale artifact routes to the workflow's stale transition, not the nominal
    next skill.
+8. `next_candidates` never bypasses `human_checkpoint: true`.
+9. Technical review reports `ready_for_pe_review: true` and
+   `ready_for_plan: false` until final exact-head PE approval is observed by the
+   `technical-review-approval` node.
+10. ADR signals contain actual file paths/digests; target paths or future
+    promotion tasks are not artifacts.
 
 ## Outcome vocabulary
 

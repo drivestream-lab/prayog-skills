@@ -44,7 +44,7 @@ deciders: Dev team lead — explicit LGTM required
 |------|-------|
 | Technical review | {path to Technical-Review-{initiative}.md or "N/A — no NEW-ADR findings"} |
 | PE sign-off | {[ ] required / [x] complete — date} |
-| Resolved ADRs | {adr_dir/adr-NNN-slug.md (link), … or N/A — must be adr_dir file paths, not TDD section refs} |
+| Resolved ADRs | {adr_dir/adr-NNN-slug.md (link, Status: Accepted), … or N/A — canonical files created by `/spec-technical-review` and accepted before planning; TDD §4 index refs alone are not sufficient} |
 | Outstanding PM questions | {list or "none — all resolved"} |
 | Outstanding domain questions | {list or "none — all resolved"} |
 
@@ -134,32 +134,10 @@ deciders: Dev team lead — explicit LGTM required
 |------|------|--------|
 | Update implementation-status.md | `docs/specification/as-built/implementation-status.md` | mark wave in_progress → complete |
 | Update tests/README.md | `tests/README.md` | add verify commands for new scripts |
-| TASK-SPEC-ADR-NN (one row per NEW-ADR) | `docs/specification/adr/adr-NNN-{slug}.md` | promote TDD §4.N draft → Accepted ADR file; set status Accepted + PE name + date; update TDD §4.N status from Draft → Accepted (conditional: include only when NEW-ADR findings exist; pre-W0) |
 
-> **Accepted ADR file format** — use this structure when writing each `adr_dir` file:
->
-> ```markdown
-> # ADR-{NNN} — {short title}
->
-> | Field  | Value |
-> |--------|-------|
-> | Status | Accepted |
-> | Date   | {YYYY-MM-DD of PE Approve} |
-> | PE     | @{pe-name} |
-> | TDD    | {path to Technical-Review-{initiative}.md} §4.{n} |
->
-> ## Context
-> {Problem statement from TDD §4.N}
->
-> ## Decision
-> {Chosen option + one-sentence rationale from TDD §4.N Recommendation}
->
-> ## Consequences
-> {From TDD §4.N Consequences}
-> ```
->
-> The acceptance date and PE name come from the GitHub Approve event on the spec PR —
-> not from the date the file is written.
+> **ADR lifecycle** — Draft and Accepted ADR files are created and accepted during
+> `/spec-technical-review` and the `technical-review-approval` checkpoint.
+> Planning consumes Accepted files only; do not add ADR promotion tasks here.
 
 ---
 

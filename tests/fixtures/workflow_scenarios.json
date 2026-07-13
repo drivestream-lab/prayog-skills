@@ -18,6 +18,18 @@
     "next": "spec-technical-review"
   },
   {
+    "name": "technical review routes to PE approval gate",
+    "stage": "spec-technical-review",
+    "outcome": "pass",
+    "next": "technical-review-approval"
+  },
+  {
+    "name": "PE approval enables implementation plan",
+    "stage": "technical-review-approval",
+    "outcome": "pass",
+    "next": "spec-implementation-plan"
+  },
+  {
     "name": "plan passes through Gate 2",
     "stage": "spec-implementation-plan",
     "outcome": "pass",
