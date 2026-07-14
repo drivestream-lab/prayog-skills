@@ -12,7 +12,7 @@ agent can resolve the next stage without platform-specific skill calls.
 | | |
 |---|---|
 | **License** | [MIT](LICENSE) |
-| **Version** | see [`VERSION`](VERSION) (currently **0.4.3-rc.2**) |
+| **Version** | see [`VERSION`](VERSION) (currently **0.4.3**) |
 | **Install** | [skills CLI](https://skills.sh) or `launchpad sync-harness-*` |
 | **Pairs with** | [launchpad](https://github.com/drivestream-lab/launchpad) · `*-rules` repos |
 

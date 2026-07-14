@@ -5,71 +5,44 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
-## [0.4.3-rc.3] — local RC
+## [0.4.3] — 2026-07-14
 
-### Added
+### Added — SDD delivery contract (Gate 1 / Gate 2) and `/board-seed`
 
-- **`/board-seed`** skill — stack-agnostic post-merge board seeding: governance
-  board binding (read-only meta), EPIC parent + wave sub-issues on org Project,
-  initiative grouping. Registered on all app profiles and in `workflow.yaml`.
-- Delivery contract `profiles: [app]` token for Gate 2 labels (any non-meta-pm stack).
+- Root `delivery-contract.yaml` and `workflow.yaml` — portable skill chaining;
+  every skill emits the shared persistent handoff envelope.
+- **Gate 1 (meta):** `/prd-impact-map` revisioned artifact, Draft-PR readiness
+  handoff, PE-controlled pending/blocked/LGTM labels.
+- **Gate 2 (app):** Draft spec PR + labels (`spec-pending`, `spec-lgtm`, …);
+  full package on head before PE unlock; Approve attestation body in
+  `spec-implementation-plan` §10.
+- **`/board-seed`** — stack-agnostic post-merge board seeding (governance board
+  binding, EPIC + wave sub-issues on org Project). On all app profiles;
+  `workflow.yaml` `board-seed` is `type: skill`.
+- Delivery contract `profiles: [app]` token for Gate 2 on any non-meta-pm stack.
+- `pre-implement` / `loop-spec` block coding until spec merge with `spec-lgtm`
+  and board-seed complete.
+- Feasibility, TDD, planning, and pre-implement templates carry freshness and
+  command contracts; CI validates handoff/ripple fixtures.
 
 ### Changed
 
-- `spec-implementation-plan` delegates post-merge seeding to `/board-seed`; §9
-  `target.project` must match `governance.project_board.name`.
-- `pre-implement` rule 10 requires EPIC + wave sub-issue tree on programme board.
-- `workflow.yaml` `board-seed` node is now `type: skill` (development lane).
-
-## [0.4.3-rc.1] — local RC
-
-### Added — versioned SDD handoff and freshness contracts
-
-- Root `delivery-contract.yaml` and `workflow.yaml` define portable existing-skill
-  chaining; every skill now emits the shared persistent handoff envelope.
-- `/prd-impact-map` now produces a canonical, revisioned impact-map artifact
-  with PRD and per-repo scope digests, SHA-bound tech-lead approval, explicit
-  effective states, and downstream ripple actions.
-- `/prd-impact-map` now generates its artifact before a PR exists, emits a
-  complete Draft-PR readiness handoff, and forbids GitHub side effects until
-  explicit user authorization. Gate 1 uses PE-controlled pending/blocked/LGTM
-  labels with revised/stale invalidation labels.
-- `/spec-draft` now fails closed on stale/unapproved handoffs and runs D1–D12
-  completeness checks covering traceability, acceptance, negative paths,
-  contracts, NFR applicability, assumptions, and blocking questions.
-- `/spec-draft` now mirrors the PM lane: generate the spec slice locally, emit a
-  Draft-PR readiness handoff in chat, and open the Draft spec PR with
-  `spec-pending` only after explicit user authorization.
-- Gate 2 labels (`spec-pending`, `spec-lgtm`, …) for app repos in
-  `delivery-contract.yaml`; `review_roles.gate-2` for PE-controlled unlock.
-- Downstream spec skills aligned: Draft PR + `spec-pending` through feasibility,
-  TDD, and planning; **`spec-lgtm`** only after full package on head.
-- `spec-implementation-plan` §10: PE Gate 2 unlock checklist and Approve
-  attestation body (mirrors meta impact-map pattern).
-- `pre-implement` and `loop-spec` block coding until spec merge with
-  `spec-lgtm` on head and board-seed complete.
-- Feasibility, technical review, planning, and pre-implement templates now
-  carry source freshness and command contracts.
-- CI now validates check ranges, template contracts, links, profile keys, and
-  deterministic handoff/ripple scenarios.
-- Added a team-first pilot playbook with scenario coverage, scorecard metrics,
-  and review-graduation criteria. (Removed — process lives in skills and
-  launchpad playbook.)
-- `update-documents` now separates Resolution and Ad-hoc modes, requires every
-  propagated edit to cite an approved decision source, and routes new semantic
-  choices back to `review-findings` instead of requesting retrospective sign-off.
+- `spec-draft` mirrors the PM lane (local slice → readiness handoff → Draft PR
+  after explicit authorization); fails closed on stale/unapproved handoffs (D1–D12).
+- Downstream eng skills keep Draft PR + `spec-pending` through planning;
+  **`spec-lgtm`** only after full package.
+- `spec-implementation-plan` delegates post-merge seeding to `/board-seed`;
+  §9 `target.project` must match `governance.project_board.name`.
+- `update-documents` separates Resolution and Ad-hoc modes; new semantic
+  choices route back to `review-findings`.
 
 ### Fixed
 
-- Aligned technical-review references on T1–T11.
-- Corrected WorkManifest P14 from §8 to §9 and added `spec_path` to TASK rows.
-- Corrected wave ordering so grounding precedes human approval.
-- Fixed the verify-policy link to shared layout defaults.
-- **ADR lifecycle** — `/spec-technical-review` now creates Draft ADR files under
-  `{adr_dir}` and TDD §4 is an index only. PE acceptance (`Draft` → `Accepted`)
-  happens on the spec PR before `/spec-implementation-plan`. Removed obsolete
-  `TASK-SPEC-ADR-NN` promotion tasks from planning; P12/P13 verify Accepted ADR
-  files exist instead.
+- **ADR lifecycle** — `/spec-technical-review` creates Draft ADR files under
+  `{adr_dir}`; TDD §4 is an index. PE acceptance before planning; P12/P13
+  verify Accepted ADR files (no obsolete promotion tasks).
+- Technical-review T1–T11 refs; WorkManifest P14 / `spec_path`; wave ordering
+  (grounding before human approval); verify-policy layout defaults.
 
 ---
 
