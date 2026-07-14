@@ -135,4 +135,25 @@ Human must:
 - [ ] Review FR checklist — all pass or explicitly deferred
 - [ ] Review §Contracts produced — accurate and complete for next wave
 - [ ] Mark as-built: {SPEC} W{N} = human_approved
+
+## Workflow handoff
+
+handoff:
+  contract: sdd-delivery/v2
+  stage: ground-spec
+  outcome: {pass | findings | needs-input | blocked | failed}
+  artifact:
+    path: {reports_dir}/Ground-Report-{SPEC}-W{N}.md
+    digest: sha256:{hex}
+  blockers: []
+  signals:
+    wave: W{N}
+    contracts_produced: {count}
+  next_candidates:
+    - wave-human-decision
+  human_checkpoint: true
+  external_action: false
 ```
+
+The Ground Report is not complete without this handoff. Findings/failure route
+back to `loop-spec`; pass always stops at the human wave checkpoint.

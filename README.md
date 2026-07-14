@@ -4,10 +4,15 @@
 
 Skills answer **what steps an agent runs** (validate PRD, draft spec, pre-implement gate, live verify). They complement **rules** repos (`.mdc` coding constitution at `.cursor/rules/`) and **launchpad** (factory CLI + playbook).
 
+Portable delivery semantics live in [`workflow.yaml`](workflow.yaml) under the
+contract in [`delivery-contract.yaml`](delivery-contract.yaml). Every skill
+persists a standard handoff so Cursor, Claude Code, Codex, or a Launchpad-seeded
+agent can resolve the next stage without platform-specific skill calls.
+
 | | |
 |---|---|
 | **License** | [MIT](LICENSE) |
-| **Version** | see [`VERSION`](VERSION) (currently **0.4.1**) |
+| **Version** | see [`VERSION`](VERSION) (currently **0.4.3**) |
 | **Install** | [skills CLI](https://skills.sh) or `launchpad sync-harness-*` |
 | **Pairs with** | [launchpad](https://github.com/drivestream-lab/launchpad) · `*-rules` repos |
 
@@ -34,7 +39,7 @@ PM skills validate and refine PRDs. Dev skills implement spec slices in service 
 | **validate-requirements** | Auditing PRD completeness |
 | **review-findings** | PM decides on findings |
 | **update-documents** | PM refines PRD after findings |
-| **prd-impact-map** | Maps PRD to affected repos |
+| **prd-impact-map** | Generates a versioned PRD → repo map and Draft-PR readiness handoff |
 
 ### Development (app repos — harness seeded)
 
@@ -43,7 +48,8 @@ PM skills validate and refine PRDs. Dev skills implement spec slices in service 
 | **spec-draft** | Dev translates PRD → spec slice for this repo |
 | **initiative-feasibility** | Dev reviews spec for buildability |
 | **spec-technical-review** | PE resolves engineering decisions + drafts ADRs |
-| **spec-implementation-plan** | Wave plan + board-seed YAML (§9) |
+| **spec-implementation-plan** | Wave plan + §9 WorkManifest YAML on spec branch |
+| **board-seed** | EPIC + wave tree on programme board after spec merge (all app stacks) |
 | **pre-implement** | Pre-flight before each implementation wave |
 | **loop-spec** | Implement → verify → fix per task |
 | **ground-spec** | Wave complete — FR validation + contracts for next wave |
@@ -56,18 +62,35 @@ Profile manifests (`profiles/*.yaml`) list which dev skills apply per harness pr
 ## Dev workflow (high level)
 
 ```text
-Eng opens spec PR (chore/INIT-*-spec-{repo})
+PM: validated PRD → generate Impact-Map-{INIT}.md locally
+    → review PR-readiness handoff → user authorizes Draft PR creation
+    → agent uses gh when configured; initializes impact-map-pending
+    → product clarification on PR; PE sets impact-map-lgtm
+    → tech-lead Approve on exact meta PR head SHA
+    → merge PRD PR to develop
+    ↓
+Eng: Draft spec PR (entire spec lifecycle) for approved repo scope
+    → spec-pending; Q&A on Draft PR
     ↓
 /spec-draft  →  /initiative-feasibility  →  [/spec-technical-review]
     ↓
 /spec-implementation-plan  (§9 WorkManifest YAML on spec branch)
     ↓
-Merge spec PR → develop → seed board issues per wave
+PE sets spec-lgtm on exact head → Ready for review → Approve → merge
+    ↓
+Merge spec PR → develop → **`/board-seed`** (governance board + EPIC/wave tree)
     ↓
 Per wave:  /pre-implement  →  /loop-spec  →  /ground-spec  →  human checkpoint
 ```
 
 Full process: [launchpad delivery workflow](https://github.com/drivestream-lab/launchpad/blob/main/playbook/delivery-workflow.md).
+
+Artifacts are the source of truth. GitHub labels are status projections only.
+PE moves Gate 1 through `impact-map-pending`, `impact-map-blocked`, and
+`impact-map-lgtm`; Gate 2 through `spec-pending`, `spec-blocked`, and
+`spec-lgtm`. Revised or stale labels close the gate. Never infer approval from
+labels alone — require matching GitHub Approve and artifact digests on the exact
+PR head.
 
 ---
 

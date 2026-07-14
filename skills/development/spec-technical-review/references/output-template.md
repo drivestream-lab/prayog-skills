@@ -4,7 +4,14 @@
 |-------|-------|
 | Initiative | {INITIATIVE} |
 | Spec | {SPEC_PATH} |
+| Spec digest | `sha256:{hex}` |
 | Feasibility report | {FEASIBILITY_PATH} |
+| Feasibility digest | `sha256:{hex}` |
+| PRD digest | `sha256:{hex}` |
+| Impact map / revision | `{path}` / `{N}` |
+| Repo scope digest | `sha256:{hex}` |
+| Approved meta PR head | `{SHA}` |
+| Source freshness | CURRENT / STALE — reason |
 | Repo | {REPO} |
 | Date | {YYYY-MM-DD} |
 | Branch | `chore/INIT-{COMPONENT}-{NUMBER}-spec-{repo}` (spec PR — TDD committed here) |
@@ -62,41 +69,24 @@ engineering terms (stack-agnostic — describe shapes and invariants, not syntax
 
 ## 4. ADR resolutions
 
-One subsection per `NEW-ADR` finding from the feasibility report.
+Every feasibility `NEW-ADR` appears once. `ADR_REQUIRED` rows link actual files
+rendered from [adr-template.md](adr-template.md). **Do not embed ADR body content
+in the TDD** — the canonical Draft lives in `{adr_dir}`; this section is an index
+only.
 
-> **ADR status lifecycle:**
-> - **Draft** — written here during technical review; open for PE discussion.
-> - **Accepted** — the moment PE gives GitHub Approve on this spec PR. That
->   Approve is the decision gate; no separate acceptance step exists.
-> - **Record-keeping after Approve (two required steps):**
->   1. Dev updates the `**Status:**` line in this §4.N section to
->      `Accepted — @{pe-name}  {YYYY-MM-DD}`.
->   2. `/spec-implementation-plan` adds `TASK-SPEC-ADR-NN` to write
->      `{adr_dir}/adr-NNN-{slug}.md` with status Accepted + PE name + date.
->      Manual promotion by PE/human is valid if plan has not run yet.
+| Finding | Classification | ADR file / TDD section | Recommendation / default | Status | Digest |
+|---------|----------------|------------------------|--------------------------|--------|--------|
+| {F13-NN} | ADR_REQUIRED | `{adr_dir}/adr-{NNN}-{slug}.md` | {choice} | Draft | `sha256:{hex}` |
+| {F13-NN} | TDD_ONLY | §9 row {id} | {choice + rationale} | Resolved | N/A |
+| {F13-NN} | DEFERRED_WITH_DEFAULT | §9 row {id} | {default + revisit trigger} | Deferred | N/A |
 
-### 4.{n} Draft ADR — {short title}
+**Derived counts:**
 
-**Feasibility finding:** {C-id or G-id}
-**Status:** Draft — requires PE sign-off
-**Target file:** `{adr_dir}/adr-{NNN}-{slug}.md` (written by TASK-SPEC-ADR-NN after PE Approve)
-
-**Problem:**
-{1–2 sentences.}
-
-**Options considered:**
-
-| Option | Pros | Cons |
-|--------|------|------|
-| A. {option} | | |
-| B. {option} | | |
-
-**Recommendation:** Option {A/B} — {one-sentence rationale}
-
-**Consequences:**
-- {impact on other modules, test strategy, or future spec}
-
-**Open for review by:** PE checkpoint
+- ADR_REQUIRED: {N}
+- TDD_ONLY: {N}
+- DEFERRED_WITH_DEFAULT: {N}
+- Draft ADR files created: {N}
+- Missing/broken ADR files: {N}
 
 ---
 
@@ -141,9 +131,9 @@ One subsection per `NEW-ADR` finding from the feasibility report.
 
 All items from feasibility routed to PE lane. Every row must show a resolution.
 
-| Finding ID | Question | Resolution | Default assumption if deferred |
-|------------|----------|------------|-------------------------------|
-| {C1/G1/…} | {engineering question} | {resolved: option chosen} / {deferred: reason} | {default} |
+| Finding ID | Owner | Status | Question | Resolution | Required by | Default if deferred | Evidence / reference |
+|------------|-------|--------|----------|------------|-------------|---------------------|----------------------|
+| {C1/G1/…} | {PE} | resolved/deferred | {engineering question} | {option chosen / defer reason} | plan | {safe default} | {finding/ADR/comment} |
 
 ---
 
@@ -152,28 +142,28 @@ All items from feasibility routed to PE lane. Every row must show a resolution.
 These items remain open and require PM input before the implementation plan
 is considered unblocked.
 
-| # | Question | Blocks |
-|---|----------|--------|
-| PM-{n} | {product question — user-visible behaviour or scope} | {plan wave} |
+| ID | Owner | Status | Question | Blocking | Required by | Default if deferred | Evidence | Resolution reference |
+|----|-------|--------|----------|----------|-------------|---------------------|----------|----------------------|
+| PM-{n} | {PM} | open/resolved/deferred | {product question — user-visible behaviour or scope} | yes/no | {plan wave/stage} | {safe default or none} | {spec/PRD ref} | {meta PR URL or pending} |
 
 ---
 
 ## 11. Routed out — domain clarifications (SME)
 
-| # | Question | SME / owner | Blocks |
-|---|----------|-------------|--------|
-| D-{n} | {business source-of-truth question} | {name / team} | {plan wave} |
+| ID | Owner | Status | Question | Blocking | Required by | Default if deferred | Evidence | Resolution reference |
+|----|-------|--------|----------|----------|-------------|---------------------|----------|----------------------|
+| D-{n} | {SME/team} | open/resolved/deferred | {business source-of-truth question} | yes/no | {plan wave/stage} | {safe default or none} | {source ref} | {URL/path or pending} |
 
 ---
 
-## 12. Auto-fixed items
+## 12. Fix disposition
 
-Items the agent resolved without human input (naming drift, inferred
-cross-references, spec typos). These are **done** — no action required.
+Use `auto-fixed` only when the target artifact was actually edited. Otherwise
+use `planned-auto-fix` or `suggested-fix`.
 
-| ID | Item | Fix applied |
-|----|------|-------------|
-| AF-{n} | {e.g. CLI flag name drift} | {e.g. aligned spec to schema enum value} |
+| ID | Status | Item | Target/evidence | Result digest |
+|----|--------|------|-----------------|---------------|
+| AF-{n} | auto-fixed / planned-auto-fix / suggested-fix | {item} | {path + before/after or future task} | {digest or N/A} |
 
 ---
 
@@ -181,12 +171,13 @@ cross-references, spec typos). These are **done** — no action required.
 
 | Gate | Status |
 |------|--------|
-| All T1–T10 checks | {PASS / FAIL — list blocking items} |
+| All T1–T11 checks | {PASS / FAIL — list blocking items} |
 | Engineering decisions resolved | {N resolved, N deferred with defaults} |
-| Draft ADRs written | {N drafts} |
-| PM questions outstanding | {N — list} |
-| Domain questions outstanding | {N — list} |
-| **Ready for /spec-implementation-plan** | **YES / NO — reason** |
+| Draft ADR files written | {N files / N required} |
+| PM questions outstanding | {derived row count — list} |
+| Domain questions outstanding | {derived row count — list} |
+| Ready for PE review | YES / NO |
+| **Ready for /spec-implementation-plan** | **NO — final exact-head PE approval required** |
 
 ---
 
@@ -196,23 +187,24 @@ cross-references, spec typos). These are **done** — no action required.
 |-------|--------|-------|
 | T1 Module boundaries | PASS/FAIL/SKIPPED | |
 | T2 Interface contracts | | |
-| T3 NEW-ADR resolutions | | |
+| T3 NEW-ADR dispositions | | |
 | T4 Test policy | | |
 | T5 Error handling | | |
 | T6 Observability | | |
 | T7 Data contract ownership | | |
 | T8 Dependency graph | | |
 | T9 Engineering questions zero | | |
-| T10 PE sign-off gate | | |
-| T11 ADR promotion path | | |
+| T10 PE review readiness | | |
+| T11 ADR artifact integrity | | |
 
 ---
 
 ## PR instructions
 
-> Commit this TDD to the spec PR branch. PE reviews on the **same spec PR**.
-> PE GitHub Approve = sign-off. Spec PR cannot merge until PE approves (when TDD present).
-> CODEOWNERS enforces PE as a required reviewer on `Technical-Review-*`.
+> Commit this TDD to the **Draft spec PR** branch. PE reviews on the **same PR**.
+> Gate 2 label stays **`spec-pending`** until the implementation plan exists.
+> PE accepts architecture by committing **Accepted** TDD/ADR files — not by
+> setting `spec-lgtm` yet. CODEOWNERS may request PE review on `Technical-Review-*`.
 
 ```
 Branch:   chore/INIT-{COMPONENT}-{NUMBER}-spec-{repo}
@@ -226,17 +218,19 @@ Review deadline: {date from report header}
 PE review checklist (PE works through this on the spec PR):
   [ ] T1 Module boundaries — can I draw the box?
   [ ] T2 Interface contracts — are shapes and invariants specified?
-  [ ] T3 Draft ADRs — do recommendations make sense given existing ADRs?
+  [ ] T3 ADR dispositions — required Draft files exist; TDD-only/deferred rationales are valid
   [ ] T4 Test policy — is determinism policy acceptable?
   [ ] T9 Zero unresolved PE items?
-  [ ] T11 ADR promotion path — each §4 draft states how it will reach adr_dir
+  [ ] T11 ADR artifact integrity — every required file/link/digest is valid
 
-PE action:
-  Approve → GitHub "Approve" on spec PR
-  Request changes → spec PR thread with specific T-check item to fix
+PE action (artifact acceptance — mid-lane):
+  Review/comment or Request changes → developer updates TDD/ADR files
+  Explicitly state when decisions are ready for acceptance
+  Developer/PE updates ADR metadata Draft → Accepted and TDD Status → Accepted
+  Commit acceptance package to spec branch (label remains spec-pending)
 
-After PE approves:
-  Dev updates §Status in this file: "Accepted — @{pe-name}  {date}"
-  → /spec-implementation-plan can now run on the same branch
-  → after plan is committed: merge spec PR, then seed board from plan §9
+After artifact acceptance:
+  → /spec-implementation-plan may run on the same branch
+  → after plan on head: PE sets spec-lgtm + Approve + attestation
+  → Ready for review → merge → board-seed from merged plan §9
 ```

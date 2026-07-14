@@ -56,3 +56,15 @@ Do not skip prerequisites (running server, config files, bootstrap scripts) docu
 ## Run mode
 
 If the user asks to **run** verify: state the exact command from `tests_readme` and tracker **Verify command**; run it when the environment is available; report pass/fail.
+
+## Workflow handoff
+
+Emit the envelope from `../../../references/handoff-envelope.md` in the verify
+result and persist the command/evidence in the tracker or report. Use stage
+`verify`.
+
+- `pass` / justified `skipped` → `ground-spec`
+- `findings` / `failed` → `loop-spec`
+- `blocked` → human decision
+
+Never mark `pass` without command output or equivalent reproducible evidence.

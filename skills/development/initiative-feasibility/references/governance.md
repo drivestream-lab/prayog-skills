@@ -70,13 +70,14 @@ cross-service contracts, deployment, storage model, CLI shape):
 - Flag spec wording that **contradicts** an Accepted ADR → finding (feasibility)
   or RISK row (plan). Severity: **Critical** if blocking.
 - Flag **NEW-ADR** when spec chooses between alternatives with no existing ADR →
-  PE question (feasibility; route to `/spec-technical-review`) or
-  DEP/RISK + draft-ADR TASK (plan).
+  PE question (feasibility; route to `/spec-technical-review`).
 
-> **Accepted ADR SSOT** = files in `{adr_dir}`. TDD §4 draft sections are not
-> substitutes for Accepted ADR files at implementation time. A `draft-ADR TASK`
-> must produce a file at `{adr_dir}/adr-NNN-{slug}.md`; linking a TDD section
-> in §0 "Resolved ADRs" does not satisfy P12.
+> **Accepted ADR SSOT** = files in `{adr_dir}`. `/spec-technical-review` creates
+> Draft ADR files for every `ADR_REQUIRED` disposition; TDD §4 is an index that
+> links those files. PE acceptance (`Draft` → `Accepted`) happens on the spec PR
+> before `/spec-implementation-plan`. TDD §4 rows or embedded draft content are not
+> substitutes for Accepted ADR files at implementation time. Do not add ADR
+> promotion tasks to the plan.
 
 ---
 

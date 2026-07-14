@@ -3,9 +3,10 @@ name: initiative-feasibility
 description: >-
   After the dev team has written their spec slice from the PRD, review it
   against the current codebase — baseline, gaps, impact, test harness,
-  architecture governance (ADR + MDC), risks, and 4-lane triage. Use when
+  architecture governance (ADR + MDC), risks, and 4-lane triage. Commits to
+  the open Draft spec PR while Gate 2 label remains spec-pending. Use when
   the dev has drafted the spec and wants to check buildability before technical
-  review and planning. Runs while the spec PR is open.
+  review and planning.
 disable-model-invocation: true
 paths: AGENTS.md, docs/specification/**, .cursor/rules/**
 background_eligible: true
@@ -29,6 +30,15 @@ Pattern borrowed from awesome-copilot `create-github-issues-for-unmet-specificat
 3. Don't fix — flag. Do not edit product source or product specs unless the user explicitly asks after the report.
 4. Dual output: chat summary + saved report file + 4-lane triage.
 5. Run T0–T5 control loop (Gather → Understand → Analyze → Plan → Execute → Verify).
+6. Verify source freshness before F1. The spec's PRD digest, impact-map
+   revision, repo scope digest, approved meta PR head, and approval reference
+   must still match the canonical handoff. Stop on stale input.
+7. Every open item must record lane, blocking, owner, status, required-by
+   stage, default-if-deferred, evidence, and resolution reference.
+8. Commit the feasibility report to the **same Draft spec PR** branch opened by
+   `/spec-draft`. Do not open a second spec PR. Gate 2 label stays
+   **`spec-pending`** — do not set `spec-lgtm` during feasibility.
+9. **Do not implement** product code. Spec-only artifacts on the spec PR.
 
 ## Inputs
 
@@ -36,13 +46,15 @@ Gather before starting. Resolve paths from `.harness/profile.yaml` or [reference
 
 1. **Initiative spec slice** — primary doc (REQUIRED); written by dev team, lives under `product_spec_dir`
 2. **PRD** — upstream requirements from `<client>-meta/prd/` (OPTIONAL; for conformance context; link from spec header)
-3. **As-built** — `implementation-status.md` (REQUIRED)
-4. **Tests** — `tests_readme`, `unit_tests_dir`, `live_verify_dir`, and toolchain config from profile (REQUIRED)
-5. **Source** — modules under `source_roots` from profile (REQUIRED)
-6. **Prior feasibility report** — for incremental re-run (OPTIONAL)
-7. **Layout** — `.harness/profile.yaml` or [references/layout-defaults.md](references/layout-defaults.md)
-8. **`rules_glob`** — workspace MDC rules (REQUIRED). Read before T2 Analyze.
-9. **`adr_dir`** — architecture decision records (REQUIRED). Run relevant-ADR pass per [references/governance.md](references/governance.md) before T2 Analyze.
+3. **Canonical impact map + approval evidence** — (REQUIRED) exact revision and
+   tech-lead review referenced by the spec header
+4. **As-built** — `implementation-status.md` (REQUIRED)
+5. **Tests** — `tests_readme`, `unit_tests_dir`, `live_verify_dir`, and toolchain config from profile (REQUIRED)
+6. **Source** — modules under `source_roots` from profile (REQUIRED)
+7. **Prior feasibility report** — for incremental re-run (OPTIONAL)
+8. **Layout** — `.harness/profile.yaml` or [references/layout-defaults.md](references/layout-defaults.md)
+9. **`rules_glob`** — workspace MDC rules (REQUIRED). Read before T2 Analyze.
+10. **`adr_dir`** — architecture decision records (REQUIRED). Run relevant-ADR pass per [references/governance.md](references/governance.md) before T2 Analyze.
 
 ## When to use
 
@@ -52,12 +64,25 @@ Gather before starting. Resolve paths from `.harness/profile.yaml` or [reference
 
 ## Process
 
-1. **T0 Gather** — inventory inputs; note missing paths
+1. **T0 Gather and freshness gate** — inventory inputs; compare the spec header
+   with the canonical PRD/map/review. If the repo was removed, deferred, or its
+   scope digest changed, stop and emit the map's ripple action.
 2. **T1 Understand** — initiative id, spec branch, review objective
 3. **T2 Analyze** — read spec waves/capabilities; scan repo evidence; cross-reference `rules_glob` and relevant ADRs; flag spec wording that conflicts with MDC patterns or Accepted ADRs
 4. **T3 Plan** — which checks run (full vs incremental)
 5. **T4 Execute** — run checks F1–F14 per [references/checks.md](references/checks.md)
 6. **T5 Verify** — save report; publish summary + 4-lane triage
+
+## Impact-map revision handling
+
+- `continue` — scope digest unchanged; record the newer revision check.
+- `re-draft` / `re-feasibility` — scope digest changed; update the spec before
+  running incremental feasibility.
+- `hold` / `close` — repo removed, deferred, blocked, or approval stale.
+- `re-plan` — dependency/build order changed; invalidate any existing plan.
+
+Never carry a prior feasibility finding forward across changed source digests
+without explicitly re-evaluating that finding.
 
 ## Output
 
@@ -76,3 +101,17 @@ End with four lanes (see output template):
 
 Do **not** route engineering decisions to PM. Apply the routing rubric in
 the `spec-technical-review` skill's `references/governance.md`.
+
+## Workflow handoff
+
+Append the envelope from `../../../references/handoff-envelope.md` to the saved
+report. Use stage `initiative-feasibility`.
+
+- `pass` with no PE-lane items → `spec-implementation-plan`
+- `findings` with PE-lane items / NEW-ADR → `spec-technical-review`
+- `needs-input` / `blocked` → human decision
+- `stale` → `spec-draft`
+- `failed` → stop
+
+Put lane counts, NEW-ADR, and ripple action in `signals`; finding ids belong in
+`blockers`.

@@ -5,6 +5,47 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [0.4.3] — 2026-07-14
+
+### Added — SDD delivery contract (Gate 1 / Gate 2) and `/board-seed`
+
+- Root `delivery-contract.yaml` and `workflow.yaml` — portable skill chaining;
+  every skill emits the shared persistent handoff envelope.
+- **Gate 1 (meta):** `/prd-impact-map` revisioned artifact, Draft-PR readiness
+  handoff, PE-controlled pending/blocked/LGTM labels.
+- **Gate 2 (app):** Draft spec PR + labels (`spec-pending`, `spec-lgtm`, …);
+  full package on head before PE unlock; Approve attestation body in
+  `spec-implementation-plan` §10.
+- **`/board-seed`** — stack-agnostic post-merge board seeding (governance board
+  binding, EPIC + wave sub-issues on org Project). On all app profiles;
+  `workflow.yaml` `board-seed` is `type: skill`.
+- Delivery contract `profiles: [app]` token for Gate 2 on any non-meta-pm stack.
+- `pre-implement` / `loop-spec` block coding until spec merge with `spec-lgtm`
+  and board-seed complete.
+- Feasibility, TDD, planning, and pre-implement templates carry freshness and
+  command contracts; CI validates handoff/ripple fixtures.
+
+### Changed
+
+- `spec-draft` mirrors the PM lane (local slice → readiness handoff → Draft PR
+  after explicit authorization); fails closed on stale/unapproved handoffs (D1–D12).
+- Downstream eng skills keep Draft PR + `spec-pending` through planning;
+  **`spec-lgtm`** only after full package.
+- `spec-implementation-plan` delegates post-merge seeding to `/board-seed`;
+  §9 `target.project` must match `governance.project_board.name`.
+- `update-documents` separates Resolution and Ad-hoc modes; new semantic
+  choices route back to `review-findings`.
+
+### Fixed
+
+- **ADR lifecycle** — `/spec-technical-review` creates Draft ADR files under
+  `{adr_dir}`; TDD §4 is an index. PE acceptance before planning; P12/P13
+  verify Accepted ADR files (no obsolete promotion tasks).
+- Technical-review T1–T11 refs; WorkManifest P14 / `spec_path`; wave ordering
+  (grounding before human approval); verify-policy layout defaults.
+
+---
+
 ## [0.4.2] — 2026-07-09
 
 ### Added — `profiles/meta-pm.yaml` for launchpad PM harness lane

@@ -90,6 +90,100 @@ SKILL_REGISTRY_INVARIANT = (
     set(),
 )
 
+CHECK_REGISTRIES = [
+    (
+        "skills/development/spec-draft/references/checks.md",
+        "D",
+        12,
+        [
+            "skills/development/spec-draft/SKILL.md",
+            "skills/development/spec-draft/references/output-template.md",
+        ],
+    ),
+    (
+        "skills/development/initiative-feasibility/references/checks.md",
+        "F",
+        14,
+        [
+            "skills/development/initiative-feasibility/SKILL.md",
+            "skills/development/initiative-feasibility/references/output-template.md",
+        ],
+    ),
+    (
+        "skills/development/spec-technical-review/references/checks.md",
+        "T",
+        11,
+        [
+            "skills/development/spec-technical-review/SKILL.md",
+            "skills/development/spec-technical-review/references/output-template.md",
+        ],
+    ),
+    (
+        "skills/development/spec-implementation-plan/references/checks.md",
+        "P",
+        14,
+        [
+            "skills/development/spec-implementation-plan/SKILL.md",
+            "skills/development/spec-implementation-plan/references/output-template.md",
+        ],
+    ),
+]
+
+REQUIRED_TOKENS = {
+    "skills/requirements/prd-impact-map/references/output-template.md": [
+        "schema_version:",
+        "source_prd_digest:",
+        "Scope digest",
+        "## 9. Downstream ripple ledger",
+        "## T0 collision report",
+        "human_decision: pending",
+        "## 11. PR readiness handoff",
+        "## 12. Approval request",
+        "No GitHub side effects have occurred",
+    ],
+    "skills/development/spec-draft/references/output-template.md": [
+        "PRD digest",
+        "Impact-map revision",
+        "Repo scope digest",
+        "## Negative and failure paths",
+        "## Draft check summary",
+        "D12 Output completeness",
+    ],
+    "skills/development/initiative-feasibility/references/output-template.md": [
+        "Source freshness",
+        "Repo scope digest",
+        "Default if deferred",
+        "Resolution reference",
+    ],
+    "skills/development/spec-technical-review/references/output-template.md": [
+        "Source freshness",
+        "Feasibility digest",
+        "All T1–T11 checks",
+    ],
+    "skills/development/spec-implementation-plan/references/output-template.md": [
+        "## Source freshness and command contract",
+        "Spec path",
+        "## 9. WorkManifest seed",
+    ],
+    "skills/development/pre-implement/references/output-template.md": [
+        "Plan source freshness",
+        "`check_command`",
+        "`ground_command`",
+    ],
+}
+
+FORBIDDEN_WORKFLOW_TEXT = {
+    "skills/development/spec-technical-review": ["T1–T10", "T1-T10"],
+    "skills/development/spec-implementation-plan": ["P14 | **WorkManifest seed** — §8"],
+    "skills/development/loop-spec/SKILL.md": ["Human explicitly approves → `/ground-spec`"],
+}
+
+DELIVERY_CONTRACT_FILES = [
+    "delivery-contract.yaml",
+    "workflow.yaml",
+    "references/handoff-envelope.md",
+]
+
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 
@@ -251,6 +345,150 @@ def check_requirements_profile_registry() -> list[str]:
     return errors
 
 
+def check_check_registries() -> list[str]:
+    """Check registry IDs and their advertised ranges in consumers."""
+    errors: list[str] = []
+    for registry_path, prefix, final_number, consumers in CHECK_REGISTRIES:
+        registry = ROOT / registry_path
+        if not registry.exists():
+            errors.append(f"  MISSING: {registry_path}")
+            continue
+        text = registry.read_text(encoding="utf-8")
+        found = {
+            int(match)
+            for match in re.findall(
+                rf"^\|\s*{re.escape(prefix)}(\d+)\s*\|",
+                text,
+                flags=re.MULTILINE,
+            )
+        }
+        expected = set(range(1, final_number + 1))
+        if found != expected:
+            errors.append(
+                f"  {registry_path}: {prefix} IDs are {sorted(found)}, "
+                f"expected {sorted(expected)}"
+            )
+        advertised = f"{prefix}1–{prefix}{final_number}"
+        if advertised not in text:
+            errors.append(f"  {registry_path}: heading must advertise {advertised}")
+        for consumer_path in consumers:
+            consumer = ROOT / consumer_path
+            if not consumer.exists():
+                errors.append(f"  MISSING consumer: {consumer_path}")
+                continue
+            if advertised not in consumer.read_text(encoding="utf-8"):
+                errors.append(
+                    f"  {consumer_path}: must reference complete range {advertised}"
+                )
+    return errors
+
+
+def check_required_tokens() -> list[str]:
+    """Validate producer/consumer template fields and canonical sections."""
+    errors: list[str] = []
+    for relative_path, tokens in REQUIRED_TOKENS.items():
+        path = ROOT / relative_path
+        if not path.exists():
+            errors.append(f"  MISSING: {relative_path}")
+            continue
+        text = path.read_text(encoding="utf-8")
+        for token in tokens:
+            if token not in text:
+                errors.append(f"  {relative_path}: missing required token {token!r}")
+    return errors
+
+
+def check_forbidden_workflow_text() -> list[str]:
+    """Reject known stale workflow contracts."""
+    errors: list[str] = []
+    for relative_path, forbidden_values in FORBIDDEN_WORKFLOW_TEXT.items():
+        path = ROOT / relative_path
+        paths = list(path.rglob("*.md")) if path.is_dir() else [path]
+        for candidate in paths:
+            if not candidate.exists():
+                continue
+            text = candidate.read_text(encoding="utf-8")
+            for forbidden in forbidden_values:
+                if forbidden in text:
+                    errors.append(
+                        f"  {candidate.relative_to(ROOT)}: stale workflow text "
+                        f"{forbidden!r}"
+                    )
+    return errors
+
+
+def check_local_markdown_links() -> list[str]:
+    """Ensure repository-local Markdown links resolve."""
+    errors: list[str] = []
+    link_re = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
+    for source in ROOT.rglob("*.md"):
+        if ".git" in source.parts:
+            continue
+        text = source.read_text(encoding="utf-8")
+        for raw_target in link_re.findall(text):
+            target = raw_target.strip().split("#", 1)[0]
+            if (
+                not target
+                or target.startswith(("http://", "https://", "mailto:"))
+                or "{" in target
+                or "}" in target
+            ):
+                continue
+            resolved = (source.parent / target).resolve()
+            if not resolved.exists():
+                errors.append(
+                    f"  {source.relative_to(ROOT)}: broken local link {raw_target!r}"
+                )
+    return errors
+
+
+def check_profile_contracts() -> list[str]:
+    """Check stack-neutral layout keys required by development skills."""
+    errors: list[str] = []
+    required_dev_keys = {
+        "constitution:",
+        "rules_glob:",
+        "product_spec_dir:",
+        "as_built:",
+        "adr_dir:",
+        "reports_dir:",
+        "tests_readme:",
+        "source_roots:",
+        "unit_tests_dir:",
+        "live_verify_dir:",
+        "debug_tests_dir:",
+    }
+    for profile in (ROOT / "profiles").glob("*.yaml"):
+        text = profile.read_text(encoding="utf-8")
+        if "development_skills:" in text:
+            for key in sorted(required_dev_keys):
+                if key not in text:
+                    errors.append(
+                        f"  {profile.relative_to(ROOT)}: missing layout key {key}"
+                    )
+        if "requirements_skills:" in text and "reports_dir:" not in text:
+            errors.append(
+                f"  {profile.relative_to(ROOT)}: missing layout key reports_dir:"
+            )
+    return errors
+
+
+def check_delivery_contract_surface() -> list[str]:
+    """Check portable workflow files and handoff instructions are present."""
+    errors: list[str] = []
+    for relative_path in DELIVERY_CONTRACT_FILES:
+        if not (ROOT / relative_path).is_file():
+            errors.append(f"  MISSING: {relative_path}")
+
+    for skill_file in SKILLS_DIR.glob("*/*/SKILL.md"):
+        text = skill_file.read_text(encoding="utf-8")
+        if "## Workflow handoff" not in text:
+            errors.append(
+                f"  {skill_file.relative_to(ROOT)}: missing Workflow handoff section"
+            )
+    return errors
+
+
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def main() -> int:
@@ -278,6 +516,30 @@ def main() -> int:
     errors = check_requirements_profile_registry()
     if errors:
         all_errors.append(("Every skills/requirements/*/ must be listed in profiles requirements_skills:", errors))
+
+    errors = check_check_registries()
+    if errors:
+        all_errors.append(("Check registries and advertised ranges must agree", errors))
+
+    errors = check_required_tokens()
+    if errors:
+        all_errors.append(("Workflow producer/consumer contracts must be complete", errors))
+
+    errors = check_forbidden_workflow_text()
+    if errors:
+        all_errors.append(("Known stale workflow contracts must not reappear", errors))
+
+    errors = check_local_markdown_links()
+    if errors:
+        all_errors.append(("Repository-local Markdown links must resolve", errors))
+
+    errors = check_profile_contracts()
+    if errors:
+        all_errors.append(("Harness profiles must satisfy layout contracts", errors))
+
+    errors = check_delivery_contract_surface()
+    if errors:
+        all_errors.append(("Delivery contract and skill handoffs must be complete", errors))
 
     if all_errors:
         print("prayog-skills consistency check FAILED\n")

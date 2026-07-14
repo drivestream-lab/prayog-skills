@@ -185,3 +185,15 @@ Follow that file's instructions to produce both the chat summary and the full re
 | **Pipeline (Stage 9)** | Full | Called by `requirements-pipeline` as the combined accuracy + integrity review. No prior report exists at this stage. The report it produces becomes the prior report for future incremental runs. |
 | **After updates** | Incremental | Called by `update-documents` in its Phase 3 verify step. The pre-update validation report serves as the prior report. |
 | **Interactive resolution** | — | After report is generated, user invokes `review-findings` with the report file to walk through findings and collect decisions |
+
+## Workflow handoff
+
+Append the envelope from `../../../references/handoff-envelope.md` to the saved
+validation report. Use stage `validate-requirements`.
+
+- `pass` → `prd-impact-map`
+- `findings` → `review-findings`
+- `needs-input` / `failed` → human checkpoint
+
+Populate the artifact path/digest and stable finding ids. `next_candidates` are
+navigation hints only; do not invoke the next skill automatically.
