@@ -8,6 +8,16 @@
 
 | Item | Required | Status |
 |------|----------|--------|
+| Branch context | `develop` or `feature/INIT-*-w{N}-*` — not open `chore/*-spec-*` | [ ] ok / blocked |
+| Spec PR merged | Implementation plan on integration branch | [ ] yes / no |
+| Gate 2 at merge | Merged spec PR had `spec-lgtm` on head | [ ] verified / missing |
+| Board seed | Wave issue(s) from plan §9 exist | [ ] seeded / partial / missing |
+| Plan source freshness | all upstream rows `CURRENT` | [ ] current / stale |
+| Impact-map repo scope | revision and scope digest match canonical handoff | [ ] match / stale |
+| `check_command` | resolved | [ ] command / missing |
+| `test_command` | resolved | [ ] command / missing |
+| `verify_command` | resolved or N/A with reason | [ ] command / N/A / missing |
+| `ground_command` | resolved or N/A with reason | [ ] command / N/A / missing |
 | Prior wave as-built row | `human_approved` | [ ] {wave id} = {status} |
 | Prior Ground Report exists | `reports/Ground-Report-{SPEC}-W{N-1}.md` | [ ] exists / missing |
 | Plan PE sign-off (W0 only) | Implementation-Plan §0 marked complete | [ ] complete / pending |
@@ -49,8 +59,8 @@
 
 - [ ] Slice spec does not contradict any listed ADR
 - [ ] Plan TASK MDC notes and ADR notes for this wave reviewed
-- [ ] Any NEW-ADR from the plan has a draft-ADR task scheduled before the
-  decision is encoded in code
+- [ ] Every initiative ADR cited for this wave is **Accepted** in `{adr_dir}`
+  (created during `/spec-technical-review`, not promoted during planning)
 
 ---
 
@@ -61,7 +71,7 @@
 - [ ] `tests_readme` — feature map row if verification coverage changes
 - [ ] Unit verification scope — edges and boundary behaviour (mocked dependencies)
 - [ ] Live verification — one end-to-end happy path per feature
-- [ ] ADR — draft or update when plan flags NEW-ADR or a decision changed
+- [ ] ADR — update when this wave supersedes an Accepted ADR (requires PE review)
 
 ---
 
@@ -79,9 +89,10 @@
 
 | Layer | What it proves | Command (from tests_readme / profile) |
 |-------|----------------|---------------------------------------|
-| Unit | Module logic, boundary behaviour, edge cases (no external I/O) | {from profile} |
-| Live verify | Product behaviour on running stack | {from tests_readme} |
-| Ground check | All FRs satisfied; boundaries respected | {from profile} |
+| Static check | Formatting, linting, types, or equivalent repository checks | `{check_command}` |
+| Unit | Module logic, boundary behaviour, edge cases (no external I/O) | `{test_command}` |
+| Live verify | Product behaviour on running stack | `{verify_command}` or N/A — reason |
+| Ground check | All FRs satisfied; boundaries respected | `{ground_command}` or N/A — reason |
 
 ---
 

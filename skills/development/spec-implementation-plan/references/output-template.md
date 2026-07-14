@@ -4,14 +4,39 @@ initiative: {INITIATIVE}
 status: Planned
 date_created: {YYYY-MM-DD}
 source_spec: {SPEC_PATH}
+source_spec_digest: sha256:{hex}
 feasibility_report: {FEASIBILITY_PATH or N/A}
+feasibility_digest: sha256:{hex or N/A}
 technical_review: {TECHNICAL_REVIEW_PATH or N/A}
+technical_review_digest: sha256:{hex or N/A}
+prd_digest: sha256:{hex}
+impact_map: {IMPACT_MAP_PATH}
+impact_map_revision: {N}
+repo_scope_digest: sha256:{hex}
+approved_meta_pr_head: {SHA}
 branch: chore/INIT-{COMPONENT}-{NUMBER}-spec-{repo}
 review_deadline: {YYYY-MM-DD + 3 business days}
-deciders: Dev team lead — explicit LGTM required
+deciders: PE — spec-lgtm + Approve on exact head after full package
 ---
 
 # Implementation plan — {INITIATIVE}
+
+## Source freshness and command contract
+
+| Item | Value | Status |
+|------|-------|--------|
+| Spec / digest | `{SPEC_PATH}` / `sha256:{hex}` | CURRENT / STALE |
+| Feasibility / digest | `{FEASIBILITY_PATH}` / `sha256:{hex}` | CURRENT / STALE |
+| Technical review / digest | `{TECHNICAL_REVIEW_PATH or N/A}` / `sha256:{hex or N/A}` | CURRENT / STALE / N/A |
+| Impact map / revision | `{IMPACT_MAP_PATH}` / `{N}` | CURRENT / STALE |
+| Repo scope digest | `sha256:{hex}` | CURRENT / STALE |
+| Approved meta PR head | `{SHA}` | CURRENT / STALE |
+| `check_command` | `{command}` | RESOLVED / MISSING |
+| `test_command` | `{command}` | RESOLVED / MISSING |
+| `verify_command` | `{command or N/A — reason}` | RESOLVED / N/A / MISSING |
+| `ground_command` | `{command or N/A — reason}` | RESOLVED / N/A / MISSING |
+
+> Do not continue if any source is STALE or required command is MISSING.
 
 ## 0. Technical design reference
 
@@ -19,7 +44,7 @@ deciders: Dev team lead — explicit LGTM required
 |------|-------|
 | Technical review | {path to Technical-Review-{initiative}.md or "N/A — no NEW-ADR findings"} |
 | PE sign-off | {[ ] required / [x] complete — date} |
-| Resolved ADRs | {adr_dir/adr-NNN-slug.md (link), … or N/A — must be adr_dir file paths, not TDD section refs} |
+| Resolved ADRs | {adr_dir/adr-NNN-slug.md (link, Status: Accepted), … or N/A — canonical files created by `/spec-technical-review` and accepted before planning; TDD §4 index refs alone are not sufficient} |
 | Outstanding PM questions | {list or "none — all resolved"} |
 | Outstanding domain questions | {list or "none — all resolved"} |
 
@@ -41,9 +66,9 @@ deciders: Dev team lead — explicit LGTM required
 
 **GOAL-W0:** …
 
-| Task | Description | Codebase | Done when | Verify command | MDC notes | ADR notes | Branch |
-|------|-------------|----------|-----------|----------------|-----------|-----------|--------|
-| TASK-W0-01 | | {repo} | | `{make check}` | | | |
+| Task | Description | Codebase | Spec path | Done when | Verify command | MDC notes | ADR notes | Branch |
+|------|-------------|----------|-----------|-----------|----------------|-----------|-----------|--------|
+| TASK-W0-01 | | {repo} | {SPEC_PATH} | | `{check_command}` | | | |
 
 #### Files (W0)
 
@@ -63,9 +88,9 @@ deciders: Dev team lead — explicit LGTM required
 
 **GOAL-W1:** …
 
-| Task | Description | Codebase | Done when | Verify command | MDC notes | ADR notes | Branch |
-|------|-------------|----------|-----------|----------------|-----------|-----------|--------|
-| TASK-W1-01 | | {repo} | | | | | |
+| Task | Description | Codebase | Spec path | Done when | Verify command | MDC notes | ADR notes | Branch |
+|------|-------------|----------|-----------|-----------|----------------|-----------|-----------|--------|
+| TASK-W1-01 | | {repo} | {SPEC_PATH} | | | | | |
 
 #### Files (W1)
 
@@ -109,32 +134,10 @@ deciders: Dev team lead — explicit LGTM required
 |------|------|--------|
 | Update implementation-status.md | `docs/specification/as-built/implementation-status.md` | mark wave in_progress → complete |
 | Update tests/README.md | `tests/README.md` | add verify commands for new scripts |
-| TASK-SPEC-ADR-NN (one row per NEW-ADR) | `docs/specification/adr/adr-NNN-{slug}.md` | promote TDD §4.N draft → Accepted ADR file; set status Accepted + PE name + date; update TDD §4.N status from Draft → Accepted (conditional: include only when NEW-ADR findings exist; pre-W0) |
 
-> **Accepted ADR file format** — use this structure when writing each `adr_dir` file:
->
-> ```markdown
-> # ADR-{NNN} — {short title}
->
-> | Field  | Value |
-> |--------|-------|
-> | Status | Accepted |
-> | Date   | {YYYY-MM-DD of PE Approve} |
-> | PE     | @{pe-name} |
-> | TDD    | {path to Technical-Review-{initiative}.md} §4.{n} |
->
-> ## Context
-> {Problem statement from TDD §4.N}
->
-> ## Decision
-> {Chosen option + one-sentence rationale from TDD §4.N Recommendation}
->
-> ## Consequences
-> {From TDD §4.N Consequences}
-> ```
->
-> The acceptance date and PE name come from the GitHub Approve event on the spec PR —
-> not from the date the file is written.
+> **ADR lifecycle** — Draft and Accepted ADR files are created and accepted during
+> `/spec-technical-review` and the `technical-review-approval` checkpoint.
+> Planning consumes Accepted files only; do not add ADR promotion tasks here.
 
 ---
 
@@ -148,29 +151,86 @@ deciders: Dev team lead — explicit LGTM required
 
 ## 8. PR instructions
 
-> Commit this plan to the spec PR branch alongside spec, feasibility, and TDD.
-> Dev lead GitHub Approve on spec PR = gate satisfied. **Merge spec PR**, then seed board.
+> Commit this plan to the **Draft spec PR** branch alongside spec, feasibility,
+> and TDD. Label remains **`spec-pending`** until PE completes §10.
 
 ```
-Branch:   chore/INIT-{COMPONENT}-{NUMBER}-spec-{repo}
+Branch:   chore/INIT-{COMPONENT}-{NUMBER}-spec-{repo}  (Draft PR)
 PR title: "[INIT-{COMPONENT}-{NUMBER}] Spec — {repo}"
 PR body:  link meta PRD PR; paste §1 Requirements table + wave goals summary
 
-Required reviewers (CODEOWNERS): @{dev-team-lead} · @{pe-team} (when TDD present)
+Required reviewers: @{pe-team}
 Review deadline: {date from front matter}
 
-Reviewer checklist:
-  [ ] §0 PE sign-off on TDD is marked complete (or N/A with reason)
+PE checklist (before spec-lgtm):
+  [ ] Spec + feasibility + TDD + Accepted ADRs + this plan on current head
+  [ ] §0 PE sign-off on TDD marked complete (or N/A with reason)
   [ ] Wave order and dependencies make sense
   [ ] Done-when criteria are observable and testable
-  [ ] WorkManifest YAML (§9) looks correct — wave IDs are W0, W1, … (one issue per wave)
+  [ ] WorkManifest YAML (§9) correct — wave IDs W0, W1, … (one issue per wave)
   [ ] P1–P14 checks all pass
 
-After spec PR merge — dev seeds board from §9 (post-merge only):
+After spec-lgtm + Approve + merge — **`/board-seed`** from §9 (post-merge only):
   Create one GitHub Issue per wave (W0, W1, …) using §9 titles, bodies, depends_on
-  Optional bulk: copy §9 YAML to work/{INITIATIVE}.yaml and run launchpad seed-work
-  Then start wave coding: /pre-implement → /loop-spec → /ground-spec → /verify
+  Search for existing initiative/wave issues first; create only missing issues
+  Then: /pre-implement → /loop-spec → /verify (when applicable) → /ground-spec
 ```
+
+---
+
+## 10. Gate 2 unlock (PE — after plan on head)
+
+Present this section in chat when the plan is committed. **No GitHub side
+effects** until PE completes the unlock.
+
+| Item | Value |
+|------|-------|
+| Verdict | GATE OPEN REQUEST / BLOCKED |
+| Spec PR | {URL} |
+| Spec PR head SHA | `{SHA}` |
+| Gate label (current) | `spec-pending` |
+| Gate label (target) | `spec-lgtm` |
+| Blocking items | none / {reason} |
+
+Provision labels when missing:
+
+```bash
+launchpad apply-gates --repo <name> --apply
+```
+
+PE actions (all on **exact current head**):
+
+1. Remove `spec-pending`, `spec-blocked`, `spec-revised`, `spec-stale`; add **`spec-lgtm`**
+2. Submit GitHub **Approve** with attestation body (below)
+3. Mark Draft PR **Ready for review**
+4. Authorize merge (human or policy); then **`/board-seed`** from §9
+
+### Approve attestation body
+
+```text
+Spec package approved
+initiative: {INIT-id}
+spec_pr_head_sha: {SHA}
+meta_pr_head_sha: {SHA}
+impact_map_revision: {N}
+prd_digest: sha256:{hex}
+scope_digest: sha256:{hex}
+plan_digest: sha256:{hex}
+artifacts:
+  - docs/specification/product/INIT-{id}.md
+  - docs/specification/reports/Initiative-Feasibility-Report-{INIT-id}.md
+  - docs/specification/reports/Technical-Review-{INIT-id}.md
+  - docs/specification/reports/Implementation-Plan-{INIT-id}.md
+```
+
+Never infer approval from `spec-lgtm` alone — Approve, label, and artifact
+digests must match the same head SHA.
+
+| PE action | Remove | Add |
+|-----------|--------|-----|
+| Pending/new revision | `spec-lgtm`, `spec-blocked` | `spec-pending` |
+| Request changes/hold | `spec-pending`, `spec-lgtm` | `spec-blocked` |
+| Approve full package | `spec-pending`, `spec-blocked`, `spec-revised`, `spec-stale` | `spec-lgtm` |
 
 ---
 
@@ -179,11 +239,14 @@ After spec PR merge — dev seeds board from §9 (post-merge only):
 > **Primary:** dev creates **one GitHub Issue per wave** (`W0`, `W1`, …) from this section.
 > Use §9 `title`, `body`, and `depends_on` when running `gh issue create`.
 >
-> **Optional (multi-repo bulk):** copy YAML to `work/{INITIATIVE}.yaml` and run
-> `launchpad seed-work --config work/{INITIATIVE}.yaml --dry-run` then `--apply`.
+> Before creation, run `gh auth status` and search existing issues by initiative
+> plus wave id. With explicit developer authorization, create only missing
+> issues. If `gh` is unavailable, output exact commands and stop.
 >
 > Wave `id` must be exactly `W0`, `W1`, … — one issue per wave, not per TASK row.
-> Update `target.org` and `target.project` to match the GitHub org and Project name.
+> Set `target.org` from governance and `target.project` from
+> `governance.project_board.name` (read-only meta). Resolve with
+> `launchpad board-bind --client <id>` — do not free-text board names.
 
 ```yaml
 # Generated by /spec-implementation-plan — {DATE}

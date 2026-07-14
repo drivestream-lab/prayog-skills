@@ -1,0 +1,233 @@
+apiVersion: prayog/v1
+kind: SkillWorkflow
+
+id: sdd-delivery
+contract: sdd-delivery/v2
+
+entrypoints:
+  meta-pm: validate-requirements
+  development: spec-draft
+
+nodes:
+  validate-requirements:
+    type: skill
+    profile: meta-pm
+    outcomes:
+      pass: prd-impact-map
+      findings: review-findings
+      needs-input: requirements-human-decision
+      failed: requirements-human-decision
+
+  review-findings:
+    type: skill
+    profile: meta-pm
+    outcomes:
+      pass: update-documents
+      needs-input: requirements-human-decision
+      skipped: workflow-stop
+
+  update-documents:
+    type: skill
+    profile: meta-pm
+    outcomes:
+      pass: validate-requirements
+      findings: review-findings
+      needs-input: review-findings
+      failed: requirements-human-decision
+
+  prd-impact-map:
+    type: skill
+    profile: meta-pm
+    outcomes:
+      pass: prd-pr-action
+      findings: requirements-human-decision
+      needs-input: requirements-human-decision
+      blocked: requirements-human-decision
+      stale: prd-impact-map
+      failed: workflow-stop
+
+  requirements-human-decision:
+    type: human-checkpoint
+    outcomes:
+      pass: validate-requirements
+      skipped: workflow-stop
+
+  prd-pr-action:
+    type: external-action
+    owner: product
+    provider: github
+    authorization: explicit
+    outcomes:
+      pass: gate-1
+      blocked: requirements-human-decision
+      failed: workflow-stop
+
+  gate-1:
+    type: human-checkpoint
+    owner: engineering-gate
+    outcomes:
+      pass: prd-merge
+      findings: update-documents
+      blocked: update-documents
+      stale: prd-impact-map
+
+  prd-merge:
+    type: external-action
+    owner: product
+    provider: github
+    authorization: explicit
+    outcomes:
+      pass: spec-draft
+      failed: workflow-stop
+
+  spec-draft:
+    type: skill
+    profile: development
+    outcomes:
+      pass: initiative-feasibility
+      needs-input: spec-human-decision
+      blocked: spec-human-decision
+      stale: prd-impact-map
+      failed: workflow-stop
+
+  initiative-feasibility:
+    type: skill
+    profile: development
+    outcomes:
+      pass: spec-implementation-plan
+      findings: spec-technical-review
+      needs-input: spec-human-decision
+      blocked: spec-human-decision
+      stale: spec-draft
+      failed: workflow-stop
+
+  spec-technical-review:
+    type: skill
+    profile: development
+    outcomes:
+      pass: technical-review-approval
+      findings: spec-human-decision
+      needs-input: spec-human-decision
+      blocked: spec-human-decision
+      stale: initiative-feasibility
+      failed: workflow-stop
+
+  technical-review-approval:
+    type: human-checkpoint
+    owner: engineering-gate
+    outcomes:
+      pass: spec-implementation-plan
+      findings: spec-technical-review
+      blocked: spec-human-decision
+      stale: initiative-feasibility
+
+  spec-human-decision:
+    type: human-checkpoint
+    outcomes:
+      pass: initiative-feasibility
+      stale: prd-impact-map
+      skipped: workflow-stop
+
+  spec-implementation-plan:
+    type: skill
+    profile: development
+    outcomes:
+      pass: gate-2
+      needs-input: spec-human-decision
+      blocked: spec-human-decision
+      stale: initiative-feasibility
+      failed: workflow-stop
+
+  gate-2:
+    type: human-checkpoint
+    owner: engineering-gate
+    outcomes:
+      pass: spec-merge
+      findings: spec-technical-review
+      blocked: spec-human-decision
+      stale: initiative-feasibility
+
+  spec-merge:
+    type: external-action
+    owner: engineering
+    provider: github
+    authorization: explicit
+    outcomes:
+      pass: board-seed
+      failed: workflow-stop
+
+  board-seed:
+    type: skill
+    profile: development
+    requires:
+      - spec-pr-merged
+      - implementation-plan-current
+      - workmanifest-p14-pass
+    outcomes:
+      pass: pre-implement
+      blocked: board-seed
+      failed: workflow-stop
+
+  pre-implement:
+    type: skill
+    profile: development
+    outcomes:
+      pass: loop-spec
+      needs-input: wave-human-decision
+      blocked: wave-human-decision
+      stale: spec-implementation-plan
+      failed: workflow-stop
+
+  loop-spec:
+    type: skill
+    profile: development
+    outcomes:
+      pass: verify
+      findings: loop-spec
+      blocked: wave-human-decision
+      failed: loop-spec
+
+  verify:
+    type: skill
+    profile: development
+    outcomes:
+      pass: ground-spec
+      skipped: ground-spec
+      findings: loop-spec
+      blocked: wave-human-decision
+      failed: loop-spec
+
+  ground-spec:
+    type: skill
+    profile: development
+    outcomes:
+      pass: wave-human-decision
+      findings: loop-spec
+      needs-input: wave-human-decision
+      blocked: wave-human-decision
+      failed: loop-spec
+
+  wave-human-decision:
+    type: human-checkpoint
+    outcomes:
+      pass: wave-complete
+      findings: loop-spec
+      blocked: workflow-stop
+
+  wave-complete:
+    type: decision
+    outcomes:
+      pass: pre-implement
+      skipped: initiative-closure
+
+  initiative-closure:
+    type: human-checkpoint
+    outcomes:
+      pass: workflow-complete
+      findings: wave-human-decision
+
+  workflow-complete:
+    type: terminal
+
+  workflow-stop:
+    type: terminal

@@ -317,3 +317,15 @@ Format:
 6. **Resolution file is the handoff.** The resolution file is structured so a human or agent can apply fixes without re-reading the original report.
 7. **Format-agnostic fallback.** If the report format is unrecognized, present findings as raw text with generic approve/skip options. Never fail because of an unexpected format.
 8. **Ignore resolved history.** Rows under `## Resolved` are not open findings — do not count or walk through them.
+
+## Workflow handoff
+
+Append the envelope from `../../../references/handoff-envelope.md` to the
+Resolution file. Use stage `review-findings`.
+
+- `pass` → `update-documents`
+- `needs-input` → human checkpoint
+- `skipped` → stop
+
+Record unresolved finding ids under `blockers`; never encode a user decision
+only in chat.

@@ -33,28 +33,53 @@ product code** unless the user explicitly asks after the checklist.
 6. Cite concrete file paths for this repo and slice.
 7. Describe contracts in engineering terms — entry points, input/output shapes,
    invariants. Do not use language-specific syntax.
+8. Verify the plan's source-freshness table is CURRENT and its impact-map
+   revision/scope digest still match the canonical handoff. Stop on stale input.
+9. Resolve `check_command` and `test_command`; resolve `verify_command` and
+   `ground_command` when applicable. If the plan/profile/`AGENTS.md`/
+   `tests_readme` cannot supply a required command, stop with MISSING command.
+10. Confirm board seed from plan §9: **EPIC** issue exists, every declared wave
+    issue exists, and waves are **sub-issues of the EPIC** on the programme
+    board (governance `project_board.name`). Run `/board-seed` if missing.
+    A missing/partial seed blocks pre-implementation.
+11. **Spec merge gate** — before W0 (and before any `/loop-spec`), confirm:
+    - current branch is the **integration branch** (`develop`) or a
+      `feature/INIT-*-w{N}-*` wave branch cut from it — **not** an open
+      `chore/*-spec-*` Draft spec PR branch;
+    - `docs/specification/reports/Implementation-Plan-{initiative}.md` exists on
+      the integration branch (spec PR was merged);
+    - the merged spec PR head carried **`spec-lgtm`** (verify via `gh pr view`
+      on the closed spec PR: label present and `mergeCommit`/`headRefOid`
+      matches attestation or Approve `commit_id`);
+    - board-seed completed (wave issues exist per rule 10).
+    If any check fails: stop — do not produce a checklist or write product code.
 
 ## Chain position
 
 ```
-/ground-spec (prior wave) → human_approved in as-built
+spec merge (spec-lgtm on head) → /board-seed → wave issue In Progress
+    ↓
+/ground-spec (prior wave) → human_approved in as-built   [Wn>0 only]
     ↓
 /pre-implement               ← YOU ARE HERE
-  gate: prior wave = human_approved?
+  gate: spec merged + board seeded + prior wave human_approved?
   reads: Ground-Report-W{N-1}.md §Contracts produced
   produces: pre-flight checklist with confirmed contract baselines
     ↓
-  developer: checklist reviewed, branch opened
-    ↓
-[implementation]
+  developer: checklist reviewed, branch opened (feature/INIT-*-w{N}-*)
     ↓
 /loop-spec → /ground-spec (this wave)
 ```
 
+**Do not run on an open Draft spec PR branch** (`chore/*-spec-*`). Coding
+starts only after the spec package is merged to `develop`.
+
 ## Read order
 
-1. **Gate check** — `as-built/implementation-status.md`: prior wave =
-   `human_approved`? If no: stop.
+1. **Source and gate check** — spec merge gate (rule 11); plan on integration
+   branch; plan sources CURRENT; impact-map scope current; canonical commands
+   resolved; board issues exist; `as-built/implementation-status.md` prior wave
+   = `human_approved` (Wn>0)? If any answer is no: stop.
 2. **Contracts consumed** — `reports/Ground-Report-W{N-1}.md` §Contracts
    produced: for each contract this wave depends on, read the entry point,
    input shape, output shape, and invariants as verified by the prior Ground
@@ -65,7 +90,8 @@ product code** unless the user explicitly asks after the checklist.
 5. **Relevant ADRs** — keyword-match slice scope; read matched Accepted ADRs
 6. Initiative / slice spec — path from tracker Spec path or plan wave section
 7. Plan wave section — `reports/Implementation-Plan-{initiative}.md` W{N}:
-   carry forward MDC notes and ADR notes from TASK rows
+   carry forward source digests, command contract, MDC notes, and ADR notes
+   from TASK rows
 8. `tests_readme` — when the slice adds or changes verification
 
 **Gate for W0 (first wave):** no prior Ground Report exists. The gate is
@@ -81,3 +107,15 @@ interface.
 
 Use [references/output-template.md](references/output-template.md). Fill
 concrete paths for this repo and slice.
+
+## Workflow handoff
+
+Append the envelope from `../../../references/handoff-envelope.md` to the
+checklist output. Use stage `pre-implement`.
+
+- `pass` → `loop-spec`
+- `needs-input` / `blocked` → human decision
+- `stale` → `spec-implementation-plan`
+- `failed` → stop
+
+Record the board issue URL/id and resolved command contract in `signals`.

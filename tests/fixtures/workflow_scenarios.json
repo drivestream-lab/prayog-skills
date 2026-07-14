@@ -1,0 +1,62 @@
+[
+  {
+    "name": "validation findings route to review",
+    "stage": "validate-requirements",
+    "outcome": "findings",
+    "next": "review-findings"
+  },
+  {
+    "name": "clean validation routes to impact map",
+    "stage": "validate-requirements",
+    "outcome": "pass",
+    "next": "prd-impact-map"
+  },
+  {
+    "name": "feasibility engineering findings route to PE",
+    "stage": "initiative-feasibility",
+    "outcome": "findings",
+    "next": "spec-technical-review"
+  },
+  {
+    "name": "technical review routes to PE approval gate",
+    "stage": "spec-technical-review",
+    "outcome": "pass",
+    "next": "technical-review-approval"
+  },
+  {
+    "name": "PE approval enables implementation plan",
+    "stage": "technical-review-approval",
+    "outcome": "pass",
+    "next": "spec-implementation-plan"
+  },
+  {
+    "name": "plan passes through Gate 2",
+    "stage": "spec-implementation-plan",
+    "outcome": "pass",
+    "next": "gate-2"
+  },
+  {
+    "name": "spec merge routes to board seed",
+    "stage": "spec-merge",
+    "outcome": "pass",
+    "next": "board-seed"
+  },
+  {
+    "name": "board seed must pass before pre-implement",
+    "stage": "board-seed",
+    "outcome": "pass",
+    "next": "pre-implement"
+  },
+  {
+    "name": "verify findings return to implementation",
+    "stage": "verify",
+    "outcome": "findings",
+    "next": "loop-spec"
+  },
+  {
+    "name": "ground pass stops at human gate",
+    "stage": "ground-spec",
+    "outcome": "pass",
+    "next": "wave-human-decision"
+  }
+]
