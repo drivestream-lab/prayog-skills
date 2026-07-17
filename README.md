@@ -169,6 +169,7 @@ updates the PRD via requirements skills.
 |-------|------|
 | **ensure-repo-graph** | Refresh local Graphify graphs for candidate app repos `@ develop` |
 | **prd-codebase-map** | Map meta PRD → as-built + codegraph; emit product questions |
+| **review-product-questions** | Optional interactive PE stance refine before posting |
 | **post-product-questions** | PE posts questions + recommendations on Meta PR; request PM feedback |
 
 Details: [`skills/engg-reviews/README.md`](skills/engg-reviews/README.md) ·

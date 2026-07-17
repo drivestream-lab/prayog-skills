@@ -32,8 +32,8 @@ Handoff: [../references/handoff-adjunct.md](../references/handoff-adjunct.md).
 
 | Role | Action |
 |------|--------|
-| **PE (this skill)** | Map already done → format Qs + PE recommendation → post on Meta PR → request PM feedback |
-| **PM (later, meta)** | Read PR comments → update PRD + outline → `/validate-requirements` / `/update-documents` / `/review-findings` as needed |
+| **PE** | Map → optional `/review-product-questions` → this skill posts on Meta PR |
+| **PM (later, meta)** | Read PR comments → update PRD + outline → requirements skills |
 | **Gate 1** | Unchanged — still impact-map-lgtm + Approve; this post does not unlock it |
 
 ## NON-NEGOTIABLE
@@ -51,16 +51,20 @@ Handoff: [../references/handoff-adjunct.md](../references/handoff-adjunct.md).
 
 ## Inputs
 
-1. **Map path** — (REQUIRED) `PRD-Codebase-Map-{INIT}.md` (pe-workspace
-   `out/reports/` or meta `prd/reports/`)
-2. **Meta PR** — (REQUIRED) number/URL + repo (e.g. `autrio10x/drivestream-meta` #104)
-3. **Mode** — all questions / conflicts-only / PE-selected IDs
+1. **Map path** — (REQUIRED) `PRD-Codebase-Map-{INIT}.md`
+2. **PE stance** — (OPTIONAL) `PE-Product-Stance-{INIT}.md` from
+   `/review-product-questions`. When present, prefer refined recommendations
+   and omit dropped questions.
+3. **Meta PR** — (REQUIRED) number/URL + repo (e.g. `autrio10x/drivestream-meta` #104)
+4. **Mode** — all questions / conflicts-only / PE-selected IDs
 
 ## Process
 
 ### T0 — Gather
 
 - Parse § Product questions from the map.
+- If stance file exists, overlay pe_action / refined recommendations; skip
+  `drop-question` rows.
 - Resolve Meta PR via `gh pr view` when available.
 - Cap: post the same capped set as the map (default ≤10).
 

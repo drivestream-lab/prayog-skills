@@ -1,8 +1,9 @@
 # Product question template
 
-Every product question emitted by `/prd-codebase-map` or posted by
-`/post-product-questions` MUST include these fields. Language must be
-**feature / user / product** — not modules, ADRs, or implementation plans.
+Every product question emitted by `/prd-codebase-map`, refined by
+`/review-product-questions`, or posted by `/post-product-questions` MUST include
+these fields. Language must be **feature / user / product** — not modules, ADRs,
+or implementation plans.
 
 ```markdown
 ### Q-{NN} — {short title}
@@ -32,8 +33,8 @@ Every product question emitted by `/prd-codebase-map` or posted by
 
 ## Meta PR projection
 
-PE runs `/post-product-questions` to post numbered questions on the **meta PRD
-PR** (after authorization), linking to `PRD-Codebase-Map-{INIT}.md`. Comments
-are projections; the map artifact remains canonical. **PM** answers on the PR
-and updates the PRD via requirements skills — engg-reviews does not collect
-PM decisions interactively.
+Optional: PE runs `/review-product-questions` to refine stance, then
+`/post-product-questions` to post on the **meta PRD PR** (after authorization),
+linking to `PRD-Codebase-Map-{INIT}.md`. Comments are projections; the map (and
+stance file, if any) remain canonical. **PM** answers on the PR and updates the
+PRD via requirements skills.

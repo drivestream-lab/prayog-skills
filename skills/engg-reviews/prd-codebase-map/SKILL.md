@@ -100,8 +100,8 @@ Resolve paths from [references/layout-defaults.md](references/layout-defaults.md
 
 | Outcome | When | next_candidates |
 |---------|------|-----------------|
-| `pass` | Matrix complete; no blocking open questions required | `post-product-questions` or `[]` |
-| `findings` | Product questions open for PM | `post-product-questions` |
+| `pass` | Matrix complete; no blocking open questions required | `review-product-questions` and/or `post-product-questions` |
+| `findings` | Product questions open for PE refine / PM | `review-product-questions` and/or `post-product-questions` |
 | `needs-input` | PRD/repos/graphs incomplete | `ensure-repo-graph` or `[]` |
 | `blocked` | Provider missing and PE refused degraded mode | `ensure-repo-graph` |
 | `stale` | PRD digest or graph SHA mismatch mid-run | `ensure-repo-graph` |
@@ -120,7 +120,7 @@ Use `contract: engg-reviews/v1` and stage `prd-codebase-map`.
 
 | Outcome | Next |
 |---------|------|
-| `pass` / `findings` | `/post-product-questions` (PE posts on Meta PR; PM decides later) |
+| `pass` / `findings` | Optional `/review-product-questions`, then `/post-product-questions` |
 | `needs-input` / `blocked` / `stale` | `/ensure-repo-graph` then retry |
 | `failed` | Human fixes tool/write issues; retry |
 

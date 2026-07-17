@@ -84,7 +84,7 @@ PRD codebase map {INIT} rev {N}
 - Questions open: {count} (conflict={n}, partial={n}, unknown={n})
 - Artifact: prd/reports/PRD-Codebase-Map-{INIT}.md
 - Gates: unchanged (gate_coupled=false)
-Next: /post-product-questions (PE → Meta PR) then PM updates PRD via requirements skills
+Next: optional /review-product-questions (PE stance), then /post-product-questions (Meta PR)
 ```
 
 ## 8. Handoff
@@ -104,6 +104,7 @@ handoff:
     grounding_depth: deep
     open_question_count: {N}
   next_candidates:
+    - review-product-questions
     - post-product-questions
   human_checkpoint: true
   external_action: false

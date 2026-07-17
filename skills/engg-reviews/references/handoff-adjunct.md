@@ -9,7 +9,7 @@ these handoffs for Gate 1 / Gate 2 / `spec-draft` transitions.
 ```yaml
 handoff:
   contract: engg-reviews/v1
-  stage: ensure-repo-graph | prd-codebase-map | post-product-questions
+  stage: ensure-repo-graph | prd-codebase-map | review-product-questions | post-product-questions
   outcome: pass | findings | needs-input | blocked | stale | failed | skipped
   artifact:
     path: {durable path or null}
@@ -30,6 +30,7 @@ handoff:
 2. `next_candidates` may only list engg-reviews stages:
    - `ensure-repo-graph`
    - `prd-codebase-map`
+   - `review-product-questions`
    - `post-product-questions`
    - empty list
 3. **Never** put `gate-1`, `prd-merge`, `spec-draft`, `impact-map-pending`,
@@ -39,6 +40,9 @@ handoff:
 5. Mutating `impact-map-*` or `spec-*` labels from engg-reviews is forbidden.
 6. Chat summaries may repeat the handoff; the durable artifact is source of
    truth.
+7. `/review-product-questions` is **optional**. After `/prd-codebase-map`,
+   `next_candidates` may be `review-product-questions`, `post-product-questions`,
+   or both listed as alternatives — PE chooses.
 
 ## Outcome vocabulary
 

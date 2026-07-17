@@ -1,14 +1,15 @@
 # engg-reviews (experimental)
 
 Gate-independent **PE** advisory skills: map an open **meta PRD PR** onto a
-**fleet of app repos** using **as-built + in-depth code graphs**, then **post
-product questions on the Meta PR** so PM can strengthen the PRD.
+**fleet of app repos** using **as-built + in-depth code graphs**, optionally
+refine PE stance interactively, then **post product questions on the Meta PR**
+so PM can strengthen the PRD.
 
 | | |
 |--|--|
 | **Contract** | `engg-reviews/v1` (adjunct — **not** `sdd-delivery/v2`) |
 | **Phase** | 1 — local Graphify MVP |
-| **Branch** | `features/rc-2` / version `0.5.0-rc.2` |
+| **Branch / tag** | `features/rc-2` · distribute as **`pe-rc-2`** · version `0.5.0-rc.2` |
 | **Lane** | **PE only** — does not replace PM requirements skills |
 | **Profiles** | **Not** registered in `profiles/*.yaml` |
 
@@ -21,16 +22,17 @@ Plan: [docs/engg-reviews-implementation-plan.md](../../docs/engg-reviews-impleme
 3. Handoff `gate_coupled: false`; `next_candidates` only engg-reviews stages.
 4. Phase 1 evidence engine: local Graphify (`uv tool install graphifyy`).
 5. Prefer `EXTRACTED` graph edges; do not treat `INFERRED` alone as `exists`.
-6. **PE posts questions; PM decides** — engg-reviews never runs interactive PM
-   accept/reject loops or edits the PRD.
+6. **PE proposes; PM decides** — interactive review refines **PE stance** only;
+   it is not PM approval and does not edit the PRD.
 
 ## Skills (PE)
 
-| Skill | Purpose |
-|-------|---------|
-| [`ensure-repo-graph`](ensure-repo-graph/SKILL.md) | Sync fleet `@ develop`, build/refresh graphs |
-| [`prd-codebase-map`](prd-codebase-map/SKILL.md) | PRD × as-built × graph → map + product questions |
-| [`post-product-questions`](post-product-questions/SKILL.md) | Post Qs + PE recommendations on Meta PR; ask PM feedback |
+| Skill | Purpose | Required? |
+|-------|---------|-------------|
+| [`ensure-repo-graph`](ensure-repo-graph/SKILL.md) | Sync fleet `@ develop`, build/refresh graphs | Usual |
+| [`prd-codebase-map`](prd-codebase-map/SKILL.md) | PRD × as-built × graph → map + product questions | Yes |
+| [`review-product-questions`](review-product-questions/SKILL.md) | Interactive PE stance refine → `PE-Product-Stance-*.md` | **Optional** |
+| [`post-product-questions`](post-product-questions/SKILL.md) | Post Qs + PE recommendations on Meta PR; ask PM feedback | Yes (to publish) |
 
 ## PE runbook (Phase 1)
 
@@ -38,9 +40,10 @@ Plan: [docs/engg-reviews-implementation-plan.md](../../docs/engg-reviews-impleme
 1. Open Cursor on {fleet}/pe-workspace/
 2. ./bin/refresh-graph.sh <repo> [--with-docs]
 3. /ensure-repo-graph
-4. /prd-codebase-map       → out/reports/PRD-Codebase-Map-{INIT}.md
-5. /post-product-questions → gh pr comment on Meta PR (authorized)
-6. Stop (PE). Wait for PM.
+4. /prd-codebase-map
+5. /review-product-questions   # optional — product-minded PE
+6. /post-product-questions     # Meta PR comment (authorized)
+7. Stop (PE). Wait for PM.
 ```
 
 ## PM follow-up (requirements lane — not this pack)
