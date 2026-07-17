@@ -12,7 +12,7 @@ agent can resolve the next stage without platform-specific skill calls.
 | | |
 |---|---|
 | **License** | [MIT](LICENSE) |
-| **Version** | see [`VERSION`](VERSION) (currently **0.4.3**) |
+| **Version** | see [`VERSION`](VERSION) (branch `features/rc-2` experimental **0.5.0-rc.2**; mainline **0.4.3**) |
 | **Install** | [skills CLI](https://skills.sh) or `launchpad sync-harness-*` |
 | **Pairs with** | [launchpad](https://github.com/drivestream-lab/launchpad) · `*-rules` repos |
 
@@ -150,10 +150,29 @@ prayog-skills/
   skills/
     requirements/     # PM lane
     development/      # Dev lane
+    engg-reviews/     # Experimental PE adjunct (not in profiles)
   scripts/            # Consistency checks (CI)
 ```
 
 Each skill: `skills/<category>/<name>/SKILL.md` per [Agent Skills](https://cursor.com/docs/skills).
+
+---
+
+## Experimental — engg-reviews (Phase 1 MVP)
+
+Gate-independent PE advisory pack on branch `features/rc-2` / version `0.5.0-rc.2`.
+**Not** part of `sdd-delivery/v2`. **Not** listed in `profiles/*.yaml` — does not
+unlock Gate 1 or `/spec-draft`. PE posts product questions on the Meta PR; PM
+updates the PRD via requirements skills.
+
+| Skill | When |
+|-------|------|
+| **ensure-repo-graph** | Refresh local Graphify graphs for candidate app repos `@ develop` |
+| **prd-codebase-map** | Map meta PRD → as-built + codegraph; emit product questions |
+| **post-product-questions** | PE posts questions + recommendations on Meta PR; request PM feedback |
+
+Details: [`skills/engg-reviews/README.md`](skills/engg-reviews/README.md) ·
+[`docs/engg-reviews-implementation-plan.md`](docs/engg-reviews-implementation-plan.md)
 
 ---
 
