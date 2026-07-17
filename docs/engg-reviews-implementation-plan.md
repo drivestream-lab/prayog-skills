@@ -272,12 +272,15 @@ Navigators of `sdd-delivery/v2` **ignore** `engg-reviews/v1` for Gate transition
 
 ---
 
-## 12. Proposed first commit scope (after plan approval)
+## 13. Distribution (tag `pe-rc-2`)
 
-On `features/rc-2` only:
+Installer (stdlib Python) lives at `scripts/install_engg_reviews.py`.
 
-1. `VERSION` → `0.5.0-rc.2`  
-2. Scaffold `skills/engg-reviews/**` as in §5.1 (SKILL.md + references; no Docker)  
-3. `docs/engg-reviews-implementation-plan.md` (this file)  
+```bash
+curl -fsSL https://raw.githubusercontent.com/drivestream-lab/prayog-skills/pe-rc-2/scripts/install_engg_reviews.py \
+  -o /tmp/install_engg_reviews.py
+python3 /tmp/install_engg_reviews.py --target /path/to/pe-workspace --ref pe-rc-2
+```
 
-No PR. No profile updates.
+Discovers all `skills/engg-reviews/*/SKILL.md` and symlinks into the target.
+Helpers come from `skills/engg-reviews/templates/`.

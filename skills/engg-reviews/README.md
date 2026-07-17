@@ -15,6 +15,25 @@ so PM can strengthen the PRD.
 
 Plan: [docs/engg-reviews-implementation-plan.md](../../docs/engg-reviews-implementation-plan.md)
 
+## Install (PE distribution — tag `pe-rc-2`)
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/drivestream-lab/prayog-skills/pe-rc-2/scripts/install_engg_reviews.py \
+  -o /tmp/install_engg_reviews.py
+
+python3 /tmp/install_engg_reviews.py --target /path/to/pe-workspace --ref pe-rc-2
+```
+
+Or from a checkout:
+
+```bash
+python3 scripts/install_engg_reviews.py --target /path/to/pe-workspace --local-source .
+# or: ./scripts/install-engg-reviews.sh --target /path/to/pe-workspace --ref pe-rc-2
+```
+
+Links **all** `skills/engg-reviews/*/SKILL.md` packages into
+`{target}/.agents/skills/` and copies helpers from `templates/`.
+
 ## Non-negotiables
 
 1. Does **not** unlock Gate 1 or `/spec-draft`.

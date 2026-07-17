@@ -175,6 +175,14 @@ updates the PRD via requirements skills.
 Details: [`skills/engg-reviews/README.md`](skills/engg-reviews/README.md) ·
 [`docs/engg-reviews-implementation-plan.md`](docs/engg-reviews-implementation-plan.md)
 
+**PE install (tag `pe-rc-2`):**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/drivestream-lab/prayog-skills/pe-rc-2/scripts/install_engg_reviews.py \
+  -o /tmp/install_engg_reviews.py
+python3 /tmp/install_engg_reviews.py --target /path/to/pe-workspace --ref pe-rc-2
+```
+
 ---
 
 ## Release process (maintainers)

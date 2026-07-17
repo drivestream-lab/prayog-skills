@@ -1,0 +1,31 @@
+# Fleet layout for engg-reviews (Phase 1 — local Graphify)
+# Paths are relative to this pe-workspace directory. Edit for your fleet.
+
+fleet_root: ..
+pe_workspace: .
+meta_repo: REPLACE-meta-repo-name
+meta_path: ../REPLACE-meta-repo-name
+integration_branch: develop
+codegraph_provider: local-graphify
+
+layout:
+  graphs_dir: graphs
+  reports_dir: out/reports
+
+meta:
+  prd_root: ../REPLACE-meta-repo-name/prd
+  reports_dir: ../REPLACE-meta-repo-name/prd/reports
+
+repos:
+  example-service:
+    path: ../example-service
+    as_built: ../example-service/docs/specification/as-built/implementation-status.md
+    graph: graphs/example-service/graphify-out/graph.json
+
+# initiatives:
+#   INIT-EXAMPLE-001:
+#     meta_pr: 123
+#     prd: ../REPLACE-meta-repo-name/prd/INIT-EXAMPLE-001.md
+#     impact_map: ../REPLACE-meta-repo-name/prd/reports/Impact-Map-INIT-EXAMPLE-001.md
+#     candidates:
+#       - example-service
