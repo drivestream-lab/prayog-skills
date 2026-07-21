@@ -28,7 +28,10 @@ implement → check/test → fix → repeat → live verify (when applicable)
 2. **Prerequisites** — run only after `/pre-implement` produced a checklist
    with gate verdict PASS on the current wave. Do not run on an open Draft spec
    PR branch (`chore/*-spec-*`). The implementation plan must exist on
-   `develop` (spec package merged with `spec-lgtm` on merge head).
+   `develop` (spec package merged with `spec-lgtm` on merge head). When the
+   wave includes UI, also require `LOCKED-{INIT}.md` (cited in the plan /
+   pre-implement checklist) and implement that composition on the **clean**
+   baseline — do not revive explore A/B/C files.
 3. After each task, run `{check_command}` and `{test_command}` from the
    harness profile (or `tests_readme`). Both must pass before committing.
 4. Fix failures before moving to the next task — do not accumulate failures.
@@ -42,6 +45,8 @@ implement → check/test → fix → repeat → live verify (when applicable)
 
 - Wave slice spec — from plan wave section (`docs/specification/reports/Implementation-Plan-{initiative}.md W{N}`)
 - Pre-implement checklist — produced by `/pre-implement` for this wave
+- **UI lock** (UI waves) — `docs/project-guidance/design-system/variations/LOCKED-{INIT}.md`
+  (Selected composition + PM Improvements)
 - `{check_command}` — static checks (from harness profile or `AGENTS.md`)
 - `{test_command}` — unit verification (from harness profile or `tests_readme`)
 - `{verify_command}` — live verification (when applicable; from the plan and `tests_readme`)
@@ -49,7 +54,8 @@ implement → check/test → fix → repeat → live verify (when applicable)
 
 ## Loop body (each task iteration)
 
-1. Implement or fix the current task against the spec only.
+1. Implement or fix the current task against the spec (and UI lock when
+   applicable) only.
 2. Run `{check_command}` — zero warnings/errors required.
 3. Run `{test_command}` — all tests pass required.
 4. If any failure: fix and repeat from step 2.
@@ -71,10 +77,11 @@ implement → check/test → fix → repeat → live verify (when applicable)
 ## Chain position
 
 ```
-/pre-implement (checklist produced)
+/pre-implement (checklist produced; UI lock confirmed when applicable)
     ↓
 /loop-spec              ← YOU ARE HERE
   implement task → verify → fix → repeat
+  UI: rebuild locked composition on clean baseline
   human never sees intermediate failures
     ↓
   checks/tests/live verify green

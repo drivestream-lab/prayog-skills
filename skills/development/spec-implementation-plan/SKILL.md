@@ -1,11 +1,11 @@
 ---
 name: spec-implementation-plan
 description: >-
-  After feasibility (and technical review when applicable), produce a
-  wave-level implementation plan with REQ/TASK/FILE/TEST tables and a
-  WorkManifest YAML seed section (§9). Runs while the spec PR is open,
-  before spec merge. Board seeding (gh issue create) happens after spec
-  PR merge — not before.
+  After feasibility (technical review when applicable) and UI lock finalize
+  when the initiative has UI, produce a wave-level implementation plan with
+  REQ/TASK/FILE/TEST tables and a WorkManifest YAML seed section (§9). Runs
+  while the spec PR is open, before spec merge. Board seeding (gh issue create)
+  happens after spec PR merge — not before.
 disable-model-invocation: true
 paths: AGENTS.md, docs/specification/**, .cursor/rules/**
 metadata:
@@ -42,6 +42,10 @@ the board after spec PR merge**.
 10. Commit the plan to the **same Draft spec PR**. Gate 2 label stays
     **`spec-pending`**. After T5, present the **Gate 2 unlock checklist** from
     the output template so PE knows when to set `spec-lgtm`.
+11. **UI lock (when UI in scope)** — `LOCKED-{INIT}.md` must exist on the spec
+    branch (from `/ui-lock-finalize`). Explore variants must already be fully
+    removed. Plan tasks cite the lock as the UI composition contract. Non-UI
+    initiatives: mark lock N/A with reason (ui-variations skipped).
 
 ## Inputs
 
@@ -50,14 +54,16 @@ Resolve paths from `.harness/profile.yaml` or [references/layout-defaults.md](re
 1. **Initiative spec** — on spec branch (REQUIRED)
 2. **Feasibility report** — if exists (RECOMMENDED)
 3. **Technical review** — `Technical-Review-{initiative}.md` if produced (RECOMMENDED; required when feasibility had NEW-ADR findings)
-4. **As-built**, **tests_readme**, **live_verify_dir** layout (REQUIRED for test tasks)
-5. **Layout** — `.harness/profile.yaml` or [references/layout-defaults.md](references/layout-defaults.md)
-6. **`rules_glob`** — workspace MDC rules (REQUIRED). Read before T2 Analyze.
-7. **`adr_dir`** — architecture decision records (REQUIRED). Run relevant-ADR pass per [references/governance.md](references/governance.md) before T2 Analyze.
-8. **Canonical handoff references** — PRD digest, impact-map revision/scope
+4. **UI lock** — `docs/project-guidance/design-system/variations/LOCKED-{INIT}.md`
+   when UI in scope (REQUIRED for UI; N/A when ui-variations skipped)
+5. **As-built**, **tests_readme**, **live_verify_dir** layout (REQUIRED for test tasks)
+6. **Layout** — `.harness/profile.yaml` or [references/layout-defaults.md](references/layout-defaults.md)
+7. **`rules_glob`** — workspace MDC rules (REQUIRED). Read before T2 Analyze.
+8. **`adr_dir`** — architecture decision records (REQUIRED). Run relevant-ADR pass per [references/governance.md](references/governance.md) before T2 Analyze.
+9. **Canonical handoff references** — PRD digest, impact-map revision/scope
    digest, approved meta PR head/review (REQUIRED)
-9. **Command contract** — canonical check, test, live-verify, and ground
-   commands or explicit N/A rationale (REQUIRED)
+10. **Command contract** — canonical check, test, live-verify, and ground
+    commands or explicit N/A rationale (REQUIRED)
 
 ## Prerequisite
 
@@ -66,6 +72,9 @@ Run **while the Draft spec PR is open**, **before spec merge**, after:
 - `/spec-technical-review` completed when feasibility had NEW-ADR or PE-lane items
 - **`technical-review-approval` satisfied in files** — TDD `Status: Accepted`
   and every required ADR file in `{adr_dir}` is `Accepted` on the current head
+- **UI path:** `/ui-variations` → human lock → `/ui-lock-finalize` complete
+  (`LOCKED-{INIT}.md` present; explore code cleaned). **Non-UI:** ui-variations
+  `skipped`
 - All upstream source digests and approval references are CURRENT
 
 > **Artifact gate vs GitHub gate**
@@ -76,16 +85,19 @@ Run **while the Draft spec PR is open**, **before spec merge**, after:
 ## Process
 
 1. **T0 Gather and freshness gate** — spec waves, feasibility findings,
-   technical review, canonical handoff references, command contract, repo
-   layout; stop if a digest/approval is stale or a required command is unresolved
-2. **T1 Understand** — initiative id, wave boundaries, PR granularity from spec
-3. **T2 Analyze** — map each wave to concrete files and tests; cross-reference `rules_glob` and relevant ADRs; flag spec wording that conflicts with MDC patterns or Accepted ADRs as **MDC notes** / **ADR notes** in the TASK table
+   technical review, UI lock (or N/A), canonical handoff references, command
+   contract, repo layout; stop if a digest/approval is stale, UI lock is
+   missing when required, explore leftovers remain, or a required command is
+   unresolved
+2. **T1 Understand** — initiative id, wave boundaries, PR granularity from spec;
+   for UI inits, read Selected + Improvements from `LOCKED-{INIT}.md`
+3. **T2 Analyze** — map each wave to concrete files and tests; cross-reference `rules_glob` and relevant ADRs; flag spec wording that conflicts with MDC patterns or Accepted ADRs as **MDC notes** / **ADR notes** in the TASK table; UI tasks must rebuild the locked composition on a clean baseline (not resume explore files)
 4. **T3 Plan** — build REQ/TASK/FILE tables per wave; verify every TDD §4
    `ADR_REQUIRED` row links an **Accepted** file in `{adr_dir}` (created by
    `/spec-technical-review`, accepted during PE review — do not add promotion
-   tasks); cite those ADR ids in TASK **ADR notes**; collect
-   `codebase`/`spec_path`/`verify_command` per TASK
-5. **T4 Execute** — write plan; build WorkManifest seed section; run P1–P14 checks; commit to spec branch
+   tasks); cite those ADR ids in TASK **ADR notes**; cite lock path on UI
+   tasks; collect `codebase`/`spec_path`/`verify_command` per TASK
+5. **T4 Execute** — write plan; build WorkManifest seed section; run P1–P15 checks; commit to spec branch
 6. **T5 Verify** — self-contained plan readable by a fresh session; WorkManifest YAML is valid; present Gate 2 unlock checklist (§10) in chat for PE
 
 ## Output

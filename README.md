@@ -12,7 +12,7 @@ agent can resolve the next stage without platform-specific skill calls.
 | | |
 |---|---|
 | **License** | [MIT](LICENSE) |
-| **Version** | see [`VERSION`](VERSION) (currently **0.4.3**) |
+| **Version** | see [`VERSION`](VERSION) (currently **0.4.4**) |
 | **Install** | [skills CLI](https://skills.sh) or `launchpad sync-harness-*` |
 | **Pairs with** | [launchpad](https://github.com/drivestream-lab/launchpad) · `*-rules` repos |
 
@@ -48,6 +48,8 @@ PM skills validate and refine PRDs. Dev skills implement spec slices in service 
 | **spec-draft** | Dev translates PRD → spec slice for this repo |
 | **initiative-feasibility** | Dev reviews spec for buildability |
 | **spec-technical-review** | PE resolves engineering decisions + drafts ADRs |
+| **ui-variations** | Three temporary UI compositions for PM lock (spec PR; skip if non-UI) |
+| **ui-lock-finalize** | Remove all explore variants; write `LOCKED-{INIT}.md` |
 | **spec-implementation-plan** | Wave plan + §9 WorkManifest YAML on spec branch |
 | **board-seed** | EPIC + wave tree on programme board after spec merge (all app stacks) |
 | **pre-implement** | Pre-flight before each implementation wave |
@@ -73,6 +75,8 @@ Eng: Draft spec PR (entire spec lifecycle) for approved repo scope
     → spec-pending; Q&A on Draft PR
     ↓
 /spec-draft  →  /initiative-feasibility  →  [/spec-technical-review]
+    ↓
+/ui-variations  →  (PM lock)  →  /ui-lock-finalize   [skip if non-UI]
     ↓
 /spec-implementation-plan  (§9 WorkManifest YAML on spec branch)
     ↓

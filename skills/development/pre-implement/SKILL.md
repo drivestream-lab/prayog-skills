@@ -53,6 +53,10 @@ product code** unless the user explicitly asks after the checklist.
       matches attestation or Approve `commit_id`);
     - board-seed completed (wave issues exist per rule 10).
     If any check fails: stop — do not produce a checklist or write product code.
+12. **UI lock (when UI in scope)** — confirm `LOCKED-{INIT}.md` from the merged
+    spec package is present (path cited in the plan §0). Confirm no temporary
+    explore variant / preview-switch leftovers. Missing lock on a UI wave →
+    **blocked**. Non-UI waves: N/A.
 
 ## Chain position
 
@@ -63,12 +67,14 @@ spec merge (spec-lgtm on head) → /board-seed → wave issue In Progress
     ↓
 /pre-implement               ← YOU ARE HERE
   gate: spec merged + board seeded + prior wave human_approved?
-  reads: Ground-Report-W{N-1}.md §Contracts produced
+  UI: LOCKED-{INIT}.md present; explore cleaned
+  reads: Ground-Report-W{N-1}.md §Contracts produced; UI lock when applicable
   produces: pre-flight checklist with confirmed contract baselines
     ↓
   developer: checklist reviewed, branch opened (feature/INIT-*-w{N}-*)
     ↓
 /loop-spec → /ground-spec (this wave)
+  (UI waves: build locked composition on clean baseline)
 ```
 
 **Do not run on an open Draft spec PR branch** (`chore/*-spec-*`). Coding
@@ -76,23 +82,26 @@ starts only after the spec package is merged to `develop`.
 
 ## Read order
 
-1. **Source and gate check** — spec merge gate (rule 11); plan on integration
-   branch; plan sources CURRENT; impact-map scope current; canonical commands
-   resolved; board issues exist; `as-built/implementation-status.md` prior wave
-   = `human_approved` (Wn>0)? If any answer is no: stop.
+1. **Source and gate check** — spec merge gate (rule 11); UI lock gate (rule 12);
+   plan on integration branch; plan sources CURRENT; impact-map scope current;
+   canonical commands resolved; board issues exist;
+   `as-built/implementation-status.md` prior wave = `human_approved` (Wn>0)?
+   If any answer is no: stop.
 2. **Contracts consumed** — `reports/Ground-Report-W{N-1}.md` §Contracts
    produced: for each contract this wave depends on, read the entry point,
    input shape, output shape, and invariants as verified by the prior Ground
    Report. Confirm against actual source (scan `source_roots`) — not against
    spec alone.
-3. `AGENTS.md` — constitution pin, verify commands, process links
-4. **Domain-filtered MDC rules** — per [references/governance.md](references/governance.md)
-5. **Relevant ADRs** — keyword-match slice scope; read matched Accepted ADRs
-6. Initiative / slice spec — path from tracker Spec path or plan wave section
-7. Plan wave section — `reports/Implementation-Plan-{initiative}.md` W{N}:
-   carry forward source digests, command contract, MDC notes, and ADR notes
-   from TASK rows
-8. `tests_readme` — when the slice adds or changes verification
+3. **UI lock (UI waves)** — `LOCKED-{INIT}.md`: Selected composition contract +
+   PM Improvements; cite path on the checklist
+4. `AGENTS.md` — constitution pin, verify commands, process links
+5. **Domain-filtered MDC rules** — per [references/governance.md](references/governance.md)
+6. **Relevant ADRs** — keyword-match slice scope; read matched Accepted ADRs
+7. Initiative / slice spec — path from tracker Spec path or plan wave section
+8. Plan wave section — `reports/Implementation-Plan-{initiative}.md` W{N}:
+   carry forward source digests, command contract, MDC notes, ADR notes, and
+   UI lock citations from TASK rows
+9. `tests_readme` — when the slice adds or changes verification
 
 **Gate for W0 (first wave):** no prior Ground Report exists. The gate is
 the implementation plan PE sign-off (§0 of the plan). Confirm it is marked

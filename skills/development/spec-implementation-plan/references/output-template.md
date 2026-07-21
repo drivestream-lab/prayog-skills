@@ -35,8 +35,11 @@ deciders: PE — spec-lgtm + Approve on exact head after full package
 | `test_command` | `{command}` | RESOLVED / MISSING |
 | `verify_command` | `{command or N/A — reason}` | RESOLVED / N/A / MISSING |
 | `ground_command` | `{command or N/A — reason}` | RESOLVED / N/A / MISSING |
+| UI lock / digest | `{LOCKED path or N/A — non-UI}` / `sha256:{hex or N/A}` | CURRENT / STALE / N/A |
+| Explore cleanup | all temporary variants removed | PASS / FAIL / N/A |
 
 > Do not continue if any source is STALE or required command is MISSING.
+> Do not continue if UI is in scope and lock is missing, STALE, or explore cleanup FAIL.
 
 ## 0. Technical design reference
 
@@ -45,6 +48,7 @@ deciders: PE — spec-lgtm + Approve on exact head after full package
 | Technical review | {path to Technical-Review-{initiative}.md or "N/A — no NEW-ADR findings"} |
 | PE sign-off | {[ ] required / [x] complete — date} |
 | Resolved ADRs | {adr_dir/adr-NNN-slug.md (link, Status: Accepted), … or N/A — canonical files created by `/spec-technical-review` and accepted before planning; TDD §4 index refs alone are not sufficient} |
+| UI lock | {path to LOCKED-{INIT}.md — Selected + Improvements, or "N/A — non-UI / ui-variations skipped"} |
 | Outstanding PM questions | {list or "none — all resolved"} |
 | Outstanding domain questions | {list or "none — all resolved"} |
 

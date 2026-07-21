@@ -107,7 +107,7 @@ the `spec-technical-review` skill's `references/governance.md`.
 Append the envelope from `../../../references/handoff-envelope.md` to the saved
 report. Use stage `initiative-feasibility`.
 
-- `pass` with no PE-lane items → `spec-implementation-plan`
+- `pass` with no PE-lane items → `ui-variations` (then lock/finalize or skip → plan)
 - `findings` with PE-lane items / NEW-ADR → `spec-technical-review`
 - `needs-input` / `blocked` → human decision
 - `stale` → `spec-draft`

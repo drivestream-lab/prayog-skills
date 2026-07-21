@@ -50,13 +50,19 @@ handoff:
 9. Technical review reports `ready_for_pe_review: true` and
    `ready_for_plan: false` until Accepted TDD/ADR files exist on the spec
    branch. Mid-lane PE acceptance updates files only — not `spec-lgtm`.
-10. `/spec-implementation-plan` may run when TDD/ADR files are **Accepted**;
-    **`spec-lgtm`** is set only after the plan is on head (Gate 2 unlock).
+10. `/spec-implementation-plan` may run when TDD/ADR files are **Accepted** and,
+    for UI initiatives, `/ui-lock-finalize` has written `LOCKED-{INIT}.md` with
+    explore variants fully cleaned; **`spec-lgtm`** is set only after the plan
+    is on head (Gate 2 unlock). Non-UI initiatives skip ui-variations → plan.
 11. `/pre-implement` and `/loop-spec` require spec PR **merged** with
     `spec-lgtm` on merge head and board-seed complete — not an open Draft spec
-    PR branch.
+    PR branch. UI waves also require the merged `LOCKED-{INIT}.md` contract;
+    `/loop-spec` rebuilds that composition on a clean baseline.
 12. ADR signals contain actual file paths/digests; target paths or future
     promotion tasks are not artifacts.
+13. UI early lock: `/ui-variations` (explore) → human lock → `/ui-lock-finalize`
+    (delete **all** explore variants including selected; write lock artifact)
+    → `/spec-implementation-plan`. Do not leave explore code for waves.
 
 ## Outcome vocabulary
 

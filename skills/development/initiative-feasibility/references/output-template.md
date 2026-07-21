@@ -163,8 +163,8 @@ When ready:
   [ ] Spec updated to reflect answers (same branch)
   [ ] Incremental re-run of /initiative-feasibility on updated spec is clean
   [ ] Proceed: /spec-technical-review (PE questions exist)
-               OR /spec-implementation-plan (no PE questions)
-  [ ] After spec + feasibility + TDD (if any) + plan on branch:
+               OR /ui-variations (no PE questions; skip if non-UI → plan)
+  [ ] After UI lock finalize (or skip) + plan on branch:
       PE sets spec-lgtm + Approve on exact head → Ready for review → merge
   [ ] After merge: board-seed from plan §9 — then /pre-implement → /loop-spec
 ```
