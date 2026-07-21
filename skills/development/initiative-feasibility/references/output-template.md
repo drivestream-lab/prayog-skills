@@ -102,7 +102,7 @@ below may add narrative but must not contradict it.
 ### PE questions (engineering decisions — resolved by `/spec-technical-review`)
 
 > These are **not** for PM. Run `/spec-technical-review` to produce a Technical
-> Design Document that resolves these before `/spec-implementation-plan`.
+> Design Document that resolves these before `/ui-variations` (then plan).
 
 #### Blocking for implementation plan
 1. …

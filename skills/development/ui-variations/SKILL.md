@@ -21,17 +21,22 @@ for the locked choice is built later in `/loop-spec` on a clean tree.
 
 1. Resolve paths from `.harness/profile.yaml` when present.
 2. Run only while the Draft spec PR is open (`chore/*-spec-*` or equivalent).
-3. If the initiative has **no UI** (API/infra/docs-only): emit handoff `skipped`
+3. If `LOCKED-{INIT}.md` already exists from a prior lock on this branch (e.g.
+   Gate 2 `findings` re-entered PE → ui-variations): do **not** re-scaffold
+   explore variants unless the lock is explicitly invalidated. Emit `skipped`
+   with reason `lock-current` → `/spec-implementation-plan`. Only start a new
+   explore cycle when PE/PM invalidates the lock.
+4. If the initiative has **no UI** (API/infra/docs-only): emit handoff `skipped`
    with reason → `/spec-implementation-plan`. Do not invent UI work.
-4. Produce **three** temporary runnable options that share the **same** UI
+5. Produce **three** temporary runnable options that share the **same** UI
    pattern id / shell contract; vary **composition/layout/density** only.
-5. Compose existing `components/ui` and established domain components — no new
+6. Compose existing `components/ui` and established domain components — no new
    shared primitives unless consumer change-control allows it later in waves.
-6. Do **not** treat explore code as the production deliverable. After PM lock,
+7. Do **not** treat explore code as the production deliverable. After PM lock,
    `/ui-lock-finalize` **deletes all** explore variants (including the selected
    one) and restores the pre-explore baseline.
-7. Do **not** paste design-tool MCP / codegen JSX verbatim.
-8. Stop after requesting human review — do not run `/ui-lock-finalize` or
+8. Do **not** paste design-tool MCP / codegen JSX verbatim.
+9. Stop after requesting human review — do not run `/ui-lock-finalize` or
    `/spec-implementation-plan` in this stage.
 
 ## Chain position
