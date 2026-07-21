@@ -94,7 +94,7 @@ nodes:
     type: skill
     profile: development
     outcomes:
-      pass: spec-implementation-plan
+      pass: ui-variations
       findings: spec-technical-review
       needs-input: spec-human-decision
       blocked: spec-human-decision
@@ -116,7 +116,7 @@ nodes:
     type: human-checkpoint
     owner: engineering-gate
     outcomes:
-      pass: spec-implementation-plan
+      pass: ui-variations
       findings: spec-technical-review
       blocked: spec-human-decision
       stale: initiative-feasibility
@@ -127,6 +127,35 @@ nodes:
       pass: initiative-feasibility
       stale: prd-impact-map
       skipped: workflow-stop
+
+  ui-variations:
+    type: skill
+    profile: development
+    outcomes:
+      pass: ui-variation-lock
+      skipped: spec-implementation-plan
+      needs-input: spec-human-decision
+      blocked: spec-human-decision
+      stale: initiative-feasibility
+      failed: workflow-stop
+
+  ui-variation-lock:
+    type: human-checkpoint
+    outcomes:
+      pass: ui-lock-finalize
+      findings: ui-variations
+      blocked: spec-human-decision
+      skipped: spec-implementation-plan
+
+  ui-lock-finalize:
+    type: skill
+    profile: development
+    outcomes:
+      pass: spec-implementation-plan
+      needs-input: spec-human-decision
+      blocked: spec-human-decision
+      stale: ui-variations
+      failed: workflow-stop
 
   spec-implementation-plan:
     type: skill

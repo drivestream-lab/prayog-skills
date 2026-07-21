@@ -177,7 +177,7 @@ use `planned-auto-fix` or `suggested-fix`.
 | PM questions outstanding | {derived row count — list} |
 | Domain questions outstanding | {derived row count — list} |
 | Ready for PE review | YES / NO |
-| **Ready for /spec-implementation-plan** | **NO — final exact-head PE approval required** |
+| **Ready for /ui-variations (then plan)** | **NO — PE artifact acceptance first; then UI lock (or skip) before plan** |
 
 ---
 
@@ -230,7 +230,10 @@ PE action (artifact acceptance — mid-lane):
   Commit acceptance package to spec branch (label remains spec-pending)
 
 After artifact acceptance:
-  → /spec-implementation-plan may run on the same branch
+  → /ui-variations (UI in scope) → ui-variation-lock → /ui-lock-finalize
+    OR skip ui-variations when non-UI
+  → /spec-implementation-plan on the same branch
   → after plan on head: PE sets spec-lgtm + Approve + attestation
   → Ready for review → merge → board-seed from merged plan §9
 ```
+

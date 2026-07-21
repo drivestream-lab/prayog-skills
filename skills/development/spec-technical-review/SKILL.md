@@ -4,7 +4,7 @@ description: >-
   After feasibility, produce a principal-engineer design document: resolve all
   engineering decisions (ADRs, interface contracts, test policy, module
   boundaries), draft any required ADRs, and route only true product questions
-  back to PM on the meta PRD PR. Use before /spec-implementation-plan when the
+  back to PM on the meta PRD PR. Use before /ui-variations (then plan) when the
   feasibility report contains NEW-ADR findings, Critical/Should-fix engineering
   items, or unclear module boundaries. Commits TDD and Draft ADRs to the Draft
   spec PR; PE accepts architecture in files before planning. Final Gate 2

@@ -18,14 +18,44 @@
     "next": "spec-technical-review"
   },
   {
+    "name": "feasibility pass routes to ui-variations",
+    "stage": "initiative-feasibility",
+    "outcome": "pass",
+    "next": "ui-variations"
+  },
+  {
     "name": "technical review routes to PE approval gate",
     "stage": "spec-technical-review",
     "outcome": "pass",
     "next": "technical-review-approval"
   },
   {
-    "name": "PE approval enables implementation plan",
+    "name": "PE approval routes to ui-variations",
     "stage": "technical-review-approval",
+    "outcome": "pass",
+    "next": "ui-variations"
+  },
+  {
+    "name": "ui-variations pass routes to human lock",
+    "stage": "ui-variations",
+    "outcome": "pass",
+    "next": "ui-variation-lock"
+  },
+  {
+    "name": "ui-variations skip routes to plan for non-UI",
+    "stage": "ui-variations",
+    "outcome": "skipped",
+    "next": "spec-implementation-plan"
+  },
+  {
+    "name": "human lock unlocks finalize cleanup",
+    "stage": "ui-variation-lock",
+    "outcome": "pass",
+    "next": "ui-lock-finalize"
+  },
+  {
+    "name": "lock finalize routes to implementation plan",
+    "stage": "ui-lock-finalize",
     "outcome": "pass",
     "next": "spec-implementation-plan"
   },
@@ -46,6 +76,12 @@
     "stage": "board-seed",
     "outcome": "pass",
     "next": "pre-implement"
+  },
+  {
+    "name": "pre-implement routes to loop-spec",
+    "stage": "pre-implement",
+    "outcome": "pass",
+    "next": "loop-spec"
   },
   {
     "name": "verify findings return to implementation",

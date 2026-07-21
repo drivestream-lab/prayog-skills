@@ -5,6 +5,29 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [0.4.4] — 2026-07-22
+
+### Added — Early UI variation lock (before implementation plan)
+
+- **`/ui-variations`** — on the Draft spec PR, produce three temporary runnable
+  compositions for PM selection (skip when non-UI).
+- **`/ui-lock-finalize`** — after human lock: delete **all** explore variants
+  (including the selected one), restore the pre-explore baseline, write
+  `LOCKED-{INIT}.md` as the only durable UI contract.
+- `workflow.yaml` nodes: feasibility / tech-review-approval → `ui-variations` →
+  `ui-variation-lock` → `ui-lock-finalize` → `spec-implementation-plan`.
+- Plan check **P15** + freshness rows for UI lock / explore cleanup.
+- `/pre-implement` and `/loop-spec` consume the lock; waves rebuild the locked
+  composition on a clean tree (no mid-wave UI picker; no `/ui-implement`).
+
+### Changed
+
+- `initiative-feasibility` `pass` and `technical-review-approval` `pass` route
+  to `ui-variations` (not directly to the plan).
+- All app `development_skills` profiles list `ui-variations` + `ui-lock-finalize`.
+
+---
+
 ## [0.4.3] — 2026-07-14
 
 ### Added — SDD delivery contract (Gate 1 / Gate 2) and `/board-seed`
