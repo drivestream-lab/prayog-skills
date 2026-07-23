@@ -21,6 +21,47 @@ principles:
   - external-writes-require-authorization
   - human-gates-never-auto-transition
   - artifacts-not-chat-are-durable-state
+  - invocation-mode-is-not-an-exemption
+
+# Dispatch (skill nodes only) — automation eligibility SSOT in workflow.yaml
+#
+# Enum (rc-2 v1 contract tests):
+#   manual       — human or agent may run the skill; orchestrators must not auto-dispatch
+#   orchestrated — orchestrator may auto-dispatch when programme trigger + handoff authorize
+#   observed     — reserved/future; excluded from rc-2 v1 contract tests
+#
+# Schema default: absent `dispatch` on a skill (e.g. v0.4.3 pins) → treat as `manual`.
+# Consumers must not maintain skill-id allowlists; read pinned workflow.yaml only.
+#
+# Human-checkpoint nodes require `purpose` (intent slug). Mechanism is always
+# `type: human-checkpoint` — do not invent `type: gate`. Node ids such as gate-1
+# remain stable labels; purpose carries why the human stop exists.
+#
+# Consumer algorithm (human invoke and AgentRunner — same legality):
+#   next = resolve(handoff.stage, handoff.outcome) from pinned workflow.yaml
+#   if next.type != skill:
+#       STOP  # human-checkpoint, external-action, decision, terminal
+#   dispatch_value = next.dispatch ?? manual
+#   # Human / ad-hoc agent may run a skill when workflow preconditions allow.
+#   # Orchestrator auto-dispatch only when dispatch_value == orchestrated and
+#   # programme trigger + handoff authorize.
+#   if orchestrator_auto and dispatch_value != orchestrated:
+#       STOP
+#   if next.type == human-checkpoint:  # also when resolved next is checkpoint
+#       STOP  # never auto-advance; purpose is for display/ops only
+
+dispatch:
+  enum:
+    - manual
+    - orchestrated
+  schema_default: manual
+  reserved_future:
+    - observed
+  policy_fixture: tests/fixtures/workflow_dispatch_policy.json
+
+human_checkpoint:
+  required_field: purpose
+  mechanism: human-checkpoint
 
 github:
   labels:

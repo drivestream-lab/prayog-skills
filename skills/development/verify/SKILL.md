@@ -63,8 +63,9 @@ Emit the envelope from `../../../references/handoff-envelope.md` in the verify
 result and persist the command/evidence in the tracker or report. Use stage
 `verify`.
 
-- `pass` / justified `skipped` → `ground-spec`
-- `findings` / `failed` → `loop-spec`
-- `blocked` → human decision
+**Transitions:** pinned root `workflow.yaml` for this stage (SSOT). Human or
+agent may run this skill; orchestrators may auto-dispatch when authorized.
+Same legality for both invoke paths.
 
 Never mark `pass` without command output or equivalent reproducible evidence.
+`next_candidates` never authorize invoke.

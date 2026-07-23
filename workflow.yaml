@@ -12,6 +12,7 @@ nodes:
   validate-requirements:
     type: skill
     profile: meta-pm
+    dispatch: manual
     outcomes:
       pass: prd-impact-map
       findings: review-findings
@@ -21,6 +22,7 @@ nodes:
   review-findings:
     type: skill
     profile: meta-pm
+    dispatch: manual
     outcomes:
       pass: update-documents
       needs-input: requirements-human-decision
@@ -29,6 +31,7 @@ nodes:
   update-documents:
     type: skill
     profile: meta-pm
+    dispatch: manual
     outcomes:
       pass: validate-requirements
       findings: review-findings
@@ -38,6 +41,7 @@ nodes:
   prd-impact-map:
     type: skill
     profile: meta-pm
+    dispatch: manual
     outcomes:
       pass: prd-pr-action
       findings: requirements-human-decision
@@ -48,6 +52,7 @@ nodes:
 
   requirements-human-decision:
     type: human-checkpoint
+    purpose: requirements-clarification
     outcomes:
       pass: validate-requirements
       skipped: workflow-stop
@@ -64,6 +69,7 @@ nodes:
 
   gate-1:
     type: human-checkpoint
+    purpose: prd-impact-acceptance
     owner: engineering-gate
     outcomes:
       pass: prd-merge
@@ -83,6 +89,7 @@ nodes:
   spec-draft:
     type: skill
     profile: development
+    dispatch: manual
     outcomes:
       pass: initiative-feasibility
       needs-input: spec-human-decision
@@ -93,6 +100,7 @@ nodes:
   initiative-feasibility:
     type: skill
     profile: development
+    dispatch: manual
     outcomes:
       pass: spec-implementation-plan
       findings: spec-technical-review
@@ -104,6 +112,7 @@ nodes:
   spec-technical-review:
     type: skill
     profile: development
+    dispatch: manual
     outcomes:
       pass: technical-review-approval
       findings: spec-human-decision
@@ -114,6 +123,7 @@ nodes:
 
   technical-review-approval:
     type: human-checkpoint
+    purpose: tdd-adr-acceptance
     owner: engineering-gate
     outcomes:
       pass: spec-implementation-plan
@@ -123,6 +133,7 @@ nodes:
 
   spec-human-decision:
     type: human-checkpoint
+    purpose: spec-clarification
     outcomes:
       pass: initiative-feasibility
       stale: prd-impact-map
@@ -131,6 +142,7 @@ nodes:
   spec-implementation-plan:
     type: skill
     profile: development
+    dispatch: manual
     outcomes:
       pass: gate-2
       needs-input: spec-human-decision
@@ -140,6 +152,7 @@ nodes:
 
   gate-2:
     type: human-checkpoint
+    purpose: coding-readiness
     owner: engineering-gate
     outcomes:
       pass: spec-merge
@@ -159,6 +172,7 @@ nodes:
   board-seed:
     type: skill
     profile: development
+    dispatch: manual
     requires:
       - spec-pr-merged
       - implementation-plan-current
@@ -171,6 +185,7 @@ nodes:
   pre-implement:
     type: skill
     profile: development
+    dispatch: orchestrated
     outcomes:
       pass: loop-spec
       needs-input: wave-human-decision
@@ -181,6 +196,7 @@ nodes:
   loop-spec:
     type: skill
     profile: development
+    dispatch: orchestrated
     outcomes:
       pass: verify
       findings: loop-spec
@@ -190,6 +206,7 @@ nodes:
   verify:
     type: skill
     profile: development
+    dispatch: orchestrated
     outcomes:
       pass: ground-spec
       skipped: ground-spec
@@ -200,6 +217,7 @@ nodes:
   ground-spec:
     type: skill
     profile: development
+    dispatch: orchestrated
     outcomes:
       pass: wave-human-decision
       findings: loop-spec
@@ -209,6 +227,7 @@ nodes:
 
   wave-human-decision:
     type: human-checkpoint
+    purpose: wave-signoff
     outcomes:
       pass: wave-complete
       findings: loop-spec
@@ -222,6 +241,7 @@ nodes:
 
   initiative-closure:
     type: human-checkpoint
+    purpose: initiative-closure
     outcomes:
       pass: workflow-complete
       findings: wave-human-decision

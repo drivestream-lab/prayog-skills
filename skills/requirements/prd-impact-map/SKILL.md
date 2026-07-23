@@ -249,10 +249,11 @@ the current meta PR head SHA or any attested value differs from the artifact.
 Append the envelope from `../../../references/handoff-envelope.md` to the
 impact-map artifact. Use stage `prd-impact-map`.
 
-- `pass` with `signals.pr_ready: true` → authorized `prd-pr-action`
-- `findings` / `needs-input` / `blocked` → human decision
-- `stale` → rerun this skill
-- `failed` → stop
+**Transitions:** pinned root `workflow.yaml` for this stage (SSOT). Human or
+agent may run this skill; legality and auto-dispatch follow `dispatch` +
+delivery contract + latest handoff. On `pass` with `signals.pr_ready: true`,
+the next node is typically `prd-pr-action` (external-action — explicit auth).
 
 Set `external_action: true` when PR creation/update is the candidate next node.
-The handoff never authorizes GitHub mutation.
+The handoff never authorizes GitHub mutation. `next_candidates` never authorize
+invoke.

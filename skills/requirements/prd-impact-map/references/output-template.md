@@ -46,7 +46,7 @@ handoff:
     recommended_resolution: {recommendation}
     human_decision: pending
   next_candidates:
-    - requirements-human-decision
+    - requirements-human-decision  # must ⊆ workflow.yaml for outcome
   human_checkpoint: true
   external_action: false
 ```

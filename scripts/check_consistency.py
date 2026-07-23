@@ -12,12 +12,19 @@ CI:  add to .github/workflows/ci.yml as a step.
 
 from __future__ import annotations
 
+import json
 import re
 import sys
 from pathlib import Path
 
+try:
+    import yaml
+except ImportError:  # pragma: no cover — CI installs PyYAML
+    yaml = None  # type: ignore[assignment]
+
 ROOT = Path(__file__).parent.parent
 SKILLS_DIR = ROOT / "skills"
+DISPATCH_ENUM = frozenset({"manual", "orchestrated"})
 
 # ── Invariants ────────────────────────────────────────────────────────────────
 # Each entry: (description, pattern, allowed_values, file_glob)
@@ -481,11 +488,86 @@ def check_delivery_contract_surface() -> list[str]:
             errors.append(f"  MISSING: {relative_path}")
 
     for skill_file in SKILLS_DIR.glob("*/*/SKILL.md"):
+        # engg-reviews is an adjunct pack — not on sdd-delivery workflow.
+        if "engg-reviews" in skill_file.parts:
+            continue
         text = skill_file.read_text(encoding="utf-8")
         if "## Workflow handoff" not in text:
             errors.append(
                 f"  {skill_file.relative_to(ROOT)}: missing Workflow handoff section"
             )
+    return errors
+
+
+def check_workflow_dispatch_and_purpose() -> list[str]:
+    """Assert dispatch on skills and purpose on human-checkpoints (YAML SSOT)."""
+    errors: list[str] = []
+    if yaml is None:
+        return ["  MISSING dependency: PyYAML (required for workflow dispatch checks)"]
+
+    workflow_path = ROOT / "workflow.yaml"
+    policy_path = ROOT / "tests" / "fixtures" / "workflow_dispatch_policy.json"
+    if not workflow_path.is_file():
+        return ["  MISSING: workflow.yaml"]
+    if not policy_path.is_file():
+        return ["  MISSING: tests/fixtures/workflow_dispatch_policy.json"]
+
+    workflow = yaml.safe_load(workflow_path.read_text(encoding="utf-8"))
+    policy = json.loads(policy_path.read_text(encoding="utf-8"))
+    nodes = workflow.get("nodes") or {}
+    orchestrated = set(policy.get("orchestrated") or [])
+    manual = set(policy.get("manual") or [])
+    purposes = policy.get("human_checkpoint_purposes") or {}
+
+    skill_nodes = {s for s, n in nodes.items() if n.get("type") == "skill"}
+    if skill_nodes != orchestrated | manual:
+        errors.append(
+            f"  policy fixture skill set mismatch: workflow={sorted(skill_nodes)} "
+            f"policy={sorted(orchestrated | manual)}"
+        )
+    if orchestrated & manual:
+        errors.append(f"  policy fixture overlap: {sorted(orchestrated & manual)}")
+
+    for stage, node in nodes.items():
+        ntype = node.get("type")
+        if ntype == "gate":
+            errors.append(f"  {stage}: forbidden type: gate (use human-checkpoint)")
+        if ntype == "skill":
+            dispatch = node.get("dispatch")
+            if dispatch not in DISPATCH_ENUM:
+                errors.append(
+                    f"  {stage}: skill requires dispatch in {sorted(DISPATCH_ENUM)}"
+                )
+            elif stage in orchestrated and dispatch != "orchestrated":
+                errors.append(f"  {stage}: expected dispatch: orchestrated")
+            elif stage in manual and dispatch != "manual":
+                errors.append(f"  {stage}: expected dispatch: manual")
+            if "purpose" in node:
+                errors.append(f"  {stage}: purpose is only for human-checkpoint nodes")
+        elif ntype == "human-checkpoint":
+            purpose = node.get("purpose")
+            if not isinstance(purpose, str) or not purpose.strip():
+                errors.append(f"  {stage}: human-checkpoint requires purpose")
+            elif stage in purposes and purpose != purposes[stage]:
+                errors.append(
+                    f"  {stage}: purpose {purpose!r} != policy {purposes[stage]!r}"
+                )
+            if "dispatch" in node:
+                errors.append(f"  {stage}: dispatch is only for skill nodes")
+        else:
+            if "dispatch" in node:
+                errors.append(f"  {stage}: dispatch is only for skill nodes")
+            if "purpose" in node:
+                errors.append(f"  {stage}: purpose is only for human-checkpoint nodes")
+
+    checkpoint_ids = {
+        s for s, n in nodes.items() if n.get("type") == "human-checkpoint"
+    }
+    if set(purposes) != checkpoint_ids:
+        errors.append(
+            f"  human_checkpoint_purposes keys mismatch: "
+            f"workflow={sorted(checkpoint_ids)} policy={sorted(purposes)}"
+        )
     return errors
 
 
@@ -540,6 +622,12 @@ def main() -> int:
     errors = check_delivery_contract_surface()
     if errors:
         all_errors.append(("Delivery contract and skill handoffs must be complete", errors))
+
+    errors = check_workflow_dispatch_and_purpose()
+    if errors:
+        all_errors.append(
+            ("Workflow dispatch/purpose must match policy fixture", errors)
+        )
 
     if all_errors:
         print("prayog-skills consistency check FAILED\n")

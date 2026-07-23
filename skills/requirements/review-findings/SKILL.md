@@ -323,9 +323,9 @@ Format:
 Append the envelope from `../../../references/handoff-envelope.md` to the
 Resolution file. Use stage `review-findings`.
 
-- `pass` → `update-documents`
-- `needs-input` → human checkpoint
-- `skipped` → stop
+**Transitions:** pinned root `workflow.yaml` for this stage (SSOT). Human or
+agent may run this skill; legality and auto-dispatch follow `dispatch` +
+delivery contract + latest handoff.
 
 Record unresolved finding ids under `blockers`; never encode a user decision
-only in chat.
+only in chat. `next_candidates` never authorize invoke.

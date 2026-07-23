@@ -38,6 +38,10 @@ wave's `/pre-implement` consumes as a contract baseline**.
 
 ## Chain position
 
+Illustrative only — **transitions SSOT:** pinned root `workflow.yaml`
+(`dispatch: orchestrated` on this node). `pass` → human-checkpoint
+`wave-human-decision` (`purpose: wave-signoff`).
+
 ```
 /loop-spec (all iterations green)
     ↓
@@ -45,7 +49,7 @@ wave's `/pre-implement` consumes as a contract baseline**.
   produces: Ground-Report-W{N}.md
             └── §Contracts produced   ← pre-implement for WN+1 reads this
     ↓
-  human checkpoint
+  human checkpoint (wave-signoff)
   → as-built W{N} = human_approved
     ↓
 /pre-implement (next wave)
@@ -135,9 +139,18 @@ Human must:
 - [ ] Review FR checklist — all pass or explicitly deferred
 - [ ] Review §Contracts produced — accurate and complete for next wave
 - [ ] Mark as-built: {SPEC} W{N} = human_approved
+```
 
 ## Workflow handoff
 
+Append the envelope from `../../../references/handoff-envelope.md` to the
+saved Ground Report. Use stage `ground-spec`.
+
+**Transitions:** pinned root `workflow.yaml` for this stage (SSOT). Human or
+agent may run this skill; orchestrators may auto-dispatch when authorized.
+Same legality for both invoke paths.
+
+```yaml
 handoff:
   contract: sdd-delivery/v2
   stage: ground-spec
@@ -150,10 +163,13 @@ handoff:
     wave: W{N}
     contracts_produced: {count}
   next_candidates:
+    # Must match workflow.yaml for outcome — typically wave-human-decision
     - wave-human-decision
   human_checkpoint: true
   external_action: false
 ```
 
-The Ground Report is not complete without this handoff. Findings/failure route
-back to `loop-spec`; pass always stops at the human wave checkpoint.
+The Ground Report is not complete without this handoff. Outcome routes follow
+`workflow.yaml` (not hardcoded elsewhere). `next_candidates` never authorize
+invoke.
+

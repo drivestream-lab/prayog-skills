@@ -36,26 +36,38 @@ handoff:
 | `human_checkpoint` | Whether a human decision is required next |
 | `external_action` | Whether the next transition can mutate GitHub or another system |
 
+Optional future field (not required in v1): `executed_by: manual | orchestrated`
+records who ran a skill; it does not change navigation or eligibility.
+
 ## Navigation rules
 
 1. Read the latest handoff and the pinned `workflow.yaml`.
 2. Verify the handoff contract matches the installed contract.
-3. Resolve the transition for the recorded outcome.
+3. Resolve the transition for the recorded outcome from `workflow.yaml` (SSOT).
 4. Explain the next action before executing it.
-5. Never auto-transition a human checkpoint.
+5. Never auto-transition a `type: human-checkpoint` node. Mechanism is human
+   review; `purpose` on the node is intent for display/ops only — not a
+   separate node kind (`type: gate` is forbidden).
 6. Never perform an external action without explicit authorization.
 7. A stale artifact routes to the workflow's stale transition, not the nominal
    next skill.
-8. `next_candidates` never bypasses `human_checkpoint: true`.
-9. Technical review reports `ready_for_pe_review: true` and
-   `ready_for_plan: false` until Accepted TDD/ADR files exist on the spec
-   branch. Mid-lane PE acceptance updates files only — not `spec-lgtm`.
-10. `/spec-implementation-plan` may run when TDD/ADR files are **Accepted**;
+8. `next_candidates` never authorize invoke and never bypass
+   `human_checkpoint: true` or a resolved `type: human-checkpoint` node.
+9. **Invocation mode is not an exemption.** Human `/skill` and AgentRunner
+   both obey the same pinned workflow + delivery contract + latest handoff.
+10. For a resolved `type: skill` node: a human or ad-hoc agent may run the
+    skill when preconditions allow. An orchestrator may **auto-dispatch** only
+    when `dispatch: orchestrated` (missing `dispatch` → schema default
+    `manual`). Read `dispatch` from the pin — do not hardcode skill-id lists.
+11. Technical review reports `ready_for_pe_review: true` and
+    `ready_for_plan: false` until Accepted TDD/ADR files exist on the spec
+    branch. Mid-lane PE acceptance updates files only — not `spec-lgtm`.
+12. `/spec-implementation-plan` may run when TDD/ADR files are **Accepted**;
     **`spec-lgtm`** is set only after the plan is on head (Gate 2 unlock).
-11. `/pre-implement` and `/loop-spec` require spec PR **merged** with
+13. `/pre-implement` and `/loop-spec` require spec PR **merged** with
     `spec-lgtm` on merge head and board-seed complete — not an open Draft spec
     PR branch.
-12. ADR signals contain actual file paths/digests; target paths or future
+14. ADR signals contain actual file paths/digests; target paths or future
     promotion tasks are not artifacts.
 
 ## Outcome vocabulary

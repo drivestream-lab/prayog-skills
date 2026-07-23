@@ -149,11 +149,12 @@ T11 with a future promotion task or a target path alone.
 Append the envelope from `../../../references/handoff-envelope.md` to the TDD.
 Use stage `spec-technical-review`.
 
-- `pass` → `technical-review-approval`
-- `findings` / `needs-input` / `blocked` → human decision
-- `stale` → `initiative-feasibility`
-- `failed` → stop
+**Transitions:** pinned root `workflow.yaml` for this stage (SSOT). Human or
+agent may run this skill; legality and auto-dispatch follow `dispatch` +
+delivery contract + latest handoff. `pass` resolves to human-checkpoint
+`technical-review-approval` (`purpose: tdd-adr-acceptance`).
 
 Before final approval, signals must include actual Draft ADR paths/digests,
 `ready_for_pe_review: true`, and `ready_for_plan: false`. After the final
 exact-head approval, the approval node—not this skill—enables planning.
+`next_candidates` never authorize invoke.

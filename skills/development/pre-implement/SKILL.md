@@ -56,6 +56,9 @@ product code** unless the user explicitly asks after the checklist.
 
 ## Chain position
 
+Illustrative only — **transitions SSOT:** pinned root `workflow.yaml`
+(`dispatch: orchestrated` on this node). Procedure gates below still apply.
+
 ```
 spec merge (spec-lgtm on head) → /board-seed → wave issue In Progress
     ↓
@@ -113,9 +116,10 @@ concrete paths for this repo and slice.
 Append the envelope from `../../../references/handoff-envelope.md` to the
 checklist output. Use stage `pre-implement`.
 
-- `pass` → `loop-spec`
-- `needs-input` / `blocked` → human decision
-- `stale` → `spec-implementation-plan`
-- `failed` → stop
+**Transitions:** pinned root `workflow.yaml` for this stage (SSOT). Human or
+agent may run this skill; orchestrators may auto-dispatch when
+`dispatch: orchestrated` and trigger + handoff authorize. Same legality rules
+for both invoke paths.
 
 Record the board issue URL/id and resolved command contract in `signals`.
+`next_candidates` never authorize invoke.

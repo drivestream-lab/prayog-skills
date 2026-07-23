@@ -172,9 +172,9 @@ lane.
 Append the envelope from `../../../references/handoff-envelope.md` to the saved
 spec. Use stage `spec-draft`.
 
-- `pass` → `initiative-feasibility`
-- `needs-input` / `blocked` → human decision
-- `stale` → `prd-impact-map`
-- `failed` → stop
+**Transitions:** pinned root `workflow.yaml` for this stage (SSOT). Human or
+agent may run this skill; legality and auto-dispatch follow `dispatch` +
+delivery contract + latest handoff.
 
 Record D-check findings and source freshness under blockers/signals.
+`next_candidates` never authorize invoke.

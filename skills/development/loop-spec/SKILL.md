@@ -70,6 +70,9 @@ implement → check/test → fix → repeat → live verify (when applicable)
 
 ## Chain position
 
+Illustrative only — **transitions SSOT:** pinned root `workflow.yaml`
+(`dispatch: orchestrated` on this node).
+
 ```
 /pre-implement (checklist produced)
     ↓
@@ -98,8 +101,9 @@ Emit the envelope from `../../../references/handoff-envelope.md` in the final
 task summary and persist the same state in the wave tracker/commits. Use stage
 `loop-spec`.
 
-- `pass` → `verify` (the verify skill may return `skipped` when inapplicable)
-- `findings` / `failed` → repeat `loop-spec`
-- `blocked` → human decision
+**Transitions:** pinned root `workflow.yaml` for this stage (SSOT). Human or
+agent may run this skill; orchestrators may auto-dispatch when authorized.
+Same legality for both invoke paths.
 
 List failed commands/tasks under `blockers`; do not advance while any remain.
+`next_candidates` never authorize invoke.

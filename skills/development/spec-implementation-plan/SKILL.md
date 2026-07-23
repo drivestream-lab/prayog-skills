@@ -112,10 +112,11 @@ board names.
 Append the envelope from `../../../references/handoff-envelope.md` to the plan.
 Use stage `spec-implementation-plan`.
 
-- `pass` → human Gate 2, then authorized spec merge
-- `needs-input` / `blocked` → human decision
-- `stale` → `initiative-feasibility`
-- `failed` → stop
+**Transitions:** pinned root `workflow.yaml` for this stage (SSOT). Human or
+agent may run this skill; legality and auto-dispatch follow `dispatch` +
+delivery contract + latest handoff. `pass` resolves to human-checkpoint
+`gate-2` (`purpose: coding-readiness`), then authorized `spec-merge`.
 
-After the spec PR is merged, the workflow selects the engineering-owned
-`board-seed` external action. Planning does not seed the board itself.
+After the spec PR is merged, the workflow selects `board-seed` (skill).
+Planning does not seed the board itself. `next_candidates` never authorize
+invoke.

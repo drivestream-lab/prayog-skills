@@ -107,15 +107,12 @@ Run checks from [references/checks.md](references/checks.md).
 ## Workflow handoff
 
 Append the envelope from `../../../references/handoff-envelope.md`. Use stage
-`board-seed`.
+`board-seed`. Honor workflow `requires` on this node (SSOT).
 
-| Outcome | Next |
-|---------|------|
-| `pass` (`seeded` / `already-seeded`) | `/pre-implement` W0 |
-| `blocked` | retry after `gh auth refresh -s project` or board access |
-| `failed` | human fixes §9 or governance; re-run |
-| `stale` | `/spec-implementation-plan` if plan not on integration branch |
+**Transitions:** pinned root `workflow.yaml` for this stage (SSOT). Human or
+agent may run this skill; legality and auto-dispatch follow `dispatch` +
+delivery contract + latest handoff. `pass` typically advances to
+`pre-implement` (orchestrated wave entry).
 
-Set `external_action: true` when GitHub issue/project mutations are the
-candidate next step. The handoff never authorizes GitHub mutation without
-explicit developer approval.
+Record seed status in `signals`. `next_candidates` never authorize invoke.
+Board mutations during this skill still need explicit developer approval.

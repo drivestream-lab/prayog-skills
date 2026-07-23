@@ -191,9 +191,10 @@ Follow that file's instructions to produce both the chat summary and the full re
 Append the envelope from `../../../references/handoff-envelope.md` to the saved
 validation report. Use stage `validate-requirements`.
 
-- `pass` → `prd-impact-map`
-- `findings` → `review-findings`
-- `needs-input` / `failed` → human checkpoint
+**Transitions:** pinned root `workflow.yaml` for this stage (SSOT). Do not
+hardcode divergent next nodes. Human or agent may run this skill; legality and
+orchestrator auto-dispatch follow `dispatch` + delivery contract + latest
+handoff (`invocation-mode-is-not-an-exemption`).
 
 Populate the artifact path/digest and stable finding ids. `next_candidates` are
-navigation hints only; do not invoke the next skill automatically.
+hints only — they never authorize invoke.

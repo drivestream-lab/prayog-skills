@@ -8,6 +8,7 @@ import yaml
 
 
 ROOT = Path(__file__).parent.parent
+DISPATCH_ENUM = frozenset({"manual", "orchestrated"})
 
 
 class WorkflowContractTest(unittest.TestCase):
@@ -17,6 +18,9 @@ class WorkflowContractTest(unittest.TestCase):
         cls.workflow = yaml.safe_load((ROOT / "workflow.yaml").read_text())
         cls.scenarios = json.loads(
             (ROOT / "tests" / "fixtures" / "workflow_scenarios.json").read_text()
+        )
+        cls.policy = json.loads(
+            (ROOT / "tests" / "fixtures" / "workflow_dispatch_policy.json").read_text()
         )
 
     def test_contract_and_workflow_identity_match(self) -> None:
@@ -54,6 +58,65 @@ class WorkflowContractTest(unittest.TestCase):
             with self.subTest(scenario=scenario["name"]):
                 actual = nodes[scenario["stage"]]["outcomes"][scenario["outcome"]]
                 self.assertEqual(scenario["next"], actual)
+
+    def test_skill_nodes_have_valid_dispatch(self) -> None:
+        for stage, node in self.workflow["nodes"].items():
+            with self.subTest(stage=stage):
+                if node["type"] == "skill":
+                    self.assertIn("dispatch", node)
+                    self.assertIn(node["dispatch"], DISPATCH_ENUM)
+                else:
+                    self.assertNotIn("dispatch", node)
+
+    def test_dispatch_matches_policy_fixture(self) -> None:
+        orchestrated = set(self.policy["orchestrated"])
+        manual = set(self.policy["manual"])
+        self.assertFalse(orchestrated & manual)
+        skill_nodes = {
+            stage
+            for stage, node in self.workflow["nodes"].items()
+            if node["type"] == "skill"
+        }
+        self.assertEqual(skill_nodes, orchestrated | manual)
+        for stage, node in self.workflow["nodes"].items():
+            if node["type"] != "skill":
+                continue
+            expected = "orchestrated" if stage in orchestrated else "manual"
+            with self.subTest(stage=stage):
+                self.assertEqual(node["dispatch"], expected)
+
+    def test_human_checkpoints_have_purpose(self) -> None:
+        expected = self.policy["human_checkpoint_purposes"]
+        checkpoints = {
+            stage: node
+            for stage, node in self.workflow["nodes"].items()
+            if node["type"] == "human-checkpoint"
+        }
+        self.assertEqual(set(checkpoints), set(expected))
+        for stage, node in checkpoints.items():
+            with self.subTest(stage=stage):
+                self.assertNotEqual(node.get("type"), "gate")
+                purpose = node.get("purpose")
+                self.assertIsInstance(purpose, str)
+                self.assertTrue(purpose.strip())
+                self.assertEqual(purpose, expected[stage])
+
+    def test_no_gate_node_type(self) -> None:
+        for stage, node in self.workflow["nodes"].items():
+            with self.subTest(stage=stage):
+                self.assertNotEqual(node.get("type"), "gate")
+
+    def test_contract_documents_dispatch(self) -> None:
+        dispatch = self.contract.get("dispatch") or {}
+        self.assertEqual(set(dispatch.get("enum") or []), DISPATCH_ENUM)
+        self.assertEqual(dispatch.get("schema_default"), "manual")
+        self.assertIn(
+            "invocation-mode-is-not-an-exemption",
+            self.contract.get("principles") or [],
+        )
+        hc = self.contract.get("human_checkpoint") or {}
+        self.assertEqual(hc.get("required_field"), "purpose")
+        self.assertEqual(hc.get("mechanism"), "human-checkpoint")
 
     @staticmethod
     def _profile_skills(profile: str, key: str) -> set[str]:

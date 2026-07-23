@@ -84,7 +84,7 @@ handoff:
     repo: {codebase repo}
     stack_profile: {from .harness/profile.yaml — informational only}
   next_candidates:
-    - pre-implement
-  human_checkpoint: true
-  external_action: true
+    - pre-implement  # must match workflow.yaml for outcome
+  human_checkpoint: false
+  external_action: false
 ```

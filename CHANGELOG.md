@@ -5,6 +5,39 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
+## [Unreleased] — features/rc-2
+
+### Added — Workflow dispatch policy + human-checkpoint purpose (INIT-PRAYOG-SKILLS-002)
+
+- **`dispatch`** on every `type: skill` node in `workflow.yaml`:
+  `manual` | `orchestrated` (rc-2 v1). Default policy: nine upstream skills
+  `manual`; wave lane (`pre-implement`, `loop-spec`, `verify`, `ground-spec`)
+  `orchestrated`. Flip any skill later by editing YAML + policy fixture.
+- **`purpose`** required on every `type: human-checkpoint` (intent slug).
+  Mechanism remains `human-checkpoint` — **`type: gate` is forbidden**.
+- `delivery-contract.yaml` documents enum, schema default (missing → `manual`),
+  consumer algorithm, and principle **`invocation-mode-is-not-an-exemption`**
+  (human `/skill` and AgentRunner share workflow + delivery legality).
+- `references/handoff-envelope.md` — resolve/stop/dispatch rules; 
+  `next_candidates` never authorize invoke.
+- `tests/fixtures/workflow_dispatch_policy.json` — editable policy SSOT for CI.
+- Contract tests + `scripts/check_consistency.py` assert dispatch/purpose.
+
+### Changed
+
+- SDD skill `## Workflow handoff` sections defer transitions to pinned
+  `workflow.yaml` (no divergent hardcoded edges).
+- Consumers must **not** hardcode skill-id allowlists; read pinned workflow.
+
+### Pin guidance
+
+- v0.4.3 pins without `dispatch` → treat as `manual` (fail closed for
+  orchestration). Upgrade pin after release tag for wave auto-dispatch.
+- engg-reviews PE pack remains adjunct (`engg-reviews/v1`) — not part of
+  this delivery-contract change.
+
+---
+
 ## [0.4.3] — 2026-07-14
 
 ### Added — SDD delivery contract (Gate 1 / Gate 2) and `/board-seed`

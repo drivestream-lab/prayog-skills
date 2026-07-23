@@ -107,11 +107,9 @@ the `spec-technical-review` skill's `references/governance.md`.
 Append the envelope from `../../../references/handoff-envelope.md` to the saved
 report. Use stage `initiative-feasibility`.
 
-- `pass` with no PE-lane items → `spec-implementation-plan`
-- `findings` with PE-lane items / NEW-ADR → `spec-technical-review`
-- `needs-input` / `blocked` → human decision
-- `stale` → `spec-draft`
-- `failed` → stop
+**Transitions:** pinned root `workflow.yaml` for this stage (SSOT) — including
+`pass` vs `findings` routes. Human or agent may run this skill; legality and
+auto-dispatch follow `dispatch` + delivery contract + latest handoff.
 
 Put lane counts, NEW-ADR, and ripple action in `signals`; finding ids belong in
-`blockers`.
+`blockers`. `next_candidates` never authorize invoke.

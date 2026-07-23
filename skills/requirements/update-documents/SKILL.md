@@ -310,9 +310,11 @@ Present a final summary:
 Append the envelope from `../../../references/handoff-envelope.md` to the
 Update Summary. Use stage `update-documents`.
 
-- `pass` → `validate-requirements` in incremental mode
-- `findings` / `needs-input` → `review-findings`
-- `failed` → human checkpoint
+**Transitions:** pinned root `workflow.yaml` for this stage (SSOT). On `pass`,
+consumers typically re-enter `validate-requirements` in incremental mode per
+workflow. Human or agent may run this skill; legality and auto-dispatch follow
+`dispatch` + delivery contract + latest handoff.
 
 List any supplemental decision ids under `blockers`; do not continue into
-validation when a semantic decision is still missing.
+validation when a semantic decision is still missing. `next_candidates` never
+authorize invoke.

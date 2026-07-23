@@ -1,0 +1,28 @@
+{
+  "orchestrated": [
+    "pre-implement",
+    "loop-spec",
+    "verify",
+    "ground-spec"
+  ],
+  "manual": [
+    "validate-requirements",
+    "review-findings",
+    "update-documents",
+    "prd-impact-map",
+    "spec-draft",
+    "initiative-feasibility",
+    "spec-technical-review",
+    "spec-implementation-plan",
+    "board-seed"
+  ],
+  "human_checkpoint_purposes": {
+    "requirements-human-decision": "requirements-clarification",
+    "gate-1": "prd-impact-acceptance",
+    "technical-review-approval": "tdd-adr-acceptance",
+    "spec-human-decision": "spec-clarification",
+    "gate-2": "coding-readiness",
+    "wave-human-decision": "wave-signoff",
+    "initiative-closure": "initiative-closure"
+  }
+}

@@ -9,6 +9,13 @@ contract in [`delivery-contract.yaml`](delivery-contract.yaml). Every skill
 persists a standard handoff so Cursor, Claude Code, Codex, or a Launchpad-seeded
 agent can resolve the next stage without platform-specific skill calls.
 
+**SSOT:** `workflow.yaml` owns node `type`, skill `dispatch` (`manual` |
+`orchestrated`), and human-checkpoint `purpose`. Skills are procedures — they
+do not fork navigation or eligibility. Human `/skill` and AgentRunner share
+the same legality rules (`invocation-mode-is-not-an-exemption`). Orchestrators
+auto-dispatch only when `dispatch: orchestrated`; do not hardcode skill-id
+lists. Human stops use `type: human-checkpoint` (not `type: gate`).
+
 | | |
 |---|---|
 | **License** | [MIT](LICENSE) |
