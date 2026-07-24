@@ -11,7 +11,7 @@
 | Branch context | `develop` or `feature/INIT-*-w{N}-*` — not open `chore/*-spec-*` | [ ] ok / blocked |
 | Spec PR merged | Implementation plan on integration branch | [ ] yes / no |
 | Gate 2 at merge | Merged spec PR had `spec-lgtm` on head | [ ] verified / missing |
-| Board seed | Wave issue(s) from plan §9 exist | [ ] seeded / partial / missing |
+| Board seed | Wave issue(s) from plan §9 exist; TASK ids present in wave body | [ ] seeded / partial / missing |
 | Plan source freshness | all upstream rows `CURRENT` | [ ] current / stale |
 | Impact-map repo scope | revision and scope digest match canonical handoff | [ ] match / stale |
 | `check_command` | resolved | [ ] command / missing |
@@ -52,6 +52,9 @@
   - [ ] ADR-{N} — {what it governs for this slice}
 - [ ] Spec: {path to product spec for this wave}
 - [ ] Plan wave section: `reports/Implementation-Plan-{initiative}.md` W{N}
+- [ ] Board wave issue: {URL} — TASK list:
+  - [ ] TASK-W{N}-01 — implements REQ-… — done when …
+  - [ ] TASK-W{N}-02 — …
 
 ---
 

@@ -52,11 +52,15 @@ deciders: PE — spec-lgtm + Approve on exact head after full package
 
 ---
 
-## 1. Requirements (REQ)
+## 1. Requirements (REQ) — product ids
 
-| ID | Source (spec) | Summary | Feasibility ref |
-|----|---------------|---------|-----------------|
-| REQ-W0 | | | |
+Cite **product** `REQ-*` from the spec (same ids as PRD/spec). Do **not** invent
+wave-scoped shadow ids like `REQ-W{n}`.
+
+| ID | Summary | Spec path | Waves |
+|----|---------|-----------|-------|
+| REQ-01 | | {SPEC_PATH} | W0 |
+| REQ-02 | | {SPEC_PATH} | W0, W1 |
 
 ---
 
@@ -66,9 +70,9 @@ deciders: PE — spec-lgtm + Approve on exact head after full package
 
 **GOAL-W0:** …
 
-| Task | Description | Codebase | Spec path | Done when | Verify command | MDC notes | ADR notes | Branch |
-|------|-------------|----------|-----------|-----------|----------------|-----------|-----------|--------|
-| TASK-W0-01 | | {repo} | {SPEC_PATH} | | `{check_command}` | | | |
+| Task | Description | Implements | Codebase | Spec path | Done when | Verify command | MDC notes | ADR notes | Branch |
+|------|-------------|------------|----------|-----------|-----------|----------------|-----------|-----------|--------|
+| TASK-W0-01 | | REQ-01, REQ-02 | {repo} | {SPEC_PATH} | | `{check_command}` | | | |
 
 #### Files (W0)
 
@@ -80,7 +84,7 @@ deciders: PE — spec-lgtm + Approve on exact head after full package
 
 | ID | Layer | Command | Proves |
 |----|-------|---------|--------|
-| TEST-W0-U | unit | (from tests_readme / profile) | |
+| TEST-W0-U | unit | (from tests_readme / profile) | REQ-* / TASK-* |
 
 ---
 
@@ -88,9 +92,9 @@ deciders: PE — spec-lgtm + Approve on exact head after full package
 
 **GOAL-W1:** …
 
-| Task | Description | Codebase | Spec path | Done when | Verify command | MDC notes | ADR notes | Branch |
-|------|-------------|----------|-----------|-----------|----------------|-----------|-----------|--------|
-| TASK-W1-01 | | {repo} | {SPEC_PATH} | | | | | |
+| Task | Description | Implements | Codebase | Spec path | Done when | Verify command | MDC notes | ADR notes | Branch |
+|------|-------------|------------|----------|-----------|-----------|----------------|-----------|-----------|--------|
+| TASK-W1-01 | | REQ-{nn} | {repo} | {SPEC_PATH} | | | | | |
 
 #### Files (W1)
 
@@ -236,14 +240,17 @@ digests must match the same head SHA.
 
 ## 9. WorkManifest seed
 
-> **Primary:** dev creates **one GitHub Issue per wave** (`W0`, `W1`, …) from this section.
-> Use §9 `title`, `body`, and `depends_on` when running `gh issue create`.
+> **Primary:** `/board-seed` creates **one GitHub Issue per wave** (`W0`, `W1`, …)
+> from this section after spec merge. Wave bodies **must list every `TASK-*`**
+> with done-when for human traceability (TASK sub-issues optional).
 >
 > Before creation, run `gh auth status` and search existing issues by initiative
 > plus wave id. With explicit developer authorization, create only missing
 > issues. If `gh` is unavailable, output exact commands and stop.
 >
 > Wave `id` must be exactly `W0`, `W1`, … — one issue per wave, not per TASK row.
+> Each TASK **implements** one or more product `REQ-*` (never invent `REQ-W*`).
+> Ids: `../../../references/id-conventions.md`.
 > Set `target.org` from governance and `target.project` from
 > `governance.project_board.name` (read-only meta). Resolve with
 > `launchpad board-bind --client <id>` — do not free-text board names.
@@ -316,15 +323,24 @@ work:
     spec_path: {SPEC_PATH}
     verify_command: {wave W0 verify command or make verify}
     status: Backlog
+    tasks:
+      - id: TASK-W0-01
+        implements: [REQ-01, REQ-02]
+        done_when: "{observable criterion}"
+      - id: TASK-W0-02
+        implements: [REQ-03]
+        done_when: "{observable criterion}"
     body: |
       ## Wave goal
 
       {GOAL-W0 from spec}
 
-      ## Tasks (from plan §2)
+      ## Tasks (from plan §2) — stable ids for loop-spec / board
 
-      - {TASK-W0-01}: {done-when summary}
-      - {TASK-W0-02}: {done-when summary}
+      | Task | Implements | Done when |
+      |------|------------|-----------|
+      | TASK-W0-01 | REQ-01, REQ-02 | {done-when} |
+      | TASK-W0-02 | REQ-03 | {done-when} |
 
       ## Done when
 
@@ -345,14 +361,20 @@ work:
     spec_path: {SPEC_PATH}
     verify_command: {wave W1 verify command}
     status: Backlog
+    tasks:
+      - id: TASK-W1-01
+        implements: [REQ-{nn}]
+        done_when: "{observable criterion}"
     body: |
       ## Wave goal
 
       {GOAL-W1 from spec}
 
-      ## Tasks (from plan §2)
+      ## Tasks (from plan §2) — stable ids for loop-spec / board
 
-      - {TASK-W1-01}: {done-when summary}
+      | Task | Implements | Done when |
+      |------|------------|-----------|
+      | TASK-W1-01 | REQ-{nn} | {done-when} |
 
       ## Done when
 
@@ -362,5 +384,5 @@ work:
 
       {SPEC_PATH}
 
-  # (one work: entry per wave — NOT one per TASK row)
+  # (one work: entry per wave — NOT one per TASK row; tasks[] + body table required)
 ```

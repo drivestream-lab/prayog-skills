@@ -93,8 +93,9 @@ starts only after the spec package is merged to `develop`.
 5. **Relevant ADRs** — keyword-match slice scope; read matched Accepted ADRs
 6. Initiative / slice spec — path from tracker Spec path or plan wave section
 7. Plan wave section — `reports/Implementation-Plan-{initiative}.md` W{N}:
-   carry forward source digests, command contract, MDC notes, and ADR notes
-   from TASK rows
+   carry forward source digests, command contract, MDC notes, ADR notes,
+   **TASK ids**, and **Implements `REQ-*`** from TASK rows. Cite the board
+   wave issue URL and list every `TASK-*` for this wave in the checklist.
 8. `tests_readme` — when the slice adds or changes verification
 
 **Gate for W0 (first wave):** no prior Ground Report exists. The gate is
@@ -121,5 +122,5 @@ agent may run this skill; orchestrators may auto-dispatch when
 `dispatch: orchestrated` and trigger + handoff authorize. Same legality rules
 for both invoke paths.
 
-Record the board issue URL/id and resolved command contract in `signals`.
-`next_candidates` never authorize invoke.
+Record the board issue URL/id, wave `TASK-*` list, and resolved command
+contract in `signals`. `next_candidates` never authorize invoke.

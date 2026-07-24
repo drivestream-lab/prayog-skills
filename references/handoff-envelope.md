@@ -12,7 +12,7 @@ handoff:
     path: docs/specification/reports/Initiative-Feasibility-Report-INIT-001.md
     digest: sha256:{hex}
   blockers:
-    - F-12
+    - FF-02
   signals:
     new_adr: true
   next_candidates:
@@ -21,6 +21,13 @@ handoff:
   external_action: false
 ```
 
+Blockers MUST use stable ids from
+[id-conventions.md](id-conventions.md) (`VF-*`, `FF-*`, `OQ-*`, `TASK-*`, …).
+Never bare check numbers (`F-12`, `1`) or free-text sentences.
+
+Canonical artifact paths and revision rules:
+[artifact-write-contract.md](artifact-write-contract.md).
+
 ## Required fields
 
 | Field | Meaning |
@@ -28,9 +35,9 @@ handoff:
 | `contract` | Delivery contract implemented by the producer |
 | `stage` | Node id from `workflow.yaml` |
 | `outcome` | One of the contract outcomes |
-| `artifact.path` | Durable stage output |
+| `artifact.path` | Durable stage output (canonical path) |
 | `artifact.digest` | Digest of the output after it is saved |
-| `blockers` | Stable finding/question ids that prevent progress |
+| `blockers` | Stable process/delivery ids that prevent progress |
 | `signals` | Stage-specific routing facts; never implicit prose |
 | `next_candidates` | Workflow-valid next nodes, not an authorization to execute |
 | `human_checkpoint` | Whether a human decision is required next |

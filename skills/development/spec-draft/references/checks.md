@@ -7,7 +7,7 @@ applicability rationale. D1, D2, D3, D4, D7, and D11 are blocking.
 | ID | Check | Evidence required |
 |----|-------|-------------------|
 | D1 | **Approved handoff is current** | Canonical impact-map path/revision, PRD digest, current meta PR head SHA, and matching tech-lead APPROVED review; repo is affected and not deferred/blocked |
-| D2 | **Complete PRD traceability** | Every in-scope PRD capability maps to at least one FR; every FR cites a named PRD section/bullet |
+| D2 | **Complete PRD traceability** | Every in-scope PRD `CAP-*` / capability maps to at least one `REQ-*`; every `REQ-*` cites a named PRD section/bullet or `CAP-*`/`REQ-*` |
 | D3 | **Repo-bounded scope** | In-scope, out-of-scope, deferred, and other-repo responsibilities agree with the approved repo scope digest |
 | D4 | **Observable acceptance** | Every FR has externally observable done criteria and names the evidence type that can prove it |
 | D5 | **Negative and failure paths** | Error, empty, unavailable, timeout, authorization, retry/idempotency, and partial-success behavior are specified or N/A with reason |

@@ -7,6 +7,20 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased] — features/rc-2
 
+### Added — ID coherence, artifact write contract, review briefs, board TASK linkage
+
+- **`references/id-conventions.md`** — Product (`CAP`/`REQ`/`CTR`/`OQ`),
+  process (`VF`/`FF`/`CHG`/`PQ`), delivery (`INIT`/`EPIC`/`W`/`TASK`);
+  `REQ-*` canonical (legacy `FR-*` alias); handoff blockers use stable ids.
+- **`references/artifact-write-contract.md`** — One canonical path per artifact
+  kind; overwrite + in-file revision; forbid `*-revN` / `*-v2` siblings.
+- **PM:** canonical `Validation-Report-{INIT}.md` /
+  `Resolution-{INIT}.md`; stable `VF-*` findings; decision-brief
+  `review-findings`; `CHG-*` linked to `VF-*`.
+- **Dev:** spec/plan/ground cite `REQ-*`; plan TASK **implements** `REQ-*`
+  (no shadow `REQ-W*`); §9 + board-seed list TASK ids on wave bodies;
+  `loop-spec` binds TASK + structured failure blockers.
+
 ### Added — Workflow dispatch policy + human-checkpoint purpose (INIT-PRAYOG-SKILLS-002)
 
 - **`dispatch`** on every `type: skill` node in `workflow.yaml`:

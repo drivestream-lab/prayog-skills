@@ -23,17 +23,20 @@ the engineering team's interpretation of what the PRD means for their codebase.
 ## Why this skill exists
 
 PM writes PRD in feature language. Engineers own the spec.
-This skill bridges the gap — it reads the PRD and drafts structured spec FRs
-that the dev team can review, edit, and then run `/initiative-feasibility` on.
+This skill bridges the gap — it reads the PRD and drafts structured spec
+`REQ-*` rows that the dev team can review, edit, and then run
+`/initiative-feasibility` on.
 
 ## NON-NEGOTIABLE
 
 1. The spec draft is a **starting point** — dev must review and edit before
    committing. Do not present it as authoritative without dev review.
-2. Language in the spec must be **engineering terms** — FRs, acceptance criteria,
-   module scope — not copied PRD user-story language.
-3. Scope must be **bounded to this repo** only. Do not write FRs for other repos.
-4. Every FR must trace to a named section or bullet in the PRD.
+2. Language in the spec must be **engineering terms** — `REQ-*`, acceptance
+   criteria, module scope — not copied PRD user-story language. Ids follow
+   `../../../references/id-conventions.md` (`REQ-*` canonical; legacy `FR-*`
+   ≡ same number).
+3. Scope must be **bounded to this repo** only. Do not write REQs for other repos.
+4. Every `REQ-*` must trace to a named PRD `CAP-*` / `REQ-*` or section/bullet.
 5. Flag anything in the PRD that is **ambiguous for this repo** — do not guess.
    Put ambiguities in a "Spec questions" section at the bottom.
 6. **Handoff gate first.** The canonical impact-map artifact, source PRD

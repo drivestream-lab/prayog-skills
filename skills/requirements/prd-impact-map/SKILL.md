@@ -30,12 +30,18 @@ opens those after tech lead confirms the map.
 4. Explicitly list repos that are **not** affected and why — this is as
    important as the affected list.
 5. Save the canonical map at `reports_dir/Impact-Map-{INIT-id}.md`. A PR
-   comment or label is never the source of truth.
+   comment or label is never the source of truth. **Never** write
+   `Impact-Map-*-revN.md` / `*-v2` siblings — overwrite the canonical path and
+   bump `map_revision` (see `../../../references/artifact-write-contract.md`).
 6. Increment `map_revision` for every changed map and record the prior
    revision plus change reason. Do not edit history to make a revision appear
-   unchanged.
-7. Record a PRD digest and one `scope_digest` per affected repo. A tech-lead
-   approval is valid only for the exact meta PR head SHA carrying those values.
+   unchanged. If a legacy `*-revN` sibling exists, migrate into the canonical
+   path and stop writing the sibling (do not delete without authorization).
+7. Record a PRD digest and one `scope_digest` per affected repo. Prefer
+   `CAP-*` / `REQ-*` in capability lists (legacy free-text or `FR-*` acceptable
+   until next PRD edit — see `../../../references/id-conventions.md`). A
+   tech-lead approval is valid only for the exact meta PR head SHA carrying
+   those values.
 8. Treat `impact-map-*` labels as projections. If artifact, review, and label
    disagree, the gate is closed.
 9. A material PRD/map change or tech-lead revocation invalidates approval.

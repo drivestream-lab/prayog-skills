@@ -112,4 +112,5 @@ report. Use stage `initiative-feasibility`.
 auto-dispatch follow `dispatch` + delivery contract + latest handoff.
 
 Put lane counts, NEW-ADR, and ripple action in `signals`; finding ids belong in
-`blockers`. `next_candidates` never authorize invoke.
+`blockers` as **`FF-*`** (never bare `F-12`). `next_candidates` never authorize
+invoke.

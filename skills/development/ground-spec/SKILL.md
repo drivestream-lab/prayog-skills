@@ -1,8 +1,8 @@
 ---
 name: ground-spec
 description: >-
-  Validate a completed wave implementation against its product spec FRs, repo
-  artifacts, and cross-spec contracts. Produces a Ground Report including a
+  Validate a completed wave implementation against its product spec REQ rows,
+  repo artifacts, and cross-spec contracts. Produces a Ground Report including a
   Contracts Produced section that is the required input for pre-implement of
   the next wave. Use when a wave claims complete, before human checkpoint, or
   when asked to ground a spec.
@@ -23,11 +23,11 @@ wave's `/pre-implement` consumes as a contract baseline**.
 
 1. Run the repo's automated ground check when `{ground_command}` is defined
    in the harness profile. Include full output in the report. If `{ground_command}`
-   is not defined, perform manual FR validation by reading `source_roots` directly.
-2. Check every **FR** in the product spec — map each to a verifiable artifact
-   (test result, entry point, module boundary, verify script output).
-   Use engineering terms: "entry point", "module boundary", "output shape" —
-   not language-specific terms.
+   is not defined, perform manual REQ validation by reading `source_roots` directly.
+2. Check every **`REQ-*`** in the product spec (legacy `FR-*` ≡ same number) —
+   map each to a verifiable artifact (test result, entry point, module boundary,
+   verify script output). Use engineering terms: "entry point", "module
+   boundary", "output shape" — not language-specific terms.
 3. Check cross-spec contracts: modules from this wave may only consume
    interfaces from prior waves as documented in those waves' Ground Reports.
 4. Check boundary rules per ADRs and domain-filtered MDC rules.
@@ -35,6 +35,8 @@ wave's `/pre-implement` consumes as a contract baseline**.
 6. **Populate the Contracts Produced section** — this is the structured
    handoff that enables `/pre-implement` for the next wave. Without it,
    the chain is broken.
+7. Discrepancy / blocker ids use stable process ids (`FF-*` or wave-local
+   finding ids) — cite `REQ-*` in the row, not as the blocker primary key.
 
 ## Chain position
 
@@ -85,10 +87,10 @@ Save report to `{reports_dir}/Ground-Report-{SPEC}-W{N}.md` (from profile or lay
 ## Automated check output
 (paste full output of {ground_command} / {verify_command})
 
-## FR checklist
-| FR | Spec claim | Verified artifact | Status |
-|----|-----------|-------------------|--------|
-| FR-N.N | {claim} | {entry point / test / verify script} | pass / fail / partial |
+## REQ checklist
+| REQ | Spec claim | Verified artifact | Status |
+|-----|-----------|-------------------|--------|
+| REQ-{nn} | {claim} | {entry point / test / verify script} | pass / fail / partial |
 
 ## Boundary checks
 (Derived from domain-filtered ADRs and MDC rules for this repo.)
@@ -102,9 +104,9 @@ Save report to `{reports_dir}/Ground-Report-{SPEC}-W{N}.md` (from profile or lay
 | {entry point / schema / command} | Ground-Report-W{N-1} | yes / NO — drift |
 
 ## Discrepancies (must fix before human checkpoint)
-| ID | FR | Finding | Severity |
-|----|----|---------|---------|
-
+| ID | REQ | Finding | Severity |
+|----|-----|---------|---------|
+| FF-{nn} | REQ-{nn} | | |
 ## Contracts produced by this wave
 (REQUIRED — this section is the input for /pre-implement of the next wave.
 Describe in engineering terms: module, entry point name, input shape,

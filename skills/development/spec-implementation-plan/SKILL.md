@@ -27,12 +27,16 @@ the board after spec PR merge**.
 ## NON-NEGOTIABLE
 
 1. Never skip a check in [references/checks.md](references/checks.md). Mark SKIPPED with reason.
-2. Every TASK has **done when** criteria and test/verify command from profile toolchain where applicable.
+2. Every TASK has **done when** criteria, an **Implements** list of product
+   `REQ-*` ids, and test/verify command from profile toolchain where applicable.
+   Do not invent shadow `REQ-W*` ids — see `../../../references/id-conventions.md`.
 3. Plan scope must not exceed the initiative spec.
 4. Dual output: chat summary + saved plan file on spec branch.
 5. Run T0–T5 control loop.
 6. Wave IDs must use `W0`, `W1`, … (one GitHub Issue per wave; launchpad WorkManifest `id:` convention).
-7. Every TASK row must include `codebase`, `spec_path`, and `verify_command` — required for WorkManifest generation.
+7. Every TASK row must include `codebase`, `spec_path`, `verify_command`, and
+   **Implements `REQ-*`** — required for WorkManifest generation. §9 wave
+   entries must include `tasks[]` and a body table listing those TASK ids.
 8. Spec, feasibility, TDD (when present), PRD digest, impact-map revision,
    scope digest, and approvals must agree. Stop on stale sources.
 9. Resolve canonical `check_command`, `test_command`, `verify_command`, and

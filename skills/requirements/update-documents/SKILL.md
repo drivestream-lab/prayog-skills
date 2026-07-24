@@ -20,9 +20,18 @@ decide **what the decision should be**.
 
 **Domain-agnostic.** Works on any document type — requirements, PRDs, meeting notes, design specs, technical docs.
 
-**Lab handoff:** `review-findings` produces `prd/reports/Resolution-*.md`. Use rows under **Approved Fixes**, **Confirmed Items**, **Rejected Items**, and **Added as Open Questions** as the change set (Phase 1). Typical scope: `prd/INIT-*.md`, `docs/cross-service-lab.md`, per-repo `03-integrations.md` / route maps.
+**Lab handoff:** `review-findings` produces canonical
+`prd/reports/Resolution-{INIT}.md`. Use the **Decisions** table (`CHG-*` →
+`VF-*`) plus **Approved Fixes**, **Confirmed Items**, **Rejected Items**, and
+**Added as Open Questions** as the change set (Phase 1). Typical scope:
+`prd/INIT-*.md`, `docs/cross-service-lab.md`, per-repo `03-integrations.md` /
+route maps. Prefer assigning/preserving `CAP-*` / `REQ-*` / `OQ-*` when the
+resolution asks for product-id updates.
 
-**Spec PR (app repo):** When drafting `docs/specification/product/INIT-*.md`, engineering uses `/spec-draft` on branch `chore/INIT-*-spec-{repo}`. Wave IDs must match PRD §4.0 / §4.5. Gate: launchpad `playbook/delivery-workflow.md` + `playbook/spec-layout.md`.
+**Spec PR (app repo):** When drafting `docs/specification/product/INIT-*.md`, engineering uses `/spec-draft` on branch `chore/INIT-*-spec-{repo}`. Wave IDs must match PRD §4.0 / §4.5. Product ids use `REQ-*` (legacy `FR-*` ≡ same number). Gate: launchpad `playbook/delivery-workflow.md` + `playbook/spec-layout.md`.
+
+Conventions: `../../../references/id-conventions.md`,
+`../../../references/artifact-write-contract.md`.
 
 ---
 
@@ -32,12 +41,14 @@ Select exactly one mode during intake.
 
 ### Resolution mode (preferred after `review-findings`)
 
-Use when the input is a `Resolution-*.md` file.
+Use when the input is canonical `Resolution-{INIT}.md` (or legacy `Resolution-*.md`).
 
 - The Resolution file is the semantic decision source.
-- Apply only **Approved Fixes**, **Confirmed Items**, **Rejected Items**,
-  **Added as Open Questions**, and **Modified Recommendations**.
+- Apply only rows with a `CHG-*` (or legacy approved sections):
+  **Approved Fixes**, **Confirmed Items**, **Rejected Items**,
+  **Added as Open Questions**, and **Modified / custom recommendations**.
 - Exclude **Skipped** items.
+- Preserve `source_finding: VF-*` on every change row.
 - Do not ask the user to re-decide completed resolution rows.
 - If a row lacks exact action text, ownership, or other information required to
   apply it, classify it `NEEDS DECISION` and return it to `review-findings`.
@@ -48,7 +59,7 @@ Use when the input is a `Resolution-*.md` file.
 
 Use when the user directly supplies a verified correction or decision.
 
-- Structure the proposed change set.
+- Structure the proposed change set with `CHG-{nn}` ids.
 - Require the Step 2 change-set approval.
 - Require the Step 5 detailed manifest approval before editing.
 
@@ -75,22 +86,24 @@ Gather approved changes from the Resolution file or user. For each change, captu
 
 | Field | Description |
 |-------|-------------|
-| **ID** | Sequential identifier (C1, C2, ...) |
+| **ID** | `CHG-{nn}` (required). Legacy `C1`/`C2` → normalize to `CHG-01`/`CHG-02` |
+| **source_finding** | `VF-{nn}` when from resolution; `adhoc` otherwise |
 | **Type** | One of: Factual correction, Terminology change, Scope change, New information |
 | **What is wrong / missing** | The current incorrect or absent content |
 | **What is correct / new** | The verified replacement or addition |
 | **Source / evidence** | Why the new information is correct — user statement, design file, meeting, data |
-| **Decision source** | Resolution row, explicit user statement, or other approved record |
+| **Decision source** | Resolution `CHG` row, explicit user statement, or other approved record |
 | **Decision status** | APPROVED / NEEDS DECISION |
+| **Target product id** | `REQ-*` / `CAP-*` / `OQ-*` when known |
 
 #### Change type reference
 
 | Type | Propagation pattern | Search strategy |
 |------|---------------------|-----------------|
-| **Factual correction** | Any section that assumed the wrong fact — personas, pain points, user flows, assumptions, goals, constraints, dependencies | Search for the incorrect fact AND for statements derived from it |
+| **Factual correction** | Any section that assumed the wrong fact — personas, pain points, user flows, assumptions, goals, constraints, dependencies | Search for the incorrect fact AND for statements derived from it; also search `REQ-*` / `CAP-*` targets |
 | **Terminology change** | All occurrences of the old term across all documents | Context-aware find-and-replace — match singular/plural, capitalization, possessive forms |
-| **Scope change** | Scope sections, feature lists, future enhancements, assumptions, success metrics | Search for the feature/item name in scope tables, requirement lists, and roadmap references |
-| **New information** | Additive — new content in contextually correct sections, new rows in tables, new references | Identify which sections in each document should contain the new information |
+| **Scope change** | Scope sections, feature lists, future enhancements, assumptions, success metrics | Search for the feature/item name and product ids in scope tables, requirement lists, and roadmap references |
+| **New information** | Additive — new content in contextually correct sections, new rows in tables, new references | Identify which sections in each document should contain the new information; assign `CAP-*`/`REQ-*`/`OQ-*` when the resolution requires it |
 
 If the user provides changes informally, reformat them into the structured table before proceeding.
 
@@ -232,7 +245,11 @@ Apply approved changes in dependency order (upstream documents first).
 
 ### Step 7: Verify consistency after edits
 
-**If a requirements / PRD file was modified:** re-run `validate-requirements` in **incremental mode** — pass the prior `Validation-Report-*.md` as the prior report. Confirm applied changes resolved the targeted findings.
+**If a requirements / PRD file was modified:** re-run `validate-requirements` in
+**incremental mode** — pass the canonical
+`prd/reports/Validation-Report-{INIT}.md` as the prior report (same path that
+will be overwritten). Confirm applied `CHG-*` resolved the targeted `VF-*`.
+Never create a new `Validation-Report-*-revN.md`.
 
 **For all modified documents**, also perform an inline structural pass (no separate `document-audit` skill required):
 

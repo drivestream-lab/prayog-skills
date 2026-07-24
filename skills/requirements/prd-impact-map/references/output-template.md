@@ -75,7 +75,7 @@ UTF-8/LF payload, with sorted list values and exactly one final newline:
 ```text
 repo={org}/{repo}
 status=affected
-capabilities={sorted PRD capability or FR identifiers, comma-separated}
+capabilities={sorted CAP-* and/or REQ-* identifiers (legacy FR-* ≡ REQ-*), comma-separated}
 contracts={sorted provider->consumer contract identifiers, comma-separated}
 depends_on={sorted repository names, comma-separated}
 scope={single-line normalized scope summary}

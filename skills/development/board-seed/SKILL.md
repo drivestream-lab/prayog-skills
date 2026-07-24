@@ -31,16 +31,21 @@ spec package is merged to the integration branch. Applies to **any app stack**
    (exact match). If missing, run `launchpad board-bind --client <id>` and stop.
    Governance **wins** over plan §9 `target.project` free text.
 4. Parse §9 WorkManifest YAML from the merged plan. Require `epic`, `work[]`
-   with wave ids `W0`, `W1`, …
+   with wave ids `W0`, `W1`, …. Each wave must list `tasks[]` (or an equivalent
+   TASK table in `body`) with stable `TASK-*` ids and `implements: [REQ-…]`.
 5. **Idempotent** — search existing issues by initiative label + wave title/id;
    create only missing items; link existing waves under EPIC when parent missing.
 6. **Hierarchy** — EPIC first, then each wave as **sub-issue** (`--parent`) on
    the **same org Project** (`--project "<board name>"`). Initiative label on
-   every issue.
+   every issue. Wave issue bodies must retain the TASK table for
+   `/loop-spec` / human traceability (TASK GitHub sub-issues are optional).
 7. **No GitHub mutations** until developer explicitly authorizes seeding.
 8. If `gh` or `project` scope unavailable, print exact commands from
    [references/output-template.md](references/output-template.md) and stop —
    do not claim `seeded`.
+9. Ids follow `../../../references/id-conventions.md`. Artifact paths follow
+   `../../../references/artifact-write-contract.md` (board issues are external;
+   no local `*-revN` seed reports).
 
 ## Inputs
 

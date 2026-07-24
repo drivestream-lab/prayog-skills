@@ -35,31 +35,33 @@
 
 ## Traceability matrix
 
-| Spec ref / wave | Spec claim | Code evidence | Unit | Verify | Status |
+| Spec REQ / wave | Spec claim | Code evidence | Unit | Verify | Status |
 |-----------------|------------|---------------|------|--------|--------|
-| | | | | | exists / gap / partial / drift |
+| REQ-{nn} / W{n} | | | | | exists / gap / partial / drift |
 
 ## ADR traceability (F13)
 
-| Spec ref / wave | Relevant ADR(s) | Status | Finding |
+| Spec REQ / wave | Relevant ADR(s) | Status | Finding |
 |-----------------|-----------------|--------|---------|
-| | ADR-… / NEW-ADR / N/A | aligned / conflict / missing ADR | |
+| REQ-{nn} / W{n} | ADR-… / NEW-ADR / N/A | aligned / conflict / missing ADR | |
 
 ## Governance findings (F13–F14)
 
 | ID | Check | Spec quote | Governing doc | Finding |
 |----|-------|------------|---------------|---------|
-| | F13 / F14 | | ADR-… / rule file | |
+| FF-{nn} | F13 / F14 | | ADR-… / rule file | |
 
 ## Findings by severity
 
 ### Critical
 | ID | Check | Finding | Evidence |
 |----|-------|---------|----------|
+| FF-{nn} | F{n} | | |
 
 ### Should fix
 | ID | Check | Finding | Evidence |
 |----|-------|---------|----------|
+| FF-{nn} | F{n} | | |
 
 ## Impact surface
 

@@ -4,11 +4,11 @@
 |----|-------|----------|
 | B1 | Integration branch checked out; not open `chore/*-spec-*` branch | yes |
 | B2 | Merged `Implementation-Plan-{initiative}.md` exists on integration branch | yes |
-| B3 | §9 WorkManifest YAML parses; `epic` + `work[]` waves `W0..Wn` present | yes |
+| B3 | §9 WorkManifest YAML parses; `epic` + `work[]` waves `W0..Wn` present; each wave has `tasks[]` or body TASK table with `TASK-*` + `implements` REQ refs | yes |
 | B4 | Governance `project_board.enabled` and `name` resolved (meta read-only) | yes |
 | B5 | `target.project` in §9 matches governance `project_board.name` when both set | yes |
 | B6 | `gh auth status` succeeds when execution requested | yes for apply |
-| B7 | EPIC exists or create plan defined; all waves parent-linked or create plan defined | yes for pass |
+| B7 | EPIC exists or create plan defined; all waves parent-linked or create plan defined; seeded wave bodies retain TASK ids | yes for pass |
 | B8 | All seeded issues on programme Project (`--project` or verified) | warn pilot; block later |
 
 ## Verdict

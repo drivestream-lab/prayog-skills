@@ -1,26 +1,16 @@
 # update-documents
 
-Propagates approved changes across related documents without making new
-semantic decisions.
+Propagates approved corrections across related documents.
 
-- **Resolution mode:** consumes `Resolution-*.md`, presents its change set for
-  visibility, then requires approval of the exact change manifest.
-- **Ad-hoc mode:** requires approval of both the user-provided change set and
-  the exact change manifest.
+- **Resolution mode:** consumes canonical `Resolution-{INIT}.md`, applies
+  `CHG-*` rows linked to `VF-*`, presents a change manifest for approval.
+- **Ad-hoc mode:** user-supplied change set (still uses `CHG-*` ids).
 
-New ownership, scope, product, engineering, or open-question decisions route
-back to `review-findings`; they are not invented during propagation.
+Does not invent product decisions — route ambiguity back to `review-findings`.
 
-**Original author:** rushikeshpol02 (ai-skills). **Maintainer:** drivestream-lab.
+Typical input: `prd/reports/Resolution-INIT-PRAYOG-001.md`.
 
-## Invoke
+After PRD edits, re-run `/validate-requirements` incremental against
+`prd/reports/Validation-Report-{INIT}.md` (same path).
 
-```
-/update-documents
-```
-
-Typical input: `prd/reports/Resolution-INIT-PRAYOG-001.md` from `review-findings`.
-
-Scope: PRD + `cross-service-lab.md` + per-repo `03-integrations.md`. Re-run `validate-requirements` (incremental) after PRD edits.
-
-See repo root README for install command.
+See `references/id-conventions.md` and `references/artifact-write-contract.md`.

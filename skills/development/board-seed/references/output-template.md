@@ -50,10 +50,11 @@ gh issue create --repo {org}/{repo} \
 
 ## Result tree
 
-| Role | Issue | URL | On board | Sub-issue of EPIC |
-|------|-------|-----|----------|-------------------|
-| EPIC | #{n} | {url} | yes/no | — |
-| W0 | #{n} | {url} | yes/no | yes/no |
+| Role | Issue | URL | On board | Sub-issue of EPIC | TASK ids in body |
+|------|-------|-----|----------|-------------------|------------------|
+| EPIC | #{n} | {url} | yes/no | — | — |
+| W0 | #{n} | {url} | yes/no | yes/no | TASK-W0-01, … |
+| W1 | #{n} | {url} | yes/no | yes/no | TASK-W1-01, … |
 
 ## Project fields (manual if API cannot set)
 

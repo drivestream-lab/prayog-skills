@@ -1,6 +1,6 @@
 ---
 name: review-findings
-description: "Interactively walks users through findings from any audit or validation report (validate-requirements, document-audit, or future skills). Reads the report file, detects its format, presents findings via AskQuestion for user decisions, and produces a resolution summary. Use after any skill that generates a findings report, or standalone against any structured findings markdown file."
+description: "Interactively walks users through findings from any audit or validation report (validate-requirements, document-audit, or future skills). Reads the report file, detects its format, presents each finding as a decision brief (issue, example, recommendation+why, options with pros/cons) via AskQuestion, and produces a resolution summary with VF→CHG linkage. Use after any skill that generates a findings report, or standalone against any structured findings markdown file."
 ---
 
 # Review Findings — Interactive Resolution Skill
@@ -11,6 +11,9 @@ Walks users through findings from audit/validation reports, collects decisions v
 
 **Key principle:** This skill does not re-run checks or read source documents. It reads ONE report file and presents its findings interactively. The heavy analysis was already done by the producing skill.
 
+Conventions: `../../../references/id-conventions.md`,
+`../../../references/artifact-write-contract.md`.
+
 ## When to Use
 
 - After `validate-requirements` generates a validation report
@@ -20,7 +23,7 @@ Walks users through findings from audit/validation reports, collects decisions v
 
 ## Inputs
 
-1. **Report file path** — the findings report to review (REQUIRED)
+1. **Report file path** — the findings report to review (REQUIRED). Prefer canonical `prd/reports/Validation-Report-{INIT}.md`.
 2. That's it. Everything else is in the report.
 
 ---
@@ -48,14 +51,14 @@ Determine which skill produced the report by checking the heading:
 
 **validate-requirements format — 4 categories:**
 
-| Category | Section header pattern | Severity | Table Columns |
-|---|---|---|---|
-| Critical | `## Critical` | MUST FIX | #, Type, Location, Check, Finding, Source Says, Doc Claims, Recommendation |
-| Should Fix | `## Should Fix` | SHOULD FIX | #, Type, Location, Check, Finding, Recommendation |
-| Verify | `## Verify` | VERIFY | #, Type, Location, Check, Finding, Question for User |
-| Gaps | `## Gaps` | GAP | #, Type, Location, Check, Finding, Suggested Addition |
+| Category | Section header pattern | Severity | Id column | Table Columns |
+|---|---|---|---|---|
+| Critical | `## Critical` | MUST FIX | `VF` (or legacy `#`) | VF, Type, Location, Target, Check, Finding, Source Says, Doc Claims, Example, Recommendation |
+| Should Fix | `## Should Fix` | SHOULD FIX | `VF` | VF, Type, Location, Target, Check, Finding, Recommendation |
+| Verify | `## Verify` | VERIFY | `VF` | VF, Type, Location, Target, Check, Finding, Question for User |
+| Gaps | `## Gaps` | GAP | `VF` | VF, Type, Location, Target, Check, Finding, Suggested Addition |
 
-Legacy reports without a `Type` column: treat Type as unknown and continue.
+Legacy reports with only `#` instead of `VF`: assign stable `VF-{nn}` for this resolution pass (map `#1` → `VF-01`) and record the mapping in the resolution file.
 
 Also parse the `## Clean` section to know which checks passed.
 
@@ -69,15 +72,22 @@ Skip sections that contain only prose like "*No Critical findings.*" with no tab
 | Review Required (MEDIUM) | VERIFY | Same structure |
 | Informational (LOW) | INFO | Same structure |
 
+Assign `VF-{nn}` when missing.
+
 **Generic fallback:**
 
 - Look for markdown headers containing severity keywords (Critical, High, Medium, Low, Must Fix, Should Fix, etc.)
 - Parse any tables or structured text blocks under each header
-- Present raw content if parsing fails
+- Present raw content if parsing fails; still assign `VF-*`
 
 ### 1.4 Count findings
 
 Build a summary: total **open** findings, count per category. Exclude resolved rows.
+
+### 1.5 Resolve initiative id
+
+From report front matter / filename / PRD path. Needed for canonical
+`Resolution-{INIT}.md` output.
 
 ---
 
@@ -88,7 +98,7 @@ Build a summary: total **open** findings, count per category. Exclude resolved r
 Present the summary to the user:
 
 ```
-Found [N] findings in [report filename]:
+Found [N] findings in [report filename] (report_revision [N] if present):
 - [N] Critical / Must Fix
 - [N] Should Fix
 - [N] Verify / Review Required
@@ -116,7 +126,7 @@ AskQuestion:
 
 **If "skip":** End the skill. No further action.
 
-**If "bulk-approve":** Skip to Phase 4 — mark all findings as "Approved as recommended" and produce the resolution summary.
+**If "bulk-approve":** Skip to Phase 4 — mark all findings as approved recommended option; assign `CHG-*` per finding; produce the resolution summary.
 
 **If a specific category:** Only walk through that category in Phase 3, skip others.
 
@@ -128,92 +138,101 @@ AskQuestion:
 
 Walk through findings in severity order: Critical/Must Fix first, Gaps/Informational last.
 
-For each finding, show: **#**, **Type** (if present), **Location**, **Finding**, and the relevant action column (Recommendation / Question for User / Suggested Addition).
+### Decision brief (REQUIRED for Critical and Verify)
+
+For each finding, present in chat **before** AskQuestion:
+
+```markdown
+### [VF-id] — [severity]
+
+**Issue:** [what is wrong — from Finding]
+**Target:** [REQ-* / CAP-* / OQ-* / section]
+**Location:** [section/line]
+**Check:** [check #]
+**Evidence / example:** [Source Says vs Doc Claims, or Example column, or a concrete illustration]
+**Recommendation:** [recommended fix]
+**Why this recommendation:** [1–2 sentences — risk if ignored, consistency with sources]
+
+**Options:**
+| Option | Summary | Pros | Cons |
+|--------|---------|------|------|
+| A (recommended) | [apply recommendation] | [pros] | [cons] |
+| B | [plausible alternative] | [pros] | [cons] |
+| C | Skip / leave as-is | [pros] | [cons] |
+| D | Custom (user will specify) | — | — |
+```
+
+Should Fix / Gaps may use a shorter brief (issue + recommendation + why) and
+batch up to 3 when there are 5+ findings — still include options with pros/cons
+for the batch decision.
 
 ### 3.1 Critical / Must Fix Findings
 
-Present each finding INDIVIDUALLY (too important to batch).
-
-For each finding, use AskQuestion:
+Present each finding INDIVIDUALLY (never batch).
 
 ```
 AskQuestion:
-  id: "critical-[N]"
-  prompt: "[Finding description]\n\nLocation: [section/line]\nRecommendation: [recommendation]"
+  id: "critical-[VF-id]"
+  prompt: "[VF-id] [short issue]\n\nChoose an option:"
   options:
-    - id: "approve"
-      label: "Approve fix as recommended"
-    - id: "alternative"
-      label: "I have a different fix (will provide details)"
-    - id: "skip"
-      label: "Skip — leave as-is"
+    - id: "A"
+      label: "A — Apply recommendation"
+    - id: "B"
+      label: "B — [alternative summary]"
+    - id: "C"
+      label: "C — Skip / leave as-is"
+    - id: "D"
+      label: "D — Custom (I'll specify)"
 ```
 
-If user selects "alternative": ask a follow-up question in chat for their preferred fix. Record their response as the resolution.
+If user selects B or D: capture their wording as the action text. Record
+`chosen_option`, `rationale` (ask briefly if missing), and assign `CHG-{nn}`.
 
 ### 3.2 Should Fix Findings
 
-Present in batches of up to 3 findings if there are many (5+). Otherwise present individually.
-
-For each finding (or batch), use AskQuestion:
-
-```
-AskQuestion:
-  id: "shouldfix-[N]"
-  prompt: "[Finding description]\n\nRecommendation: [recommendation]"
-  options:
-    - id: "approve"
-      label: "Approve"
-    - id: "skip"
-      label: "Skip — leave as-is"
-    - id: "modify"
-      label: "Modify recommendation"
-```
-
-If user selects "modify": ask for their preferred change. Record their response.
+Present in batches of up to 3 if there are many (5+). Otherwise individually.
+Same option pattern (A/B/C/D); shorter brief allowed.
 
 ### 3.3 Verify / Review Required Findings
 
-Present each finding INDIVIDUALLY (each needs a distinct decision).
-
-For each finding, use AskQuestion:
+Present each finding INDIVIDUALLY with full decision brief.
 
 ```
 AskQuestion:
-  id: "verify-[N]"
-  prompt: "[Finding description]\n\nQuestion: [question for user]"
+  id: "verify-[VF-id]"
+  prompt: "[VF-id] [question for user]"
   options:
     - id: "confirm"
-      label: "Confirm — this is accurate as written"
+      label: "Confirm — accurate as written (tag Source: User-confirmed)"
     - id: "reject"
       label: "Reject — remove or rewrite"
     - id: "context"
       label: "Needs more context — I'll explain"
+    - id: "skip"
+      label: "Skip for now"
 ```
 
-If "confirm": record as confirmed. The finding's text should get a `(Source: User-confirmed)` tag when fixes are applied.
-
-If "reject": ask what should replace it, or confirm removal.
-
-If "context": ask for the additional context, then re-present the question with the new information.
+If "confirm": record confirmed; action = add `(Source: User-confirmed)` when applied.
+If "reject": ask replacement or confirm removal.
+If "context": ask for context, then re-present.
 
 ### 3.4 Gaps / Informational Findings
 
-Present in batches of up to 3 findings if there are many.
-
-For each finding (or batch), use AskQuestion:
+Present in batches of up to 3 when many.
 
 ```
 AskQuestion:
-  id: "gap-[N]"
-  prompt: "[Finding description]\n\nSuggested addition: [suggestion]"
+  id: "gap-[VF-id]"
+  prompt: "[VF-id] [suggested addition]"
   options:
     - id: "add-requirement"
-      label: "Add to requirements document"
-    - id: "add-question"
-      label: "Add as Open Question"
+      label: "Add to requirements (assign REQ-* / CAP-* if needed)"
+    - id: "add-oq"
+      label: "Add as Open Question OQ-*"
     - id: "skip"
       label: "Skip — not needed"
+    - id: "custom"
+      label: "Custom"
 ```
 
 ---
@@ -224,74 +243,86 @@ After all findings are reviewed (or bulk-approved), produce two outputs:
 
 ### Output 1: Chat Summary
 
-Display a brief summary in chat:
-
 ```
-## Resolution Summary — [Report Name]
+## Resolution Summary — [INIT]
 
+**Report:** [canonical validation path] (report_revision [N])
 **Findings reviewed:** [N] of [total]
 **Decisions:**
-- Approved: [N]
+- Approved (option A or equivalent): [N]
+- Alternative / custom: [N]
 - Confirmed: [N]
 - Rejected: [N]
 - Skipped: [N]
-- Added as Open Question: [N]
-- Modified: [N]
+- Added as OQ: [N]
 
-**Resolution file saved to:** [filepath]
+**Resolution file:** [canonical Resolution path] (overwritten)
 
 ### Next Step
-Apply approved fixes to the PRD and integration stubs, then re-run `validate-requirements` with this report as the prior report (incremental mode).
+Apply approved `CHG-*` via `update-documents`, then re-run `validate-requirements`
+in incremental mode against the **same** Validation-Report path.
 ```
 
 ### Output 2: Resolution File
 
-Save as `Resolution-[ReportName].md` in the same directory as the report file (e.g. `prd/reports/Resolution-INIT-PRAYOG-001.md` when the report is `Validation-Report-INIT-PRAYOG-001.md`).
+**Canonical path:** `{reports_dir}/Resolution-{INIT}.md`
+
+Overwrite this path. Never `Resolution-…-revN.md` or
+`Resolution-Validation-Report-….md` long derivatives.
 
 Format:
 
 ```markdown
 # Resolution Summary
 
-**Report:** [report filename]
+**Report:** [canonical Validation-Report path]
+**Initiative:** [INIT]
 **Reviewed on:** [date]
+**resolution_revision:** [N]
 **Findings reviewed:** [N] of [total]
+
+## Decisions
+
+| CHG | VF | Severity | Target | Chosen option | Rationale | Action to apply |
+|-----|-----|----------|--------|---------------|-----------|-----------------|
+| CHG-01 | VF-01 | Critical | REQ-07 | A | [why] | [exact apply text] |
+| CHG-02 | VF-04 | Verify | CAP-02 | confirm | [why] | Add (Source: User-confirmed) |
 
 ## Approved Fixes (ready to apply)
 
-| # | Type | Location | Original Finding | Decision | Action |
-|---|------|----------|-----------------|----------|--------|
-| 1 | [Semantic/Structural] | [section/line] | [finding text] | Approved | [recommendation to apply] |
+| CHG | VF | Type | Location | Original Finding | Decision | Action |
+|-----|-----|------|----------|------------------|----------|--------|
+| CHG-01 | VF-01 | Semantic | [section] | [finding] | Option A | [recommendation to apply] |
 
 ## Confirmed Items (add source tags)
 
-| # | Type | Location | Finding | Action |
-|---|------|----------|---------|--------|
-| 1 | [Semantic/Structural] | [section/line] | [finding text] | Add `(Source: User-confirmed)` tag |
+| CHG | VF | Type | Location | Finding | Action |
+|-----|-----|------|----------|---------|--------|
+| CHG-02 | VF-04 | … | … | … | Add `(Source: User-confirmed)` tag |
 
 ## Rejected Items (remove or rewrite)
 
-| # | Type | Location | Finding | User Direction |
-|---|------|----------|---------|---------------|
-| 1 | [Semantic/Structural] | [section/line] | [finding text] | [what user said to do instead] |
+| CHG | VF | Type | Location | Finding | User Direction |
+|-----|-----|------|----------|---------|----------------|
+| … | … | … | … | … | … |
 
 ## Added as Open Questions
 
-| # | Finding | Open Question Text |
-|---|---------|-------------------|
-| 1 | [gap description] | [formatted as an OQ entry] |
+| CHG | VF | Finding | OQ id | Open Question Text |
+|-----|-----|---------|-------|---------------------|
+| … | … | … | OQ-03 | … |
 
 ## Skipped (no action)
 
-| # | Type | Location | Finding | Reason |
-|---|------|----------|---------|--------|
-| 1 | [Semantic/Structural] | [section/line] | [finding text] | User chose to skip |
+| VF | Type | Location | Finding | Reason |
+|----|------|----------|---------|--------|
+| … | … | … | … | User chose skip |
 
-## Modified Recommendations
+## Modified / custom recommendations
 
-| # | Type | Location | Original Recommendation | User's Alternative |
-|---|------|----------|------------------------|-------------------|
-| 1 | [Semantic/Structural] | [section/line] | [original] | [user's version] |
+| CHG | VF | Original Recommendation | User's Alternative | Rationale |
+|-----|-----|-------------------------|-------------------|-----------|
+| … | … | … | … | … |
 ```
 
 ---
@@ -300,23 +331,24 @@ Format:
 
 | Context | How it's called |
 |---|---|
-| **After `validate-requirements`** | User runs validation → report generated → next steps suggest `review-findings` → user invokes it with the report path |
-| **After `document-audit`** | Same pattern — audit report generated → user invokes `review-findings` |
-| **Lab workflow** | Resolution file feeds PRD edits + `cross-service-lab.md` / per-repo `03-integrations` stub updates; then incremental `validate-requirements` |
+| **After `validate-requirements`** | User runs validation → report generated → invoke with canonical Validation-Report path |
+| **After `document-audit`** | Same pattern |
+| **Lab workflow** | Resolution feeds PRD edits + stubs via `update-documents`; then incremental validate |
 | **Standalone** | User points it at any findings report file |
 
 ---
 
 ## Critical Rules
 
-1. **Always ask before starting.** Phase 2 Entry Gate is mandatory. Never jump into the interactive flow without the user's explicit choice.
-2. **Critical findings are always individual.** Never batch Critical/Must Fix findings — each one deserves its own question.
-3. **Record everything.** Every decision (including "skip") is recorded in the resolution file. Nothing is lost.
-4. **Don't fix — collect decisions.** This skill collects user decisions. It does not modify the requirements document or any other file except the resolution summary.
-5. **Respect the user's choice.** If they say "skip", stop. If they say "critical only", don't sneak in other categories.
-6. **Resolution file is the handoff.** The resolution file is structured so a human or agent can apply fixes without re-reading the original report.
-7. **Format-agnostic fallback.** If the report format is unrecognized, present findings as raw text with generic approve/skip options. Never fail because of an unexpected format.
-8. **Ignore resolved history.** Rows under `## Resolved` are not open findings — do not count or walk through them.
+1. **Always ask before starting.** Phase 2 Entry Gate is mandatory.
+2. **Critical findings are always individual** with a full decision brief.
+3. **Record everything.** Every decision (including skip) is in the resolution file with `VF` and `CHG` where applicable.
+4. **Don't fix — collect decisions.** Only write the resolution summary file.
+5. **Respect the user's choice.** Skip / category filters are honored.
+6. **Canonical resolution path.** Overwrite `Resolution-{INIT}.md` only.
+7. **Format-agnostic fallback.** Unrecognized format → raw text + generic options + assigned `VF-*`.
+8. **Ignore resolved history.** Rows under `## Resolved` are not open findings.
+9. **Options need pros/cons** in the brief so the user can choose deliberately.
 
 ## Workflow handoff
 
@@ -327,5 +359,5 @@ Resolution file. Use stage `review-findings`.
 agent may run this skill; legality and auto-dispatch follow `dispatch` +
 delivery contract + latest handoff.
 
-Record unresolved finding ids under `blockers`; never encode a user decision
+Record unresolved `VF-*` under `blockers`; never encode a user decision
 only in chat. `next_candidates` never authorize invoke.

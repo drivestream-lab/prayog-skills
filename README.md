@@ -16,6 +16,11 @@ the same legality rules (`invocation-mode-is-not-an-exemption`). Orchestrators
 auto-dispatch only when `dispatch: orchestrated`; do not hardcode skill-id
 lists. Human stops use `type: human-checkpoint` (not `type: gate`).
 
+**IDs & artifacts:** [`references/id-conventions.md`](references/id-conventions.md)
+(product / process / delivery ids) ·
+[`references/artifact-write-contract.md`](references/artifact-write-contract.md)
+(canonical report paths — no `*-revN` siblings).
+
 | | |
 |---|---|
 | **License** | [MIT](LICENSE) |
@@ -59,7 +64,7 @@ PM skills validate and refine PRDs. Dev skills implement spec slices in service 
 | **board-seed** | EPIC + wave tree on programme board after spec merge (all app stacks) |
 | **pre-implement** | Pre-flight before each implementation wave |
 | **loop-spec** | Implement → verify → fix per task |
-| **ground-spec** | Wave complete — FR validation + contracts for next wave |
+| **ground-spec** | Wave complete — REQ validation + contracts for next wave |
 | **verify** | Live CLI/API verification |
 
 Profile manifests (`profiles/*.yaml`) list which dev skills apply per harness profile (`python-backend`, `frontend`, `data-platform`, `meta-pm`). **Launchpad** reads these at sync time — when adding or removing a dev skill, update every relevant `profiles/*.yaml` and bump the harness `agent_skills.ref`.
@@ -154,6 +159,8 @@ prayog-skills/
     python-backend.yaml
     frontend.yaml
     meta-pm.yaml
+  references/         # handoff, id-conventions, artifact-write-contract
+  docs/               # human overviews (e.g. id-and-traceability)
   skills/
     requirements/     # PM lane
     development/      # Dev lane

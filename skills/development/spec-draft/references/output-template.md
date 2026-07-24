@@ -24,13 +24,17 @@ Scope boundary: what is OUT of scope for this repo.}
 
 | ID | Requirement | PRD source | Acceptance criteria | Evidence type |
 |----|-------------|-----------|---------------------|---------------|
-| FR-{n} | {engineering statement, not user story} | PRD §{section} | {observable, testable} | unit / integration / live verify / inspection |
+| REQ-{nn} | {engineering statement, not user story} | PRD `CAP-*` / `REQ-*` or §{section} | {observable, testable} | unit / integration / live verify / inspection |
+
+> **Id convention:** `REQ-*` is canonical (`../../../references/id-conventions.md`).
+> Legacy display alias `FR-{nn}` ≡ `REQ-{nn}` (same number) — prefer `REQ-*` in
+> new rows. Do not invent wave-scoped `REQ-W*` ids.
 
 ## Negative and failure paths
 
-| FR | Condition | Required behavior | Evidence |
-|----|-----------|-------------------|----------|
-| FR-{n} | {invalid/empty/unavailable/timeout/unauthorized/partial} | {observable outcome, retry/idempotency rule} | {test/verify/inspection} |
+| REQ | Condition | Required behavior | Evidence |
+|-----|-----------|-------------------|----------|
+| REQ-{nn} | {invalid/empty/unavailable/timeout/unauthorized/partial} | {observable outcome, retry/idempotency rule} | {test/verify/inspection} |
 
 ## Out of scope for this repo
 

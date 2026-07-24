@@ -80,6 +80,18 @@ SINGLE_VALUE_INVARIANTS = [
         set(),  # must not appear
         "**/*.md",
     ),
+    (
+        "Skills must not instruct creating *-revN / *-v2 report siblings as outputs",
+        r"(?:save|write|create)\s+(?:as\s+)?`?(?:Validation-Report|Resolution|Impact-Map)[^`\n]*-(?:rev\d+|v\d+)\.md",
+        set(),
+        "**/*.md",
+    ),
+    (
+        "Plans must not use shadow REQ-W{digit} product ids",
+        r"\| REQ-W\d",
+        set(),
+        "**/spec-implementation-plan/**/*.md",
+    ),
 ]
 
 SYNC_COPY_INVARIANT = (
@@ -171,11 +183,36 @@ REQUIRED_TOKENS = {
         "## Source freshness and command contract",
         "Spec path",
         "## 9. WorkManifest seed",
+        "Implements",
+        "tasks:",
+        "TASK-W0-01",
     ],
     "skills/development/pre-implement/references/output-template.md": [
         "Plan source freshness",
         "`check_command`",
         "`ground_command`",
+        "TASK-W{N}-01",
+    ],
+    "skills/requirements/validate-requirements/output-templates.md": [
+        "report_revision",
+        "Validation-Report-{INIT}.md",
+        "VF-01",
+    ],
+    "skills/requirements/review-findings/SKILL.md": [
+        "Resolution-{INIT}.md",
+        "Decision brief",
+        "CHG-",
+        "VF-",
+    ],
+    "references/id-conventions.md": [
+        "REQ-{nn}",
+        "VF-{nn}",
+        "TASK-W{n}-{nn}",
+    ],
+    "references/artifact-write-contract.md": [
+        "Validation-Report-{INIT}.md",
+        "Never create",
+        "map_revision",
     ],
 }
 

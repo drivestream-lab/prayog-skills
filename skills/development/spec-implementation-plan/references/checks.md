@@ -8,8 +8,8 @@ P1–P14 against obsolete inputs.
 
 | ID | Check |
 |----|-------|
-| P1 | Every spec wave/section has ≥1 REQ row |
-| P2 | Every REQ has ≥1 TASK |
+| P1 | Every product `REQ-*` in scope for this plan appears in §1; every wave that implements work cites those REQs via TASK **Implements** |
+| P2 | Every in-scope `REQ-*` has ≥1 TASK; every TASK **Implements** ≥1 `REQ-*` (no shadow `REQ-W*`) |
 | P3 | Every TASK has FILE paths or explicit "docs only" |
 | P4 | Every TASK has **done when** (observable) |
 | P5 | Test TASKs name unit target and/or live-verify artifact + command from profile toolchain |
@@ -21,4 +21,4 @@ P1–P14 against obsolete inputs.
 | P11 | **MDC conformance** — per `rules_glob`; discrepancies in TASK **MDC notes** and RISK table |
 | P12 | **ADR conformance** — architectural TASKs cite Accepted ADR id from `{adr_dir}`; §0 "Resolved ADRs" links every TDD §4 `ADR_REQUIRED` file path with `Status: Accepted`; discrepancies in TASK **ADR notes** and RISK table. **FAIL** if any required ADR file is missing, still `Draft`, or only referenced from TDD §4 without a canonical `{adr_dir}` file. Do not add ADR promotion tasks — `/spec-technical-review` creates Draft files; PE acceptance happens before planning. |
 | P13 | **Technical design reference** — §0 present; technical review path populated or explicitly N/A with reason; PE sign-off status stated as `[x] complete — {date}` (not `[ ] required`) when TDD was produced; **FAIL** if TDD Status field in `Technical-Review-{initiative}.md` still reads `Draft`, or any required ADR file is not `Accepted` — the dev has not committed the pre-approval acceptance package and the plan must not proceed |
-| P14 | **WorkManifest seed** — §9 present; wave IDs (`W0`, `W1`, …) match plan waves exactly; every TASK row has `codebase`, `spec_path`, and `verify_command`; YAML is syntactically valid |
+| P14 | **WorkManifest seed** — §9 present; wave IDs (`W0`, `W1`, …) match plan waves exactly; every TASK row has `codebase`, `spec_path`, `verify_command`, and **Implements `REQ-*`**; each wave has `tasks[]` + body task table with stable `TASK-*` ids; YAML is syntactically valid |
