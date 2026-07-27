@@ -226,6 +226,7 @@ DELIVERY_CONTRACT_FILES = [
     "delivery-contract.yaml",
     "workflow.yaml",
     "references/handoff-envelope.md",
+    "references/prompt-package-contract.md",
 ]
 
 
@@ -608,6 +609,47 @@ def check_workflow_dispatch_and_purpose() -> list[str]:
     return errors
 
 
+def check_prompt_package_surface() -> list[str]:
+    """Assert prompt packages for requirements + development inventory (not dispatch)."""
+    if str(ROOT) not in sys.path:
+        sys.path.insert(0, str(ROOT))
+    from scripts.prompt_contract import (  # noqa: WPS433 — runtime path bootstrap
+        iter_prompt_skill_dirs,
+        validate_prompt_package,
+    )
+
+    errors: list[str] = []
+    inventory_path = ROOT / "tests" / "fixtures" / "prompt_inventory.json"
+    if not inventory_path.is_file():
+        return ["  MISSING: tests/fixtures/prompt_inventory.json"]
+
+    inventory = json.loads(inventory_path.read_text(encoding="utf-8"))
+    expected = {
+        (entry["area"], entry["skill_id"]) for entry in inventory.get("skills") or []
+    }
+    found = {(area, skill_id) for area, skill_id, _ in iter_prompt_skill_dirs(ROOT)}
+
+    if expected != found:
+        missing = sorted(expected - found)
+        extra = sorted(found - expected)
+        if missing:
+            errors.append(f"  inventory lists missing skill dirs: {missing}")
+        if extra:
+            errors.append(f"  skill dirs not in prompt inventory: {extra}")
+
+    for area, skill_id, skill_root in iter_prompt_skill_dirs(ROOT):
+        if (area, skill_id) not in expected:
+            continue
+        for line in validate_prompt_package(skill_root, skill_id=skill_id):
+            errors.append(f"  {area}/{skill_id}: {line}")
+
+    # Fail closed if engg-reviews accidentally gains prompt packages in inventory.
+    for entry in inventory.get("skills") or []:
+        if entry.get("area") == "engg-reviews":
+            errors.append("  engg-reviews must not appear in prompt inventory")
+    return errors
+
+
 # ── Main ──────────────────────────────────────────────────────────────────────
 
 def main() -> int:
@@ -664,6 +706,16 @@ def main() -> int:
     if errors:
         all_errors.append(
             ("Workflow dispatch/purpose must match policy fixture", errors)
+        )
+
+    errors = check_prompt_package_surface()
+    if errors:
+        all_errors.append(
+            (
+                "Prompt packages required for skills/requirements/* and "
+                "skills/development/* (independent of dispatch)",
+                errors,
+            )
         )
 
     if all_errors:

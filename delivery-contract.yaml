@@ -6,6 +6,7 @@ version: 2
 status: rc
 workflow: workflow.yaml
 handoff_spec: references/handoff-envelope.md
+prompt_package_spec: references/prompt-package-contract.md
 
 outcomes:
   - pass
@@ -58,6 +59,26 @@ dispatch:
   reserved_future:
     - observed
   policy_fixture: tests/fixtures/workflow_dispatch_policy.json
+
+# Prompt packages (skill invocation briefs) — orthogonal to dispatch.
+# Coverage = skills/requirements/* ∪ skills/development/* (see inventory).
+# Automated consumers fail closed; humans may freeform.
+# Runtime bind/render/outcome persistence is Gateflow BOUNDINPUT (later).
+prompts:
+  layout: skills/<area>/<skill-id>/prompts/
+  areas:
+    - requirements
+    - development
+  inventory_fixture: tests/fixtures/prompt_inventory.json
+  contract: references/prompt-package-contract.md
+  template_syntax: simple-mustache-vars  # {{var}} only
+  shared_variables:
+    - ticket
+    - initiative
+    - handoff_path
+    - workspace
+    - skill_id
+  eval_before_promote: true
 
 human_checkpoint:
   required_field: purpose

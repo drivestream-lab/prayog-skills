@@ -1,0 +1,19 @@
+{
+  "coverage_areas": ["requirements", "development"],
+  "note": "Prompt package coverage is directory inventory under these areas only. Independent of workflow dispatch. engg-reviews is out of scope.",
+  "skills": [
+    {"area": "requirements", "skill_id": "validate-requirements"},
+    {"area": "requirements", "skill_id": "review-findings"},
+    {"area": "requirements", "skill_id": "update-documents"},
+    {"area": "requirements", "skill_id": "prd-impact-map"},
+    {"area": "development", "skill_id": "spec-draft"},
+    {"area": "development", "skill_id": "initiative-feasibility"},
+    {"area": "development", "skill_id": "spec-technical-review"},
+    {"area": "development", "skill_id": "spec-implementation-plan"},
+    {"area": "development", "skill_id": "board-seed"},
+    {"area": "development", "skill_id": "pre-implement"},
+    {"area": "development", "skill_id": "loop-spec"},
+    {"area": "development", "skill_id": "verify"},
+    {"area": "development", "skill_id": "ground-spec"}
+  ]
+}

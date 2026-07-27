@@ -8,6 +8,7 @@ procedure SSOT; this page is orientation only.
 | [`references/id-conventions.md`](../references/id-conventions.md) | Product / process / delivery ids |
 | [`references/artifact-write-contract.md`](../references/artifact-write-contract.md) | Canonical paths; no `*-revN` siblings |
 | [`references/handoff-envelope.md`](../references/handoff-envelope.md) | Persistent handoff; blockers use stable ids |
+| [`references/prompt-package-contract.md`](../references/prompt-package-contract.md) | Versioned skill invocation briefs (`prompts/`) |
 
 ## Quick map
 

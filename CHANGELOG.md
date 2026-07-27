@@ -7,6 +7,28 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased] — features/rc-2
 
+### Added — Skill prompt packages (INIT-PRAYOG-SKILLS-003-PROMPTS)
+
+- Per-skill **prompt packages** for every skill under `skills/requirements/`
+  and `skills/development/` (**13/13**): `prompts/{template.md,schema.yaml,fixtures/}`.
+- Coverage is **directory inventory** — independent of workflow `dispatch`.
+  `skills/engg-reviews/` remains out of scope.
+- Shared v1 variables (normative `required`): `ticket`, `initiative`,
+  `handoff_path`, `workspace`, `skill_id`. Simple `{{var}}` only.
+- Semver `revision` in `schema.yaml`; outcome consumers return
+  `prompt_id` + `prompt_revision` (runtime bind/render = BOUNDINPUT later).
+- Contract surface: `references/prompt-package-contract.md`,
+  `scripts/prompt_contract.py`, `tests/fixtures/prompt_inventory.json`,
+  `tests/test_prompt_contract.py`, consistency check
+  `check_prompt_package_surface()`.
+- **Eval before promote:** golden fixtures green + CHANGELOG lists
+  `prompt_id@revision` + consistency/unittest pass.
+- Initial revisions: all packages `@1.0.0`
+  (`validate-requirements`, `review-findings`, `update-documents`,
+  `prd-impact-map`, `spec-draft`, `initiative-feasibility`,
+  `spec-technical-review`, `spec-implementation-plan`, `board-seed`,
+  `pre-implement`, `loop-spec`, `verify`, `ground-spec`).
+
 ### Added — ID coherence, artifact write contract, review briefs, board TASK linkage
 
 - **`references/id-conventions.md`** — Product (`CAP`/`REQ`/`CTR`/`OQ`),
@@ -47,6 +69,11 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 - v0.4.3 pins without `dispatch` → treat as `manual` (fail closed for
   orchestration). Upgrade pin after release tag for wave auto-dispatch.
+- Prompt packages ship on the **`v0.5.0-rc.2` family** (`features/rc-2`).
+  Automated consumers resolve briefs from the pin; missing/invalid package →
+  **fail closed**. Humans may freeform.
+- Before pin/tag promote of prompt revisions: fixtures green, checklist, and
+  CHANGELOG `prompt_id@revision` entries.
 - engg-reviews PE pack remains adjunct (`engg-reviews/v1`) — not part of
   this delivery-contract change.
 

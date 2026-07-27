@@ -21,6 +21,11 @@ lists. Human stops use `type: human-checkpoint` (not `type: gate`).
 [`references/artifact-write-contract.md`](references/artifact-write-contract.md)
 (canonical report paths — no `*-revN` siblings).
 
+**Prompt packages:** every skill under `skills/requirements/` and
+`skills/development/` ships `prompts/` (versioned invocation brief). Coverage
+is independent of `dispatch`. See
+[`references/prompt-package-contract.md`](references/prompt-package-contract.md).
+
 | | |
 |---|---|
 | **License** | [MIT](LICENSE) |
@@ -159,16 +164,26 @@ prayog-skills/
     python-backend.yaml
     frontend.yaml
     meta-pm.yaml
-  references/         # handoff, id-conventions, artifact-write-contract
+  references/         # handoff, ids, artifacts, prompt-package-contract
   docs/               # human overviews (e.g. id-and-traceability)
   skills/
-    requirements/     # PM lane
-    development/      # Dev lane
-    engg-reviews/     # Experimental PE adjunct (not in profiles)
-  scripts/            # Consistency checks (CI)
+    requirements/     # PM lane (+ prompts/ per skill)
+    development/      # Dev lane (+ prompts/ per skill)
+    engg-reviews/     # Experimental PE adjunct (not in profiles; no prompts/)
+  scripts/            # Consistency + prompt contract checks (CI)
+  tests/fixtures/     # dispatch policy + prompt inventory SSOTs
 ```
 
 Each skill: `skills/<category>/<name>/SKILL.md` per [Agent Skills](https://cursor.com/docs/skills).
+
+Requirements and development skills also include:
+
+```text
+skills/<area>/<skill-id>/prompts/
+  template.md                 # simple {{var}} invocation brief
+  schema.yaml                 # prompt_id + semver revision + variables
+  fixtures/happy_path.*       # golden render inputs + expected output
+```
 
 ---
 
