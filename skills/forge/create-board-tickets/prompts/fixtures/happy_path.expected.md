@@ -1,6 +1,6 @@
 # Invoke: create-board-tickets
 
-You are executing the **create-board-tickets** skill (Create board epic/wave tickets from board-seed readiness.).
+You are executing the **create-board-tickets** skill (Create board tickets from plan §9 (preflight + authorize + seed).).
 
 ## Bound context
 - ticket: FORGE-1001
@@ -13,19 +13,17 @@ You are executing the **create-board-tickets** skill (Create board epic/wave tic
 Follow the full procedure in this skill's `SKILL.md`. Treat `SKILL.md` as the
 procedure SSOT; this brief is the invocation package only.
 
-This is a **human forge** skill (Gateflow ForgeClient parity). Consume pin
-policy ⋉ `handoff.forge` from the prior content skill. Do not invent labels or
-required slots. Never apply `*-lgtm`. Tooling is agent-neutral (`gh`/API are
-examples). Orchestrators must not auto-dispatch this skill.
-
+This is a **human forge** skill (Gateflow BoardService / ForgeClient parity for
+`create_board_tickets`). After spec merge: verify gate + board binding, present
+EPIC/waves from plan §9, then create tickets only after explicit authorization.
+There is no separate `/board-seed` content skill. Never apply `*-lgtm`. Tooling is
+agent-neutral. Orchestrators must not auto-dispatch this skill.
 
 ## Envelope navigation (required)
-Forge skills are **not** workflow graph nodes. Do not invent programme
-`next_candidates` from a missing pin node. When emitting a forge-step
-`handoff:`, set navigation fields only if continuing from the **prior content**
-stage handoff and pinned `workflow.yaml`. `human_checkpoint` is `true` only
-when that resolved next node's `type` is `human-checkpoint`. Prefer re-reading
-the content-skill baton after mutation.
+Forge skills are **not** workflow graph nodes. After a successful seed, continue
+at `pre-implement` per pinned `workflow.yaml` `board-tickets-action` `pass`.
+`human_checkpoint` is `true` only when a resolved next node's `type` is
+`human-checkpoint`. Prefer re-reading the content-skill baton after mutation.
 
 ## Workspace
 Root: `/workspace/example-repo`.

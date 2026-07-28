@@ -174,7 +174,7 @@ PE checklist (before spec-lgtm):
   [ ] WorkManifest YAML (§9) correct — wave IDs W0, W1, … (one issue per wave)
   [ ] P1–P14 checks all pass
 
-After spec-lgtm + Approve + merge — **`/board-seed`** from §9 (post-merge only):
+After spec-lgtm + Approve + merge — **`/create-board-tickets`** from §9 (post-merge only):
   Create one GitHub Issue per wave (W0, W1, …) using §9 titles, bodies, depends_on
   Search for existing initiative/wave issues first; create only missing issues
   Then: /pre-implement → /loop-spec → /verify (when applicable) → /ground-spec
@@ -207,7 +207,7 @@ PE actions (all on **exact current head**):
 1. Remove `spec-pending`, `spec-blocked`, `spec-revised`, `spec-stale`; add **`spec-lgtm`**
 2. Submit GitHub **Approve** with attestation body (below)
 3. Mark Draft PR **Ready for review**
-4. Authorize merge (human or policy); then **`/board-seed`** from §9
+4. Authorize merge (human or policy); then **`/create-board-tickets`** from §9
 
 ### Approve attestation body
 
@@ -240,7 +240,7 @@ digests must match the same head SHA.
 
 ## 9. WorkManifest seed
 
-> **Primary:** `/board-seed` creates **one GitHub Issue per wave** (`W0`, `W1`, …)
+> **Primary:** `/create-board-tickets` creates **one GitHub Issue per wave** (`W0`, `W1`, …)
 > from this section after spec merge. Wave bodies **must list every `TASK-*`**
 > with done-when for human traceability (TASK sub-issues optional).
 >

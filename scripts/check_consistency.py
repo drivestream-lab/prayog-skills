@@ -401,6 +401,41 @@ def check_requirements_profile_registry() -> list[str]:
     return errors
 
 
+def check_forge_profile_registry() -> list[str]:
+    """Every skills/forge/*/SKILL.md must appear in every profile forge_skills."""
+    errors: list[str] = []
+    forge_dir = SKILLS_DIR / "forge"
+    if not forge_dir.exists():
+        return errors
+    actual_skills = {p.parent.name for p in forge_dir.glob("*/SKILL.md")}
+    profile_files = list((ROOT / "profiles").glob("*.yaml"))
+    block_re = re.compile(r"forge_skills:\s*\n((?:[ \t]*-[ \t]*\S+[ \t]*\n?)+)")
+    item_re = re.compile(r"-\s*(\S+)")
+
+    if not profile_files:
+        return ["  no profiles/*.yaml found"]
+
+    for pf in profile_files:
+        text = pf.read_text(encoding="utf-8")
+        m = block_re.search(text)
+        if not m:
+            errors.append(
+                f"  {pf.relative_to(ROOT)}: missing forge_skills: "
+                f"(required for launchpad materialize)"
+            )
+            continue
+        listed = set(item_re.findall(m.group(1)))
+        for skill in sorted(actual_skills - listed):
+            errors.append(
+                f"  {pf.relative_to(ROOT)}: missing {skill!r} in forge_skills:"
+            )
+        for skill in sorted(listed - actual_skills):
+            errors.append(
+                f"  {pf.relative_to(ROOT)}: stale forge_skills entry {skill!r}"
+            )
+    return errors
+
+
 def check_check_registries() -> list[str]:
     """Check registry IDs and their advertised ranges in consumers."""
     errors: list[str] = []
@@ -706,9 +741,9 @@ def check_workflow_forge() -> list[str]:
                         f"  {stage}: forge.action must be in "
                         f"{sorted(FORGE_ACTION_ENUM)}"
                     )
-                if forge.get("draft") != expected.get("draft"):
+                if "draft" in expected and forge.get("draft") != expected.get("draft"):
                     errors.append(f"  {stage}: forge.draft mismatch policy")
-                if list(forge.get("apply_labels") or []) != list(
+                if "apply_labels" in expected and list(forge.get("apply_labels") or []) != list(
                     expected.get("apply_labels") or []
                 ):
                     errors.append(f"  {stage}: forge.apply_labels mismatch policy")
@@ -806,6 +841,12 @@ def main() -> int:
     errors = check_requirements_profile_registry()
     if errors:
         all_errors.append(("Every skills/requirements/*/ must be listed in profiles requirements_skills:", errors))
+
+    errors = check_forge_profile_registry()
+    if errors:
+        all_errors.append(
+            ("Every skills/forge/*/ must be listed in every profiles/*.yaml forge_skills:", errors)
+        )
 
     errors = check_check_registries()
     if errors:

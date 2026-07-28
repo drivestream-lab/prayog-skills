@@ -17,7 +17,7 @@ Follow the full procedure in this skill's `SKILL.md` (and `references/` when pre
 ## Non-negotiables (summary)
 1. Never skip checks; every TASK has done-when, Implements REQ-*, and toolchain commands.
 2. No shadow REQ-W* ids; wave ids W0, W1, … only.
-3. Commit plan to the open Draft spec PR; board seeding happens after merge via board-seed.
+3. Commit plan to the open Draft spec PR; board seeding happens after merge via `/create-board-tickets`.
 4. Verify source freshness against canonical handoff before planning.
 
 ## Envelope navigation (required)

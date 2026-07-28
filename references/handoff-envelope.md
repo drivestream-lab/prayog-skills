@@ -177,7 +177,7 @@ Rules:
 12. `/spec-implementation-plan` may run when TDD/ADR files are **Accepted**;
     **`spec-lgtm`** is set only after the plan is on head (Gate 2 unlock).
 13. `/pre-implement` and `/loop-spec` require spec PR **merged** with
-    `spec-lgtm` on merge head and board-seed complete — not an open Draft spec
+    `spec-lgtm` on merge head and board tickets seeded — not an open Draft spec
     PR branch.
 14. ADR signals contain actual file paths/digests; target paths or future
     promotion tasks are not artifacts.

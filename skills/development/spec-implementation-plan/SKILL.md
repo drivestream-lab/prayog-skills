@@ -16,7 +16,7 @@ metadata:
 # Spec implementation plan
 
 Turn an accepted initiative spec (+ feasibility report + technical review when
-present) into an **executable plan with a board-seed artifact (§9)**. **Do not
+present) into an **executable plan with a WorkManifest artifact (§9)**. **Do not
 implement** — plan only.
 
 Commit the plan to the **spec PR branch** alongside spec, feasibility, and TDD.
@@ -75,7 +75,7 @@ Run **while the Draft spec PR is open**, **before spec merge**, after:
 > **Artifact gate vs GitHub gate**
 > Planning requires **Accepted TDD/ADR files** (P12/P13). It does **not**
 > require `spec-lgtm`. PE sets **`spec-lgtm` + GitHub Approve + attestation**
-> only after this plan is committed — that unlocks merge and board-seed.
+> only after this plan is committed — that unlocks merge and `/create-board-tickets`.
 
 ## Process
 
@@ -102,7 +102,7 @@ Use [references/output-template.md](references/output-template.md).
 
 The plan's final section (§9) emits a ready-to-use WorkManifest YAML stub.
 
-**After spec PR merge** — not before — run **`/board-seed`** (development lane,
+**After spec PR merge** — not before — run **`/create-board-tickets`** (forge skill,
 stack-agnostic). That skill reads §9, governance board binding from read-only
 meta, creates EPIC + wave sub-issues on the programme Project, and hands off to
 `/pre-implement`.
@@ -126,6 +126,7 @@ agent may run this skill; legality and auto-dispatch follow `dispatch` +
 delivery contract + latest handoff. `pass` resolves to human-checkpoint
 `gate-2` (`purpose: coding-readiness`), then authorized `spec-merge`.
 
-After the spec PR is merged, the workflow selects `board-seed` (skill).
-Planning does not seed the board itself. `next_candidates` never authorize
-invoke.
+After the spec PR is merged, the workflow selects `board-tickets-action`
+(`external-action`, `forge.action: create_board_tickets`); humans run
+`/create-board-tickets`. Planning does not seed the board itself.
+`next_candidates` never authorize invoke.

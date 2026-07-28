@@ -10,7 +10,6 @@
     {"area": "development", "skill_id": "initiative-feasibility"},
     {"area": "development", "skill_id": "spec-technical-review"},
     {"area": "development", "skill_id": "spec-implementation-plan"},
-    {"area": "development", "skill_id": "board-seed"},
     {"area": "development", "skill_id": "pre-implement"},
     {"area": "development", "skill_id": "loop-spec"},
     {"area": "development", "skill_id": "verify"},

@@ -54,14 +54,14 @@
     "next": "gate-2"
   },
   {
-    "name": "spec merge routes to board seed",
+    "name": "spec merge routes to board tickets action",
     "stage": "spec-merge",
     "outcome": "pass",
-    "next": "board-seed"
+    "next": "board-tickets-action"
   },
   {
-    "name": "board seed must pass before pre-implement",
-    "stage": "board-seed",
+    "name": "board tickets action must pass before pre-implement",
+    "stage": "board-tickets-action",
     "outcome": "pass",
     "next": "pre-implement"
   },

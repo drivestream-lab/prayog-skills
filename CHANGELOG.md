@@ -7,6 +7,16 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased] — features/rc-2
 
+### Changed — Retire `/board-seed`; single `/create-board-tickets` after merge
+
+- Removed content skill `skills/development/board-seed/`.
+- Workflow: `spec-merge` → `board-tickets-action` (`forge.action: create_board_tickets`)
+  → `pre-implement`. Human runs `/create-board-tickets` (preflight + confirm + seed).
+- Profiles: dropped `board-seed` from `development_skills`; `forge_skills` on all
+  profiles including `meta-pm`.
+- `create-board-tickets` absorbs merge-gate / board-bind / §9 preflight formerly
+  in board-seed.
+
 ### Added — Forge pin + handoff readiness + human forge skills
 
 - Merged former `forge-producer-rules.md` into `forge-side-effects.md` (**Content producers**).
@@ -23,8 +33,9 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Content prompt packages bumped `@1.0.0` → `@1.1.0` (forge awareness stanza).
 - SSOT: `references/forge-side-effects.md` (includes **Content producers**),
   `delivery-contract.yaml` `forge:`, `tests/fixtures/workflow_forge_policy.json`.
-- Demix: `spec-draft`, `prd-impact-map`, `board-seed` no longer execute forge
-  via local CLI; they fill `handoff.forge` and recommend forge skills.
+- Demix: content skills no longer execute forge via local CLI; they fill
+  `handoff.forge` and recommend forge skills. Board seeding is forge-only
+  (`/create-board-tickets`); former content `board-seed` removed.
 
 ### Changed — Derive `human_checkpoint` from pinned `workflow.yaml`
 

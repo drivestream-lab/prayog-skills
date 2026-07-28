@@ -74,11 +74,18 @@ PM skills validate and refine PRDs. Dev skills implement spec slices in service 
 | **initiative-feasibility** | Dev reviews spec for buildability |
 | **spec-technical-review** | PE resolves engineering decisions + drafts ADRs |
 | **spec-implementation-plan** | Wave plan + §9 WorkManifest YAML on spec branch |
-| **board-seed** | EPIC + wave tree on programme board after spec merge (all app stacks) |
 | **pre-implement** | Pre-flight before each implementation wave |
 | **loop-spec** | Implement → verify → fix per task |
 | **ground-spec** | Wave complete — REQ validation + contracts for next wave |
 | **verify** | Live CLI/API verification |
+
+### Forge (human — meta + app)
+
+| Skill | When |
+|-------|------|
+| **commit-workspace** | Commit staged workspace changes (ForgeClient parity) |
+| **open-draft-pr** | Open draft PR with pin labels (ForgeClient parity) |
+| **create-board-tickets** | After spec merge: preflight + authorize + seed EPIC/waves from plan §9 |
 
 Profile manifests (`profiles/*.yaml`) list which dev skills apply per harness profile (`python-backend`, `frontend`, `data-platform`, `meta-pm`). **Launchpad** reads these at sync time — when adding or removing a dev skill, update every relevant `profiles/*.yaml` and bump the harness `agent_skills.ref`.
 
@@ -103,7 +110,7 @@ Eng: Draft spec PR (entire spec lifecycle) for approved repo scope
     ↓
 PE sets spec-lgtm on exact head → Ready for review → Approve → merge
     ↓
-Merge spec PR → develop → **`/board-seed`** (governance board + EPIC/wave tree)
+Merge spec PR → develop → **`/create-board-tickets`** (governance board + EPIC/wave tree)
     ↓
 Per wave:  /pre-implement  →  /loop-spec  →  /ground-spec  →  human checkpoint
 ```

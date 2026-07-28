@@ -97,7 +97,7 @@ Stage-local rule numbers stay as documentation of which check fired:
 | validate-requirements | `1`…`11`, `S1`…`S4` |
 | initiative-feasibility | `F1`…`F14` |
 | spec-implementation-plan | `P1`…`P14` |
-| board-seed | `B1`…`B8` |
+| create-board-tickets (forge) | `B1`…`B8` |
 | engg-reviews | `C0`…`C12` |
 
 Cite the check on a finding (`VF-04`, Check `7`) — never use the check number

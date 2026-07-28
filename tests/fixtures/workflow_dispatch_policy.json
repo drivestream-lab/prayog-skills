@@ -13,8 +13,7 @@
     "spec-draft",
     "initiative-feasibility",
     "spec-technical-review",
-    "spec-implementation-plan",
-    "board-seed"
+    "spec-implementation-plan"
   ],
   "human_checkpoint_purposes": {
     "requirements-human-decision": "requirements-clarification",

@@ -70,7 +70,7 @@ Set on programme Project for each item:
 ```yaml
 handoff:
   contract: sdd-delivery/v2
-  stage: board-seed
+  stage: create-board-tickets
   outcome: pass | blocked | failed
   artifact:
     path: null

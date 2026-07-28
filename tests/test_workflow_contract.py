@@ -153,8 +153,10 @@ class WorkflowContractTest(unittest.TestCase):
                 self.assertEqual(node["type"], "external-action")
                 forge = node.get("forge") or {}
                 self.assertEqual(forge.get("action"), expected["action"])
-                self.assertEqual(forge.get("draft"), expected["draft"])
-                self.assertEqual(forge.get("apply_labels"), expected["apply_labels"])
+                if "draft" in expected:
+                    self.assertEqual(forge.get("draft"), expected["draft"])
+                if "apply_labels" in expected:
+                    self.assertEqual(forge.get("apply_labels"), expected["apply_labels"])
                 self.assertEqual(forge.get("requires"), expected["requires"])
                 for label in forge.get("apply_labels") or []:
                     self.assertFalse(str(label).endswith("-lgtm"))

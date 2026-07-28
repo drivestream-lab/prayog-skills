@@ -8,7 +8,6 @@
     "initiative-feasibility": "required",
     "spec-technical-review": "required",
     "spec-implementation-plan": "required",
-    "board-seed": "disabled",
     "pre-implement": "optional",
     "loop-spec": "required",
     "verify": "optional",
@@ -26,6 +25,10 @@
       "draft": true,
       "apply_labels": ["spec-pending"],
       "requires": ["title", "body_path"]
+    },
+    "board-tickets-action": {
+      "action": "create_board_tickets",
+      "requires": ["initiative", "plan_path"]
     }
   },
   "human_forge_skills": {

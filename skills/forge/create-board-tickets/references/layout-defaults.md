@@ -1,4 +1,4 @@
-# Layout defaults (board-seed)
+# Layout defaults (`/create-board-tickets`)
 
 When `.harness/profile.yaml` is absent, use:
 

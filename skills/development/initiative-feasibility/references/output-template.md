@@ -168,5 +168,5 @@ When ready:
                OR /spec-implementation-plan (no PE questions)
   [ ] After spec + feasibility + TDD (if any) + plan on branch:
       PE sets spec-lgtm + Approve on exact head → Ready for review → merge
-  [ ] After merge: board-seed from plan §9 — then /pre-implement → /loop-spec
+  [ ] After merge: `/create-board-tickets` from plan §9 — then /pre-implement → /loop-spec
 ```

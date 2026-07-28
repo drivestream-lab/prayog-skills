@@ -232,5 +232,5 @@ PE action (artifact acceptance — mid-lane):
 After artifact acceptance:
   → /spec-implementation-plan may run on the same branch
   → after plan on head: PE sets spec-lgtm + Approve + attestation
-  → Ready for review → merge → board-seed from merged plan §9
+  → Ready for review → merge → `/create-board-tickets` from merged plan §9
 ```

@@ -40,7 +40,7 @@ product code** unless the user explicitly asks after the checklist.
    `tests_readme` cannot supply a required command, stop with MISSING command.
 10. Confirm board seed from plan §9: **EPIC** issue exists, every declared wave
     issue exists, and waves are **sub-issues of the EPIC** on the programme
-    board (governance `project_board.name`). Run `/board-seed` if missing.
+    board (governance `project_board.name`). Run `/create-board-tickets` if missing.
     A missing/partial seed blocks pre-implementation.
 11. **Spec merge gate** — before W0 (and before any `/loop-spec`), confirm:
     - current branch is the **integration branch** (`develop`) or a
@@ -51,7 +51,7 @@ product code** unless the user explicitly asks after the checklist.
     - the merged spec PR head carried **`spec-lgtm`** (verify via `gh pr view`
       on the closed spec PR: label present and `mergeCommit`/`headRefOid`
       matches attestation or Approve `commit_id`);
-    - board-seed completed (wave issues exist per rule 10).
+    - board tickets seeded (`/create-board-tickets`) (wave issues exist per rule 10).
     If any check fails: stop — do not produce a checklist or write product code.
 
 ## Chain position
@@ -60,7 +60,7 @@ Illustrative only — **transitions SSOT:** pinned root `workflow.yaml`
 (`dispatch: orchestrated` on this node). Procedure gates below still apply.
 
 ```
-spec merge (spec-lgtm on head) → /board-seed → wave issue In Progress
+spec merge (spec-lgtm on head) → /create-board-tickets → wave issue In Progress
     ↓
 /ground-spec (prior wave) → human_approved in as-built   [Wn>0 only]
     ↓

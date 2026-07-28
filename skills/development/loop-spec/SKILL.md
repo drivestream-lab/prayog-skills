@@ -51,7 +51,7 @@ Conventions: `../../../references/id-conventions.md`.
 
 - Wave slice — plan wave section (`Implementation-Plan-{initiative}.md` W{N})
   including TASK table with **Implements** `REQ-*`
-- Board wave issue — URL/number from `/board-seed` / pre-implement checklist
+- Board wave issue — URL/number from `/create-board-tickets` / pre-implement checklist
 - Pre-implement checklist — produced by `/pre-implement` for this wave
 - `{check_command}` — static checks (from harness profile or `AGENTS.md`)
 - `{test_command}` — unit verification (from harness profile or `tests_readme`)

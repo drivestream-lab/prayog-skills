@@ -210,22 +210,26 @@ nodes:
     provider: github
     authorization: explicit
     outcomes:
-      pass: board-seed
+      pass: board-tickets-action
       failed: workflow-stop
 
-  board-seed:
-    type: skill
-    profile: development
-    dispatch: manual
+  board-tickets-action:
+    type: external-action
+    owner: engineering
+    provider: github
+    authorization: explicit
     forge:
-      commit_workspace: disabled
+      action: create_board_tickets
+      requires:
+        - initiative
+        - plan_path
     requires:
       - spec-pr-merged
       - implementation-plan-current
       - workmanifest-p14-pass
     outcomes:
       pass: pre-implement
-      blocked: board-seed
+      blocked: board-tickets-action
       failed: workflow-stop
 
   pre-implement:
