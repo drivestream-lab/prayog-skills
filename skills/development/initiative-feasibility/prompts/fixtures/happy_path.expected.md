@@ -20,6 +20,15 @@ Follow the full procedure in this skill's `SKILL.md` (and `references/` when pre
 3. Commit the feasibility report to the open Draft spec PR; keep Gate 2 as spec-pending.
 4. 4-lane triage for open items; do not set spec-lgtm.
 
+## Envelope navigation (required)
+After choosing `outcome`, derive `next_candidates` and `human_checkpoint` from
+pinned `workflow.yaml` for `(stage: initiative-feasibility, outcome)` per
+`references/handoff-envelope.md` (**Derive from pinned workflow**).
+`human_checkpoint` is `true` only when the resolved next node's `type` is
+`human-checkpoint` — never because the artifact should be reviewed.
+Never set `true` on skill→skill edges (for example never on
+`pre-implement` / `loop-spec` / `verify` `pass`).
+
 ## Workspace
 Root: `/workspace/example-repo`.
 

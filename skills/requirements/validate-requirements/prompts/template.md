@@ -21,6 +21,15 @@ Follow the full procedure in this skill's `SKILL.md` (and `references/` when pre
 4. Canonical report path only — overwrite Validation-Report-{INIT}.md; never *-revN siblings.
 5. Stable finding ids VF-* per id-conventions; prefer REQ-*/CAP-*/OQ-* in Location.
 
+## Envelope navigation (required)
+After choosing `outcome`, derive `next_candidates` and `human_checkpoint` from
+pinned `workflow.yaml` for `(stage: {{skill_id}}, outcome)` per
+`references/handoff-envelope.md` (**Derive from pinned workflow**).
+`human_checkpoint` is `true` only when the resolved next node's `type` is
+`human-checkpoint` — never because the artifact should be reviewed.
+Never set `true` on skill→skill edges (for example never on
+`pre-implement` / `loop-spec` / `verify` `pass`).
+
 ## Workspace
 Root: `{{workspace}}`.
 

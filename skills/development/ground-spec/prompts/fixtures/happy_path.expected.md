@@ -20,6 +20,16 @@ Follow the full procedure in this skill's `SKILL.md` (and `references/` when pre
 3. Populate Contracts Produced — required input for next wave pre-implement.
 4. Do not mark human_approved — that is a human gate only.
 
+## Envelope navigation (required)
+After choosing `outcome`, derive `next_candidates` and `human_checkpoint` from
+pinned `workflow.yaml` for `(stage: ground-spec, outcome)` per
+`references/handoff-envelope.md` (**Derive from pinned workflow**).
+`human_checkpoint` is `true` only when the resolved next node's `type` is
+`human-checkpoint` — never because the artifact should be reviewed.
+Never set `true` on skill→skill edges (for example never on
+`pre-implement` / `loop-spec` / `verify` `pass`).
+Example: `ground-spec` + `pass` → `wave-human-decision` → `human_checkpoint: true` (do not copy into earlier lane skills).
+
 ## Workspace
 Root: `/workspace/example-repo`.
 

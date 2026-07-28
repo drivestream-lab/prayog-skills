@@ -20,6 +20,15 @@ Follow the full procedure in this skill's `SKILL.md` (and `references/` when pre
 3. Commit plan to the open Draft spec PR; board seeding happens after merge via board-seed.
 4. Verify source freshness against canonical handoff before planning.
 
+## Envelope navigation (required)
+After choosing `outcome`, derive `next_candidates` and `human_checkpoint` from
+pinned `workflow.yaml` for `(stage: {{skill_id}}, outcome)` per
+`references/handoff-envelope.md` (**Derive from pinned workflow**).
+`human_checkpoint` is `true` only when the resolved next node's `type` is
+`human-checkpoint` — never because the artifact should be reviewed.
+Never set `true` on skill→skill edges (for example never on
+`pre-implement` / `loop-spec` / `verify` `pass`).
+
 ## Workspace
 Root: `{{workspace}}`.
 

@@ -20,6 +20,16 @@ Follow the full procedure in this skill's `SKILL.md` (and `references/` when pre
 3. Resolve check/test/verify/ground commands; stop on MISSING command.
 4. Stop if plan source-freshness or impact-map revision/scope digest is stale.
 
+## Envelope navigation (required)
+After choosing `outcome`, derive `next_candidates` and `human_checkpoint` from
+pinned `workflow.yaml` for `(stage: {{skill_id}}, outcome)` per
+`references/handoff-envelope.md` (**Derive from pinned workflow**).
+`human_checkpoint` is `true` only when the resolved next node's `type` is
+`human-checkpoint` — never because the artifact should be reviewed.
+Never set `true` on skill→skill edges (for example never on
+`pre-implement` / `loop-spec` / `verify` `pass`).
+Example: `pre-implement` + `pass` → `loop-spec` → `human_checkpoint: false`.
+
 ## Workspace
 Root: `{{workspace}}`.
 

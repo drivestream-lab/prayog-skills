@@ -20,6 +20,16 @@ Follow the full procedure in this skill's `SKILL.md` (and `references/` when pre
 3. Bind each iteration to TASK-* + wave issue + implements REQ-*.
 4. When green, hand off to ground-spec before any human checkpoint.
 
+## Envelope navigation (required)
+After choosing `outcome`, derive `next_candidates` and `human_checkpoint` from
+pinned `workflow.yaml` for `(stage: {{skill_id}}, outcome)` per
+`references/handoff-envelope.md` (**Derive from pinned workflow**).
+`human_checkpoint` is `true` only when the resolved next node's `type` is
+`human-checkpoint` — never because the artifact should be reviewed.
+Never set `true` on skill→skill edges (for example never on
+`pre-implement` / `loop-spec` / `verify` `pass`).
+Example: `loop-spec` + `pass` → `verify` → `human_checkpoint: false`.
+
 ## Workspace
 Root: `{{workspace}}`.
 

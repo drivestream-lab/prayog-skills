@@ -147,6 +147,8 @@ Human must:
 
 1. Append/emit the envelope from `../../../references/handoff-envelope.md` to the saved Ground Report. Use stage `ground-spec`.
 2. When the invocation binds `handoff_path` (orchestrator / AgentRunner baton), also **overwrite** that path with the same `handoff:` envelope before exit. Leaving the baton empty is a failed stage for automated consumers. `artifact.path` remains the workspace skill output, not the baton path. See `../../../references/handoff-envelope.md` (Orchestrator baton).
+3. Derive `next_candidates` and `human_checkpoint` from pinned root `workflow.yaml` for `(stage: ground-spec, outcome)` per `../../../references/handoff-envelope.md` (**Derive from pinned workflow**). Set `human_checkpoint: true` only when the resolved next node's `type` is `human-checkpoint` — never because the artifact "should be reviewed."
+4. Happy path: `outcome: pass` → next `wave-human-decision` (`type: human-checkpoint`) → `human_checkpoint: true`. Do **not** copy this `true` into earlier implement-lane skills on skill→skill edges.
 
 
 **Transitions:** pinned root `workflow.yaml` for this stage (SSOT). Human or
@@ -168,6 +170,7 @@ handoff:
   next_candidates:
     # Must match workflow.yaml for outcome — typically wave-human-decision
     - wave-human-decision
+  # true because next.type is human-checkpoint — not "please review"
   human_checkpoint: true
   external_action: false
 ```

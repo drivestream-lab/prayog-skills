@@ -230,6 +230,13 @@ def validate_prompt_package(skill_root: Path, *, skill_id: str) -> list[str]:
         errors.append(
             "template must instruct overwrite of {{handoff_path}} with handoff envelope"
         )
+    if "## Envelope navigation (required)" not in template:
+        errors.append("template missing ## Envelope navigation (required) section")
+    if "human-checkpoint" not in template or "workflow.yaml" not in template:
+        errors.append(
+            "template must instruct deriving human_checkpoint from workflow.yaml "
+            "next node type"
+        )
 
     try:
         bound = load_yaml(inputs_path) or {}

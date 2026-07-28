@@ -7,6 +7,15 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased] — features/rc-2
 
+### Changed — Derive `human_checkpoint` from pinned `workflow.yaml`
+
+- `human_checkpoint` means the resolved next node’s `type` is `human-checkpoint`,
+  not “artifact deserves review.” Producers derive `next_candidates` +
+  `human_checkpoint` from pinned `workflow.yaml` for `(stage, outcome)`.
+- SSOT: `references/handoff-envelope.md` (**Derive from pinned workflow**).
+- All 13 packaged skills / prompt templates updated; implement-lane contrast
+  examples (`pre-implement`/`pass`→`false` vs `ground-spec`/`pass`→`true`).
+
 ### Changed — Orchestrator baton dual-write (`handoff_path`)
 
 - Prompt packages and `SKILL.md` Workflow handoff sections require writing the

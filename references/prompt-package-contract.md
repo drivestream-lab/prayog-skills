@@ -80,6 +80,14 @@ invoke it is the **orchestrator ingest target**:
 
 Templates must instruct this dual-write explicitly. Golden fixtures must match.
 
+### Envelope navigation (all packaged skills)
+
+Templates must instruct producers to derive `next_candidates` and
+`human_checkpoint` from pinned `workflow.yaml` for `(stage, outcome)` — see
+[`handoff-envelope.md`](handoff-envelope.md) (**Derive from pinned workflow**).
+`human_checkpoint` is `true` only when the resolved next node’s `type` is
+`human-checkpoint` (never because the artifact “should be reviewed”).
+
 ## Consumer resolution (automated runs)
 
 ```text

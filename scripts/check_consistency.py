@@ -544,7 +544,7 @@ def check_delivery_contract_surface() -> list[str]:
         # Prompt-packaged lanes must dual-write orchestrator baton when bound.
         if "requirements" in skill_file.parts or "development" in skill_file.parts:
             handoff_idx = text.find("## Workflow handoff")
-            handoff_chunk = text[handoff_idx : handoff_idx + 1200]
+            handoff_chunk = text[handoff_idx : handoff_idx + 2000]
             if "handoff_path" not in handoff_chunk:
                 errors.append(
                     f"  {skill_file.relative_to(ROOT)}: Workflow handoff must "
@@ -554,6 +554,16 @@ def check_delivery_contract_surface() -> list[str]:
                 errors.append(
                     f"  {skill_file.relative_to(ROOT)}: Workflow handoff must "
                     "require overwrite of handoff_path baton"
+                )
+            if "Derive `next_candidates`" not in handoff_chunk:
+                errors.append(
+                    f"  {skill_file.relative_to(ROOT)}: Workflow handoff must "
+                    "require deriving next_candidates/human_checkpoint from workflow.yaml"
+                )
+            if "human-checkpoint" not in handoff_chunk:
+                errors.append(
+                    f"  {skill_file.relative_to(ROOT)}: Workflow handoff must "
+                    "tie human_checkpoint to next node type human-checkpoint"
                 )
     return errors
 

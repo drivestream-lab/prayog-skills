@@ -39,12 +39,41 @@ Canonical artifact paths and revision rules:
 | `artifact.digest` | Digest of the output after it is saved |
 | `blockers` | Stable process/delivery ids that prevent progress |
 | `signals` | Stage-specific routing facts; never implicit prose |
-| `next_candidates` | Workflow-valid next nodes, not an authorization to execute |
-| `human_checkpoint` | Whether a human decision is required next |
+| `next_candidates` | Must match the pinned `workflow.yaml` transition for `(stage, outcome)`; never an authorization to execute |
+| `human_checkpoint` | `true` **iff** the resolved next node’s `type` is `human-checkpoint`; **not** “this artifact deserves review” |
 | `external_action` | Whether the next transition can mutate GitHub or another system |
 
 Optional future field (not required in v1): `executed_by: manual | orchestrated`
 records who ran a skill; it does not change navigation or eligibility.
+
+## Derive from pinned `workflow.yaml`
+
+After choosing `outcome`, producers **must** fill navigation fields from the
+pinned root `workflow.yaml` (same rules for every skill and every invoke mode):
+
+```text
+next_id = nodes[stage].outcomes[outcome]
+next    = nodes[next_id]
+
+next_candidates  = [next_id]    # match the pin transition; do not invent
+human_checkpoint = (next.type == "human-checkpoint")
+```
+
+Rules:
+
+- Durable artifacts are always reviewable; that does **not** set
+  `human_checkpoint: true`.
+- An envelope that nominates a `type: skill` next node with
+  `human_checkpoint: true` is **invalid** (contradicts the pin).
+- `next_candidates` never authorize invoke and never bypass a resolved
+  `type: human-checkpoint` node.
+- Illustrations only (live edges always come from the pin):
+
+| stage | outcome | next (example) | `human_checkpoint` |
+|-------|---------|----------------|--------------------|
+| `validate-requirements` | `findings` | `review-findings` (`skill`) | `false` |
+| `pre-implement` | `pass` | `loop-spec` (`skill`) | `false` |
+| `ground-spec` | `pass` | `wave-human-decision` (`human-checkpoint`) | `true` |
 
 ## Orchestrator baton (`handoff_path`)
 
