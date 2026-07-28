@@ -120,6 +120,9 @@ concrete paths for this repo and slice.
 4. Happy path: `outcome: pass` → next `loop-spec` (`type: skill`) → `human_checkpoint: false`.
 
 
+4. Follow `../../../references/forge-side-effects.md#content-producers` when this stage's pin has `forge.commit_workspace` other than `disabled` or next is an `external-action` with `forge.requires` — fill `handoff.forge` / recommend the matching `/forge` skill; do not treat local CLI as skill success.
+
+
 **Transitions:** pinned root `workflow.yaml` for this stage (SSOT). Human or
 agent may run this skill; orchestrators may auto-dispatch when
 `dispatch: orchestrated` and trigger + handoff authorize. Same legality rules

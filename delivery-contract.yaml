@@ -6,6 +6,7 @@ version: 2
 status: rc
 workflow: workflow.yaml
 handoff_spec: references/handoff-envelope.md
+forge_spec: references/forge-side-effects.md
 prompt_package_spec: references/prompt-package-contract.md
 
 outcomes:
@@ -60,15 +61,50 @@ dispatch:
     - observed
   policy_fixture: tests/fixtures/workflow_dispatch_policy.json
 
+# Forge (mutation side-effects) — orthogonal to tools-during-hop (e.g. code-graph).
+#
+# Pin declares policy + required instance slots. Content skills fill handoff.forge.
+# Human forge skills (skills/forge/<action-kebab>/) and orchestrator ForgeClient
+# both consume pin ⋉ handoff. Content skills must not treat local CLI (e.g. gh)
+# as automate success.
+#
+# Skill nodes: forge.commit_workspace only (absent → disabled).
+# External-action nodes: forge.action + draft/labels/requires as applicable.
+# Head/ref binding is run context (not pin). Approval labels (*-lgtm) never auto.
+#
+# Human skill id = forge.action with '_' → '-'. Orchestrators never auto-dispatch
+# forge skills (not on workflow outcomes; disable-model-invocation: true).
+forge:
+  commit_workspace:
+    enum:
+      - disabled
+      - optional
+      - required
+    schema_default: disabled
+  actions:
+    enum:
+      - commit_workspace
+      - open_draft_pr
+      - create_board_tickets
+    reserved_future:
+      - link_pr_to_ticket
+      - update_board_status
+      - post_forge_comment
+  human_skill_id: action_with_underscores_to_hyphens
+  forbid_auto_labels_suffix: "-lgtm"
+  policy_fixture: tests/fixtures/workflow_forge_policy.json
+  contract: references/forge-side-effects.md
+
 # Prompt packages (skill invocation briefs) — orthogonal to dispatch.
-# Coverage = skills/requirements/* ∪ skills/development/* (see inventory).
-# Automated consumers fail closed; humans may freeform.
+# Coverage = skills/requirements/* ∪ skills/development/* ∪ skills/forge/*
+# (see inventory). Automated consumers fail closed; humans may freeform.
 # Runtime bind/render/outcome persistence is Gateflow BOUNDINPUT (later).
 prompts:
   layout: skills/<area>/<skill-id>/prompts/
   areas:
     - requirements
     - development
+    - forge
   inventory_fixture: tests/fixtures/prompt_inventory.json
   contract: references/prompt-package-contract.md
   template_syntax: simple-mustache-vars  # {{var}} only

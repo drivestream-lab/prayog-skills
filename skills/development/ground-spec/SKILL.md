@@ -151,6 +151,9 @@ Human must:
 4. Happy path: `outcome: pass` → next `wave-human-decision` (`type: human-checkpoint`) → `human_checkpoint: true`. Do **not** copy this `true` into earlier implement-lane skills on skill→skill edges.
 
 
+4. Follow `../../../references/forge-side-effects.md#content-producers` when this stage's pin has `forge.commit_workspace` other than `disabled` or next is an `external-action` with `forge.requires` — fill `handoff.forge` / recommend the matching `/forge` skill; do not treat local CLI as skill success.
+
+
 **Transitions:** pinned root `workflow.yaml` for this stage (SSOT). Human or
 agent may run this skill; orchestrators may auto-dispatch when authorized.
 Same legality for both invoke paths.

@@ -4,9 +4,9 @@ description: >-
   Translate the PRD into a spec slice for this repo. Reads the PRD from the
   meta PRD PR branch or merged develop, extracts capabilities relevant to this
   repo, drafts docs/specification/product/INIT-*.md locally, and produces a
-  Draft-PR readiness handoff. After explicit user authorization, the agent may
-  use gh to create/update the Draft spec PR and initialize Gate 2 labels. Run
-  after Gate 1 approval and before /initiative-feasibility.
+  Draft-PR readiness handoff (handoff.forge for open_draft_pr). Publish via
+  /open-draft-pr or orchestrator ForgeClient after authorization — not inside
+  this skill. Run after Gate 1 approval and before /initiative-feasibility.
 disable-model-invocation: true
 paths: AGENTS.md, docs/specification/**, .cursor/rules/**
 background_eligible: true
@@ -44,9 +44,11 @@ This skill bridges the gap — it reads the PRD and drafts structured spec
    A label or old LGTM alone is not approval.
 7. This repo must be `affected` in the latest map and not deferred or blocked.
    Record the repo's `scope_digest` in the spec. If any gate fails: stop.
-8. **No GitHub side effects during generation.** Do not create a branch,
-   commit, push, PR, comment, review request, or label until the completed
-   PR-readiness handoff is shown and the user explicitly authorizes PR action.
+8. **No forge mutations in this skill.** Do not create a branch, commit, push,
+   PR, comment, review request, or label here. Fill `handoff.forge` readiness
+   for `open_draft_pr` and recommend `/open-draft-pr` (or wait for the
+   orchestrator ForgeClient on `spec-pr-action`). See
+   `../../../references/forge-side-effects.md#content-producers`.
 9. Treat `spec-*` labels as projections. If artifact, review, and label
    disagree, the gate is closed. Exactly one PE gate label may be active:
    `spec-pending`, `spec-lgtm`, or `spec-blocked`. `spec-revised` and
@@ -107,33 +109,24 @@ Resolve paths from `.harness/profile.yaml` or [references/layout-defaults.md](re
    - `PR READY` or `PR BLOCKED` verdict.
    Stop without GitHub side effects.
 
-## PR creation handoff
+## PR readiness (fill handoff.forge — do not open the PR here)
 
 After T5, **always** present the PR readiness section from
-[references/output-template.md](references/output-template.md) and ask the user
-whether to create or update the Draft spec PR.
+[references/output-template.md](references/output-template.md). On
+`outcome: pass`, next node is `spec-pr-action` (`open_draft_pr`). Fill
+`handoff.forge` with pin `requires` at minimum:
 
-If the user explicitly authorizes it and `gh` is configured, the agent may:
+- `action: open_draft_pr`
+- `draft: true`
+- `apply_labels: [spec-pending]` (match pin; never `*-lgtm`)
+- `title`, `body_path` (and any other pin `requires`)
 
-1. create/switch to the proposed branch when needed,
-2. commit the approved spec file(s),
-3. push the branch,
-4. create or update the **Draft** spec PR,
-5. verify Gate 2 labels provisioned by Launchpad are present; if missing, stop
-   and instruct the user to run
-   `launchpad apply-gates --repo <name> --apply`,
-6. apply `spec-pending` and remove obsolete Gate 2 labels through GitHub REST
-   issue-label endpoints (do not use `gh pr edit`),
-7. verify the PE team exists and has repository access,
-8. request PE review through GitHub REST
-   `POST repos/{owner}/{repo}/pulls/{number}/requested_reviewers` with the team
-   slug, then verify the request is present.
+Recommend **`/open-draft-pr`** after the user authorizes publish. Do **not**
+run forge mutations inside `/spec-draft`. If Forge tooling is unavailable,
+readiness in the handoff is still the durable package for a later forge skill
+or Gateflow ForgeClient.
 
-This is a separate, user-authorized agent action—not an automatic side effect
-of `/spec-draft`.
-
-If `gh` is not configured, provide exact manual commands and do not report that
-the PR exists.
+See `../../../references/forge-side-effects.md`.
 
 ## Output
 
@@ -141,9 +134,10 @@ Draft saved to `{product_spec_dir}/INIT-{id}.md` (from profile).
 
 Use [references/output-template.md](references/output-template.md).
 
-Before PR creation, `spec_pr` and Gate 2 fields are `pending`. After the
-user-authorized PR action, the PR body contains the spec summary, artifact path,
-meta handoff digests, Gate 2 checklist, and PE review request.
+Before `/open-draft-pr` (or orchestrator forge), `spec_pr` and Gate 2 fields
+are `pending`. After the authorized forge skill / ForgeClient run, the PR body
+contains the spec summary, artifact path, meta handoff digests, Gate 2
+checklist, and PE review request.
 
 ## Revision handling
 
@@ -161,9 +155,10 @@ When a newer approved impact-map revision appears:
 
 After dev reviews the local draft:
 
-1. authorize Draft spec PR creation when the PR-readiness verdict is `PR READY`
-2. commit the spec slice to the Draft spec PR branch (during authorized PR action
-   or immediately after)
+1. authorize publish and run `/open-draft-pr` when the PR-readiness verdict is
+   `PR READY` (or let the orchestrator execute `spec-pr-action`)
+2. ensure the spec slice is on the Draft spec PR head (via
+   `/commit-workspace` and/or `/open-draft-pr` as appropriate)
 3. run `/initiative-feasibility` on the committed spec on that branch
 
 Do not skip the PR-readiness handoff or jump straight to feasibility on a local
@@ -174,8 +169,9 @@ lane.
 
 1. Append/emit the envelope from `../../../references/handoff-envelope.md` to the saved spec. Use stage `spec-draft`.
 2. When the invocation binds `handoff_path` (orchestrator / AgentRunner baton), also **overwrite** that path with the same `handoff:` envelope before exit. Leaving the baton empty is a failed stage for automated consumers. `artifact.path` remains the workspace skill output, not the baton path. See `../../../references/handoff-envelope.md` (Orchestrator baton).
-3. Derive `next_candidates` and `human_checkpoint` from pinned root `workflow.yaml` for `(stage: spec-draft, outcome)` per `../../../references/handoff-envelope.md` (**Derive from pinned workflow**). Set `human_checkpoint: true` only when the resolved next node's `type` is `human-checkpoint` — never because the artifact "should be reviewed."
-
+3. Derive `next_candidates`, `human_checkpoint`, and `external_action` from pinned root `workflow.yaml` for `(stage: spec-draft, outcome)` per `../../../references/handoff-envelope.md` (**Derive from pinned workflow**). Set `human_checkpoint: true` only when the resolved next node's `type` is `human-checkpoint`. Set `external_action: true` when next is `external-action` (e.g. `spec-pr-action` on `pass`).
+4. On `pass`, fill complete `handoff.forge` for `open_draft_pr` per pin `requires` (`../../../references/forge-side-effects.md#content-producers`). Recommend `/open-draft-pr`.
+5. Follow `../../../references/forge-side-effects.md#content-producers` — content skill success ≠ PR opened.
 
 **Transitions:** pinned root `workflow.yaml` for this stage (SSOT). Human or
 agent may run this skill; legality and auto-dispatch follow `dispatch` +

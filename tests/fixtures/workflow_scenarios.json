@@ -12,6 +12,24 @@
     "next": "prd-impact-map"
   },
   {
+    "name": "spec draft routes to spec PR action",
+    "stage": "spec-draft",
+    "outcome": "pass",
+    "next": "spec-pr-action"
+  },
+  {
+    "name": "spec PR action routes to feasibility",
+    "stage": "spec-pr-action",
+    "outcome": "pass",
+    "next": "initiative-feasibility"
+  },
+  {
+    "name": "impact map routes to PRD PR action",
+    "stage": "prd-impact-map",
+    "outcome": "pass",
+    "next": "prd-pr-action"
+  },
+  {
     "name": "feasibility engineering findings route to PE",
     "stage": "initiative-feasibility",
     "outcome": "findings",

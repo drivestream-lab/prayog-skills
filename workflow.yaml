@@ -13,6 +13,8 @@ nodes:
     type: skill
     profile: meta-pm
     dispatch: manual
+    forge:
+      commit_workspace: optional
     outcomes:
       pass: prd-impact-map
       findings: review-findings
@@ -23,6 +25,8 @@ nodes:
     type: skill
     profile: meta-pm
     dispatch: manual
+    forge:
+      commit_workspace: optional
     outcomes:
       pass: update-documents
       needs-input: requirements-human-decision
@@ -32,6 +36,8 @@ nodes:
     type: skill
     profile: meta-pm
     dispatch: manual
+    forge:
+      commit_workspace: optional
     outcomes:
       pass: validate-requirements
       findings: review-findings
@@ -42,6 +48,8 @@ nodes:
     type: skill
     profile: meta-pm
     dispatch: manual
+    forge:
+      commit_workspace: required
     outcomes:
       pass: prd-pr-action
       findings: requirements-human-decision
@@ -62,6 +70,15 @@ nodes:
     owner: product
     provider: github
     authorization: explicit
+    forge:
+      action: open_draft_pr
+      draft: true
+      apply_labels:
+        - impact-map-pending
+      remove_labels: []
+      requires:
+        - title
+        - body_path
     outcomes:
       pass: gate-1
       blocked: requirements-human-decision
@@ -90,17 +107,40 @@ nodes:
     type: skill
     profile: development
     dispatch: manual
+    forge:
+      commit_workspace: required
     outcomes:
-      pass: initiative-feasibility
+      pass: spec-pr-action
       needs-input: spec-human-decision
       blocked: spec-human-decision
       stale: prd-impact-map
+      failed: workflow-stop
+
+  spec-pr-action:
+    type: external-action
+    owner: engineering
+    provider: github
+    authorization: explicit
+    forge:
+      action: open_draft_pr
+      draft: true
+      apply_labels:
+        - spec-pending
+      remove_labels: []
+      requires:
+        - title
+        - body_path
+    outcomes:
+      pass: initiative-feasibility
+      blocked: spec-human-decision
       failed: workflow-stop
 
   initiative-feasibility:
     type: skill
     profile: development
     dispatch: manual
+    forge:
+      commit_workspace: required
     outcomes:
       pass: spec-implementation-plan
       findings: spec-technical-review
@@ -113,6 +153,8 @@ nodes:
     type: skill
     profile: development
     dispatch: manual
+    forge:
+      commit_workspace: required
     outcomes:
       pass: technical-review-approval
       findings: spec-human-decision
@@ -143,6 +185,8 @@ nodes:
     type: skill
     profile: development
     dispatch: manual
+    forge:
+      commit_workspace: required
     outcomes:
       pass: gate-2
       needs-input: spec-human-decision
@@ -173,6 +217,8 @@ nodes:
     type: skill
     profile: development
     dispatch: manual
+    forge:
+      commit_workspace: disabled
     requires:
       - spec-pr-merged
       - implementation-plan-current
@@ -186,6 +232,8 @@ nodes:
     type: skill
     profile: development
     dispatch: orchestrated
+    forge:
+      commit_workspace: optional
     outcomes:
       pass: loop-spec
       needs-input: wave-human-decision
@@ -197,6 +245,8 @@ nodes:
     type: skill
     profile: development
     dispatch: orchestrated
+    forge:
+      commit_workspace: required
     outcomes:
       pass: verify
       findings: loop-spec
@@ -207,6 +257,8 @@ nodes:
     type: skill
     profile: development
     dispatch: orchestrated
+    forge:
+      commit_workspace: optional
     outcomes:
       pass: ground-spec
       skipped: ground-spec
@@ -218,6 +270,8 @@ nodes:
     type: skill
     profile: development
     dispatch: orchestrated
+    forge:
+      commit_workspace: required
     outcomes:
       pass: wave-human-decision
       findings: loop-spec

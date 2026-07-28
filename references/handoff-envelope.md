@@ -41,10 +41,59 @@ Canonical artifact paths and revision rules:
 | `signals` | Stage-specific routing facts; never implicit prose |
 | `next_candidates` | Must match the pinned `workflow.yaml` transition for `(stage, outcome)`; never an authorization to execute |
 | `human_checkpoint` | `true` **iff** the resolved next node’s `type` is `human-checkpoint`; **not** “this artifact deserves review” |
-| `external_action` | Whether the next transition can mutate GitHub or another system |
+| `external_action` | `true` **iff** the resolved next node’s `type` is `external-action` — not “agent must run `gh`” |
+| `forge` | Optional. Instance payload for forge executors when the pin expects mutation readiness (see below) |
 
 Optional future field (not required in v1): `executed_by: manual | orchestrated`
 records who ran a skill; it does not change navigation or eligibility.
+
+## `handoff.forge` (instance readiness)
+
+When the next node is `type: external-action` with `forge.requires`, or the
+stage recommends a forge action, producers **fill** `handoff.forge` so human
+forge skills and the orchestrator ForgeClient share one package. Policy
+(action, draft, labels) comes from the pin; the skill fills instance slots.
+See [`forge-side-effects.md`](forge-side-effects.md) (**Content producers**).
+
+```yaml
+handoff:
+  contract: sdd-delivery/v2
+  stage: spec-draft
+  outcome: pass
+  artifact:
+    path: docs/specification/product/INIT-001.md
+    digest: sha256:{hex}
+  blockers: []
+  signals:
+    pr_ready: true
+  next_candidates:
+    - spec-pr-action
+  human_checkpoint: false
+  external_action: true
+  forge:
+    action: open_draft_pr
+    draft: true
+    apply_labels:
+      - spec-pending
+    title: "Spec: INIT-001 — …"
+    body_path: docs/specification/product/INIT-001.md
+```
+
+Rules:
+
+- Pin wins on `action`, `draft`, `apply_labels`, `remove_labels`.
+- Skill must supply every name listed in the pin’s `forge.requires`.
+- Missing required slots on an outcome that routes to that external-action →
+  **incomplete** handoff (fail closed for automate).
+- Never put approval labels (`*-lgtm`) in `apply_labels`.
+- `forge` does **not** authorize invoke and does not replace `next_candidates`.
+- Chat may repeat the recommendation; handoff is the durable SSOT.
+
+Also set `external_action` from the pin:
+
+```text
+external_action = (next.type == "external-action")
+```
 
 ## Derive from pinned `workflow.yaml`
 
@@ -57,6 +106,7 @@ next    = nodes[next_id]
 
 next_candidates  = [next_id]    # match the pin transition; do not invent
 human_checkpoint = (next.type == "human-checkpoint")
+external_action  = (next.type == "external-action")
 ```
 
 Rules:
@@ -107,6 +157,8 @@ Rules:
    review; `purpose` on the node is intent for display/ops only — not a
    separate node kind (`type: gate` is forbidden).
 6. Never perform an external action without explicit authorization.
+   `external_action: true` means the next node may mutate a system after auth —
+   not that the content skill must run `gh` or any specific CLI.
 7. A stale artifact routes to the workflow's stale transition, not the nominal
    next skill.
 8. `next_candidates` never authorize invoke and never bypass
@@ -117,6 +169,8 @@ Rules:
     skill when preconditions allow. An orchestrator may **auto-dispatch** only
     when `dispatch: orchestrated` (missing `dispatch` → schema default
     `manual`). Read `dispatch` from the pin — do not hardcode skill-id lists.
+    Forge skills under `skills/forge/` are never auto-dispatched (not on
+    `outcomes`).
 11. Technical review reports `ready_for_pe_review: true` and
     `ready_for_plan: false` until Accepted TDD/ADR files exist on the spec
     branch. Mid-lane PE acceptance updates files only — not `spec-lgtm`.
@@ -127,6 +181,9 @@ Rules:
     PR branch.
 14. ADR signals contain actual file paths/digests; target paths or future
     promotion tasks are not artifacts.
+15. When the pin expects forge readiness, fill `handoff.forge` per
+    [`forge-side-effects.md`](forge-side-effects.md). Executors are human
+    forge skills or ForgeClient — not the content skill’s success path.
 
 ## Outcome vocabulary
 

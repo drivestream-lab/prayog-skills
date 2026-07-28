@@ -1,9 +1,9 @@
 # Prompt package contract
 
-Versioned **invocation briefs** for skills under `skills/requirements/` and
-`skills/development/`. Procedure remains in each skill’s `SKILL.md`. Prompt
-packages do **not** replace procedure and are **independent of** workflow
-`dispatch` (see INIT-PRAYOG-SKILLS-002).
+Versioned **invocation briefs** for skills under `skills/requirements/`,
+`skills/development/`, and `skills/forge/`. Procedure remains in each skill’s
+`SKILL.md`. Prompt packages do **not** replace procedure and are **independent
+of** workflow `dispatch` (see INIT-PRAYOG-SKILLS-002).
 
 Contract id remains `sdd-delivery/v2` (CHANGELOG documents additive semantics;
 no `v2.x` label).
@@ -14,14 +14,15 @@ no `v2.x` label).
 |----------|--------------|
 | Every skill under `skills/requirements/*` | `skills/engg-reviews/*` |
 | Every skill under `skills/development/*` | Gateflow runtime bind/render (BOUNDINPUT later) |
-| Directory inventory (13/13 at init) | Using `dispatch` to select coverage |
+| Every skill under `skills/forge/*` | |
+| Directory inventory (see `prompt_inventory.json`) | Using `dispatch` to select coverage |
 
 Inventory SSOT for CI: `tests/fixtures/prompt_inventory.json`.
 
 ## Layout (normative)
 
 ```text
-skills/<area>/<skill-id>/     # area ∈ {requirements, development}
+skills/<area>/<skill-id>/     # area ∈ {requirements, development, forge}
   SKILL.md
   prompts/
     template.md

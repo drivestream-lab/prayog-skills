@@ -25,6 +25,10 @@ except ImportError:  # pragma: no cover — CI installs PyYAML
 ROOT = Path(__file__).parent.parent
 SKILLS_DIR = ROOT / "skills"
 DISPATCH_ENUM = frozenset({"manual", "orchestrated"})
+COMMIT_WORKSPACE_ENUM = frozenset({"disabled", "optional", "required"})
+FORGE_ACTION_ENUM = frozenset(
+    {"commit_workspace", "open_draft_pr", "create_board_tickets"}
+)
 
 # ── Invariants ────────────────────────────────────────────────────────────────
 # Each entry: (description, pattern, allowed_values, file_glob)
@@ -233,6 +237,7 @@ DELIVERY_CONTRACT_FILES = [
     "workflow.yaml",
     "references/handoff-envelope.md",
     "references/prompt-package-contract.md",
+    "references/forge-side-effects.md",
 ]
 
 
@@ -640,6 +645,99 @@ def check_workflow_dispatch_and_purpose() -> list[str]:
     return errors
 
 
+def check_workflow_forge() -> list[str]:
+    """Assert forge.commit_workspace on skills and forge on PR external-actions."""
+    errors: list[str] = []
+    if yaml is None:
+        return ["  MISSING dependency: PyYAML (required for workflow forge checks)"]
+
+    workflow_path = ROOT / "workflow.yaml"
+    policy_path = ROOT / "tests" / "fixtures" / "workflow_forge_policy.json"
+    if not workflow_path.is_file():
+        return ["  MISSING: workflow.yaml"]
+    if not policy_path.is_file():
+        return ["  MISSING: tests/fixtures/workflow_forge_policy.json"]
+
+    workflow = yaml.safe_load(workflow_path.read_text(encoding="utf-8"))
+    policy = json.loads(policy_path.read_text(encoding="utf-8"))
+    nodes = workflow.get("nodes") or {}
+    commit_policy = policy.get("commit_workspace") or {}
+    ea_policy = policy.get("external_action_forge") or {}
+    skill_map = policy.get("human_forge_skills") or {}
+    forbid_suffix = policy.get("forbid_auto_label_suffix") or "-lgtm"
+
+    skill_nodes = {s for s, n in nodes.items() if n.get("type") == "skill"}
+    if set(commit_policy) != skill_nodes:
+        errors.append(
+            f"  forge commit_workspace keys mismatch: "
+            f"workflow={sorted(skill_nodes)} policy={sorted(commit_policy)}"
+        )
+
+    for stage, node in nodes.items():
+        ntype = node.get("type")
+        forge = node.get("forge") or {}
+        if ntype == "skill":
+            cw = forge.get("commit_workspace")
+            if cw not in COMMIT_WORKSPACE_ENUM:
+                errors.append(
+                    f"  {stage}: skill requires forge.commit_workspace in "
+                    f"{sorted(COMMIT_WORKSPACE_ENUM)}"
+                )
+            elif stage in commit_policy and cw != commit_policy[stage]:
+                errors.append(
+                    f"  {stage}: commit_workspace {cw!r} != policy "
+                    f"{commit_policy[stage]!r}"
+                )
+            if "action" in forge:
+                errors.append(
+                    f"  {stage}: forge.action belongs on external-action nodes"
+                )
+        elif ntype == "external-action":
+            if stage in ea_policy:
+                expected = ea_policy[stage]
+                action = forge.get("action")
+                if action != expected.get("action"):
+                    errors.append(
+                        f"  {stage}: forge.action {action!r} != "
+                        f"{expected.get('action')!r}"
+                    )
+                if action is not None and action not in FORGE_ACTION_ENUM:
+                    errors.append(
+                        f"  {stage}: forge.action must be in "
+                        f"{sorted(FORGE_ACTION_ENUM)}"
+                    )
+                if forge.get("draft") != expected.get("draft"):
+                    errors.append(f"  {stage}: forge.draft mismatch policy")
+                if list(forge.get("apply_labels") or []) != list(
+                    expected.get("apply_labels") or []
+                ):
+                    errors.append(f"  {stage}: forge.apply_labels mismatch policy")
+                if list(forge.get("requires") or []) != list(
+                    expected.get("requires") or []
+                ):
+                    errors.append(f"  {stage}: forge.requires mismatch policy")
+            for label in forge.get("apply_labels") or []:
+                if str(label).endswith(forbid_suffix):
+                    errors.append(
+                        f"  {stage}: forbid auto-apply label {label!r} "
+                        f"(suffix {forbid_suffix})"
+                    )
+        elif "forge" in node and ntype not in {"skill", "external-action"}:
+            errors.append(f"  {stage}: forge only on skill or external-action")
+
+    for action, skill_id in skill_map.items():
+        expected_id = action.replace("_", "-")
+        if skill_id != expected_id:
+            errors.append(
+                f"  human_forge_skills: {action} → {skill_id!r} "
+                f"(expected {expected_id!r})"
+            )
+        skill_file = ROOT / "skills" / "forge" / skill_id / "SKILL.md"
+        if not skill_file.is_file():
+            errors.append(f"  MISSING forge skill: skills/forge/{skill_id}/SKILL.md")
+    return errors
+
+
 def check_prompt_package_surface() -> list[str]:
     """Assert prompt packages for requirements + development inventory (not dispatch)."""
     if str(ROOT) not in sys.path:
@@ -739,12 +837,18 @@ def main() -> int:
             ("Workflow dispatch/purpose must match policy fixture", errors)
         )
 
+    errors = check_workflow_forge()
+    if errors:
+        all_errors.append(
+            ("Workflow forge policy must match fixture and forbid *-lgtm", errors)
+        )
+
     errors = check_prompt_package_surface()
     if errors:
         all_errors.append(
             (
-                "Prompt packages required for skills/requirements/* and "
-                "skills/development/* (independent of dispatch)",
+                "Prompt packages required for skills/requirements/*, "
+                "skills/development/*, and skills/forge/* (independent of dispatch)",
                 errors,
             )
         )

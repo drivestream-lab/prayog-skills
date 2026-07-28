@@ -85,9 +85,9 @@ class PromptPackageInventoryTest(unittest.TestCase):
         }
 
     def test_inventory_count_and_areas(self) -> None:
-        self.assertEqual(len(self.expected), 13)
+        self.assertEqual(len(self.expected), 16)
         areas = {area for area, _ in self.expected}
-        self.assertEqual(areas, {"requirements", "development"})
+        self.assertEqual(areas, {"requirements", "development", "forge"})
         self.assertFalse(any(a == "engg-reviews" for a, _ in self.expected))
 
     def test_inventory_matches_directories(self) -> None:
@@ -98,6 +98,7 @@ class PromptPackageInventoryTest(unittest.TestCase):
 
     def test_inventory_independent_of_dispatch_fixture(self) -> None:
         # Coverage must not be derived from dispatch policy membership alone.
+        # Content skills match dispatch nodes; forge skills are extra (not on graph).
         policy = json.loads(
             (ROOT / "tests" / "fixtures" / "workflow_dispatch_policy.json").read_text(
                 encoding="utf-8"
@@ -105,7 +106,21 @@ class PromptPackageInventoryTest(unittest.TestCase):
         )
         dispatch_skills = set(policy["manual"]) | set(policy["orchestrated"])
         inventory_skills = {skill_id for _, skill_id in self.expected}
-        self.assertEqual(inventory_skills, dispatch_skills)
+        content_inventory = {
+            skill_id
+            for area, skill_id in self.expected
+            if area in {"requirements", "development"}
+        }
+        self.assertEqual(content_inventory, dispatch_skills)
+        forge_skills = {
+            skill_id for area, skill_id in self.expected if area == "forge"
+        }
+        self.assertEqual(
+            forge_skills,
+            {"commit-workspace", "open-draft-pr", "create-board-tickets"},
+        )
+        self.assertTrue(forge_skills.isdisjoint(dispatch_skills))
+        self.assertEqual(inventory_skills, content_inventory | forge_skills)
 
     def test_every_package_valid(self) -> None:
         for area, skill_id, skill_root in iter_prompt_skill_dirs(ROOT):

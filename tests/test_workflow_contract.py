@@ -118,6 +118,62 @@ class WorkflowContractTest(unittest.TestCase):
         self.assertEqual(hc.get("required_field"), "purpose")
         self.assertEqual(hc.get("mechanism"), "human-checkpoint")
 
+    def test_contract_documents_forge(self) -> None:
+        forge = self.contract.get("forge") or {}
+        self.assertEqual(
+            set(forge.get("commit_workspace", {}).get("enum") or []),
+            {"disabled", "optional", "required"},
+        )
+        self.assertEqual(forge.get("commit_workspace", {}).get("schema_default"), "disabled")
+        self.assertIn("open_draft_pr", forge.get("actions", {}).get("enum") or [])
+        self.assertEqual(
+            forge.get("policy_fixture"),
+            "tests/fixtures/workflow_forge_policy.json",
+        )
+
+    def test_skill_nodes_have_commit_workspace(self) -> None:
+        policy = json.loads(
+            (ROOT / "tests" / "fixtures" / "workflow_forge_policy.json").read_text()
+        )
+        expected = policy["commit_workspace"]
+        for stage, node in self.workflow["nodes"].items():
+            if node["type"] != "skill":
+                continue
+            with self.subTest(stage=stage):
+                cw = (node.get("forge") or {}).get("commit_workspace")
+                self.assertEqual(cw, expected[stage])
+
+    def test_external_action_forge_policy(self) -> None:
+        policy = json.loads(
+            (ROOT / "tests" / "fixtures" / "workflow_forge_policy.json").read_text()
+        )
+        for stage, expected in policy["external_action_forge"].items():
+            node = self.workflow["nodes"][stage]
+            with self.subTest(stage=stage):
+                self.assertEqual(node["type"], "external-action")
+                forge = node.get("forge") or {}
+                self.assertEqual(forge.get("action"), expected["action"])
+                self.assertEqual(forge.get("draft"), expected["draft"])
+                self.assertEqual(forge.get("apply_labels"), expected["apply_labels"])
+                self.assertEqual(forge.get("requires"), expected["requires"])
+                for label in forge.get("apply_labels") or []:
+                    self.assertFalse(str(label).endswith("-lgtm"))
+
+    def test_human_forge_skills_exist(self) -> None:
+        policy = json.loads(
+            (ROOT / "tests" / "fixtures" / "workflow_forge_policy.json").read_text()
+        )
+        for action, skill_id in policy["human_forge_skills"].items():
+            self.assertEqual(skill_id, action.replace("_", "-"))
+            path = ROOT / "skills" / "forge" / skill_id / "SKILL.md"
+            with self.subTest(skill_id=skill_id):
+                self.assertTrue(path.is_file())
+                text = path.read_text()
+                self.assertIn("disable-model-invocation: true", text)
+                self.assertIn("## Workflow handoff", text)
+                # Forge skills must not appear as workflow skill nodes
+                self.assertNotIn(skill_id, self.workflow["nodes"])
+
     @staticmethod
     def _profile_skills(profile: str, key: str) -> set[str]:
         raw = yaml.safe_load((ROOT / "profiles" / f"{profile}.yaml").read_text())

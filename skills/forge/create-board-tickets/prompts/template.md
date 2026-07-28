@@ -1,0 +1,38 @@
+# Invoke: create-board-tickets
+
+You are executing the **create-board-tickets** skill (Create board epic/wave tickets from board-seed readiness.).
+
+## Bound context
+- ticket: {{ticket}}
+- initiative: {{initiative}}
+- handoff_path: {{handoff_path}}
+- workspace: {{workspace}}
+- skill_id: {{skill_id}}
+
+## Instruction
+Follow the full procedure in this skill's `SKILL.md`. Treat `SKILL.md` as the
+procedure SSOT; this brief is the invocation package only.
+
+This is a **human forge** skill (Gateflow ForgeClient parity). Consume pin
+policy ⋉ `handoff.forge` from the prior content skill. Do not invent labels or
+required slots. Never apply `*-lgtm`. Tooling is agent-neutral (`gh`/API are
+examples). Orchestrators must not auto-dispatch this skill.
+
+
+## Envelope navigation (required)
+Forge skills are **not** workflow graph nodes. Do not invent programme
+`next_candidates` from a missing pin node. When emitting a forge-step
+`handoff:`, set navigation fields only if continuing from the **prior content**
+stage handoff and pinned `workflow.yaml`. `human_checkpoint` is `true` only
+when that resolved next node's `type` is `human-checkpoint`. Prefer re-reading
+the content-skill baton after mutation.
+
+## Workspace
+Root: `{{workspace}}`.
+
+## Handoff baton (required)
+1. Persist any durable note under `{{workspace}}` and append the `handoff:`
+   envelope when the skill defines one.
+2. Then **overwrite** the file at exactly `{{handoff_path}}` with the same
+   `handoff:` envelope (plain YAML or a single fenced yaml block).
+3. Do not leave `{{handoff_path}}` empty when bound.

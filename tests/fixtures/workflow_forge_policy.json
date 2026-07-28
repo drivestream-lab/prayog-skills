@@ -1,0 +1,37 @@
+{
+  "commit_workspace": {
+    "validate-requirements": "optional",
+    "review-findings": "optional",
+    "update-documents": "optional",
+    "prd-impact-map": "required",
+    "spec-draft": "required",
+    "initiative-feasibility": "required",
+    "spec-technical-review": "required",
+    "spec-implementation-plan": "required",
+    "board-seed": "disabled",
+    "pre-implement": "optional",
+    "loop-spec": "required",
+    "verify": "optional",
+    "ground-spec": "required"
+  },
+  "external_action_forge": {
+    "prd-pr-action": {
+      "action": "open_draft_pr",
+      "draft": true,
+      "apply_labels": ["impact-map-pending"],
+      "requires": ["title", "body_path"]
+    },
+    "spec-pr-action": {
+      "action": "open_draft_pr",
+      "draft": true,
+      "apply_labels": ["spec-pending"],
+      "requires": ["title", "body_path"]
+    }
+  },
+  "human_forge_skills": {
+    "commit_workspace": "commit-workspace",
+    "open_draft_pr": "open-draft-pr",
+    "create_board_tickets": "create-board-tickets"
+  },
+  "forbid_auto_label_suffix": "-lgtm"
+}

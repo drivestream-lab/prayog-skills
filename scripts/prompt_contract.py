@@ -34,7 +34,7 @@ SHARED_VARIABLES: dict[str, dict[str, Any]] = {
     "skill_id": {"required": True, "type": "string"},
 }
 
-PROMPT_AREAS = frozenset({"requirements", "development"})
+PROMPT_AREAS = frozenset({"requirements", "development", "forge"})
 
 SEMVER_RE = re.compile(r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$")
 VAR_RE = re.compile(r"\{\{\s*([A-Za-z_][A-Za-z0-9_]*)\s*\}\}")
@@ -262,7 +262,7 @@ def validate_prompt_package(skill_root: Path, *, skill_id: str) -> list[str]:
 
 
 def iter_prompt_skill_dirs(root: Path) -> list[tuple[str, str, Path]]:
-    """Return (area, skill_id, skill_root) for requirements + development only."""
+    """Return (area, skill_id, skill_root) for requirements + development + forge."""
     skills_dir = root / "skills"
     found: list[tuple[str, str, Path]] = []
     for area in sorted(PROMPT_AREAS):

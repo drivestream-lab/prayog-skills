@@ -7,6 +7,25 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased] — features/rc-2
 
+### Added — Forge pin + handoff readiness + human forge skills
+
+- Merged former `forge-producer-rules.md` into `forge-side-effects.md` (**Content producers**).
+
+- Pin `forge.commit_workspace` on every content skill; `forge` on
+  `prd-pr-action` / new `spec-pr-action` (`action: open_draft_pr`, projection
+  labels, `requires`). Spec `pass` → `spec-pr-action` → feasibility.
+- Handoff optional `forge:` instance payload (pin wins policy; skill fills
+  slots). Content skills do not treat local CLI as success; recommend
+  `/open-draft-pr`, `/commit-workspace`, `/create-board-tickets`.
+- Human forge skills under `skills/forge/` (parity with Gateflow ForgeClient):
+  `commit-workspace`, `open-draft-pr`, `create-board-tickets` — not on graph
+  `outcomes`; `disable-model-invocation: true`. Prompt packages `@1.0.0`.
+- Content prompt packages bumped `@1.0.0` → `@1.1.0` (forge awareness stanza).
+- SSOT: `references/forge-side-effects.md` (includes **Content producers**),
+  `delivery-contract.yaml` `forge:`, `tests/fixtures/workflow_forge_policy.json`.
+- Demix: `spec-draft`, `prd-impact-map`, `board-seed` no longer execute forge
+  via local CLI; they fill `handoff.forge` and recommend forge skills.
+
 ### Changed — Derive `human_checkpoint` from pinned `workflow.yaml`
 
 - `human_checkpoint` means the resolved next node’s `type` is `human-checkpoint`,

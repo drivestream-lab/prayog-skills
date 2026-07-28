@@ -10,21 +10,29 @@ persists a standard handoff so Cursor, Claude Code, Codex, or a Launchpad-seeded
 agent can resolve the next stage without platform-specific skill calls.
 
 **SSOT:** `workflow.yaml` owns node `type`, skill `dispatch` (`manual` |
-`orchestrated`), and human-checkpoint `purpose`. Skills are procedures — they
-do not fork navigation or eligibility. Human `/skill` and AgentRunner share
-the same legality rules (`invocation-mode-is-not-an-exemption`). Orchestrators
-auto-dispatch only when `dispatch: orchestrated`; do not hardcode skill-id
-lists. Human stops use `type: human-checkpoint` (not `type: gate`).
+`orchestrated`), human-checkpoint `purpose`, and **`forge`** mutation policy
+(`commit_workspace` on skills; `action` / labels / `requires` on
+`external-action`). Skills are procedures — they do not fork navigation or
+eligibility. Human `/skill` and AgentRunner share the same legality rules
+(`invocation-mode-is-not-an-exemption`). Orchestrators auto-dispatch only when
+`dispatch: orchestrated`; do not hardcode skill-id lists. Human stops use
+`type: human-checkpoint` (not `type: gate`). Publish uses ForgeClient
+(orchestrator) or `skills/forge/` (human) from pin ⋉ `handoff.forge` — see
+[`references/forge-side-effects.md`](references/forge-side-effects.md).
 
 **IDs & artifacts:** [`references/id-conventions.md`](references/id-conventions.md)
 (product / process / delivery ids) ·
 [`references/artifact-write-contract.md`](references/artifact-write-contract.md)
 (canonical report paths — no `*-revN` siblings).
 
-**Prompt packages:** every skill under `skills/requirements/` and
-`skills/development/` ships `prompts/` (versioned invocation brief). Coverage
-is independent of `dispatch`. See
+**Prompt packages:** every skill under `skills/requirements/`,
+`skills/development/`, and `skills/forge/` ships `prompts/` (versioned
+invocation brief). Coverage is independent of `dispatch`. See
 [`references/prompt-package-contract.md`](references/prompt-package-contract.md).
+
+**Human forge skills:** `commit-workspace`, `open-draft-pr`,
+`create-board-tickets` — Gateflow ForgeClient parity for the human walker;
+not workflow graph nodes.
 
 | | |
 |---|---|

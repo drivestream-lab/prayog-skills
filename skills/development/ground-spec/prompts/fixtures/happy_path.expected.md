@@ -30,6 +30,13 @@ Never set `true` on skill→skill edges (for example never on
 `pre-implement` / `loop-spec` / `verify` `pass`).
 Example: `ground-spec` + `pass` → `wave-human-decision` → `human_checkpoint: true` (do not copy into earlier lane skills).
 
+
+## Forge (required awareness)
+Content skills fill `handoff.forge` when the pin expects it; they do **not**
+execute forge mutations. Human forge skills (`/commit-workspace`,
+`/open-draft-pr`, `/create-board-tickets`) or Gateflow ForgeClient apply pin ⋉
+handoff. Never apply `*-lgtm`. See `references/forge-side-effects.md#content-producers`.
+
 ## Workspace
 Root: `/workspace/example-repo`.
 

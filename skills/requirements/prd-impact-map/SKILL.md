@@ -4,9 +4,10 @@ description: >-
   Map a PRD to affected repos using the service catalog. Reads the PRD and
   config/service-catalog.yaml from <client>-meta, matches PRD capabilities
   to service descriptions, generates a versioned impact-map artifact locally,
-  and produces a PR-readiness handoff. After explicit user authorization, the
-  agent may use gh to create/update the Draft PR and initialize Gate 1 labels.
-  Run in <client>-meta after PRD validation and before app spec PRs.
+  and produces a PR-readiness handoff (handoff.forge for open_draft_pr).
+  Publish via /open-draft-pr or orchestrator ForgeClient after authorization —
+  not inside this skill. Run in <client>-meta after PRD validation and before
+  app spec PRs.
 disable-model-invocation: true
 paths: prd/**, config/service-catalog.yaml
 background_eligible: true
@@ -46,9 +47,10 @@ opens those after tech lead confirms the map.
    disagree, the gate is closed.
 9. A material PRD/map change or tech-lead revocation invalidates approval.
    Produce a downstream ripple action for every repo already in flight.
-10. **No GitHub side effects during generation.** Do not create a branch,
-    commit, push, PR, comment, review request, or label until the completed
-    PR-readiness handoff is shown and the user explicitly authorizes PR action.
+10. **No forge mutations in this skill.** Do not create a branch, commit, push,
+    PR, comment, review request, or label here. Fill `handoff.forge` for
+    `open_draft_pr` and recommend `/open-draft-pr` (or orchestrator ForgeClient
+    on `prd-pr-action`). See `../../../references/forge-side-effects.md#content-producers`.
 11. Gate labels are a visible workflow projection, not authority. Exactly one
     PE gate label may be active: `impact-map-pending`, `impact-map-lgtm`, or
     `impact-map-blocked`. `impact-map-revised` and `impact-map-stale` are
@@ -138,30 +140,15 @@ do not resume a partial mapping run.
    - `PR READY` or `PR BLOCKED` verdict.
    Stop without GitHub side effects.
 
-## PR creation handoff
+## PR readiness (fill handoff.forge — do not open the PR here)
 
-After T5, ask the user whether to create or update the Draft PR.
+After T5, present readiness and ask whether to publish. On `outcome: pass`,
+next is `prd-pr-action` (`open_draft_pr`). Fill `handoff.forge` with pin
+`requires` at minimum (`title`, `body_path`, `action: open_draft_pr`,
+`draft: true`, `apply_labels: [impact-map-pending]`). Recommend
+`/open-draft-pr`. Do not run forge mutations inside `/prd-impact-map`.
 
-If the user explicitly authorizes it and `gh` is configured, the agent may:
-
-1. create/switch to the proposed branch when needed,
-2. commit the approved PRD/report files,
-3. push the branch,
-4. create or update the Draft PR,
-5. verify Gate 1 labels provisioned by Launchpad are present; if missing, stop
-   and instruct the user to run `launchpad apply-gates --meta --apply`,
-6. apply `impact-map-pending` and remove obsolete Gate 1 labels through GitHub
-   REST issue-label endpoints (do not use `gh pr edit`),
-7. verify the PE team exists and has repository access,
-8. request PE/tech-lead review through GitHub REST
-   `POST repos/{owner}/{repo}/pulls/{number}/requested_reviewers` with the team
-   slug, then verify the request is present.
-
-This is a separate, user-authorized agent action—not an automatic side effect
-of `/prd-impact-map`.
-
-If `gh` is not configured, provide exact manual commands and do not report that
-the PR exists.
+See `../../../references/forge-side-effects.md`.
 
 ## Output and approval contract
 
@@ -171,11 +158,11 @@ Generated canonical file:
 
 Use [references/output-template.md](references/output-template.md).
 
-Before PR creation, `meta_pr` and approval fields are `pending`. After the
-user-authorized PR action, the PR body contains the impact summary, artifact
-path, map revision, PRD digest, Gate 1 checklist, and PE review request.
-Clarification comments may discuss the map, but decisions must be committed to
-the PRD/map artifact.
+Before `/open-draft-pr` (or orchestrator forge), `meta_pr` and approval fields
+are `pending`. After the authorized forge skill / ForgeClient run, the PR body
+contains the impact summary, artifact path, map revision, PRD digest, Gate 1
+checklist, and PE review request. Clarification comments may discuss the map,
+but decisions must be committed to the PRD/map artifact.
 
 Effective state is derived:
 
@@ -254,7 +241,8 @@ the current meta PR head SHA or any attested value differs from the artifact.
 
 1. Append/emit the envelope from `../../../references/handoff-envelope.md` to the impact-map artifact. Use stage `prd-impact-map`.
 2. When the invocation binds `handoff_path` (orchestrator / AgentRunner baton), also **overwrite** that path with the same `handoff:` envelope before exit. Leaving the baton empty is a failed stage for automated consumers. `artifact.path` remains the workspace skill output, not the baton path. See `../../../references/handoff-envelope.md` (Orchestrator baton).
-3. Derive `next_candidates` and `human_checkpoint` from pinned root `workflow.yaml` for `(stage: prd-impact-map, outcome)` per `../../../references/handoff-envelope.md` (**Derive from pinned workflow**). Set `human_checkpoint: true` only when the resolved next node's `type` is `human-checkpoint` — never because the artifact "should be reviewed."
+3. Derive `next_candidates`, `human_checkpoint`, and `external_action` from pinned root `workflow.yaml` for `(stage: prd-impact-map, outcome)` per `../../../references/handoff-envelope.md` (**Derive from pinned workflow**). Set `human_checkpoint: true` only when the resolved next node's `type` is `human-checkpoint`. Set `external_action: true` when next is `external-action` (e.g. `prd-pr-action` on `pass`).
+4. On `pass`, fill complete `handoff.forge` for `open_draft_pr` per pin `requires`. Recommend `/open-draft-pr`. Follow `../../../references/forge-side-effects.md#content-producers`.
 
 
 **Transitions:** pinned root `workflow.yaml` for this stage (SSOT). Human or
@@ -262,6 +250,5 @@ agent may run this skill; legality and auto-dispatch follow `dispatch` +
 delivery contract + latest handoff. On `pass` with `signals.pr_ready: true`,
 the next node is typically `prd-pr-action` (external-action — explicit auth).
 
-Set `external_action: true` when PR creation/update is the candidate next node.
-The handoff never authorizes GitHub mutation. `next_candidates` never authorize
+The handoff never authorizes forge mutation. `next_candidates` never authorize
 invoke.
