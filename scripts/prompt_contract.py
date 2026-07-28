@@ -218,6 +218,19 @@ def validate_prompt_package(skill_root: Path, *, skill_id: str) -> list[str]:
     variables = schema["variables"]
     errors.extend(validate_template(template, variables))
 
+    # Orchestrator baton dual-write must be explicit in packaged templates.
+    if "Prefer the latest handoff artifact" in template:
+        errors.append(
+            "template treats handoff_path as read-only preference; "
+            "must require overwrite of {{handoff_path}}"
+        )
+    if "## Handoff baton" not in template:
+        errors.append("template missing ## Handoff baton section")
+    if "overwrite" not in template.lower() or "{{handoff_path}}" not in template:
+        errors.append(
+            "template must instruct overwrite of {{handoff_path}} with handoff envelope"
+        )
+
     try:
         bound = load_yaml(inputs_path) or {}
     except Exception as exc:  # noqa: BLE001

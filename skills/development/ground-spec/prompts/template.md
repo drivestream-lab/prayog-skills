@@ -21,4 +21,14 @@ Follow the full procedure in this skill's `SKILL.md` (and `references/` when pre
 4. Do not mark human_approved — that is a human gate only.
 
 ## Workspace
-Root: `{{workspace}}`. Prefer the latest handoff artifact at `{{handoff_path}}` when relevant to this skill.
+Root: `{{workspace}}`.
+
+## Handoff baton (required)
+1. Follow this skill's `SKILL.md`. Persist the usual durable artifact under
+   `{{workspace}}` and append the `handoff:` envelope to that artifact.
+2. Then **overwrite** the file at exactly `{{handoff_path}}` with the same
+   `handoff:` envelope (plain YAML or a single fenced yaml block).
+3. Do not leave `{{handoff_path}}` empty. Do not rely on docs-only or chat-only
+   handoff for orchestrator continuation.
+4. If `{{handoff_path}}` already contains a prior envelope, you may read it for
+   context; your final write replaces it with this stage's envelope.

@@ -46,6 +46,28 @@ Canonical artifact paths and revision rules:
 Optional future field (not required in v1): `executed_by: manual | orchestrated`
 records who ran a skill; it does not change navigation or eligibility.
 
+## Orchestrator baton (`handoff_path`)
+
+When an orchestrator / AgentRunner binds `handoff_path` (absolute path to the
+run baton file), the producer **must** dual-write:
+
+1. Persist the usual durable skill artifact under the workspace and append the
+   `handoff:` envelope to that artifact (as today).
+2. **Overwrite** the file at exactly `handoff_path` with the **same** envelope
+   (plain YAML starting with `handoff:` **or** a single fenced `yaml` block
+   containing it). Prefer a minimal baton file (envelope ± fence).
+
+Rules:
+
+- Do **not** leave `handoff_path` empty after an automated/packaged run.
+- Chat-only handoff is **not** durable for orchestrator continuation.
+- Envelope fields are unchanged. `artifact.path` remains the **workspace-relative**
+  skill output (checklist/report/etc.), **not** the baton path.
+- If `handoff_path` already holds a prior envelope, read it for context if
+  useful; the final write **replaces** it with this stage’s envelope.
+- Manual freeform `/skill` without a bound baton path keeps artifact-only
+  behavior (no invented path).
+
 ## Navigation rules
 
 1. Read the latest handoff and the pinned `workflow.yaml`.

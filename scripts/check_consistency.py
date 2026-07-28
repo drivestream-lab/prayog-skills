@@ -92,6 +92,12 @@ SINGLE_VALUE_INVARIANTS = [
         set(),
         "**/spec-implementation-plan/**/*.md",
     ),
+    (
+        "Prompt templates must not treat handoff_path as read-only preference",
+        r"Prefer the latest handoff artifact at `\{\{handoff_path\}\}`",
+        set(),  # must not appear
+        "**/prompts/template.md",
+    ),
 ]
 
 SYNC_COPY_INVARIANT = (
@@ -534,6 +540,21 @@ def check_delivery_contract_surface() -> list[str]:
             errors.append(
                 f"  {skill_file.relative_to(ROOT)}: missing Workflow handoff section"
             )
+            continue
+        # Prompt-packaged lanes must dual-write orchestrator baton when bound.
+        if "requirements" in skill_file.parts or "development" in skill_file.parts:
+            handoff_idx = text.find("## Workflow handoff")
+            handoff_chunk = text[handoff_idx : handoff_idx + 1200]
+            if "handoff_path" not in handoff_chunk:
+                errors.append(
+                    f"  {skill_file.relative_to(ROOT)}: Workflow handoff must "
+                    "require write to handoff_path baton"
+                )
+            if "overwrite" not in handoff_chunk.lower():
+                errors.append(
+                    f"  {skill_file.relative_to(ROOT)}: Workflow handoff must "
+                    "require overwrite of handoff_path baton"
+                )
     return errors
 
 

@@ -7,6 +7,16 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased] — features/rc-2
 
+### Changed — Orchestrator baton dual-write (`handoff_path`)
+
+- Prompt packages and `SKILL.md` Workflow handoff sections require writing the
+  durable `handoff:` envelope to the bound `{{handoff_path}}` baton (in addition
+  to the workspace skill artifact). Fixes Gateflow BOUNDINPUT empty-baton
+  fail-closed when templates only “preferred” that path for read.
+- SSOT: `references/handoff-envelope.md` (Orchestrator baton) +
+  `references/prompt-package-contract.md`. Consistency checks forbid the old
+  Prefer-only wording.
+
 ### Added — Skill prompt packages (INIT-PRAYOG-SKILLS-003-PROMPTS)
 
 - Per-skill **prompt packages** for every skill under `skills/requirements/`

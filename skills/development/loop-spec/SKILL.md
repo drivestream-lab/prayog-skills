@@ -111,9 +111,9 @@ fix failures before moving on, stop when all TASKs green.
 
 ## Workflow handoff
 
-Emit the envelope from `../../../references/handoff-envelope.md` in the final
-task summary and persist the same state in the wave tracker/commits. Use stage
-`loop-spec`.
+1. Emit the envelope from `../../../references/handoff-envelope.md` in the final task summary and persist the same state in the wave tracker/commits. Use stage `loop-spec`.
+2. When the invocation binds `handoff_path` (orchestrator / AgentRunner baton), also **overwrite** that path with the same `handoff:` envelope before exit. Leaving the baton empty is a failed stage for automated consumers. `artifact.path` remains the workspace skill output, not the baton path. See `../../../references/handoff-envelope.md` (Orchestrator baton).
+
 
 **Transitions:** pinned root `workflow.yaml` for this stage (SSOT). Human or
 agent may run this skill; orchestrators may auto-dispatch when authorized.

@@ -146,8 +146,9 @@ T11 with a future promotion task or a target path alone.
 
 ## Workflow handoff
 
-Append the envelope from `../../../references/handoff-envelope.md` to the TDD.
-Use stage `spec-technical-review`.
+1. Append/emit the envelope from `../../../references/handoff-envelope.md` to the TDD. Use stage `spec-technical-review`.
+2. When the invocation binds `handoff_path` (orchestrator / AgentRunner baton), also **overwrite** that path with the same `handoff:` envelope before exit. Leaving the baton empty is a failed stage for automated consumers. `artifact.path` remains the workspace skill output, not the baton path. See `../../../references/handoff-envelope.md` (Orchestrator baton).
+
 
 **Transitions:** pinned root `workflow.yaml` for this stage (SSOT). Human or
 agent may run this skill; legality and auto-dispatch follow `dispatch` +

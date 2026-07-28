@@ -65,6 +65,21 @@ Decision and MAJOR revision rationale.
 Simple `{{var}}` substitution only. No filters, conditionals, or partials.
 Every `{{var}}` must be declared in `schema.yaml`.
 
+### `handoff_path` (orchestrator baton)
+
+`handoff_path` is **not** a read-only preference. For packaged / automated
+invoke it is the **orchestrator ingest target**:
+
+1. Persist the usual durable workspace artifact and append the `handoff:`
+   envelope there (see [`handoff-envelope.md`](handoff-envelope.md)).
+2. **Overwrite** `{{handoff_path}}` with the same envelope before considering
+   the skill complete.
+3. Do not leave `{{handoff_path}}` empty. Do not rely on docs-only or chat-only
+   handoff for orchestrator continuation.
+4. Prior envelope at that path may be read for context; final write replaces it.
+
+Templates must instruct this dual-write explicitly. Golden fixtures must match.
+
 ## Consumer resolution (automated runs)
 
 ```text

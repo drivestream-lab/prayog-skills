@@ -324,8 +324,9 @@ Present a final summary:
 
 ## Workflow handoff
 
-Append the envelope from `../../../references/handoff-envelope.md` to the
-Update Summary. Use stage `update-documents`.
+1. Append/emit the envelope from `../../../references/handoff-envelope.md` to the Update Summary. Use stage `update-documents`.
+2. When the invocation binds `handoff_path` (orchestrator / AgentRunner baton), also **overwrite** that path with the same `handoff:` envelope before exit. Leaving the baton empty is a failed stage for automated consumers. `artifact.path` remains the workspace skill output, not the baton path. See `../../../references/handoff-envelope.md` (Orchestrator baton).
+
 
 **Transitions:** pinned root `workflow.yaml` for this stage (SSOT). On `pass`,
 consumers typically re-enter `validate-requirements` in incremental mode per

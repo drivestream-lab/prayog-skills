@@ -114,8 +114,9 @@ concrete paths for this repo and slice.
 
 ## Workflow handoff
 
-Append the envelope from `../../../references/handoff-envelope.md` to the
-checklist output. Use stage `pre-implement`.
+1. Append/emit the envelope from `../../../references/handoff-envelope.md` to the checklist output. Use stage `pre-implement`.
+2. When the invocation binds `handoff_path` (orchestrator / AgentRunner baton), also **overwrite** that path with the same `handoff:` envelope before exit. Leaving the baton empty is a failed stage for automated consumers. `artifact.path` remains the workspace skill output, not the baton path. See `../../../references/handoff-envelope.md` (Orchestrator baton).
+
 
 **Transitions:** pinned root `workflow.yaml` for this stage (SSOT). Human or
 agent may run this skill; orchestrators may auto-dispatch when
