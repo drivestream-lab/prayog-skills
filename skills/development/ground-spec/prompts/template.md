@@ -28,7 +28,7 @@ pinned `workflow.yaml` for `(stage: {{skill_id}}, outcome)` per
 `human-checkpoint` — never because the artifact should be reviewed.
 Never set `true` on skill→skill edges (for example never on
 `pre-implement` / `loop-spec` / `verify` `pass`).
-Example: `ground-spec` + `pass` → `wave-human-decision` → `human_checkpoint: true` (do not copy into earlier lane skills).
+Example: `ground-spec` + `pass` → `wave-signoff` → `human_checkpoint: true` (do not copy into earlier lane skills).
 
 
 ## Forge (required awareness)

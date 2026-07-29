@@ -30,6 +30,12 @@
     "next": "prd-pr-action"
   },
   {
+    "name": "PRD PR action routes to impact acceptance",
+    "stage": "prd-pr-action",
+    "outcome": "pass",
+    "next": "prd-impact-acceptance"
+  },
+  {
     "name": "feasibility engineering findings route to PE",
     "stage": "initiative-feasibility",
     "outcome": "findings",
@@ -48,10 +54,10 @@
     "next": "spec-implementation-plan"
   },
   {
-    "name": "plan passes through Gate 2",
+    "name": "plan passes through coding-readiness",
     "stage": "spec-implementation-plan",
     "outcome": "pass",
-    "next": "gate-2"
+    "next": "coding-readiness"
   },
   {
     "name": "spec merge routes to board tickets action",
@@ -66,15 +72,39 @@
     "next": "pre-implement"
   },
   {
-    "name": "verify findings return to implementation",
-    "stage": "verify",
-    "outcome": "findings",
-    "next": "loop-spec"
+    "name": "Pass-1 loop-spec stops at live-verify",
+    "stage": "loop-spec",
+    "outcome": "pass",
+    "next": "live-verify"
   },
   {
-    "name": "ground pass stops at human gate",
+    "name": "live-verify pass parks awaiting closeout",
+    "stage": "live-verify",
+    "outcome": "pass",
+    "next": "wave-awaiting-closeout"
+  },
+  {
+    "name": "manual verify routes to learning-extract",
+    "stage": "verify",
+    "outcome": "pass",
+    "next": "learning-extract"
+  },
+  {
+    "name": "closeout learning-extract routes to ground-spec",
+    "stage": "learning-extract",
+    "outcome": "pass",
+    "next": "ground-spec"
+  },
+  {
+    "name": "ground pass stops at wave-signoff",
     "stage": "ground-spec",
     "outcome": "pass",
-    "next": "wave-human-decision"
+    "next": "wave-signoff"
+  },
+  {
+    "name": "learning-extract findings stay on learning-extract",
+    "stage": "learning-extract",
+    "outcome": "findings",
+    "next": "learning-extract"
   }
 ]

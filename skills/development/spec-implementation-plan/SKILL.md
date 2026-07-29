@@ -124,7 +124,7 @@ board names.
 **Transitions:** pinned root `workflow.yaml` for this stage (SSOT). Human or
 agent may run this skill; legality and auto-dispatch follow `dispatch` +
 delivery contract + latest handoff. `pass` resolves to human-checkpoint
-`gate-2` (`purpose: coding-readiness`), then authorized `spec-merge`.
+`coding-readiness` (`purpose: coding-readiness`), then authorized `spec-merge`.
 
 After the spec PR is merged, the workflow selects `board-tickets-action`
 (`external-action`, `forge.action: create_board_tickets`); humans run

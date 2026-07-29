@@ -123,7 +123,9 @@ Rules:
 |-------|---------|----------------|--------------------|
 | `validate-requirements` | `findings` | `review-findings` (`skill`) | `false` |
 | `pre-implement` | `pass` | `loop-spec` (`skill`) | `false` |
-| `ground-spec` | `pass` | `wave-human-decision` (`human-checkpoint`) | `true` |
+| `loop-spec` | `pass` | `live-verify` (`human-checkpoint`) | `true` |
+| `learning-extract` | `pass` | `ground-spec` (`skill`) | `false` |
+| `ground-spec` | `pass` | `wave-signoff` (`human-checkpoint`) | `true` |
 
 ## Orchestrator baton (`handoff_path`)
 

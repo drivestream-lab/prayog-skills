@@ -10,7 +10,9 @@
 
 Give PE a **gate-independent** way to map an open **meta PRD PR** onto a **fleet of app repos** using **in-depth code-graph evidence**, then ask **product/feature questions on the meta PR** so PM can strengthen the PRD.
 
-**Out of scope for this work:** changing Gate 1/2, `impact-map-*` / `spec-*` labels, or `sdd-delivery/v2` navigation in [`workflow.yaml`](../workflow.yaml).
+**Out of scope for this work:** changing `prd-impact-acceptance` /
+`coding-readiness`, `impact-map-*` / `spec-*` labels, or `sdd-delivery/v2`
+navigation in [`workflow.yaml`](../../workflow.yaml).
 
 **Success (Phase 1):** One PE on one real meta Draft PR produces better product questions (scenario / example / recommendation / why) grounded in as-built + Graphify evidence — PM can answer without reading code.
 
@@ -21,7 +23,7 @@ Give PE a **gate-independent** way to map an open **meta PRD PR** onto a **fleet
 | Principle | Meaning |
 |-----------|---------|
 | Two phases | Local MVP first; Docker/FalkorDB/MCP only if value is proven |
-| Adjunct system | `engg-reviews` — does **not** unlock Gate 1 or `/spec-draft` |
+| Adjunct system | `engg-reviews` — does **not** unlock `prd-impact-acceptance` or `/spec-draft` |
 | OSS evidence | Graphify = codegraph provider (Phase 1: local CLI/skill) |
 | In-depth | Per-capability `query` / `path` / `explain`; prefer `EXTRACTED` edges |
 | Artifacts > chat | Durable meta report; PR comments are projections |
@@ -115,8 +117,8 @@ skills/engg-reviews/
 ```
 
 Bump on branch only: `VERSION` → `0.5.0-rc.2`.  
-Do **not** add skills to [`profiles/meta-pm.yaml`](../profiles/meta-pm.yaml) or app `development_skills`.  
-Do **not** add Gate edges in [`workflow.yaml`](../workflow.yaml).
+Do **not** add skills to [`profiles/meta-pm.yaml`](../../profiles/meta-pm.yaml) or app `development_skills`.  
+Do **not** add Gate edges in [`workflow.yaml`](../../workflow.yaml).
 
 ### 5.2 `/ensure-repo-graph`
 
@@ -154,7 +156,7 @@ Required sections:
 - Capability matrix (PRD ref | as-built | graph evidence | confidence | delta)  
 - Product questions (see template below)  
 - Eng appendix (paths/communities — not for PM decision UI)  
-- Adjunct handoff: `contract: engg-reviews/v1`, `next_candidates: [post-product-questions]` or `[]` — **never** `gate-1` / `prd-merge` / `spec-draft`  
+- Adjunct handoff: `contract: engg-reviews/v1`, `next_candidates: [post-product-questions]` or `[]` — **never** `prd-impact-acceptance` / `prd-merge` / `spec-draft`  
 
 **Greenfield / empty as-built:** short-circuit to PRD-ambiguity questions only; do not claim codebase grounding.
 

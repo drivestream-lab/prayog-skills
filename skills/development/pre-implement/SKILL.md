@@ -71,7 +71,7 @@ spec merge (spec-lgtm on head) → /create-board-tickets → wave issue In Progr
     ↓
   developer: checklist reviewed, branch opened (feature/INIT-*-w{N}-*)
     ↓
-/loop-spec → /ground-spec (this wave)
+/loop-spec → live-verify (human) → closeout: /learning-extract → /ground-spec
 ```
 
 **Do not run on an open Draft spec PR branch** (`chore/*-spec-*`). Coding

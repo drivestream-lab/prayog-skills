@@ -11,6 +11,7 @@
     "pre-implement": "optional",
     "loop-spec": "required",
     "verify": "optional",
+    "learning-extract": "optional",
     "ground-spec": "required"
   },
   "external_action_forge": {

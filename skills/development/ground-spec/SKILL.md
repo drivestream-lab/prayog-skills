@@ -35,23 +35,27 @@ wave's `/pre-implement` consumes as a contract baseline**.
 6. **Populate the Contracts Produced section** — this is the structured
    handoff that enables `/pre-implement` for the next wave. Without it,
    the chain is broken.
-7. Discrepancy / blocker ids use stable process ids (`FF-*` or wave-local
+7. **Cite learning ids** — when
+   `{reports_dir}/Learning-Extract-{initiative}-W{N}.md` exists, add a
+   **Learning cited** table of `L-*` ids (do not re-author learning SSOT).
+8. Discrepancy / blocker ids use stable process ids (`FF-*` or wave-local
    finding ids) — cite `REQ-*` in the row, not as the blocker primary key.
 
 ## Chain position
 
 Illustrative only — **transitions SSOT:** pinned root `workflow.yaml`
-(`dispatch: orchestrated` on this node). `pass` → human-checkpoint
-`wave-human-decision` (`purpose: wave-signoff`).
+(`dispatch: orchestrated` on this node). Closeout path: `learning-extract`
+→ this skill → `wave-signoff`. Pass-1 does **not** route here from `loop-spec`.
 
 ```
-/loop-spec (all iterations green)
+/learning-extract (Pass-2 / Enter-at)
     ↓
 /ground-spec                          ← YOU ARE HERE
   produces: Ground-Report-W{N}.md
             └── §Contracts produced   ← pre-implement for WN+1 reads this
+            └── cites L-* from Learning-Extract when present
     ↓
-  human checkpoint (wave-signoff)
+  human checkpoint wave-signoff
   → as-built W{N} = human_approved
     ↓
 /pre-implement (next wave)
@@ -107,6 +111,13 @@ Save report to `{reports_dir}/Ground-Report-{SPEC}-W{N}.md` (from profile or lay
 | ID | REQ | Finding | Severity |
 |----|-----|---------|---------|
 | FF-{nn} | REQ-{nn} | | |
+
+## Learning cited
+(From Learning-Extract-{INIT}-W{N}.md when present — cite only.)
+| L-id | Class | How it affects this ground |
+|------|-------|----------------------------|
+| L-01 | … | … |
+
 ## Contracts produced by this wave
 (REQUIRED — this section is the input for /pre-implement of the next wave.
 Describe in engineering terms: module, entry point name, input shape,
@@ -148,7 +159,7 @@ Human must:
 1. Append/emit the envelope from `../../../references/handoff-envelope.md` to the saved Ground Report. Use stage `ground-spec`.
 2. When the invocation binds `handoff_path` (orchestrator / AgentRunner baton), also **overwrite** that path with the same `handoff:` envelope before exit. Leaving the baton empty is a failed stage for automated consumers. `artifact.path` remains the workspace skill output, not the baton path. See `../../../references/handoff-envelope.md` (Orchestrator baton).
 3. Derive `next_candidates` and `human_checkpoint` from pinned root `workflow.yaml` for `(stage: ground-spec, outcome)` per `../../../references/handoff-envelope.md` (**Derive from pinned workflow**). Set `human_checkpoint: true` only when the resolved next node's `type` is `human-checkpoint` — never because the artifact "should be reviewed."
-4. Happy path: `outcome: pass` → next `wave-human-decision` (`type: human-checkpoint`) → `human_checkpoint: true`. Do **not** copy this `true` into earlier implement-lane skills on skill→skill edges.
+4. Happy path: `outcome: pass` → next `wave-signoff` (`type: human-checkpoint`) → `human_checkpoint: true`. Do **not** copy this `true` into earlier implement-lane skills on skill→skill edges.
 
 
 4. Follow `../../../references/forge-side-effects.md#content-producers` when this stage's pin has `forge.commit_workspace` other than `disabled` or next is an `external-action` with `forge.requires` — fill `handoff.forge` / recommend the matching `/forge` skill; do not treat local CLI as skill success.
@@ -171,8 +182,8 @@ handoff:
     wave: W{N}
     contracts_produced: {count}
   next_candidates:
-    # Must match workflow.yaml for outcome — typically wave-human-decision
-    - wave-human-decision
+    # Must match workflow.yaml for outcome — typically wave-signoff
+    - wave-signoff
   # true because next.type is human-checkpoint — not "please review"
   human_checkpoint: true
   external_action: false

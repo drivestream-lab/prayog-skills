@@ -62,15 +62,15 @@ If the user asks to **run** verify: state the exact command from `tests_readme` 
 1. Emit the envelope from `../../../references/handoff-envelope.md` in the verify result and persist the command/evidence in the tracker or report. Use stage `verify`.
 2. When the invocation binds `handoff_path` (orchestrator / AgentRunner baton), also **overwrite** that path with the same `handoff:` envelope before exit. Leaving the baton empty is a failed stage for automated consumers. `artifact.path` remains the workspace skill output, not the baton path. See `../../../references/handoff-envelope.md` (Orchestrator baton).
 3. Derive `next_candidates` and `human_checkpoint` from pinned root `workflow.yaml` for `(stage: verify, outcome)` per `../../../references/handoff-envelope.md` (**Derive from pinned workflow**). Set `human_checkpoint: true` only when the resolved next node's `type` is `human-checkpoint` — never because the artifact "should be reviewed."
-4. Happy path: `outcome: pass` or `skipped` → next `ground-spec` (`type: skill`) → `human_checkpoint: false`.
+4. Happy path: `outcome: pass` or `skipped` → next `learning-extract` (`type: skill`) → `human_checkpoint: false`.
 
 
 4. Follow `../../../references/forge-side-effects.md#content-producers` when this stage's pin has `forge.commit_workspace` other than `disabled` or next is an `external-action` with `forge.requires` — fill `handoff.forge` / recommend the matching `/forge` skill; do not treat local CLI as skill success.
 
 
 **Transitions:** pinned root `workflow.yaml` for this stage (SSOT). Human or
-agent may run this skill; orchestrators may auto-dispatch when authorized.
-Same legality for both invoke paths.
+agent may run this skill; orchestrators must **not** auto-dispatch
+(`dispatch: manual`). Same legality for human invoke paths.
 
 Never mark `pass` without command output or equivalent reproducible evidence.
 `next_candidates` never authorize invoke.

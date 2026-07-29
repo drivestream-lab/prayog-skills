@@ -10,7 +10,7 @@ You are executing the **loop-spec** skill (Loop spec (per-wave implement loop)).
 - skill_id: {{skill_id}}
 
 ## Instruction
-Implement one TASK at a time against the product spec; verify; fix; stop at ground handoff. Do not self-approve.
+Implement one TASK at a time against the product spec; check/test; fix; stop at live-verify. Do not self-approve or ground.
 
 Follow the full procedure in this skill's `SKILL.md` (and `references/` when present). Treat `SKILL.md` as the procedure SSOT; this brief is the invocation package only.
 
@@ -18,7 +18,7 @@ Follow the full procedure in this skill's `SKILL.md` (and `references/` when pre
 1. Prerequisites: pre-implement checklist PASS; plan on develop (spec package merged).
 2. After each TASK run check_command and test_command; fix before advancing.
 3. Bind each iteration to TASK-* + wave issue + implements REQ-*.
-4. When green, hand off to ground-spec before any human checkpoint.
+4. When green, hand off with pass → live-verify (human prove). Closeout is separate.
 
 ## Envelope navigation (required)
 After choosing `outcome`, derive `next_candidates` and `human_checkpoint` from
@@ -27,8 +27,8 @@ pinned `workflow.yaml` for `(stage: {{skill_id}}, outcome)` per
 `human_checkpoint` is `true` only when the resolved next node's `type` is
 `human-checkpoint` — never because the artifact should be reviewed.
 Never set `true` on skill→skill edges (for example never on
-`pre-implement` / `loop-spec` / `verify` `pass`).
-Example: `loop-spec` + `pass` → `verify` → `human_checkpoint: false`.
+`pre-implement` / `loop-spec` `pass`).
+Example: `loop-spec` + `pass` → `live-verify` → `human_checkpoint: true`.
 
 
 ## Forge (required awareness)

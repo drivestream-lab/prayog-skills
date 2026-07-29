@@ -12,6 +12,7 @@
     {"area": "development", "skill_id": "spec-implementation-plan"},
     {"area": "development", "skill_id": "pre-implement"},
     {"area": "development", "skill_id": "loop-spec"},
+    {"area": "development", "skill_id": "learning-extract"},
     {"area": "development", "skill_id": "verify"},
     {"area": "development", "skill_id": "ground-spec"},
     {"area": "forge", "skill_id": "commit-workspace"},

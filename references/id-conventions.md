@@ -98,6 +98,7 @@ Stage-local rule numbers stay as documentation of which check fired:
 | initiative-feasibility | `F1`…`F14` |
 | spec-implementation-plan | `P1`…`P14` |
 | create-board-tickets (forge) | `B1`…`B8` |
+| learning-extract | `L-01`…`L-{nn}` |
 | engg-reviews | `C0`…`C12` |
 
 Cite the check on a finding (`VF-04`, Check `7`) — never use the check number
@@ -111,6 +112,7 @@ alone as a handoff blocker.
 
 - `VF-03`, `VF-11`
 - `FF-02`
+- `L-01`
 - `OQ-04`
 - `TASK-W0-03`
 

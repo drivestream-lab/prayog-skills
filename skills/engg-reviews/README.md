@@ -13,7 +13,7 @@ so PM can strengthen the PRD.
 | **Lane** | **PE only** — does not replace PM requirements skills |
 | **Profiles** | **Not** registered in `profiles/*.yaml` |
 
-Plan: [docs/engg-reviews-implementation-plan.md](../../docs/engg-reviews-implementation-plan.md)
+Plan: [implementation-plan.md](implementation-plan.md)
 
 ## Install (PE distribution — tag `pe-rc-2`)
 

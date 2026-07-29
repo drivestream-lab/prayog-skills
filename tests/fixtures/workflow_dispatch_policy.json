@@ -2,7 +2,7 @@
   "orchestrated": [
     "pre-implement",
     "loop-spec",
-    "verify",
+    "learning-extract",
     "ground-spec"
   ],
   "manual": [
@@ -13,15 +13,17 @@
     "spec-draft",
     "initiative-feasibility",
     "spec-technical-review",
-    "spec-implementation-plan"
+    "spec-implementation-plan",
+    "verify"
   ],
   "human_checkpoint_purposes": {
     "requirements-human-decision": "requirements-clarification",
-    "gate-1": "prd-impact-acceptance",
+    "prd-impact-acceptance": "prd-impact-acceptance",
     "technical-review-approval": "tdd-adr-acceptance",
     "spec-human-decision": "spec-clarification",
-    "gate-2": "coding-readiness",
-    "wave-human-decision": "wave-signoff",
+    "coding-readiness": "coding-readiness",
+    "live-verify": "live-verify",
+    "wave-signoff": "wave-signoff",
     "initiative-closure": "initiative-closure"
   }
 }

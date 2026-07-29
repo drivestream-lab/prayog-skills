@@ -2,10 +2,9 @@
 name: loop-spec
 description: >-
   Execute the per-wave implementation loop: implement against spec one TASK at
-  a time, run verification, fix failures, repeat until green — then stop and
-  request human checkpoint. Binds each iteration to TASK-* + board wave issue.
-  Use during active wave development. Stops at human checkpoint; does not
-  advance to the next wave.
+  a time, run checks/tests, fix failures, repeat until green — then stop for
+  human live-verify. Binds each iteration to TASK-* + board wave issue. Use
+  during active wave development. Does not run ground-spec or learning-extract.
 disable-model-invocation: true
 paths: AGENTS.md, docs/specification/**, src/**
 metadata:
@@ -15,12 +14,15 @@ metadata:
 
 # Loop spec
 
-Execute the per-wave loop:
+Execute the per-wave Pass-1 loop:
 
 ```
-implement TASK → check/test → fix → repeat → live verify (when applicable)
-→ ground report → human checkpoint
+implement TASK → check/test → fix → repeat
+→ stop at live-verify (human prove + patch tip)
 ```
+
+Closeout (`/learning-extract` → `/ground-spec`) is a **separate** Pass-2 after
+human live-verify — not this skill's job.
 
 Conventions: `../../../references/id-conventions.md`.
 
@@ -35,17 +37,16 @@ Conventions: `../../../references/id-conventions.md`.
 3. After each **TASK**, run `{check_command}` and `{test_command}` from the
    harness profile (or `tests_readme`). Both must pass before committing.
 4. Fix failures before moving to the next TASK — do not accumulate failures.
-5. When all TASKs are green: hand off to `/ground-spec`. The Ground Report is
-   produced **before** the human checkpoint. Do not request or record human
-   approval before grounding evidence exists, and do not self-approve.
-6. Do not skip verification steps to save time — failures caught here are
-   cheaper than failures caught in `/ground-spec` or the wave PR review.
+5. When all TASKs are green: **stop** for human checkpoint `live-verify`. Do
+   **not** run `/ground-spec` or `/learning-extract` in this hop. Do not
+   self-approve the wave.
+6. Do not skip check/test steps to save time.
 7. **Bind execution** — each iteration names `TASK-W{n}-{nn}`, the wave board
    issue URL/number, and `implements: [REQ-…]` from the plan / wave body.
-8. **Structured failures** — on check/test/verify failure, record under handoff
+8. **Structured failures** — on check/test failure, record under handoff
    `blockers` the `TASK-*` id plus command and short why; comment the same on
-   the wave issue when `gh` is available and authorized. Do not advance while
-   any TASK blocker remains.
+   the wave issue when Forge tooling is available and authorized. Do not advance
+   while any TASK blocker remains.
 
 ## Inputs
 
@@ -55,8 +56,8 @@ Conventions: `../../../references/id-conventions.md`.
 - Pre-implement checklist — produced by `/pre-implement` for this wave
 - `{check_command}` — static checks (from harness profile or `AGENTS.md`)
 - `{test_command}` — unit verification (from harness profile or `tests_readme`)
-- `{verify_command}` — live verification (when applicable; from the plan and `tests_readme`)
-- `{ground_command}` — automated input to `/ground-spec` (optional; from harness profile if defined)
+- `{verify_command}` — documented for the **human** live-verify stop (not run as
+  success criteria of this skill)
 
 ## Loop body (each TASK iteration)
 
@@ -68,19 +69,16 @@ Conventions: `../../../references/id-conventions.md`.
    `{command, expected, actual/summary}` until green.
 6. When TASK is green: commit (message cites `TASK-*`), clear that blocker, move
    to next TASK.
-7. After all TASKs are green, run `{verify_command}` when the plan marks live
-   verification applicable; fix failures and repeat.
-8. Stop and hand off to `/ground-spec`; that skill runs `{ground_command}` when
-   defined and produces the Ground Report.
+7. After all TASKs are green: hand off with `pass` → pin next `live-verify`
+   (human prove + patch). Optional: note applicable `{verify_command}` for the
+   human — do not treat running it as this skill's success.
 
 ## Stop conditions
 
 - All wave TASKs complete
 - `{check_command}` exits 0
 - `{test_command}` exits 0
-- `{verify_command}` exits 0 (when applicable)
-- `/ground-spec` is the next action; human review happens only after its report
-- Human approves Ground Report → as-built status updated → wave PR may merge
+- Handoff `pass` toward `live-verify`
 
 ## Chain position
 
@@ -91,14 +89,14 @@ Illustrative only — **transitions SSOT:** pinned root `workflow.yaml`
 /pre-implement (checklist produced)
     ↓
 /loop-spec              ← YOU ARE HERE
-  bind TASK + wave issue → implement → verify → fix → repeat
+  bind TASK + wave issue → implement → check/test → fix → repeat
   failures: handoff blockers + optional issue comment (TASK-*, why)
     ↓
-  checks/tests/live verify green
+  checks/tests green
     ↓
-/ground-spec (validates wave against spec REQs, produces §Contracts produced)
-    ↓
-  human checkpoint → as-built human_approved → merge
+live-verify (human prove + patch tip) → wave-awaiting-closeout
+    ↓ (Pass-2 Enter-at or /learning-extract)
+/learning-extract → /ground-spec → wave-signoff
 ```
 
 ## Usage with /loop timer (optional)
@@ -114,7 +112,7 @@ fix failures before moving on, stop when all TASKs green.
 1. Emit the envelope from `../../../references/handoff-envelope.md` in the final task summary and persist the same state in the wave tracker/commits. Use stage `loop-spec`.
 2. When the invocation binds `handoff_path` (orchestrator / AgentRunner baton), also **overwrite** that path with the same `handoff:` envelope before exit. Leaving the baton empty is a failed stage for automated consumers. `artifact.path` remains the workspace skill output, not the baton path. See `../../../references/handoff-envelope.md` (Orchestrator baton).
 3. Derive `next_candidates` and `human_checkpoint` from pinned root `workflow.yaml` for `(stage: loop-spec, outcome)` per `../../../references/handoff-envelope.md` (**Derive from pinned workflow**). Set `human_checkpoint: true` only when the resolved next node's `type` is `human-checkpoint` — never because the artifact "should be reviewed."
-4. Happy path: `outcome: pass` → next `verify` (`type: skill`) → `human_checkpoint: false`.
+4. Happy path: `outcome: pass` → next `live-verify` (`type: human-checkpoint`) → `human_checkpoint: true`.
 
 
 4. Follow `../../../references/forge-side-effects.md#content-producers` when this stage's pin has `forge.commit_workspace` other than `disabled` or next is an `external-action` with `forge.requires` — fill `handoff.forge` / recommend the matching `/forge` skill; do not treat local CLI as skill success.

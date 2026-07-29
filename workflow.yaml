@@ -80,11 +80,11 @@ nodes:
         - title
         - body_path
     outcomes:
-      pass: gate-1
+      pass: prd-impact-acceptance
       blocked: requirements-human-decision
       failed: workflow-stop
 
-  gate-1:
+  prd-impact-acceptance:
     type: human-checkpoint
     purpose: prd-impact-acceptance
     owner: engineering-gate
@@ -188,13 +188,13 @@ nodes:
     forge:
       commit_workspace: required
     outcomes:
-      pass: gate-2
+      pass: coding-readiness
       needs-input: spec-human-decision
       blocked: spec-human-decision
       stale: initiative-feasibility
       failed: workflow-stop
 
-  gate-2:
+  coding-readiness:
     type: human-checkpoint
     purpose: coding-readiness
     owner: engineering-gate
@@ -240,8 +240,8 @@ nodes:
       commit_workspace: optional
     outcomes:
       pass: loop-spec
-      needs-input: wave-human-decision
-      blocked: wave-human-decision
+      needs-input: wave-signoff
+      blocked: wave-signoff
       stale: spec-implementation-plan
       failed: workflow-stop
 
@@ -252,12 +252,36 @@ nodes:
     forge:
       commit_workspace: required
     outcomes:
-      pass: verify
+      pass: live-verify
       findings: loop-spec
-      blocked: wave-human-decision
+      blocked: wave-signoff
       failed: loop-spec
 
+  live-verify:
+    type: human-checkpoint
+    purpose: live-verify
+    outcomes:
+      pass: wave-awaiting-closeout
+      findings: loop-spec
+      blocked: workflow-stop
+
+  wave-awaiting-closeout:
+    type: terminal
+
   verify:
+    type: skill
+    profile: development
+    dispatch: manual
+    forge:
+      commit_workspace: optional
+    outcomes:
+      pass: learning-extract
+      skipped: learning-extract
+      findings: loop-spec
+      blocked: wave-signoff
+      failed: loop-spec
+
+  learning-extract:
     type: skill
     profile: development
     dispatch: orchestrated
@@ -265,10 +289,10 @@ nodes:
       commit_workspace: optional
     outcomes:
       pass: ground-spec
-      skipped: ground-spec
-      findings: loop-spec
-      blocked: wave-human-decision
-      failed: loop-spec
+      findings: learning-extract
+      needs-input: wave-signoff
+      blocked: wave-signoff
+      failed: learning-extract
 
   ground-spec:
     type: skill
@@ -277,13 +301,13 @@ nodes:
     forge:
       commit_workspace: required
     outcomes:
-      pass: wave-human-decision
+      pass: wave-signoff
       findings: loop-spec
-      needs-input: wave-human-decision
-      blocked: wave-human-decision
+      needs-input: wave-signoff
+      blocked: wave-signoff
       failed: loop-spec
 
-  wave-human-decision:
+  wave-signoff:
     type: human-checkpoint
     purpose: wave-signoff
     outcomes:
@@ -302,7 +326,7 @@ nodes:
     purpose: initiative-closure
     outcomes:
       pass: workflow-complete
-      findings: wave-human-decision
+      findings: wave-signoff
 
   workflow-complete:
     type: terminal

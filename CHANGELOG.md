@@ -7,6 +7,18 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased] — features/rc-2
 
+### Changed — Pass-1 live-verify stop + learning-extract closeout
+
+- Checkpoint ids ≡ purpose: `gate-1` → `prd-impact-acceptance`, `gate-2` →
+  `coding-readiness`, `wave-human-decision` → `wave-signoff`. Labels unchanged.
+- Pass-1: `loop-spec.pass` → `live-verify` → `wave-awaiting-closeout` (park).
+- `verify` is `dispatch: manual`; optional path `verify` → `learning-extract`.
+- New orchestrated skill `learning-extract` (MD + YAML fence, `L-*` taxonomy) →
+  `ground-spec` → `wave-signoff`. HOW: H1–H6 (worker ingest; no skill HTTP).
+- App profiles include `learning-extract`.
+- Docs Option A: `docs/` orientation (`overview`, `for-launchpad`, `for-gateflow`,
+  `id-map`); engg-reviews plan under `skills/engg-reviews/`.
+
 ### Changed — Retire `/board-seed`; single `/create-board-tickets` after merge
 
 - Removed content skill `skills/development/board-seed/`.

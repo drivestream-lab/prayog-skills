@@ -124,6 +124,6 @@ Use `contract: engg-reviews/v1` and stage `prd-codebase-map`.
 | `needs-input` / `blocked` / `stale` | `/ensure-repo-graph` then retry |
 | `failed` | Human fixes tool/write issues; retry |
 
-Always `gate_coupled: false`. **Never** list `gate-1`, `prd-merge`, or
+Always `gate_coupled: false`. **Never** list `prd-impact-acceptance`, `prd-merge`, or
 `spec-draft` in `next_candidates`. SDD Gate navigators must ignore this
 contract.

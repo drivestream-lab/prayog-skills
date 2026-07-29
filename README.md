@@ -77,7 +77,8 @@ PM skills validate and refine PRDs. Dev skills implement spec slices in service 
 | **pre-implement** | Pre-flight before each implementation wave |
 | **loop-spec** | Implement → verify → fix per task |
 | **ground-spec** | Wave complete — REQ validation + contracts for next wave |
-| **verify** | Live CLI/API verification |
+| **learning-extract** | After live-verify: structured L-* learning (closeout) |
+| **verify** | Manual live-verify aid (not on Pass-1 edge) |
 
 ### Forge (human — meta + app)
 
@@ -112,14 +113,15 @@ PE sets spec-lgtm on exact head → Ready for review → Approve → merge
     ↓
 Merge spec PR → develop → **`/create-board-tickets`** (governance board + EPIC/wave tree)
     ↓
-Per wave:  /pre-implement  →  /loop-spec  →  /ground-spec  →  human checkpoint
+Per wave Pass-1:  /pre-implement  →  /loop-spec  →  live-verify (human)
+Pass-2 closeout:  /learning-extract  →  /ground-spec  →  wave-signoff
 ```
 
 Full process: [launchpad delivery workflow](https://github.com/drivestream-lab/launchpad/blob/main/playbook/delivery-workflow.md).
 
 Artifacts are the source of truth. GitHub labels are status projections only.
-PE moves Gate 1 through `impact-map-pending`, `impact-map-blocked`, and
-`impact-map-lgtm`; Gate 2 through `spec-pending`, `spec-blocked`, and
+PE moves prd-impact-acceptance through `impact-map-pending`, `impact-map-blocked`, and
+`impact-map-lgtm`; coding-readiness through `spec-pending`, `spec-blocked`, and
 `spec-lgtm`. Revised or stale labels close the gate. Never infer approval from
 labels alone — require matching GitHub Approve and artifact digests on the exact
 PR head.
@@ -179,15 +181,18 @@ prayog-skills/
     python-backend.yaml
     frontend.yaml
     meta-pm.yaml
-  references/         # handoff, ids, artifacts, prompt-package-contract
-  docs/               # human overviews (e.g. id-and-traceability)
+  references/         # normative: handoff, forge, ids, artifacts, prompts
+  docs/               # human orientation (overview, for-launchpad/gateflow)
   skills/
     requirements/     # PM lane (+ prompts/ per skill)
     development/      # Dev lane (+ prompts/ per skill)
+    forge/            # Human forge skills (+ prompts/)
     engg-reviews/     # Experimental PE adjunct (not in profiles; no prompts/)
   scripts/            # Consistency + prompt contract checks (CI)
-  tests/fixtures/     # dispatch policy + prompt inventory SSOTs
+  tests/fixtures/     # dispatch / forge / prompt inventory SSOTs
 ```
+
+**Docs:** start at [`docs/README.md`](docs/README.md) — orientation only; contracts stay in `references/` and the pin YAMLs.
 
 Each skill: `skills/<category>/<name>/SKILL.md` per [Agent Skills](https://cursor.com/docs/skills).
 
@@ -206,7 +211,7 @@ skills/<area>/<skill-id>/prompts/
 
 Gate-independent PE advisory pack on branch `features/rc-2` / version `0.5.0-rc.2`.
 **Not** part of `sdd-delivery/v2`. **Not** listed in `profiles/*.yaml` — does not
-unlock Gate 1 or `/spec-draft`. PE posts product questions on the Meta PR; PM
+unlock `prd-impact-acceptance` or `/spec-draft`. PE posts product questions on the Meta PR; PM
 updates the PRD via requirements skills.
 
 | Skill | When |
@@ -217,7 +222,8 @@ updates the PRD via requirements skills.
 | **post-product-questions** | PE posts questions + recommendations on Meta PR; request PM feedback |
 
 Details: [`skills/engg-reviews/README.md`](skills/engg-reviews/README.md) ·
-[`docs/engg-reviews-implementation-plan.md`](docs/engg-reviews-implementation-plan.md)
+Plan: [`skills/engg-reviews/implementation-plan.md`](skills/engg-reviews/implementation-plan.md).
+Partner orientation: [`docs/`](docs/README.md).
 
 **PE install (tag `pe-rc-2`):**
 

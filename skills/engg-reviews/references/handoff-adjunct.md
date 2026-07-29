@@ -33,7 +33,7 @@ handoff:
    - `review-product-questions`
    - `post-product-questions`
    - empty list
-3. **Never** put `gate-1`, `prd-merge`, `spec-draft`, `impact-map-pending`,
+3. **Never** put `prd-impact-acceptance`, `prd-merge`, `spec-draft`, `impact-map-pending`,
    or any `sdd-delivery/v2` node in `next_candidates`.
 4. `external_action: false` by default. Posting meta PR comments requires
    explicit user authorization and still does **not** set gate labels.

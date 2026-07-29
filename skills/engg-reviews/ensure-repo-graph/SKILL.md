@@ -120,7 +120,7 @@ Append adjunct handoff (`stage: ensure-repo-graph`).
 
 ## Forbidden next_candidates
 
-Never: `gate-1`, `prd-merge`, `spec-draft`, or any `sdd-delivery/v2` node.
+Never: `prd-impact-acceptance`, `prd-merge`, `spec-draft`, or any `sdd-delivery/v2` node.
 
 ## Workflow handoff
 
