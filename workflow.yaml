@@ -120,7 +120,9 @@ nodes:
     type: external-action
     owner: engineering
     provider: github
-    authorization: explicit
+    # Automated: ForgeClient open_draft_pr without interactive STOP when
+    # handoff.forge requires are complete.
+    authorization: automated
     forge:
       action: open_draft_pr
       draft: true
@@ -264,12 +266,13 @@ nodes:
 
   # Wave Draft-PR after checklist + code are on head_ref (reuse open_draft_pr).
   # Placement after loop-spec avoids a mid-Pass-1 STOP before coding.
+  # authorization: automated — ForgeClient opens PR without interactive STOP.
   # Not a merge action — human merge stays at wave-signoff.
   wave-pr-action:
     type: external-action
     owner: engineering
     provider: github
-    authorization: explicit
+    authorization: automated
     forge:
       action: open_draft_pr
       draft: true

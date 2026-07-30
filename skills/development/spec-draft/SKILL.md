@@ -5,8 +5,9 @@ description: >-
   meta PRD PR branch or merged develop, extracts capabilities relevant to this
   repo, drafts docs/specification/product/INIT-*.md locally, and produces a
   Draft-PR readiness handoff (handoff.forge for open_draft_pr). Publish via
-  /open-draft-pr or orchestrator ForgeClient after authorization — not inside
-  this skill. Run after Gate 1 approval and before /initiative-feasibility.
+  /open-draft-pr or orchestrator ForgeClient (spec-pr-action is authorization:
+  automated) — not inside this skill. Run after Gate 1 approval and before
+  /initiative-feasibility.
 disable-model-invocation: true
 paths: AGENTS.md, docs/specification/**, .cursor/rules/**
 background_eligible: true
@@ -164,11 +165,13 @@ at minimum:
 - `apply_labels: [spec-pending]` (match pin; never `*-lgtm`)
 - `title`, `body_path` (and any other pin `requires`)
 
-Recommend **`/open-draft-pr`** (and `/commit-workspace` when publication of the
-local artifact is needed) after the user authorizes publish. Do **not**
-run forge mutations inside `/spec-draft`. If Forge tooling is unavailable,
-readiness in the handoff is still the durable package for a later forge skill
-or Gateflow ForgeClient.
+Recommend `/commit-workspace` when local publication is needed. On `pass`, next
+is `spec-pr-action` with pin `authorization: automated` — Gateflow ForgeClient
+opens the Draft PR without interactive STOP when requires are complete. Human
+walkers may still run `/open-draft-pr` after user confirm. Do **not** run forge
+mutations inside `/spec-draft`. If Forge tooling is unavailable, readiness in
+the handoff is still the durable package for a later forge skill or Gateflow
+ForgeClient.
 
 See `../../../references/forge-side-effects.md`.
 
@@ -199,11 +202,11 @@ When a newer approved impact-map revision appears:
 
 After dev reviews the local draft:
 
-1. authorize publish and run `/open-draft-pr` when the workflow outcome is
-   `pass` and the PR-readiness verdict is `PR READY` (or let the orchestrator
-   execute `spec-pr-action`)
+1. on `pass` / `PR READY`, let the orchestrator execute `spec-pr-action`
+   (`authorization: automated`), or authorize and run `/open-draft-pr` as a
+   human walker
 2. ensure the spec slice is on the Draft spec PR head via `/commit-workspace`
-   and/or `/open-draft-pr` (Forge skills — not this content skill)
+   and/or `/open-draft-pr` / ForgeClient (Forge — not this content skill)
 3. run `/initiative-feasibility` on the published spec on that branch
 
 Do not skip the PR-readiness handoff or jump straight to feasibility on a local
@@ -215,7 +218,7 @@ lane.
 1. Append/emit the envelope from `../../../references/handoff-envelope.md` to the saved spec. Use stage `spec-draft`.
 2. When the invocation binds `handoff_path` (orchestrator / AgentRunner baton), also **overwrite** that path with the same `handoff:` envelope before exit. Leaving the baton empty is a failed stage for automated consumers. `artifact.path` remains the workspace skill output, not the baton path. See `../../../references/handoff-envelope.md` (Orchestrator baton).
 3. Derive `next_candidates`, `human_checkpoint`, and `external_action` from pinned root `workflow.yaml` for `(stage: spec-draft, outcome)` per `../../../references/handoff-envelope.md` (**Derive from pinned workflow**). Set `human_checkpoint: true` only when the resolved next node's `type` is `human-checkpoint`. Set `external_action: true` when next is `external-action` (e.g. `spec-pr-action` on `pass`).
-4. On `pass`, fill complete `handoff.forge` for `open_draft_pr` per pin `requires` (`../../../references/forge-side-effects.md#content-producers`). Recommend `/open-draft-pr`.
+4. On `pass`, fill complete `handoff.forge` for `open_draft_pr` per pin `requires` (`../../../references/forge-side-effects.md#content-producers`). Orchestrator: `spec-pr-action` is `authorization: automated`. Human walker: recommend `/open-draft-pr` after confirm.
 5. Follow `../../../references/forge-side-effects.md#content-producers` — content skill success ≠ PR opened.
 
 **Transitions:** pinned root `workflow.yaml` for this stage (SSOT). Human or

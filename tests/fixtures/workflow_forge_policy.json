@@ -14,6 +14,14 @@
     "learning-extract": "optional",
     "ground-spec": "required"
   },
+  "external_action_authorization": {
+    "prd-pr-action": "explicit",
+    "prd-merge": "explicit",
+    "spec-pr-action": "automated",
+    "spec-merge": "explicit",
+    "board-tickets-action": "explicit",
+    "wave-pr-action": "automated"
+  },
   "external_action_forge": {
     "prd-pr-action": {
       "action": "open_draft_pr",

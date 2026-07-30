@@ -26,6 +26,7 @@ them.
 | Checkpoints | `prd-impact-acceptance`, `coding-readiness` (not `gate-1` / `gate-2`) |
 | Labels | Unchanged: `impact-map-*`, `spec-*` |
 | WorkManifest | Launchpad **materializes** the pin only — it does **not** own, parse, or execute WorkManifest. Prayog owns the contract; Gateflow/humans validate and project it. |
+| External-action auth | Pin may set `authorization: automated` on `spec-pr-action` / `wave-pr-action` (Forge opens Draft PR without human forge confirm). Playbooks should not require a human `/open-draft-pr` click for those nodes when remounted on this tip. |
 
 ## Pass-1 / Pass-2 (copy for playbooks)
 

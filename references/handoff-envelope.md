@@ -95,6 +95,11 @@ Also set `external_action` from the pin:
 external_action = (next.type == "external-action")
 ```
 
+Whether the orchestrator **STOPs** for interactive authorize is **not** this
+flag — it is pin `authorization` on that external-action node (`explicit` |
+`automated`). See [`forge-side-effects.md`](forge-side-effects.md).
+`external_action: true` only means the next node is an external-action.
+
 ## Outcome vocabulary (examples)
 
 Outcomes are stage-local and must be edges that exist on the pin for that
@@ -195,9 +200,11 @@ Rules:
 5. Never auto-transition a `type: human-checkpoint` node. Mechanism is human
    review; `purpose` on the node is intent for display/ops only — not a
    separate node kind (`type: gate` is forbidden).
-6. Never perform an external action without explicit authorization.
-   `external_action: true` means the next node may mutate a system after auth —
-   not that the content skill must run `gh` or any specific CLI.
+6. Never perform an external action unless the pin authorizes it.
+   `authorization: explicit` → interactive / API authorize then Forge;
+   `authorization: automated` → ForgeClient when `handoff.forge` requires are
+   complete (no interactive STOP). `external_action: true` only means the next
+   node is an external-action — not that the content skill must run `gh`.
 7. A stale artifact routes to the workflow's stale transition, not the nominal
    next skill.
 8. `next_candidates` never authorize invoke and never bypass

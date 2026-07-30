@@ -67,10 +67,13 @@ PASS 2 (Enter-at learning-extract, or human /learning-extract)
   scripts but never claims human smoke/sandbox success. Emits `commit_workspace`
   readiness for code on the same `head_ref`.
 - On `loop-spec.pass`, next is **`wave-pr-action`** (reuse `open_draft_pr` with
-  `title` / `body_path` / `head_ref` / `base_ref`). First Draft PR view should
-  already include checklist + code. There is **no** merge Forge action — merge
-  stays human-only at `wave-signoff`. This placement avoids a mid-Pass-1 STOP
-  before coding (trade: no PR URL during coding).
+  `title` / `body_path` / `head_ref` / `base_ref`). Pin sets
+  `authorization: automated` — ForgeClient opens the Draft PR without an
+  interactive authorize STOP when requires are complete. First Draft PR view
+  should already include checklist + code. There is **no** merge Forge action —
+  merge stays human-only at `wave-signoff`. This placement avoids a mid-Pass-1
+  STOP before coding (trade: no PR URL during coding).
+  (`spec-pr-action` is also `automated`; other external-actions stay `explicit`.)
 - `verify` is **manual** (optional aid) — not on the Pass-1 edge. Layer ownership
   covers unit, integration/contract, smoke, and sandbox; live evidence requires
   expected-versus-observed rows in `Live-Verify-{INIT}-W{N}.md` and must not

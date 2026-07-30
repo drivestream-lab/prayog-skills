@@ -23,8 +23,12 @@ Human-walker equivalent of Gateflow `ForgeClient` **open/update Draft PR**
 3. `action` must be `open_draft_pr`. Open or update a **Draft** PR when
    `draft: true`.
 4. Apply only projection labels from policy. **Never** apply `*-lgtm`.
-5. Explicit human authorization before mutate (chat yes / UI). Content skill
-   recommendation is not authorization by itself if the user has not confirmed.
+5. When **you** (human) run this skill: explicit user confirmation before
+   mutate (chat yes / UI). Content skill recommendation is not authorization
+   by itself. When the pin sets `authorization: automated` on the matching
+   `external-action` (`spec-pr-action`, `wave-pr-action`), **Gateflow
+   ForgeClient** may open/update the Draft PR without interactive STOP —
+   that path does not invoke this skill. This skill remains human-confirm.
 6. Tool-neutral Forge tooling (`gh`, REST, …) — examples only.
 
 ## Inputs

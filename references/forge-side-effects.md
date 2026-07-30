@@ -127,12 +127,34 @@ if orchestrator and policy in {optional, required}:
 
 next = resolve(stage, outcome)
 if next.type == external-action:
-    STOP until authorization
+    # authorization is REQUIRED on every external-action (explicit|automated).
+    # Missing or unknown value → invalid pin / FAIL closed.
+    auth = next.authorization
+    if auth not in {explicit, automated}:
+        FAIL
+
     effective = merge(next.forge, handoff.forge)  # pin wins policy
-    if missing any next.forge.requires: FAIL
-    if orchestrator: ForgeClient.apply(effective)
-    # human: recommend / run skills/forge/<action-kebab>
+    if next.forge.requires and missing any required slot:
+        FAIL
+
+    if auth == explicit:
+        STOP until interactive / API authorization
+    # auth == automated: no interactive STOP — pre-authorized ForgeClient
+
+    if orchestrator:
+        ForgeClient.apply(effective)
+    # human walker: recommend / run skills/forge/<action-kebab>
+    # (human forge skills still require user confirm when the human invokes them)
 ```
+
+| `authorization` | Meaning |
+|-----------------|--------|
+| `explicit` | STOP for authorize, then ForgeClient |
+| `automated` | ForgeClient runs immediately when requires are complete |
+
+Day-one pin: `spec-pr-action` and `wave-pr-action` are `automated`; other
+external-actions are `explicit`. Wave merge remains human-only at
+`wave-signoff` (no merge Forge action).
 
 ## Reserved actions
 

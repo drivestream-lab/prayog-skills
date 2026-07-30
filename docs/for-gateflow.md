@@ -20,6 +20,11 @@ Orientation for orchestrator / AgentRunner maintainers. Pin SSOT:
    (`references/workmanifest-contract.md` + `scripts/workmanifest_contract.py`).
    Reject unsupported `apiVersion` / `kind` pairs fail-closed. Do not invent a
    Gateflow-local manifest schema.
+8. **`authorization` on every external-action** — required `explicit` |
+   `automated`. Missing/unknown → fail closed. `automated` ⇒ ForgeClient
+   without interactive STOP when requires are complete; `explicit` ⇒ STOP
+   then authorize. Day-one: `spec-pr-action` and `wave-pr-action` are
+   `automated`; others `explicit`.
 
 ## Pass-1 / Pass-2 (implement lane)
 
@@ -35,8 +40,9 @@ PASS 2 — separate walk (API Enter-at learning-extract)
 | Do | Don't |
 |----|--------|
 | After `pre-implement`, ForgeClient `commit_workspace` (checklist on `head_ref`) then continue to `loop-spec` | STOP / authorize `open_draft_pr` between pre-implement and loop-spec |
-| After `loop-spec`, ForgeClient `commit_workspace` (code) then STOP on `wave-pr-action` | Auto-merge or invent a merge Forge action |
-| Open Draft PR only via ForgeClient at `wave-pr-action` (checklist+code already on tip) | PR-at-start before skills / duplicate open |
+| After `loop-spec`, ForgeClient `commit_workspace` (code) then resolve `wave-pr-action` | Auto-merge or invent a merge Forge action |
+| `wave-pr-action` is `authorization: automated` — ForgeClient `open_draft_pr` **without** interactive STOP when requires complete | Wait for human `/forge/authorize` on wave/spec Draft PR when pin says automated |
+| First Draft PR view has checklist + code already on tip | PR-at-start before skills / duplicate open |
 | Stop after authorize at `live-verify` | Auto-run `verify` / `ground-spec` / `learning-extract` on Pass-1 |
 | Treat unit/`make test` green as agent bar only | Treat unit green as live bar or skip human script run |
 | Expect human to run co-shipped `live_verify_dir` script at `live-verify` | Auto-dispatch `/verify` on Pass-1 |

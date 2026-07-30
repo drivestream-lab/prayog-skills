@@ -829,14 +829,23 @@ def check_workflow_forge() -> list[str]:
     nodes = workflow.get("nodes") or {}
     commit_policy = policy.get("commit_workspace") or {}
     ea_policy = policy.get("external_action_forge") or {}
+    auth_policy = policy.get("external_action_authorization") or {}
     skill_map = policy.get("human_forge_skills") or {}
     forbid_suffix = policy.get("forbid_auto_label_suffix") or "-lgtm"
+    auth_enum = frozenset({"explicit", "automated"})
 
     skill_nodes = {s for s, n in nodes.items() if n.get("type") == "skill"}
     if set(commit_policy) != skill_nodes:
         errors.append(
             f"  forge commit_workspace keys mismatch: "
             f"workflow={sorted(skill_nodes)} policy={sorted(commit_policy)}"
+        )
+
+    ea_nodes = {s for s, n in nodes.items() if n.get("type") == "external-action"}
+    if set(auth_policy) != ea_nodes:
+        errors.append(
+            f"  external_action_authorization keys mismatch: "
+            f"workflow={sorted(ea_nodes)} policy={sorted(auth_policy)}"
         )
 
     for stage, node in nodes.items():
@@ -859,6 +868,17 @@ def check_workflow_forge() -> list[str]:
                     f"  {stage}: forge.action belongs on external-action nodes"
                 )
         elif ntype == "external-action":
+            auth = node.get("authorization")
+            if auth not in auth_enum:
+                errors.append(
+                    f"  {stage}: external-action requires authorization in "
+                    f"{sorted(auth_enum)} (got {auth!r})"
+                )
+            elif stage in auth_policy and auth != auth_policy[stage]:
+                errors.append(
+                    f"  {stage}: authorization {auth!r} != policy "
+                    f"{auth_policy[stage]!r}"
+                )
             if stage in ea_policy:
                 expected = ea_policy[stage]
                 action = forge.get("action")

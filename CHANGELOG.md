@@ -7,6 +7,19 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased] — features/rc-2
 
+### Added — External-action `authorization` knob (`explicit` | `automated`)
+
+- Every `external-action` **must** set `authorization` (`explicit` or
+  `automated`); omission is invalid (no debt / no default).
+- `automated`: ForgeClient runs when `handoff.forge` requires are complete —
+  no interactive STOP. `explicit`: STOP for authorize, then Forge (previous
+  behavior).
+- Day-one: `spec-pr-action` + `wave-pr-action` = **`automated`**; all other
+  external-actions = **`explicit`**. No merge Forge action.
+- Contract: `delivery-contract.yaml` `forge.external_action.authorization`;
+  consumer algorithm in `references/forge-side-effects.md`.
+- Fixtures/tests/consistency enforce the field and day-one values.
+
 ### Changed — Wave Draft PR after loop-spec (Pass-1 uninterrupted coding)
 
 - Workflow: `pre-implement.pass` → `loop-spec` → `wave-pr-action` → `live-verify`

@@ -126,10 +126,36 @@ class WorkflowContractTest(unittest.TestCase):
         )
         self.assertEqual(forge.get("commit_workspace", {}).get("schema_default"), "disabled")
         self.assertIn("open_draft_pr", forge.get("actions", {}).get("enum") or [])
+        auth = (forge.get("external_action") or {}).get("authorization") or {}
+        self.assertEqual(set(auth.get("enum") or []), {"explicit", "automated"})
+        self.assertEqual(auth.get("required_on"), "every-external-action-node")
         self.assertEqual(
             forge.get("policy_fixture"),
             "tests/fixtures/workflow_forge_policy.json",
         )
+
+    def test_external_action_authorization_required(self) -> None:
+        policy = json.loads(
+            (ROOT / "tests" / "fixtures" / "workflow_forge_policy.json").read_text()
+        )
+        expected = policy["external_action_authorization"]
+        allowed = {"explicit", "automated"}
+        external = {
+            stage: node
+            for stage, node in self.workflow["nodes"].items()
+            if node["type"] == "external-action"
+        }
+        self.assertEqual(set(external), set(expected))
+        for stage, node in external.items():
+            with self.subTest(stage=stage):
+                auth = node.get("authorization")
+                self.assertIn(auth, allowed)
+                self.assertEqual(auth, expected[stage])
+        self.assertEqual(expected["spec-pr-action"], "automated")
+        self.assertEqual(expected["wave-pr-action"], "automated")
+        for stage, auth in expected.items():
+            if stage not in {"spec-pr-action", "wave-pr-action"}:
+                self.assertEqual(auth, "explicit", stage)
 
     def test_skill_nodes_have_commit_workspace(self) -> None:
         policy = json.loads(
