@@ -30,10 +30,13 @@ PASS 2 — separate walk (API Enter-at learning-extract)
 | Do | Don't |
 |----|--------|
 | Stop after `loop-spec` at `live-verify` | Auto-run `verify` / `ground-spec` / `learning-extract` on Pass-1 |
+| Treat unit/`make test` green as agent bar only | Treat unit green as live bar or skip human script run |
+| Expect human to run co-shipped `live_verify_dir` script at `live-verify` | Auto-dispatch `/verify` on Pass-1 |
 | Start closeout with Enter-at `learning-extract` | Treat `live-verify.pass` as resume into closeout skills (no authorize-resume in this slice) |
 | Ingest Learning-Extract artifact / baton into DB (INIT-007) | Require the skill to HTTP POST as success |
 
 `verify` is `dispatch: manual` — optional freeform path into `learning-extract`.
+Unit green ≠ live prove; human runs the planned live script at `live-verify`.
 
 ## Checkpoint ids (breaking vs older pins)
 

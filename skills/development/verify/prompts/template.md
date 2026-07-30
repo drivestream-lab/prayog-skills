@@ -16,9 +16,10 @@ Follow the full procedure in this skill's `SKILL.md` (and `references/` when pre
 
 ## Non-negotiables (summary)
 1. Resolve unit_tests_dir / live_verify_dir / debug_tests_dir from profile.
-2. Live verify proves the feature on a running stack; debug is not gating.
-3. Use toolchain commands from tests_readme/profile — do not hardcode stack commands.
+2. Live verify proves the feature on a running stack; human runs at checkpoint `live-verify`; debug is not gating.
+3. Use toolchain commands from tests_readme/profile — do not hardcode stack commands. Live verify_command is not unit / make test.
 4. Do not skip documented prerequisites (running server, bootstrap, config).
+5. This skill is optional (`dispatch: manual`); Pass-1 stop is human-checkpoint `live-verify`, not auto `/verify`.
 
 ## Envelope navigation (required)
 After choosing `outcome`, derive `next_candidates` and `human_checkpoint` from
@@ -28,7 +29,7 @@ pinned `workflow.yaml` for `(stage: {{skill_id}}, outcome)` per
 `human-checkpoint` — never because the artifact should be reviewed.
 Never set `true` on skill→skill edges (for example never on
 `pre-implement` / `loop-spec` / `verify` `pass`).
-Example: `verify` + `pass`/`skipped` → `ground-spec` → `human_checkpoint: false`.
+Example: `verify` + `pass`/`skipped` → `learning-extract` → `human_checkpoint: false`.
 
 
 ## Forge (required awareness)

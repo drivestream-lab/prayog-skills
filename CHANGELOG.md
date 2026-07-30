@@ -7,6 +7,21 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased] — features/rc-2
 
+### Added — Co-ship live-verify scripts (human executes)
+
+- Plan check **P15**: new/material product surface ⇒ same wave ships unit TEST
+  **and** FILE under `live_verify_dir`; `verify_command` is live script entry
+  (not unit / `make test` / bare N/A when P15 applies).
+- `/loop-spec`: implement verify FILEs; run check+unit only; handoff lists human
+  `{verify_command}`; never live verify as skill success.
+- `/pre-implement`: gate requires co-shipped live path when P15 applies; human
+  live-verify stub on checklist.
+- Verify policy: unit = agent bar; live script = human at checkpoint
+  `live-verify`; `/verify` stays `dispatch: manual` (optional).
+- Docs: `overview`, `for-gateflow`, README ladder.
+- Prompt packages bumped `@1.1.0` → `@1.2.0` for plan / pre-implement /
+  loop-spec / verify.
+
 ### Changed — Pass-1 live-verify stop + learning-extract closeout
 
 - Checkpoint ids ≡ purpose: `gate-1` → `prd-impact-acceptance`, `gate-2` →

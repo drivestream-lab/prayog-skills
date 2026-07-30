@@ -33,10 +33,13 @@ deciders: PE — spec-lgtm + Approve on exact head after full package
 | Approved meta PR head | `{SHA}` | CURRENT / STALE |
 | `check_command` | `{command}` | RESOLVED / MISSING |
 | `test_command` | `{command}` | RESOLVED / MISSING |
-| `verify_command` | `{command or N/A — reason}` | RESOLVED / N/A / MISSING |
+| `verify_command` | `{live script under live_verify_dir, or N/A — reason}` | RESOLVED / N/A / MISSING |
 | `ground_command` | `{command or N/A — reason}` | RESOLVED / N/A / MISSING |
 
 > Do not continue if any source is STALE or required command is MISSING.
+> `verify_command` is **live** verify (human-run at checkpoint `live-verify`),
+> not `{test_command}`. When P15 applies, N/A is invalid — co-ship a FILE under
+> `live_verify_dir` in the same wave.
 
 ## 0. Technical design reference
 
@@ -85,6 +88,11 @@ wave-scoped shadow ids like `REQ-W{n}`.
 | ID | Layer | Command | Proves |
 |----|-------|---------|--------|
 | TEST-W0-U | unit | (from tests_readme / profile) | REQ-* / TASK-* |
+| TEST-W0-L | live | `{live_verify_dir}/…` (human-run) | new/changed product surface (P15) |
+
+> When the wave FILE list adds/changes a product surface (P15), include ≥1
+> `live_verify_dir` FILE in **Files** and a live row here. Agent implements the
+> script; human executes it at `live-verify`.
 
 ---
 
@@ -137,7 +145,7 @@ wave-scoped shadow ids like `REQ-W{n}`.
 | Task | File | Action |
 |------|------|--------|
 | Update implementation-status.md | `docs/specification/as-built/implementation-status.md` | mark wave in_progress → complete |
-| Update tests/README.md | `tests/README.md` | add verify commands for new scripts |
+| Update tests/README.md | `tests/README.md` | add live-verify commands for co-shipped scripts |
 
 > **ADR lifecycle** — Draft and Accepted ADR files are created and accepted during
 > `/spec-technical-review` and the `technical-review-approval` checkpoint.
@@ -149,7 +157,7 @@ wave-scoped shadow ids like `REQ-W{n}`.
 
 | Check | Status |
 |-------|--------|
-| P1–P14 | |
+| P1–P15 | |
 
 ---
 
@@ -172,17 +180,18 @@ PE checklist (before spec-lgtm):
   [ ] Wave order and dependencies make sense
   [ ] Done-when criteria are observable and testable
   [ ] WorkManifest YAML (§9) correct — wave IDs W0, W1, … (one issue per wave)
-  [ ] P1–P14 checks all pass
+  [ ] P1–P15 checks all pass (including P15 co-ship when surface changes)
 
 After spec-lgtm + Approve + merge — **`/create-board-tickets`** from §9 (post-merge only):
   Create one GitHub Issue per wave (W0, W1, …) using §9 titles, bodies, depends_on
   Search for existing initiative/wave issues first; create only missing issues
-  Then: /pre-implement → /loop-spec → /verify (when applicable) → /ground-spec
+  Then Pass-1: /pre-implement → /loop-spec → live-verify (human runs co-shipped script)
+  Then Pass-2: /learning-extract → /ground-spec → wave-signoff
 ```
 
 ---
 
-## 10. Gate 2 unlock (PE — after plan on head)
+## 10. Coding-readiness unlock (PE — after plan on head)
 
 Present this section in chat when the plan is committed. **No GitHub side
 effects** until PE completes the unlock.
@@ -293,7 +302,7 @@ epic:
   title: "[feature] {INITIATIVE} — {short title}"
   codebase: {repo}
   spec_path: {SPEC_PATH}
-  verify_command: {make verify or profile verify command}
+  verify_command: {live script under live_verify_dir — not make test}
   body: |
     ## Objective
 
@@ -321,7 +330,7 @@ work:
     depends_on: []
     codebase: {repo}
     spec_path: {SPEC_PATH}
-    verify_command: {wave W0 verify command or make verify}
+    verify_command: {wave W0 live script under live_verify_dir}
     status: Backlog
     tasks:
       - id: TASK-W0-01
@@ -359,7 +368,7 @@ work:
       - W0
     codebase: {repo}
     spec_path: {SPEC_PATH}
-    verify_command: {wave W1 verify command}
+    verify_command: {wave W1 live script under live_verify_dir}
     status: Backlog
     tasks:
       - id: TASK-W1-01

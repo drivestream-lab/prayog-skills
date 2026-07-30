@@ -124,6 +124,10 @@ Rules:
 | `validate-requirements` | `findings` | `review-findings` (`skill`) | `false` |
 | `pre-implement` | `pass` | `loop-spec` (`skill`) | `false` |
 | `loop-spec` | `pass` | `live-verify` (`human-checkpoint`) | `true` |
+
+> At `live-verify`, the human runs the wave's planned live script
+> (`verify_command` under `live_verify_dir`) and inspects the feature — not
+> unit/`make test` alone. Optional skill `/verify` is separate (`dispatch: manual`).
 | `learning-extract` | `pass` | `ground-spec` (`skill`) | `false` |
 | `ground-spec` | `pass` | `wave-signoff` (`human-checkpoint`) | `true` |
 

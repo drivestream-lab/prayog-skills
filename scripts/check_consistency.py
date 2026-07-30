@@ -150,7 +150,7 @@ CHECK_REGISTRIES = [
     (
         "skills/development/spec-implementation-plan/references/checks.md",
         "P",
-        14,
+        15,
         [
             "skills/development/spec-implementation-plan/SKILL.md",
             "skills/development/spec-implementation-plan/references/output-template.md",

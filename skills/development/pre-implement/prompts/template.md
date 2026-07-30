@@ -17,8 +17,9 @@ Follow the full procedure in this skill's `SKILL.md` (and `references/` when pre
 ## Non-negotiables (summary)
 1. Gate check first — prior wave Ground Report exists and as-built row is human_approved.
 2. Read domain-filtered rules and relevant ADRs; cite concrete paths for this slice.
-3. Resolve check/test/verify/ground commands; stop on MISSING command.
+3. Resolve check/test/verify/ground commands; stop on MISSING command. When P15 applies, live `verify_command` under `live_verify_dir` is required (not unit / N/A).
 4. Stop if plan source-freshness or impact-map revision/scope digest is stale.
+5. Human runs the co-shipped live script at checkpoint `live-verify`; this skill does not execute it.
 
 ## Envelope navigation (required)
 After choosing `outcome`, derive `next_candidates` and `human_checkpoint` from

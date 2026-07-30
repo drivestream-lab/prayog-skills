@@ -55,6 +55,10 @@ PASS 2 (Enter-at learning-extract, or human /learning-extract)
 ```
 
 - `verify` is **manual** (optional aid) — not on the Pass-1 edge.
+- **Co-ship live verify:** when a wave adds/changes a product surface, the same
+  wave ships the live script under `live_verify_dir` (plan P15). `/loop-spec`
+  runs check+unit only; the human executes the script at `live-verify` before
+  Pass-2 closeout automation continues.
 - Checkpoints use **purpose-named ids** (`prd-impact-acceptance`,
   `coding-readiness`, `live-verify`, `wave-signoff`). GitHub labels stay
   lane-named (`impact-map-*`, `spec-*`).

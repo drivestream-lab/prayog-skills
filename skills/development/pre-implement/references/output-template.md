@@ -10,14 +10,15 @@
 |------|----------|--------|
 | Branch context | `develop` or `feature/INIT-*-w{N}-*` — not open `chore/*-spec-*` | [ ] ok / blocked |
 | Spec PR merged | Implementation plan on integration branch | [ ] yes / no |
-| Gate 2 at merge | Merged spec PR had `spec-lgtm` on head | [ ] verified / missing |
+| Coding-readiness at merge | Merged spec PR had `spec-lgtm` on head | [ ] verified / missing |
 | Board seed | Wave issue(s) from plan §9 exist; TASK ids present in wave body | [ ] seeded / partial / missing |
 | Plan source freshness | all upstream rows `CURRENT` | [ ] current / stale |
 | Impact-map repo scope | revision and scope digest match canonical handoff | [ ] match / stale |
 | `check_command` | resolved | [ ] command / missing |
 | `test_command` | resolved | [ ] command / missing |
-| `verify_command` | resolved or N/A with reason | [ ] command / N/A / missing |
+| `verify_command` | live script under `live_verify_dir` when P15 applies; else command or N/A with reason | [ ] command / N/A / missing |
 | `ground_command` | resolved or N/A with reason | [ ] command / N/A / missing |
+| Co-shipped live verify (P15) | If wave adds/changes product surface: FILE path under `live_verify_dir` listed | [ ] path / N/A (no surface) / missing |
 | Prior wave as-built row | `human_approved` | [ ] {wave id} = {status} |
 | Prior Ground Report exists | `reports/Ground-Report-{SPEC}-W{N-1}.md` | [ ] exists / missing |
 | Plan PE sign-off (W0 only) | Implementation-Plan §0 marked complete | [ ] complete / pending |
@@ -73,7 +74,7 @@
 - [ ] `as-built/implementation-status.md` — verification row for this wave
 - [ ] `tests_readme` — feature map row if verification coverage changes
 - [ ] Unit verification scope — edges and boundary behaviour (mocked dependencies)
-- [ ] Live verification — one end-to-end happy path per feature
+- [ ] Live verification — co-shipped script under `live_verify_dir` (human-run at `live-verify`)
 - [ ] ADR — update when this wave supersedes an Accepted ADR (requires PE review)
 
 ---
@@ -94,8 +95,20 @@
 |-------|----------------|---------------------------------------|
 | Static check | Formatting, linting, types, or equivalent repository checks | `{check_command}` |
 | Unit | Module logic, boundary behaviour, edge cases (no external I/O) | `{test_command}` |
-| Live verify | Product behaviour on running stack | `{verify_command}` or N/A — reason |
+| Live verify | Product behaviour on running stack (human-run at `live-verify`) | `{verify_command}` — path under `live_verify_dir` when P15; else N/A — reason |
 | Ground check | All FRs satisfied; boundaries respected | `{ground_command}` or N/A — reason |
+
+> When P15 applies: N/A or unit-only for live verify **blocks** the gate.
+> Agent implements the script in `/loop-spec`; does **not** run it as success.
+
+### Human live-verify (after loop-spec)
+
+When checklist PASS and coding is green, the human at checkpoint `live-verify`:
+
+- [ ] Run the documented `{verify_command}` (co-shipped script) in the sandbox
+- [ ] Experience / inspect the feature to the depth env access allows
+- [ ] Paste exit evidence (command + exit code / key output) on the wave issue or PR
+- [ ] Apply tip hygiene for any hotfixes before Enter-at Pass-2 closeout
 
 ---
 
@@ -104,7 +117,7 @@
 - Initiative: {initiative id}
 - Issue: #{board issue — from seed-work output}
 - Spec path: {docs/specification/product/…}
-- Verify command: {from board issue or plan}
+- Verify command (human): {live script from plan / board — not make test}
 - ADRs in scope: {ids}
 
 ---

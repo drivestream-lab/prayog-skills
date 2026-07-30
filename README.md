@@ -75,7 +75,7 @@ PM skills validate and refine PRDs. Dev skills implement spec slices in service 
 | **spec-technical-review** | PE resolves engineering decisions + drafts ADRs |
 | **spec-implementation-plan** | Wave plan + §9 WorkManifest YAML on spec branch |
 | **pre-implement** | Pre-flight before each implementation wave |
-| **loop-spec** | Implement → verify → fix per task |
+| **loop-spec** | Implement → check/unit → fix per task; deliver live-verify FILEs (do not run live) |
 | **ground-spec** | Wave complete — REQ validation + contracts for next wave |
 | **learning-extract** | After live-verify: structured L-* learning (closeout) |
 | **verify** | Manual live-verify aid (not on Pass-1 edge) |
@@ -113,10 +113,13 @@ PE sets spec-lgtm on exact head → Ready for review → Approve → merge
     ↓
 Merge spec PR → develop → **`/create-board-tickets`** (governance board + EPIC/wave tree)
     ↓
-Per wave Pass-1:  /pre-implement  →  /loop-spec  →  live-verify (human)
+Per wave Pass-1:  /pre-implement  →  /loop-spec  →  live-verify (human runs co-shipped script)
 Pass-2 closeout:  /learning-extract  →  /ground-spec  →  wave-signoff
 ```
 
+New/material product surfaces **co-ship** a live script under `live_verify_dir`
+in the same wave (plan P15). Agent bar is check+unit; human executes the script
+at `live-verify`. Optional `/verify` remains manual — not on the Pass-1 edge.
 Full process: [launchpad delivery workflow](https://github.com/drivestream-lab/launchpad/blob/main/playbook/delivery-workflow.md).
 
 Artifacts are the source of truth. GitHub labels are status projections only.

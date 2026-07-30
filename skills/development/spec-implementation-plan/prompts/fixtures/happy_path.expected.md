@@ -15,10 +15,11 @@ Produce a wave-level plan with REQ/TASK/FILE/TEST tables and §9 WorkManifest se
 Follow the full procedure in this skill's `SKILL.md` (and `references/` when present). Treat `SKILL.md` as the procedure SSOT; this brief is the invocation package only.
 
 ## Non-negotiables (summary)
-1. Never skip checks; every TASK has done-when, Implements REQ-*, and toolchain commands.
+1. Never skip checks (P1–P15); every TASK has done-when, Implements REQ-*, and toolchain commands.
 2. No shadow REQ-W* ids; wave ids W0, W1, … only.
 3. Commit plan to the open Draft spec PR; board seeding happens after merge via `/create-board-tickets`.
 4. Verify source freshness against canonical handoff before planning.
+5. P15: new/material product surface ⇒ co-ship unit TEST + FILE under `live_verify_dir`; `verify_command` is live (not unit / N/A when P15 applies).
 
 ## Envelope navigation (required)
 After choosing `outcome`, derive `next_candidates` and `human_checkpoint` from

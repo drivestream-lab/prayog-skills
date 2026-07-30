@@ -10,7 +10,10 @@ paths: AGENTS.md, tests/**, docs/specification/as-built/**
 
 # Verify
 
-Clarify **live verify** vs **unit** for one feature, or run verify when asked.
+Clarify **live verify** vs **unit** for one feature, or run verify when a human
+asks. This skill is an **optional manual aid** (`dispatch: manual`) — not on the
+Pass-1 edge. The Pass-1 gate after `/loop-spec` is human-checkpoint
+`live-verify` (human runs the co-shipped script from the plan).
 
 Read `AGENTS.md`, `tests_readme`, and `rules_glob` (include testing-verify rule when present). Policy: [references/verify-policy.md](references/verify-policy.md). Paths: `.harness/profile.yaml` or [references/layout-defaults.md](../pre-implement/references/layout-defaults.md).
 
@@ -18,19 +21,25 @@ Read `AGENTS.md`, `tests_readme`, and `rules_glob` (include testing-verify rule 
 
 Resolve `unit_tests_dir`, `live_verify_dir`, `debug_tests_dir` from profile.
 
-| Layer | Location (profile key) | Proves |
-|-------|------------------------|--------|
-| Unit | `unit_tests_dir` | Logic, branches, edge cases |
-| Verify | `live_verify_dir` | Product feature on **running** stack |
-| Debug | `debug_tests_dir` | Exploration — not gating |
+| Layer | Who runs | Location (profile key) | Proves |
+|-------|----------|------------------------|--------|
+| Unit | Agent (`/loop-spec`) | `unit_tests_dir` | Logic, branches, edge cases |
+| Live verify | Human (`live-verify`) | `live_verify_dir` | Product feature on **running** stack |
+| Debug | Exploratory | `debug_tests_dir` | Exploration — not gating |
 
-**No overlap:** do not assert the same behavior in unit and verify for the same feature.
+**Co-ship:** new/material product surfaces ship the live script in the same wave
+as the code (plan P15). `/loop-spec` delivers the FILE; it does not run live
+verify as success.
+
+**No overlap:** do not assert the same behavior in unit and live verify for the same feature.
 
 ## Toolchain vs live verify
 
 Commands come from `tests_readme` and profile toolchain — do not hardcode stack-specific commands in the skill.
 
 Do not skip prerequisites (running server, config files, bootstrap scripts) documented in `tests_readme`.
+
+Live `verify_command` is not `{test_command}` / unit-only.
 
 ## Output format (plan mode)
 

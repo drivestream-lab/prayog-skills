@@ -16,9 +16,9 @@ Follow the full procedure in this skill's `SKILL.md` (and `references/` when pre
 
 ## Non-negotiables (summary)
 1. Prerequisites: pre-implement checklist PASS; plan on develop (spec package merged).
-2. After each TASK run check_command and test_command; fix before advancing.
+2. After each TASK run check_command and test_command; fix before advancing. Implement live-verify FILE TASKs when planned — do not run live verify / verify_all as success.
 3. Bind each iteration to TASK-* + wave issue + implements REQ-*.
-4. When green, hand off with pass → live-verify (human prove). Closeout is separate.
+4. When green, hand off with pass → live-verify; handoff MUST list human verify_command (co-shipped script). Closeout is separate.
 
 ## Envelope navigation (required)
 After choosing `outcome`, derive `next_candidates` and `human_checkpoint` from

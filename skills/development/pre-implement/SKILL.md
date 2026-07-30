@@ -35,9 +35,13 @@ product code** unless the user explicitly asks after the checklist.
    invariants. Do not use language-specific syntax.
 8. Verify the plan's source-freshness table is CURRENT and its impact-map
    revision/scope digest still match the canonical handoff. Stop on stale input.
-9. Resolve `check_command` and `test_command`; resolve `verify_command` and
-   `ground_command` when applicable. If the plan/profile/`AGENTS.md`/
-   `tests_readme` cannot supply a required command, stop with MISSING command.
+9. Resolve `check_command` and `test_command`. Resolve `verify_command` as the
+   **live** script under `live_verify_dir` when the wave plan triggers P15
+   (new/material product surface) — **FAIL** the gate on bare N/A or
+   unit-only (`make test` / `{test_command}`). Resolve `ground_command` when
+   applicable. If the plan/profile/`AGENTS.md`/`tests_readme` cannot supply a
+   required command, stop with MISSING command. The human runs
+   `{verify_command}` at checkpoint `live-verify`; this skill does not execute it.
 10. Confirm board seed from plan §9: **EPIC** issue exists, every declared wave
     issue exists, and waves are **sub-issues of the EPIC** on the programme
     board (governance `project_board.name`). Run `/create-board-tickets` if missing.

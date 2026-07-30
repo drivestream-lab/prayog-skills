@@ -36,10 +36,14 @@ Conventions: `../../../references/id-conventions.md`.
    `develop` (spec package merged with `spec-lgtm` on merge head).
 3. After each **TASK**, run `{check_command}` and `{test_command}` from the
    harness profile (or `tests_readme`). Both must pass before committing.
+   Implement live-verify **FILE** TASKs (scripts under `live_verify_dir`) when
+   the plan includes them — deliver the artifact; do **not** execute live
+   verify, `verify_all`, or `{verify_command}` as this skill's success bar.
 4. Fix failures before moving to the next TASK — do not accumulate failures.
 5. When all TASKs are green: **stop** for human checkpoint `live-verify`. Do
    **not** run `/ground-spec` or `/learning-extract` in this hop. Do not
-   self-approve the wave.
+   self-approve the wave. Handoff **MUST** list the human `{verify_command}`
+   (co-shipped live script path/command).
 6. Do not skip check/test steps to save time.
 7. **Bind execution** — each iteration names `TASK-W{n}-{nn}`, the wave board
    issue URL/number, and `implements: [REQ-…]` from the plan / wave body.
@@ -56,8 +60,8 @@ Conventions: `../../../references/id-conventions.md`.
 - Pre-implement checklist — produced by `/pre-implement` for this wave
 - `{check_command}` — static checks (from harness profile or `AGENTS.md`)
 - `{test_command}` — unit verification (from harness profile or `tests_readme`)
-- `{verify_command}` — documented for the **human** live-verify stop (not run as
-  success criteria of this skill)
+- `{verify_command}` — **human** live-verify entry (script under `live_verify_dir`);
+  document on handoff; **never** run as exit criteria of this skill
 
 ## Loop body (each TASK iteration)
 
@@ -70,8 +74,9 @@ Conventions: `../../../references/id-conventions.md`.
 6. When TASK is green: commit (message cites `TASK-*`), clear that blocker, move
    to next TASK.
 7. After all TASKs are green: hand off with `pass` → pin next `live-verify`
-   (human prove + patch). Optional: note applicable `{verify_command}` for the
-   human — do not treat running it as this skill's success.
+   (human runs co-shipped script + inspects feature). Handoff **MUST** include
+   `{verify_command}` for the human. Do **not** run live verify / `verify_all`
+   / optional `/verify` as this skill's success.
 
 ## Stop conditions
 

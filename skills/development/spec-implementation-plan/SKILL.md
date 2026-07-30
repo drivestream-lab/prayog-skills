@@ -42,10 +42,14 @@ the board after spec PR merge**.
 9. Resolve canonical `check_command`, `test_command`, `verify_command`, and
    `ground_command` before planning. Required commands may come from the
    consumer profile, `AGENTS.md`, or `tests_readme`; missing required commands
-   block the plan. Use N/A with reason only when a layer is not applicable.
-10. Commit the plan to the **same Draft spec PR**. Gate 2 label stays
-    **`spec-pending`**. After T5, present the **Gate 2 unlock checklist** from
-    the output template so PE knows when to set `spec-lgtm`.
+   block the plan. `verify_command` is the **live** script entry under
+   `live_verify_dir` — never `{test_command}` / unit-only. Use N/A with reason
+   only when a layer is not applicable. When P15 applies (new/material product
+   surface), bare N/A or unit-as-live is invalid — co-ship the verify FILE in
+   the same wave (see [references/checks.md](references/checks.md) P15).
+10. Commit the plan to the **same Draft spec PR**. Coding-readiness label stays
+    **`spec-pending`**. After T5, present the **coding-readiness unlock
+    checklist** from the output template so PE knows when to set `spec-lgtm`.
 
 ## Inputs
 
@@ -89,8 +93,8 @@ Run **while the Draft spec PR is open**, **before spec merge**, after:
    `/spec-technical-review`, accepted during PE review — do not add promotion
    tasks); cite those ADR ids in TASK **ADR notes**; collect
    `codebase`/`spec_path`/`verify_command` per TASK
-5. **T4 Execute** — write plan; build WorkManifest seed section; run P1–P14 checks; commit to spec branch
-6. **T5 Verify** — self-contained plan readable by a fresh session; WorkManifest YAML is valid; present Gate 2 unlock checklist (§10) in chat for PE
+5. **T4 Execute** — write plan; build WorkManifest seed section; run P1–P15 checks; commit to spec branch
+6. **T5 Verify** — self-contained plan readable by a fresh session; WorkManifest YAML is valid; present coding-readiness unlock checklist (§10) in chat for PE
 
 ## Output
 
