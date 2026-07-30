@@ -12,7 +12,9 @@ Orientation for orchestrator / AgentRunner maintainers. Pin SSOT:
 3. **Same legality** as human invoke (`invocation-mode-is-not-an-exemption`).
 4. Auto-dispatch a skill **only** when `dispatch: orchestrated` and programme
    trigger + handoff authorize.
-5. On `type: human-checkpoint` or `external-action` — **STOP** (auth / human).
+5. On `type: human-checkpoint` — **STOP** (human). On `type: external-action`
+   — honor pin `authorization` (`explicit` ⇒ STOP then Forge; `automated` ⇒
+   ForgeClient when requires complete, no interactive STOP).
 6. After a content hop: apply `forge.commit_workspace` / next `external-action`
    via **ForgeClient** — never auto-run `skills/forge/*`.
 7. **WorkManifest contract** — before remounting a pin that expects
@@ -21,10 +23,8 @@ Orientation for orchestrator / AgentRunner maintainers. Pin SSOT:
    Reject unsupported `apiVersion` / `kind` pairs fail-closed. Do not invent a
    Gateflow-local manifest schema.
 8. **`authorization` on every external-action** — required `explicit` |
-   `automated`. Missing/unknown → fail closed. `automated` ⇒ ForgeClient
-   without interactive STOP when requires are complete; `explicit` ⇒ STOP
-   then authorize. Day-one: `spec-pr-action` and `wave-pr-action` are
-   `automated`; others `explicit`.
+   `automated`. Missing/unknown → fail closed. Day-one: `spec-pr-action` and
+   `wave-pr-action` are `automated`; others `explicit`.
 
 ## Pass-1 / Pass-2 (implement lane)
 
@@ -87,8 +87,9 @@ WorkManifest versions and consume the exact pinned contract before BoardService
 / ForgeClient seed or walk.
 
 Content skills still fill `handoff.forge` only — they never commit, push,
-branch, open PRs, apply labels, or create board issues. Gateflow must STOP on
-`wave-pr-action` and must **not** merge at `wave-signoff`.
+branch, open PRs, apply labels, or create board issues. On remount, Gateflow
+must honor `authorization` (automated Draft PR open on `spec-pr-action` /
+`wave-pr-action`) and must **not** merge at `wave-signoff`.
 
 ## Out of scope (Initiative C2 — deferred)
 
