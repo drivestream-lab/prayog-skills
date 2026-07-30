@@ -16,6 +16,9 @@ See also: [id-conventions.md](id-conventions.md).
 | Feasibility | `{reports_dir}/Initiative-Feasibility-Report-{INIT}.md` | digests |
 | Technical review | `{reports_dir}/Technical-Review-{INIT}.md` | digests |
 | Implementation plan | `{reports_dir}/Implementation-Plan-{INIT}.md` | digests |
+| Pre-implement checklist | `{reports_dir}/Pre-Implement-{INIT}-W{N}.md` | per wave (new wave = new file) |
+| Wave execution | `{reports_dir}/Wave-Execution-{INIT}-W{N}.md` | per wave (new wave = new file) |
+| Live verify | `{reports_dir}/Live-Verify-{INIT}-W{N}.md` | per wave (new wave = new file) |
 | Ground report | `{reports_dir}/Ground-Report-{SPEC}-W{N}.md` | per wave (new wave = new file) |
 
 `{reports_dir}` defaults: meta `prd/reports`; app `docs/specification/reports`.
@@ -31,8 +34,10 @@ Resolve from `.harness/profile.yaml` when present.
 3. **Chat must name the canonical path** (“updated
    `prd/reports/Validation-Report-INIT-….md` revision N”), never imply a new
    filename family.
-4. **Ground reports are per-wave** — `…-W0.md`, `…-W1.md` are different
-   concerns, not revisions of one file.
+4. **Per-wave implement-lane artifacts** — `Pre-Implement-…-W{N}`,
+   `Wave-Execution-…-W{N}`, `Live-Verify-…-W{N}`, and
+   `Ground-Report-…-W{N}` are different concerns per wave, not revisions of
+   one file.
 5. **ADRs** use `adr-{NNN}-{slug}.md` lifecycle (Draft → Accepted), not
    `adr-…-rev2.md`.
 6. If a non-canonical sibling already exists from older runs, **migrate**:

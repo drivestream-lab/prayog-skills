@@ -10,16 +10,21 @@ You are executing the **pre-implement** skill (Pre-implement (wave pre-flight)).
 - skill_id: {{skill_id}}
 
 ## Instruction
-Produce the pre-flight checklist for one wave slice. Do not write product code unless explicitly asked after the checklist.
+Produce the gate-only pre-flight checklist for one wave slice. Write
+`{reports_dir}/Pre-Implement-{INIT}-W{N}.md`. Never open a branch and never
+implement product code — even if asked; implementation belongs to `/loop-spec`.
 
 Follow the full procedure in this skill's `SKILL.md` (and `references/` when present). Treat `SKILL.md` as the procedure SSOT; this brief is the invocation package only.
 
 ## Non-negotiables (summary)
-1. Gate check first — prior wave Ground Report exists and as-built row is human_approved.
-2. Read domain-filtered rules and relevant ADRs; cite concrete paths for this slice.
-3. Resolve check/test/verify/ground commands; stop on MISSING command. When P15 applies, live `verify_command` under `live_verify_dir` is required (not unit / N/A).
-4. Stop if plan source-freshness or impact-map revision/scope digest is stale.
-5. Human runs the co-shipped live script at checkpoint `live-verify`; this skill does not execute it.
+1. Gate check first — prior wave Ground Report exists and as-built row is human_approved. Board/branch/PR state is read-only.
+2. Consume canonical §9 WorkManifest (`prayog/v1`); fail closed when `workmanifest_contract` fails, a TASK lacks exit proof, or an applicable wave lacks live-verification contract/script.
+3. Read domain-filtered rules and relevant ADRs; cite concrete paths for this slice.
+4. Resolve check/test/verify/ground commands; stop on MISSING command. When P15 applies, live `verify_command` under `live_verify_dir` is required (not unit / N/A).
+5. Stop if plan source-freshness or impact-map revision/scope digest is stale.
+6. When board/wave-head readiness is absent: emit Forge/external-action readiness — do not invoke mutation.
+7. Human runs the co-shipped live script at checkpoint `live-verify`; this skill does not execute it.
+8. Select outcome deterministically (`pass` / `needs-input` / `blocked` / `stale` / `failed`) per `SKILL.md`.
 
 ## Envelope navigation (required)
 After choosing `outcome`, derive `next_candidates` and `human_checkpoint` from
@@ -29,14 +34,16 @@ pinned `workflow.yaml` for `(stage: {{skill_id}}, outcome)` per
 `human-checkpoint` — never because the artifact should be reviewed.
 Never set `true` on skill→skill edges (for example never on
 `pre-implement` / `loop-spec` / `verify` `pass`).
-Example: `pre-implement` + `pass` → `loop-spec` → `human_checkpoint: false`.
+Example: `pre-implement` + `pass` → `wave-pr-action` (`external-action`) →
+`human_checkpoint: false`, `external_action: true`. On pass, fill complete
+`handoff.forge` for wave Draft-PR (`title`, `body_path`, `head_ref`, `base_ref`).
 
 
 ## Forge (required awareness)
 Content skills fill `handoff.forge` when the pin expects it; they do **not**
 execute forge mutations. Human forge skills (`/commit-workspace`,
 `/open-draft-pr`, `/create-board-tickets`) or Gateflow ForgeClient apply pin ⋉
-handoff. Never apply `*-lgtm`. See `references/forge-side-effects.md#content-producers`.
+handoff. Never apply `*-lgtm`. Never merge. See `references/forge-side-effects.md#content-producers`.
 
 ## Workspace
 Root: `{{workspace}}`.

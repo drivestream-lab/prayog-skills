@@ -46,6 +46,7 @@ REQ-07 ──cited by──▶ impact scope, spec row, plan TASK, ground-spec ro
 |------|-------|----------|---------|
 | Validation finding | `VF-{nn}` | `validate-requirements` | One finding instance |
 | Feasibility finding | `FF-{nn}` | `initiative-feasibility` | One feasibility finding |
+| Ground finding | `GF-{nn}` | `ground-spec` | One grounding discrepancy |
 | Change to apply | `CHG-{nn}` | `review-findings` / `update-documents` | Approved edit unit |
 | Product question (PE) | `PQ-{nn}` | engg-reviews | PE question on Meta PR (optional pack) |
 
@@ -58,6 +59,8 @@ Rules:
 - Resolution and `update-documents` link **`VF-*` → `CHG-*`**.
 - Feasibility handoff blockers use **`FF-*`**, never bare `F-12` (conflicts
   with check id `F12` and looks like an FR).
+- Grounding discrepancies use **`GF-*`**. Do **not** reuse feasibility-owned
+  `FF-*` for new grounding findings.
 - Spec open engineering questions stay **`Q-{n}`** in the spec file; PRD open
   questions use **`OQ-*`**. Do not mix registries.
 
@@ -96,7 +99,9 @@ Stage-local rule numbers stay as documentation of which check fired:
 |-------|----------|
 | validate-requirements | `1`…`11`, `S1`…`S4` |
 | initiative-feasibility | `F1`…`F14` |
-| spec-implementation-plan | `P1`…`P14` |
+| spec-technical-review | `T1`…`T12` |
+| spec-implementation-plan | `P1`…`P16` |
+| ground-spec | `G1`…`G10` |
 | create-board-tickets (forge) | `B1`…`B8` |
 | learning-extract | `L-01`…`L-{nn}` |
 | engg-reviews | `C0`…`C12` |
@@ -112,6 +117,7 @@ alone as a handoff blocker.
 
 - `VF-03`, `VF-11`
 - `FF-02`
+- `GF-01` (ground findings from `ground-spec`)
 - `L-01`
 - `OQ-04`
 - `TASK-W0-03`
@@ -123,7 +129,7 @@ Not: `1`, `F-12`, `Critical #2`, free-text sentences.
 ## Coherence bar
 
 1. Product ids (`CAP`, `REQ`, `CTR`, `OQ`) are assigned once and never recycled.
-2. Process ids (`VF`, `FF`, `CHG`) are stable within a canonical report file’s
-   revision chain.
+2. Process ids (`VF`, `FF`, `GF`, `CHG`) are stable within a canonical report
+   file’s revision chain.
 3. Delivery ids (`W`, `TASK`) never rename product ids.
 4. Check ids document which rule fired — not primary keys.

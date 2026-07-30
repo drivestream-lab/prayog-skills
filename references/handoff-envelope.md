@@ -95,6 +95,38 @@ Also set `external_action` from the pin:
 external_action = (next.type == "external-action")
 ```
 
+## Outcome vocabulary (examples)
+
+Outcomes are stage-local and must be edges that exist on the pin for that
+stage. Same word, different next node — always read `workflow.yaml`.
+
+| Outcome | Typical meaning (content skills) |
+|---------|----------------------------------|
+| `pass` | Stage contract satisfied; advance on the happy path |
+| `findings` | Blocking engineering findings need an owning stage (e.g. PE review) |
+| `needs-input` | Required answer or source is missing/unreadable; human clarification |
+| `blocked` | Authoritative source exists and shows an unsatisfied gate |
+| `stale` | Digest/head/revision mismatch vs canonical inputs |
+| `failed` | Execution/validation failure on otherwise valid inputs |
+| `skipped` | Only where the pin defines a skip edge (e.g. `verify`) |
+
+Illustrations (live edges always come from the pin):
+
+| stage | outcome | next (example) |
+|-------|---------|----------------|
+| `initiative-feasibility` | `findings` | `spec-technical-review` |
+| `initiative-feasibility` | `needs-input` | `spec-human-decision` |
+| `spec-technical-review` | `stale` | `initiative-feasibility` |
+| `spec-implementation-plan` | `blocked` | `spec-human-decision` |
+
+No branch, commit, PR, label, issue, or cleanup operation is added by choosing
+an outcome — Forge mutations stay on `external-action` nodes / forge skills.
+
+Human-checkpoint evidence (e.g. at `wave-signoff`) may record **reviewed head
+SHA** and **merge commit SHA** after the human merges manually. That is
+checkpoint state, **not** `handoff.forge` authorization and never a Forge merge
+action.
+
 ## Derive from pinned `workflow.yaml`
 
 After choosing `outcome`, producers **must** fill navigation fields from the
@@ -122,7 +154,7 @@ Rules:
 | stage | outcome | next (example) | `human_checkpoint` |
 |-------|---------|----------------|--------------------|
 | `validate-requirements` | `findings` | `review-findings` (`skill`) | `false` |
-| `pre-implement` | `pass` | `loop-spec` (`skill`) | `false` |
+| `pre-implement` | `pass` | `wave-pr-action` (`external-action`) | `false` (`external_action: true`) |
 | `loop-spec` | `pass` | `live-verify` (`human-checkpoint`) | `true` |
 
 > At `live-verify`, the human runs the wave's planned live script

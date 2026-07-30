@@ -8,6 +8,18 @@ workflow: workflow.yaml
 handoff_spec: references/handoff-envelope.md
 forge_spec: references/forge-side-effects.md
 prompt_package_spec: references/prompt-package-contract.md
+workmanifest_spec: references/workmanifest-contract.md
+
+# WorkManifest — immutable approved execution intent (epic/waves/tasks/deps/
+# files/exit proof/wave verification). Board status and runtime evidence live
+# in owning systems/artifacts, not in the approved manifest. Walker-neutral:
+# human or Gateflow. Launchpad materializes the pin only.
+workmanifest:
+  identity:
+    apiVersion: prayog/v1
+    kind: WorkManifest
+  nature: immutable-approved-execution-intent
+  validator: scripts/workmanifest_contract.py
 
 outcomes:
   - pass
@@ -72,6 +84,9 @@ dispatch:
 #
 # Skill nodes: forge.commit_workspace only (absent → disabled).
 # External-action nodes: forge.action + draft/labels/requires as applicable.
+# `open_draft_pr` is reused for PRD/spec Draft PRs and for wave Draft-PR
+# preparation (`wave-pr-action`). There is **no** merge Forge action — wave
+# approval and merge remain human-only at `wave-signoff`.
 # Head/ref binding is run context (not pin). Approval labels (*-lgtm) never auto.
 #
 # Human skill id = forge.action with '_' → '-'. Orchestrators never auto-dispatch

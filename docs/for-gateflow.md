@@ -15,12 +15,17 @@ Orientation for orchestrator / AgentRunner maintainers. Pin SSOT:
 5. On `type: human-checkpoint` or `external-action` — **STOP** (auth / human).
 6. After a content hop: apply `forge.commit_workspace` / next `external-action`
    via **ForgeClient** — never auto-run `skills/forge/*`.
+7. **WorkManifest contract** — before remounting a pin that expects
+   `prayog/v1`, consume the **exact pinned** Prayog contract
+   (`references/workmanifest-contract.md` + `scripts/workmanifest_contract.py`).
+   Reject unsupported `apiVersion` / `kind` pairs fail-closed. Do not invent a
+   Gateflow-local manifest schema.
 
 ## Pass-1 / Pass-2 (implement lane)
 
 ```text
 PASS 1 — Enter-at pre-implement (continuous walk)
-  pre-implement → loop-spec → live-verify
+  pre-implement → wave-pr-action → loop-spec → live-verify
        live-verify.pass → wave-awaiting-closeout   # terminal park
 
 PASS 2 — separate walk (API Enter-at learning-extract)
@@ -29,14 +34,19 @@ PASS 2 — separate walk (API Enter-at learning-extract)
 
 | Do | Don't |
 |----|--------|
+| STOP on `wave-pr-action`; run ForgeClient `open_draft_pr` after auth | Auto-merge or invent a merge Forge action |
 | Stop after `loop-spec` at `live-verify` | Auto-run `verify` / `ground-spec` / `learning-extract` on Pass-1 |
 | Treat unit/`make test` green as agent bar only | Treat unit green as live bar or skip human script run |
 | Expect human to run co-shipped `live_verify_dir` script at `live-verify` | Auto-dispatch `/verify` on Pass-1 |
+| Validate §9 via pinned WorkManifest contract before board seed / coding | Accept unsupported manifest versions or mutate approved intent at runtime |
+| Require reviewed head SHA + human merge SHA at `wave-signoff.pass` | Let Gateflow/Forge merge the wave PR |
 | Start closeout with Enter-at `learning-extract` | Treat `live-verify.pass` as resume into closeout skills (no authorize-resume in this slice) |
 | Ingest Learning-Extract artifact / baton into DB (INIT-007) | Require the skill to HTTP POST as success |
 
 `verify` is `dispatch: manual` — optional freeform path into `learning-extract`.
 Unit green ≠ live prove; human runs the planned live script at `live-verify`.
+BoardService / ForgeClient **project** epic/wave/task summaries onto the board;
+board text is not a second WorkManifest authority.
 
 ## Checkpoint ids (breaking vs older pins)
 
@@ -57,6 +67,31 @@ Unit green ≠ live prove; human runs the planned live script at `live-verify`.
 - Learning payload: `{reports_dir}/Learning-Extract-{INIT}-W{N}.md` with
   markdown + fenced `learning_extract:` YAML (`L-*`). Worker ingest; skill does
   not own Postgres.
+
+## Migration / remount
+
+Development-stage outcome rubrics, T12, `GF-*` / G1–G10, WorkManifest
+`prayog/v1` consumer alignment, `wave-pr-action`, and Forge-boundary cleanup
+land only when programmes remount a new pin tag. Open initiatives keep their
+prior pinned behavior until an explicit remount; migrated initiatives rerun from
+the earliest materially affected stage. On remount, reject unsupported
+WorkManifest versions and consume the exact pinned contract before BoardService
+/ ForgeClient seed or walk.
+
+Content skills still fill `handoff.forge` only — they never commit, push,
+branch, open PRs, apply labels, or create board issues. Gateflow must STOP on
+`wave-pr-action` and must **not** merge at `wave-signoff`.
+
+## Out of scope (Initiative C2 — deferred)
+
+Do **not** claim these as implemented on this remount:
+
+- Evidence probes inside `initiative-feasibility` (need disposable env,
+  ledger, timeout, cleanup)
+- Blocking security-gate / T13 (needs coordinated pin + tenant role + reviewer
+  evidence contracts)
+- Task-level `parallel_safe` / concurrency / resource locks
+- Branch cleanup / `delete_branch` Forge action
 
 ## Partner handoff
 

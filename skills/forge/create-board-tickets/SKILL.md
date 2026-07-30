@@ -32,22 +32,35 @@ the implementation plan.
    `{workspace}/{meta_repo}/config/governance-*.yaml` → `project_board.name`.
    If missing, run `launchpad board-bind --client <id>` and stop. Governance
    **wins** over plan §9 `target.project` free text.
-4. Parse §9 WorkManifest YAML. Require `epic`, `work[]` with wave ids `W0`,
-   `W1`, …. Each wave must list `tasks[]` (or TASK table in `body`) with stable
-   `TASK-*` ids and `implements: [REQ-…]`.
-5. **Idempotent** — search existing issues by initiative label; create only
+4. **Validate WorkManifest before mutate** — parse §9 YAML and run
+   `scripts/workmanifest_contract.py` / `validate_workmanifest` for
+   `apiVersion: prayog/v1` + `kind: WorkManifest`. Require
+   `workmanifest-contract-pass` (plan P16). Reject unsupported
+   `apiVersion`/`kind`. Do **not** create issues on a failing contract.
+   Require `epic`, `work[]` with wave ids `W0`…`Wn`, and each wave's
+   `tasks[]` with stable `TASK-*`, `implements`, `depends_on`, exit proof,
+   and verification as defined in
+   [`../../../references/workmanifest-contract.md`](../../../references/workmanifest-contract.md).
+5. **Projection only** — project epic/wave/task **summaries** from the
+   canonical WorkManifest into board issue titles/bodies. Board issue text is
+   **never** a second authority: do not invent TASK ids, REQ mappings,
+   dependencies, exit criteria, or proof summaries that are absent from §9.
+6. **Idempotent** — search existing issues by initiative label; create only
    missing items; link existing waves under EPIC when parent missing.
-6. **Hierarchy** — EPIC first, then each wave as sub-issue on the same org
-   Project. Initiative label on every issue. Wave bodies retain the TASK table.
-7. **Explicit authorization before mutate.** Present the seed plan; create only
-   after the human confirms.
-8. Never apply approval labels (`*-lgtm`). Tool-neutral Forge tooling (`gh`,
+7. **Hierarchy** — EPIC first, then each wave as sub-issue on the same org
+   Project. Initiative label on every issue. Wave bodies retain TASK ids,
+   REQ mappings, dependencies, exit criteria, and proof summary from the
+   manifest.
+8. **Explicit authorization before mutate.** Present the seed plan; create only
+   after the human confirms. Authorization, branch, commit, PR, label, and
+   issue-creation behavior otherwise unchanged.
+9. Never apply approval labels (`*-lgtm`). Tool-neutral Forge tooling (`gh`,
    project APIs, …) — examples only.
-9. If tooling unavailable, print exact commands from
-   [references/output-template.md](references/output-template.md) and stop —
-   do not claim `seeded`.
-10. Ids: `../../../references/id-conventions.md`. Paths:
-    `../../../references/artifact-write-contract.md`.
+10. If tooling unavailable, print exact commands from
+    [references/output-template.md](references/output-template.md) and stop —
+    do not claim `seeded`.
+11. Ids: `../../../references/id-conventions.md`. Paths:
+    `../../../references/artifact-write-contract.md`. Checks: **B1–B8**.
 
 ## Inputs
 
@@ -59,7 +72,7 @@ the implementation plan.
 
 ## Prerequisite
 
-- Spec PR **merged**; P14-valid WorkManifest in §9
+- Spec PR **merged**; WorkManifest contract pass on §9 (`workmanifest-contract-pass` / P16)
 - Programme board configured (`project_board.enabled` + `name`)
 - Pin next step: `board-tickets-action` (`forge.action: create_board_tickets`)
 
@@ -69,15 +82,19 @@ the implementation plan.
    integration HEAD
 2. **T1 Verify merge gate** — plan on integration; optional closed spec PR with
    `spec-lgtm`; stop if still on open spec branch
-3. **T2 Dedupe search** — existing issues by initiative label (read-only)
-4. **T3 Present seed plan** — EPIC + waves, board name/URL, create vs existing;
-   ask for authorization
-5. **T4 Execute** (authorized only) — create/update EPIC and waves; project
-   links / sub-issues per board model
-6. **T5 Report** — issue URLs; `signals.seeded` / `already-seeded`; handoff
+3. **T1b Validate WorkManifest** — run shared contract validator; stop on any
+   structured error (unsupported version, DAG/exit/live violations)
+4. **T2 Dedupe search** — existing issues by initiative label (read-only)
+5. **T3 Present seed plan** — EPIC + waves + preserved TASK metadata summary,
+   board name/URL, create vs existing; ask for authorization
+6. **T4 Execute** (authorized only) — create/update EPIC and waves; project
+   links / sub-issues per board model; wave bodies carry projected TASK
+   metadata from the manifest
+7. **T5 Report** — issue URLs; preserved task metadata; `signals.seeded` /
+   `already-seeded`; handoff
 
 Use [references/output-template.md](references/output-template.md) and
-[references/checks.md](references/checks.md).
+[references/checks.md](references/checks.md) (B1–B8).
 
 ## Workflow handoff
 
@@ -87,4 +104,4 @@ Use [references/output-template.md](references/output-template.md) and
 3. After successful seed, programme continues at `pre-implement` per pin
    (`board-tickets-action` `pass` → `pre-implement`). Do not invent graph edges.
 4. Honor pin `requires` on `board-tickets-action` (spec merged, plan current,
-   WorkManifest P14).
+   `workmanifest-contract-pass`).

@@ -5,21 +5,28 @@ You are executing the **verify** skill (Verify (live verify discipline)).
 ## Bound context
 - ticket: FORGE-1001
 - initiative: INIT-PRAYOG-SKILLS-003-PROMPTS
-- handoff_path: prd/reports/Impact-Map-INIT-PRAYOG-SKILLS-003-PROMPTS.md
+- handoff_path: /tmp/handoff-baton.yaml
 - workspace: /workspace/example-repo
 - skill_id: verify
 
 ## Instruction
-Clarify or run live-verify vs unit for one feature. No overlap between unit and verify for the same behavior.
+Clarify or run live-verify vs unit for one feature. Write
+`Live-Verify-{INIT}-W{N}.md` with expected-versus-observed evidence. Bind
+environment and build at runtime. No overlap between unit and verify for the
+same behavior. Command execution is verification tooling — never commit,
+update PR/tracker, or apply labels; emit Forge readiness when publication is
+needed.
 
 Follow the full procedure in this skill's `SKILL.md` (and `references/` when present). Treat `SKILL.md` as the procedure SSOT; this brief is the invocation package only.
 
 ## Non-negotiables (summary)
-1. Resolve unit_tests_dir / live_verify_dir / debug_tests_dir from profile.
-2. Live verify proves the feature on a running stack; human runs at checkpoint `live-verify`; debug is not gating.
-3. Use toolchain commands from tests_readme/profile — do not hardcode stack commands. Live verify_command is not unit / make test.
-4. Do not skip documented prerequisites (running server, bootstrap, config).
-5. This skill is optional (`dispatch: manual`); Pass-1 stop is human-checkpoint `live-verify`, not auto `/verify`.
+1. Resolve unit_tests_dir / live_verify_dir / debug_tests_dir from profile. Follow verify-policy layer ownership (unit, integration/contract, smoke, sandbox, debug).
+2. Live verify proves the feature on a running stack; human runs at checkpoint `live-verify`; debug is not gating. Sandbox runs require cleanup and stop conditions.
+3. Require expected-versus-observed human evidence in `Live-Verify-*`. Forbid duplicating unit-only assertions in smoke/sandbox.
+4. Use toolchain commands from tests_readme/profile — do not hardcode stack commands. Live verify_command is not unit / make test.
+5. Do not skip documented prerequisites (running server, bootstrap, config).
+6. This skill is optional (`dispatch: manual`); Pass-1 stop is human-checkpoint `live-verify`, not auto `/verify`.
+7. Select outcome deterministically (`pass` / `skipped` / `findings` / `blocked` / `failed`) per `SKILL.md`.
 
 ## Envelope navigation (required)
 After choosing `outcome`, derive `next_candidates` and `human_checkpoint` from
@@ -44,9 +51,9 @@ Root: `/workspace/example-repo`.
 ## Handoff baton (required)
 1. Follow this skill's `SKILL.md`. Persist the usual durable artifact under
    `/workspace/example-repo` and append the `handoff:` envelope to that artifact.
-2. Then **overwrite** the file at exactly `prd/reports/Impact-Map-INIT-PRAYOG-SKILLS-003-PROMPTS.md` with the same
+2. Then **overwrite** the file at exactly `/tmp/handoff-baton.yaml` with the same
    `handoff:` envelope (plain YAML or a single fenced yaml block).
-3. Do not leave `prd/reports/Impact-Map-INIT-PRAYOG-SKILLS-003-PROMPTS.md` empty. Do not rely on docs-only or chat-only
+3. Do not leave `/tmp/handoff-baton.yaml` empty. Do not rely on docs-only or chat-only
    handoff for orchestrator continuation.
-4. If `prd/reports/Impact-Map-INIT-PRAYOG-SKILLS-003-PROMPTS.md` already contains a prior envelope, you may read it for
+4. If `/tmp/handoff-baton.yaml` already contains a prior envelope, you may read it for
    context; your final write replaces it with this stage's envelope.

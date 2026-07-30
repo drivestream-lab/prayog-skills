@@ -45,14 +45,23 @@ This skill bridges the gap — it reads the PRD and drafts structured spec
 7. This repo must be `affected` in the latest map and not deferred or blocked.
    Record the repo's `scope_digest` in the spec. If any gate fails: stop.
 8. **No forge mutations in this skill.** Do not create a branch, commit, push,
-   PR, comment, review request, or label here. Fill `handoff.forge` readiness
-   for `open_draft_pr` and recommend `/open-draft-pr` (or wait for the
-   orchestrator ForgeClient on `spec-pr-action`). See
+   PR, comment, review request, apply labels, create issues, or merge here.
+   Persist the spec locally and fill `handoff.forge` readiness for
+   `open_draft_pr`; recommend `/open-draft-pr` or `/commit-workspace` (or wait
+   for the orchestrator ForgeClient on `spec-pr-action`). See
    `../../../references/forge-side-effects.md#content-producers`.
 9. Treat `spec-*` labels as projections. If artifact, review, and label
    disagree, the gate is closed. Exactly one PE gate label may be active:
    `spec-pending`, `spec-lgtm`, or `spec-blocked`. `spec-revised` and
    `spec-stale` are additional invalidation labels and always close the gate.
+10. **Ownership boundary.** The spec owns observable product behavior,
+    acceptance, field meaning, invariants, errors, and compatibility. It may
+    cite existing architectural constraints from `adr_dir` but must **not**
+    choose implementation architecture. Architecture questions are recorded
+    for feasibility / technical review — not decided here.
+11. **Outcome vocabulary.** Emit only `pass`, `needs-input`, `blocked`,
+    `stale`, or `failed` (this stage has no `findings` edge). Map evidence to
+    the outcome rubric below; do not invent lane-specific outcomes.
 
 ## Prerequisites
 
@@ -98,30 +107,65 @@ Resolve paths from `.harness/profile.yaml` or [references/layout-defaults.md](re
 3. **T2 Scope** — list ONLY what this repo owns. Explicitly exclude what belongs
    to other repos. Cross-service contracts are noted but not spec'd here.
 4. **T3 Draft** — write INIT-*.md using [references/output-template.md](references/output-template.md)
-5. **T4 Flag** — list ambiguities, open questions, and anything that needs PM
-   confirmation (route to meta PRD PR — see feasibility skill)
+5. **T4 Flag and clarify** — list ambiguities and open questions. Before any
+   `pass` attempt, run the **bounded clarification loop** below.
 6. **T5 Verify and hand off** — run D1–D12 from
-   [references/checks.md](references/checks.md); present in chat:
+   [references/checks.md](references/checks.md); select the workflow outcome
+   from the rubric; present in chat:
    - generated/changed files,
    - gate verification summary,
    - spec summary and open questions,
+   - selected workflow outcome + reason,
    - proposed branch, base, Draft PR title/body, reviewers, and initial labels,
-   - `PR READY` or `PR BLOCKED` verdict.
+   - `PR READY` or `PR BLOCKED` verdict (PR READY only when outcome is `pass`).
    Stop without GitHub side effects.
+
+## Bounded clarification loop (before pass)
+
+Before T5 can emit `pass`:
+
+1. Classify every open Spec question as material (blocks acceptance or scope)
+   or non-blocking (safe default + revisit trigger).
+2. Ask only material questions; write each accepted answer into the owning
+   `REQ-*` / acceptance / NFR / contract row — do not leave answers only in chat.
+3. Preserve unresolved non-blockers with owner, default-if-deferred, and
+   revisit trigger (D6).
+4. Rerun affected D-checks after incorporating answers.
+5. If any material ambiguity remains unresolved → do **not** emit `pass`;
+   select `needs-input` or `blocked` per the outcome rubric.
+
+## Outcome selection (workflow edges)
+
+Map evidence to exactly one outcome declared for `spec-draft` in pinned
+`workflow.yaml`. Do not emit `findings` or `skipped` from this stage.
+
+| Outcome | When | Next (from workflow) |
+|---------|------|----------------------|
+| `pass` | D1–D12 PASS, zero unresolved material questions, PR READY, sources CURRENT | `spec-pr-action` |
+| `needs-input` | Required handoff/source input missing or unreadable; or material PM/domain ambiguity remains after the clarification loop | `spec-human-decision` |
+| `blocked` | Explicit gate closure (approval/label/artifact disagree; repo deferred/blocked; PE gate closed) | `spec-human-decision` |
+| `stale` | Digest/head/revision mismatch vs approved handoff | `prd-impact-map` |
+| `failed` | Execution/render error on otherwise valid inputs | `workflow-stop` |
+
+Check verdicts (PASS/FAIL/NEEDS INPUT) feed this rubric — a FAIL on a blocking
+check is usually `needs-input` or `blocked`, not automatically `failed`.
+Permit complete `handoff.forge` for `open_draft_pr` **only** on `pass`.
 
 ## PR readiness (fill handoff.forge — do not open the PR here)
 
 After T5, **always** present the PR readiness section from
-[references/output-template.md](references/output-template.md). On
-`outcome: pass`, next node is `spec-pr-action` (`open_draft_pr`). Fill
-`handoff.forge` with pin `requires` at minimum:
+[references/output-template.md](references/output-template.md), including the
+selected workflow outcome and reason. On `outcome: pass`, next node is
+`spec-pr-action` (`open_draft_pr`). Fill `handoff.forge` with pin `requires`
+at minimum:
 
 - `action: open_draft_pr`
 - `draft: true`
 - `apply_labels: [spec-pending]` (match pin; never `*-lgtm`)
 - `title`, `body_path` (and any other pin `requires`)
 
-Recommend **`/open-draft-pr`** after the user authorizes publish. Do **not**
+Recommend **`/open-draft-pr`** (and `/commit-workspace` when publication of the
+local artifact is needed) after the user authorizes publish. Do **not**
 run forge mutations inside `/spec-draft`. If Forge tooling is unavailable,
 readiness in the handoff is still the durable package for a later forge skill
 or Gateflow ForgeClient.
@@ -155,11 +199,12 @@ When a newer approved impact-map revision appears:
 
 After dev reviews the local draft:
 
-1. authorize publish and run `/open-draft-pr` when the PR-readiness verdict is
-   `PR READY` (or let the orchestrator execute `spec-pr-action`)
-2. ensure the spec slice is on the Draft spec PR head (via
-   `/commit-workspace` and/or `/open-draft-pr` as appropriate)
-3. run `/initiative-feasibility` on the committed spec on that branch
+1. authorize publish and run `/open-draft-pr` when the workflow outcome is
+   `pass` and the PR-readiness verdict is `PR READY` (or let the orchestrator
+   execute `spec-pr-action`)
+2. ensure the spec slice is on the Draft spec PR head via `/commit-workspace`
+   and/or `/open-draft-pr` (Forge skills — not this content skill)
+3. run `/initiative-feasibility` on the published spec on that branch
 
 Do not skip the PR-readiness handoff or jump straight to feasibility on a local
 file only — the Draft spec PR is the engineering review surface for the whole

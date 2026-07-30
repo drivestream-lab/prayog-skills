@@ -141,7 +141,7 @@ CHECK_REGISTRIES = [
     (
         "skills/development/spec-technical-review/references/checks.md",
         "T",
-        11,
+        12,
         [
             "skills/development/spec-technical-review/SKILL.md",
             "skills/development/spec-technical-review/references/output-template.md",
@@ -150,10 +150,28 @@ CHECK_REGISTRIES = [
     (
         "skills/development/spec-implementation-plan/references/checks.md",
         "P",
-        15,
+        16,
         [
             "skills/development/spec-implementation-plan/SKILL.md",
             "skills/development/spec-implementation-plan/references/output-template.md",
+        ],
+    ),
+    (
+        "skills/development/ground-spec/references/checks.md",
+        "G",
+        10,
+        [
+            "skills/development/ground-spec/SKILL.md",
+            "skills/development/ground-spec/references/output-template.md",
+        ],
+    ),
+    (
+        "skills/forge/create-board-tickets/references/checks.md",
+        "B",
+        8,
+        [
+            "skills/forge/create-board-tickets/SKILL.md",
+            "skills/forge/create-board-tickets/references/output-template.md",
         ],
     ),
 ]
@@ -187,7 +205,17 @@ REQUIRED_TOKENS = {
     "skills/development/spec-technical-review/references/output-template.md": [
         "Source freshness",
         "Feasibility digest",
-        "All T1–T11 checks",
+        "All T1–T12 checks",
+        "T12 Product-boundary",
+        "FF-",
+        "approved REQ-",
+    ],
+    "skills/development/spec-technical-review/references/adr-template.md": [
+        "product_constraints",
+        "supersedes",
+        "superseded_by",
+        "changes_user_visible_behavior",
+        "Product decisions excluded",
     ],
     "skills/development/spec-implementation-plan/references/output-template.md": [
         "## Source freshness and command contract",
@@ -196,12 +224,56 @@ REQUIRED_TOKENS = {
         "Implements",
         "tasks:",
         "TASK-W0-01",
+        "Workflow outcome",
+        "apiVersion: prayog/v1",
+        "depends_on:",
+        "exit:",
+        "criteria:",
+        "evidence_expected:",
+        "Verification Coverage",
+        "Live-verification intent",
+        "stop_conditions:",
+        "cleanup:",
+        "workmanifest-contract.md",
+        "P1–P16",
     ],
     "skills/development/pre-implement/references/output-template.md": [
         "Plan source freshness",
         "`check_command`",
         "`ground_command`",
         "TASK-W{N}-01",
+        "Pre-Implement-",
+        "Bound by Forge/human context",
+        "WorkManifest contract",
+        "TASK exit proof",
+        "Live-verification contract",
+    ],
+    "skills/development/ground-spec/references/output-template.md": [
+        "GF-",
+        "wave-signoff",
+        "reviewed head",
+        "G1–G10",
+    ],
+    "skills/development/loop-spec/SKILL.md": [
+        "Wave-Execution-",
+        "commit_workspace",
+        "Never commit",
+        "WorkManifest",
+        "dependency order",
+        "Do **not** mutate",
+    ],
+    "skills/development/verify/SKILL.md": [
+        "Live-Verify-",
+        "expected",
+        "observed",
+        "Integration / contract",
+        "Smoke",
+        "Sandbox",
+    ],
+    "skills/forge/create-board-tickets/references/output-template.md": [
+        "workmanifest-contract-pass",
+        "Preserved task metadata",
+        "B1–B8",
     ],
     "skills/requirements/validate-requirements/output-templates.md": [
         "report_revision",
@@ -218,18 +290,49 @@ REQUIRED_TOKENS = {
         "REQ-{nn}",
         "VF-{nn}",
         "TASK-W{n}-{nn}",
+        "GF-",
+        "P1",
+        "P16",
+        "T12",
+        "G1",
+        "G10",
     ],
     "references/artifact-write-contract.md": [
         "Validation-Report-{INIT}.md",
         "Never create",
         "map_revision",
+        "Pre-Implement-{INIT}-W{N}.md",
+        "Wave-Execution-{INIT}-W{N}.md",
+        "Live-Verify-{INIT}-W{N}.md",
+        "Ground-Report-{SPEC}-W{N}.md",
     ],
 }
 
 FORBIDDEN_WORKFLOW_TEXT = {
-    "skills/development/spec-technical-review": ["T1–T10", "T1-T10"],
-    "skills/development/spec-implementation-plan": ["P14 | **WorkManifest seed** — §8"],
-    "skills/development/loop-spec/SKILL.md": ["Human explicitly approves → `/ground-spec`"],
+    "skills/development/spec-technical-review": [
+        "T1–T10",
+        "T1-T10",
+        "T1–T11",
+        "T1-T11",
+        "All T1–T11",
+    ],
+    "skills/development/spec-implementation-plan": [
+        "P14 | **WorkManifest seed** — §8",
+        "apiVersion: launchpad/v1",
+        "launchpad WorkManifest",
+    ],
+    "skills/development/loop-spec/SKILL.md": [
+        "Human explicitly approves → `/ground-spec`",
+        "When TASK is green: commit",
+    ],
+    "skills/development/ground-spec": [
+        "check every REQ in product spec",
+        "Commit this report",
+    ],
+    "skills/development/pre-implement": [
+        "unless the user asks",
+        "unless user asks",
+    ],
 }
 
 DELIVERY_CONTRACT_FILES = [
@@ -238,6 +341,7 @@ DELIVERY_CONTRACT_FILES = [
     "references/handoff-envelope.md",
     "references/prompt-package-contract.md",
     "references/forge-side-effects.md",
+    "references/workmanifest-contract.md",
 ]
 
 
@@ -570,6 +674,33 @@ def check_delivery_contract_surface() -> list[str]:
     for relative_path in DELIVERY_CONTRACT_FILES:
         if not (ROOT / relative_path).is_file():
             errors.append(f"  MISSING: {relative_path}")
+
+    contract_path = ROOT / "delivery-contract.yaml"
+    if contract_path.is_file():
+        contract_text = contract_path.read_text(encoding="utf-8")
+        for token in (
+            "workmanifest_spec: references/workmanifest-contract.md",
+            "apiVersion: prayog/v1",
+            "kind: WorkManifest",
+            "immutable-approved-execution-intent",
+        ):
+            if token not in contract_text:
+                errors.append(
+                    f"  delivery-contract.yaml: missing WorkManifest registration token {token!r}"
+                )
+
+    workflow_path = ROOT / "workflow.yaml"
+    if workflow_path.is_file():
+        workflow_text = workflow_path.read_text(encoding="utf-8")
+        if "workmanifest-p14-pass" in workflow_text:
+            errors.append(
+                "  workflow.yaml: stale predicate workmanifest-p14-pass "
+                "(use workmanifest-contract-pass)"
+            )
+        if "workmanifest-contract-pass" not in workflow_text:
+            errors.append(
+                "  workflow.yaml: missing documented predicate workmanifest-contract-pass"
+            )
 
     for skill_file in SKILLS_DIR.glob("*/*/SKILL.md"):
         # engg-reviews is an adjunct pack — not on sdd-delivery workflow.

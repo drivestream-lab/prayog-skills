@@ -1,0 +1,49 @@
+# Invalid: live applicable but missing cleanup and stop_conditions
+apiVersion: prayog/v1
+kind: WorkManifest
+initiative: INIT-DEMO-001
+epic:
+  id: EPIC
+  repo: example-service
+  title: demo
+  codebase: example-service
+  spec_path: docs/specification/product/INIT-DEMO-001.md
+  verify_command: python tests/verify/verify_items.py
+work:
+  - id: W0
+    kind: issue
+    repo: example-service
+    title: W0
+    depends_on: []
+    codebase: example-service
+    spec_path: docs/specification/product/INIT-DEMO-001.md
+    verify_command: python tests/verify/verify_items.py
+    tasks:
+      - id: TASK-W0-01
+        implements: [REQ-01]
+        depends_on: []
+        files:
+          - path: src/api/items.py
+            action: create
+          - path: tests/verify/verify_items.py
+            action: create
+        exit:
+          criteria:
+            - "POST /v1/items returns 201 with created item id"
+          proof:
+            kind: command
+            command: "python tests/verify/verify_items.py"
+            expected: "exit 0; prints PASS"
+            evidence_expected: "Live-Verify-INIT-DEMO-001-W0.md"
+    verification:
+      check: "make check"
+      unit: "pytest -q"
+      live:
+        applicable: true
+        mode: smoke
+        command: python tests/verify/verify_items.py
+        covers: [REQ-01]
+        prerequisites:
+          - "Stack up"
+        expected_observations:
+          - "Script exits 0"

@@ -7,6 +7,74 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased] — features/rc-2
 
+### Added — Wave Draft-PR preparation (Initiative C1)
+
+- Workflow: `pre-implement.pass` → new `wave-pr-action` (`forge.action:
+  open_draft_pr`, `draft: true`, requires `title` / `body_path` / `head_ref` /
+  `base_ref`) → `loop-spec`.
+- Reuses existing `open_draft_pr` / `/open-draft-pr`; **no** merge Forge action.
+- `wave-signoff.pass` requires human-recorded reviewed head SHA and merge
+  commit SHA; Gateflow and Forge cannot merge.
+- `/pre-implement` fills complete `handoff.forge` for wave Draft-PR on pass
+  (`external_action: true`); prompts `@1.4.0` → `@1.5.0`.
+- Docs / forge policy fixture / workflow scenarios updated for `wave-pr-action`.
+
+### Deferred — Initiative C2 (out of scope)
+
+- Evidence probes, blocking security-gate / T13 infrastructure, and task-level
+  `parallel_safe` / concurrency remain deferred pending separate
+  cross-repository design. Not claimed as implemented in this remount.
+
+### Added — Prayog-owned WorkManifest contract (Initiative B)
+
+- Canonical contract `references/workmanifest-contract.md` with identity
+  `apiVersion: prayog/v1` + `kind: WorkManifest` (immutable approved execution
+  intent: epic/waves/tasks/deps/files/exit proof/wave verification).
+- Registered in `delivery-contract.yaml` (`workmanifest_spec` + identity);
+  board status and runtime evidence stay out of the approved manifest.
+- Shared validator `scripts/workmanifest_contract.py` (CLI + importable
+  `validate_workmanifest`) with fixtures under `tests/fixtures/workmanifest/`
+  and `tests/test_workmanifest_contract.py`.
+- Plan check **P16** WorkManifest contract validity; strengthened P4/P5/P7/P10/P15
+  for objective exit evidence and unit/integration/smoke/sandbox layers.
+- §9 seed uses `prayog/v1` (not `launchpad/v1`); TASK rows + verification
+  coverage + live-verification intent in the plan output template.
+- Workflow board prerequisite renamed to documented predicate
+  `workmanifest-contract-pass` (Initiative B; wave-pr-action lands in C1).
+- Prompt package `spec-implementation-plan` bumped `@1.3.0` → `@1.4.0`.
+- Development-stage scenarios for vague exit, dependency cycle, missing
+  file/proof/live, unit-as-live, and correct N/A-layer outcomes.
+- **Consumer alignment:** `/pre-implement`, `/loop-spec`, and `/verify` consume
+  the canonical WorkManifest (fail-closed preflight; dependency-ordered
+  file-scoped execution with observed evidence in Wave-Execution; layer
+  ownership + expected-versus-observed live evidence). `/create-board-tickets`
+  validates via the shared contract and projects TASK metadata without making
+  board text a second authority (Forge mutate behavior otherwise unchanged).
+- Prompt packages bumped `@1.3.0` → `@1.4.0` for pre-implement / loop-spec /
+  verify; create-board-tickets `@1.1.0` → `@1.2.0`.
+- Docs: Gateflow must reject unsupported manifest versions and consume the
+  exact pinned Prayog contract before remount; Launchpad materializes only.
+
+### Added — Development skills remediation (Initiative A)
+
+- Deterministic stage outcome rubrics for `spec-draft`, `initiative-feasibility`,
+  `spec-technical-review`, `spec-implementation-plan`, `pre-implement`,
+  `loop-spec`, `verify`, and `ground-spec` (existing vocabulary only).
+- Product vs architecture boundary: spec owns observable `REQ-*`; ADRs bind to
+  approved REQs; new check **T12** Product-boundary integrity.
+- Ground findings namespace **`GF-*`** (no longer reuse feasibility `FF-*`);
+  ground checks **G1–G10**; canonical implement-lane artifacts
+  `Pre-Implement-*`, `Wave-Execution-*`, `Live-Verify-*`.
+- Content/Forge cleanup: no per-TASK commits in `loop-spec`; `pre-implement`
+  is gate-only (never opens a branch or implements product code).
+- Semantic routing fixtures: `tests/fixtures/development_stage_scenarios.json`
+  + `tests/test_development_stage_contract.py` (contract-policy, not LLM
+  behavioral guarantee).
+- Prompt revisions bumped for affected development packages.
+- **Migration:** remount requires a new tag/pin. Open initiatives keep their
+  pinned behavior until explicit remount; migrated initiatives rerun from the
+  earliest materially affected stage. Forge authorization unchanged in A/B.
+
 ### Added — Co-ship live-verify scripts (human executes)
 
 - Plan check **P15**: new/material product surface ⇒ same wave ships unit TEST

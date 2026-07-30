@@ -5,20 +5,26 @@ You are executing the **loop-spec** skill (Loop spec (per-wave implement loop)).
 ## Bound context
 - ticket: FORGE-1001
 - initiative: INIT-PRAYOG-SKILLS-003-PROMPTS
-- handoff_path: prd/reports/Impact-Map-INIT-PRAYOG-SKILLS-003-PROMPTS.md
+- handoff_path: /tmp/handoff-baton.yaml
 - workspace: /workspace/example-repo
 - skill_id: loop-spec
 
 ## Instruction
-Implement one TASK at a time against the product spec; check/test; fix; stop at live-verify. Do not self-approve or ground.
+Implement one TASK at a time against the product spec; check/test; fix; record
+local TASK proof. Never commit or push. After the wave is green, write
+`Wave-Execution-{INIT}-W{N}.md`, emit completed TASK ids/evidence, and fill one
+stage-level `commit_workspace` Forge package. Stop at live-verify. Do not
+self-approve or ground.
 
 Follow the full procedure in this skill's `SKILL.md` (and `references/` when present). Treat `SKILL.md` as the procedure SSOT; this brief is the invocation package only.
 
 ## Non-negotiables (summary)
-1. Prerequisites: pre-implement checklist PASS; plan on develop (spec package merged).
-2. After each TASK run check_command and test_command; fix before advancing. Implement live-verify FILE TASKs when planned — do not run live verify / verify_all as success.
-3. Bind each iteration to TASK-* + wave issue + implements REQ-*.
-4. When green, hand off with pass → live-verify; handoff MUST list human verify_command (co-shipped script). Closeout is separate.
+1. Prerequisites: pre-implement checklist PASS; plan on develop (spec package merged); wave head bound by Forge/human context; WorkManifest already contract-valid.
+2. Consume WorkManifest TASKs in dependency order; remain within declared file scope. Persist actual command/evidence in Wave-Execution/handoff — do not mutate approved WorkManifest intent.
+3. After each TASK run check_command and test_command only; fix before advancing. Implement planned live-verify FILE TASKs — never run smoke/sandbox or claim human live success.
+4. Bind each iteration to TASK-* + wave issue + implements REQ-* from the manifest.
+5. When green: write Wave-Execution-*; fill commit_workspace Forge readiness; hand off pass → live-verify with human verify_command. Closeout is separate.
+6. Select outcome deterministically (`pass` / `findings` / `blocked` / `failed`) per `SKILL.md`.
 
 ## Envelope navigation (required)
 After choosing `outcome`, derive `next_candidates` and `human_checkpoint` from
@@ -36,6 +42,8 @@ Content skills fill `handoff.forge` when the pin expects it; they do **not**
 execute forge mutations. Human forge skills (`/commit-workspace`,
 `/open-draft-pr`, `/create-board-tickets`) or Gateflow ForgeClient apply pin ⋉
 handoff. Never apply `*-lgtm`. See `references/forge-side-effects.md#content-producers`.
+After a green wave, prefer one stage-level `commit_workspace` package — ForgeClient
+or `/commit-workspace` publishes to the bound wave head.
 
 ## Workspace
 Root: `/workspace/example-repo`.
@@ -43,9 +51,9 @@ Root: `/workspace/example-repo`.
 ## Handoff baton (required)
 1. Follow this skill's `SKILL.md`. Persist the usual durable artifact under
    `/workspace/example-repo` and append the `handoff:` envelope to that artifact.
-2. Then **overwrite** the file at exactly `prd/reports/Impact-Map-INIT-PRAYOG-SKILLS-003-PROMPTS.md` with the same
+2. Then **overwrite** the file at exactly `/tmp/handoff-baton.yaml` with the same
    `handoff:` envelope (plain YAML or a single fenced yaml block).
-3. Do not leave `prd/reports/Impact-Map-INIT-PRAYOG-SKILLS-003-PROMPTS.md` empty. Do not rely on docs-only or chat-only
+3. Do not leave `/tmp/handoff-baton.yaml` empty. Do not rely on docs-only or chat-only
    handoff for orchestrator continuation.
-4. If `prd/reports/Impact-Map-INIT-PRAYOG-SKILLS-003-PROMPTS.md` already contains a prior envelope, you may read it for
+4. If `/tmp/handoff-baton.yaml` already contains a prior envelope, you may read it for
    context; your final write replaces it with this stage's envelope.

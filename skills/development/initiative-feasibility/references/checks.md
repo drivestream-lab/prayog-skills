@@ -1,6 +1,11 @@
 # Feasibility checks (F1–F14)
 
-Run every check. PASS = zero findings. SKIPPED = missing input (state reason).
+Run every check. SKIPPED = missing input (state reason).
+
+**PASS semantics (severity-aware):** PASS means **zero unresolved blocking
+findings**. Informational observations (Verify / Gap) and accepted residual
+risk with an explicit default may remain in the report as signals. Do **not**
+require a literally empty findings list.
 
 Governance detail: [governance.md](governance.md).
 
@@ -21,6 +26,11 @@ Governance detail: [governance.md](governance.md).
 | F13 | **ADR conformance** | Relevant Accepted ADRs cited; spec does not contradict ADR; `NEW-ADR` flagged when initiative needs an undocumented decision |
 | F14 | **MDC conformance** | Spec wording does not conflict with `rules_glob` patterns; discrepancies listed in findings |
 
-Severity: **Critical** (blocks merge), **Should fix**, **Verify**, **Gap** (informational).
+Severity: **Critical** (blocks progress — unresolved → blocking finding),
+**Should fix** (blocking for PE-lane engineering unless explicitly deferred with
+default), **Verify**, **Gap** (informational — report signals only).
 
 **Critical** for F13 when spec contradicts an Accepted ADR.
+
+Blocking findings select workflow outcome via the lane-to-outcome rubric in
+`SKILL.md` (PE/ADR → `findings`; PM/domain → `needs-input`; gate → `blocked`).

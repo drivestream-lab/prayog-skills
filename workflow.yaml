@@ -226,7 +226,10 @@ nodes:
     requires:
       - spec-pr-merged
       - implementation-plan-current
-      - workmanifest-p14-pass
+      # Documented predicate: §9 WorkManifest passes
+      # scripts/workmanifest_contract.py (prayog/v1 identity, task DAG,
+      # file scope, exit proof, live-verification completeness). Plan P16.
+      - workmanifest-contract-pass
     outcomes:
       pass: pre-implement
       blocked: board-tickets-action
@@ -239,10 +242,32 @@ nodes:
     forge:
       commit_workspace: optional
     outcomes:
-      pass: loop-spec
+      pass: wave-pr-action
       needs-input: wave-signoff
       blocked: wave-signoff
       stale: spec-implementation-plan
+      failed: workflow-stop
+
+  # Wave Draft-PR preparation (reuse open_draft_pr). Not a merge action.
+  # Coding starts on the bound wave head after this external-action passes.
+  wave-pr-action:
+    type: external-action
+    owner: engineering
+    provider: github
+    authorization: explicit
+    forge:
+      action: open_draft_pr
+      draft: true
+      apply_labels: []
+      remove_labels: []
+      requires:
+        - title
+        - body_path
+        - head_ref
+        - base_ref
+    outcomes:
+      pass: loop-spec
+      blocked: wave-signoff
       failed: workflow-stop
 
   loop-spec:
@@ -307,6 +332,10 @@ nodes:
       blocked: wave-signoff
       failed: loop-spec
 
+  # Human-only exact-head approval + merge. Gateflow/Forge must not merge.
+  # pass is legal only after the human confirms the reviewed PR head SHA,
+  # merges manually, and records the resulting merge commit SHA in checkpoint
+  # evidence (not via handoff.forge authorization or approval labels).
   wave-signoff:
     type: human-checkpoint
     purpose: wave-signoff

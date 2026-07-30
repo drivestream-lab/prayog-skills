@@ -20,6 +20,8 @@
 | Plan path | {reports_dir}/Implementation-Plan-{initiative}.md |
 | Spec PR | {url or N/A} |
 | spec-lgtm on merge head | verified / not verified / N/A |
+| WorkManifest contract | `workmanifest-contract-pass` / FAIL ({codes}) |
+| apiVersion / kind | `prayog/v1` / `WorkManifest` |
 
 ## Seed plan
 
@@ -28,6 +30,16 @@
 | EPIC | create / exists / link | {repo} | {epic.title} |
 | W0 | create / exists / link-parent | {repo} | {work[0].title} |
 | W1 | … | | |
+
+## Preserved task metadata (projected from WorkManifest)
+
+> Board issue bodies carry this metadata as a **projection**. The approved
+> WorkManifest remains the authority — do not invent or rewrite fields here.
+
+| Wave | TASK | Implements | depends_on | Exit criteria (summary) | Proof summary |
+|------|------|------------|------------|-------------------------|---------------|
+| W0 | TASK-W0-01 | REQ-… | … | … | kind=command; expected=… |
+| W0 | TASK-W0-02 | … | … | … | … |
 
 ## Executed commands (authorized apply only)
 
@@ -50,11 +62,11 @@ gh issue create --repo {org}/{repo} \
 
 ## Result tree
 
-| Role | Issue | URL | On board | Sub-issue of EPIC | TASK ids in body |
-|------|-------|-----|----------|-------------------|------------------|
-| EPIC | #{n} | {url} | yes/no | — | — |
-| W0 | #{n} | {url} | yes/no | yes/no | TASK-W0-01, … |
-| W1 | #{n} | {url} | yes/no | yes/no | TASK-W1-01, … |
+| Role | Issue | URL | On board | Sub-issue of EPIC | TASK ids in body | REQ / deps / exit / proof preserved |
+|------|-------|-----|----------|-------------------|------------------|-------------------------------------|
+| EPIC | #{n} | {url} | yes/no | — | — | — |
+| W0 | #{n} | {url} | yes/no | yes/no | TASK-W0-01, … | yes/no |
+| W1 | #{n} | {url} | yes/no | yes/no | TASK-W1-01, … | yes/no |
 
 ## Project fields (manual if API cannot set)
 
@@ -64,6 +76,8 @@ Set on programme Project for each item:
 - **Codebase:** `{repo slug}`
 - **Spec path:** from §9 `spec_path`
 - **Status:** Backlog
+
+Checks: **B1–B8**.
 
 ---
 
@@ -82,6 +96,8 @@ handoff:
     board_url: {url}
     epic_issue: {url}
     waves_seeded: [W0, W1, ...]
+    workmanifest_contract: pass
+    tasks_preserved: true
     repo: {codebase repo}
     stack_profile: {from .harness/profile.yaml — informational only}
   next_candidates:

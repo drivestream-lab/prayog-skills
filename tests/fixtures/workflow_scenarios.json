@@ -36,16 +36,40 @@
     "next": "prd-impact-acceptance"
   },
   {
+    "name": "feasibility pass routes to implementation plan",
+    "stage": "initiative-feasibility",
+    "outcome": "pass",
+    "next": "spec-implementation-plan"
+  },
+  {
     "name": "feasibility engineering findings route to PE",
     "stage": "initiative-feasibility",
     "outcome": "findings",
     "next": "spec-technical-review"
   },
   {
+    "name": "feasibility PM or domain needs-input routes to human decision",
+    "stage": "initiative-feasibility",
+    "outcome": "needs-input",
+    "next": "spec-human-decision"
+  },
+  {
     "name": "technical review routes to PE approval gate",
     "stage": "spec-technical-review",
     "outcome": "pass",
     "next": "technical-review-approval"
+  },
+  {
+    "name": "technical review blocked routes to human decision",
+    "stage": "spec-technical-review",
+    "outcome": "blocked",
+    "next": "spec-human-decision"
+  },
+  {
+    "name": "technical review stale routes back to feasibility",
+    "stage": "spec-technical-review",
+    "outcome": "stale",
+    "next": "initiative-feasibility"
   },
   {
     "name": "PE approval enables implementation plan",
@@ -60,6 +84,24 @@
     "next": "coding-readiness"
   },
   {
+    "name": "plan needs-input routes to human decision",
+    "stage": "spec-implementation-plan",
+    "outcome": "needs-input",
+    "next": "spec-human-decision"
+  },
+  {
+    "name": "plan blocked routes to human decision",
+    "stage": "spec-implementation-plan",
+    "outcome": "blocked",
+    "next": "spec-human-decision"
+  },
+  {
+    "name": "plan stale routes back to feasibility",
+    "stage": "spec-implementation-plan",
+    "outcome": "stale",
+    "next": "initiative-feasibility"
+  },
+  {
     "name": "spec merge routes to board tickets action",
     "stage": "spec-merge",
     "outcome": "pass",
@@ -70,6 +112,18 @@
     "stage": "board-tickets-action",
     "outcome": "pass",
     "next": "pre-implement"
+  },
+  {
+    "name": "pre-implement pass routes to wave PR action",
+    "stage": "pre-implement",
+    "outcome": "pass",
+    "next": "wave-pr-action"
+  },
+  {
+    "name": "wave PR action routes to loop-spec",
+    "stage": "wave-pr-action",
+    "outcome": "pass",
+    "next": "loop-spec"
   },
   {
     "name": "Pass-1 loop-spec stops at live-verify",

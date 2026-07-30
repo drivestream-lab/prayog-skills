@@ -19,24 +19,34 @@ Turn an accepted initiative spec (+ feasibility report + technical review when
 present) into an **executable plan with a WorkManifest artifact (§9)**. **Do not
 implement** — plan only.
 
-Commit the plan to the **spec PR branch** alongside spec, feasibility, and TDD.
-Table shape borrowed from awesome-copilot `create-implementation-plan`
-(REQ/TASK/FILE/TEST/RISK). §9 WorkManifest YAML is generated here; **dev seeds
-the board after spec PR merge**.
+Persist the plan locally and emit Forge readiness for the **spec PR branch**
+alongside spec, feasibility, and TDD. Table shape borrowed from awesome-copilot
+`create-implementation-plan` (REQ/TASK/FILE/TEST/RISK). §9 WorkManifest YAML is
+generated here; **dev seeds the board after spec PR merge**.
+
+**Prayog owns the WorkManifest contract** (`apiVersion: prayog/v1`,
+`references/workmanifest-contract.md`). Launchpad only materializes the pin —
+it does not own, parse, or execute WorkManifest.
 
 ## NON-NEGOTIABLE
 
 1. Never skip a check in [references/checks.md](references/checks.md). Mark SKIPPED with reason.
-2. Every TASK has **done when** criteria, an **Implements** list of product
-   `REQ-*` ids, and test/verify command from profile toolchain where applicable.
-   Do not invent shadow `REQ-W*` ids — see `../../../references/id-conventions.md`.
-3. Plan scope must not exceed the initiative spec.
-4. Dual output: chat summary + saved plan file on spec branch.
+2. Every TASK has **objective exit evidence**: observable exit criteria, proving
+   command or review, expected result, and evidence location — plus an
+   **Implements** list of product `REQ-*` ids and toolchain commands where
+   applicable. Do not invent shadow `REQ-W*` ids — see
+   `../../../references/id-conventions.md`.
+3. Every acceptance criterion maps to a verification layer (unit,
+   integration/contract, smoke, or sandbox) in the wave Verification Coverage
+   table. Plan scope must not exceed the initiative spec.
+4. Dual output: chat summary + saved plan file (local + Forge readiness).
 5. Run T0–T5 control loop.
-6. Wave IDs must use `W0`, `W1`, … (one GitHub Issue per wave; launchpad WorkManifest `id:` convention).
-7. Every TASK row must include `codebase`, `spec_path`, `verify_command`, and
-   **Implements `REQ-*`** — required for WorkManifest generation. §9 wave
-   entries must include `tasks[]` and a body table listing those TASK ids.
+6. Wave IDs must use `W0`, `W1`, … (one GitHub Issue per wave; WorkManifest `id:`
+   convention).
+7. Every TASK row must include `codebase`, `spec_path`, `verify_command`,
+   **Implements `REQ-*`**, `depends_on`, file path/action scope, and exit
+   proof fields — required for WorkManifest generation. §9 wave entries must
+   include `tasks[]`, `verification`, and a body table listing those TASK ids.
 8. Spec, feasibility, TDD (when present), PRD digest, impact-map revision,
    scope digest, and approvals must agree. Stop on stale sources.
 9. Resolve canonical `check_command`, `test_command`, `verify_command`, and
@@ -47,9 +57,17 @@ the board after spec PR merge**.
    only when a layer is not applicable. When P15 applies (new/material product
    surface), bare N/A or unit-as-live is invalid — co-ship the verify FILE in
    the same wave (see [references/checks.md](references/checks.md) P15).
-10. Commit the plan to the **same Draft spec PR**. Coding-readiness label stays
-    **`spec-pending`**. After T5, present the **coding-readiness unlock
-    checklist** from the output template so PE knows when to set `spec-lgtm`.
+10. Persist the plan locally and fill `handoff.forge` for `/commit-workspace`
+    onto the **same Draft spec PR**. Do **not** commit, push, branch, open PRs,
+    apply labels, create issues, or merge inside this skill. Coding-readiness
+    label stays **`spec-pending`**. After T5, present the **coding-readiness
+    unlock checklist** from the output template so PE knows when to set
+    `spec-lgtm`.
+11. Select workflow outcome from the rubric below; map evidence deterministically.
+12. Before coding-readiness, run a **read-only cross-artifact consistency pass**
+    (spec ↔ plan REQ ids, plan ↔ §9 WorkManifest, Accepted ADR citations).
+    Corrections belong in the **owning** artifact — do not invent a parallel
+    truth in chat.
 
 ## Inputs
 
@@ -79,7 +97,8 @@ Run **while the Draft spec PR is open**, **before spec merge**, after:
 > **Artifact gate vs GitHub gate**
 > Planning requires **Accepted TDD/ADR files** (P12/P13). It does **not**
 > require `spec-lgtm`. PE sets **`spec-lgtm` + GitHub Approve + attestation**
-> only after this plan is committed — that unlocks merge and `/create-board-tickets`.
+> only after this plan is published via Forge — that unlocks merge and
+> `/create-board-tickets`.
 
 ## Process
 
@@ -92,9 +111,31 @@ Run **while the Draft spec PR is open**, **before spec merge**, after:
    `ADR_REQUIRED` row links an **Accepted** file in `{adr_dir}` (created by
    `/spec-technical-review`, accepted during PE review — do not add promotion
    tasks); cite those ADR ids in TASK **ADR notes**; collect
-   `codebase`/`spec_path`/`verify_command` per TASK
-5. **T4 Execute** — write plan; build WorkManifest seed section; run P1–P15 checks; commit to spec branch
-6. **T5 Verify** — self-contained plan readable by a fresh session; WorkManifest YAML is valid; present coding-readiness unlock checklist (§10) in chat for PE
+   `codebase`/`spec_path`/`verify_command`/depends_on/files/exit per TASK;
+   map each acceptance criterion to a verification layer
+5. **T4 Execute** — write plan; build WorkManifest seed section (`prayog/v1`);
+   run P1–P16 checks including shared validator; persist locally and fill Forge
+   readiness (do not commit here)
+6. **T5 Verify** — self-contained plan readable by a fresh session; WorkManifest
+   contract passes; read-only cross-artifact consistency; select workflow
+   outcome; present coding-readiness unlock checklist (§10) in chat for PE
+
+## Outcome selection (workflow edges)
+
+Map evidence to exactly one outcome declared for `spec-implementation-plan` in
+pinned `workflow.yaml` (this stage has no `findings` edge):
+
+| Outcome | When | Next (from workflow) |
+|---------|------|----------------------|
+| `pass` | P1–P16 PASS; sources CURRENT; Accepted TDD/ADRs when required; plan ready for coding-readiness | `coding-readiness` |
+| `needs-input` | Authoritative source is **absent or unreadable**, so the requirement cannot be determined | `spec-human-decision` |
+| `blocked` | Authoritative source **exists** and shows an unsatisfied gate: Draft ADR, unaccepted TDD, missing PE approval, or unresolved blocker (P12/P13 FAIL) | `spec-human-decision` |
+| `stale` | Digest / head / revision mismatch vs upstream artifacts | `initiative-feasibility` |
+| `failed` | Rendering/validation failure, or P4/P15/P16 contract failures (vague exit, dependency cycle, missing proof/live, unit-as-live) on otherwise present inputs | `workflow-stop` |
+
+Check FAIL is not automatically `failed` — classify per the table (P12/P13 Draft
+ADR → `blocked`; missing unreadable source → `needs-input`; mismatch → `stale`;
+WorkManifest/exit/live contract → `failed`).
 
 ## Output
 
@@ -104,16 +145,18 @@ Use [references/output-template.md](references/output-template.md).
 
 ## WorkManifest integration
 
-The plan's final section (§9) emits a ready-to-use WorkManifest YAML stub.
+The plan's final section (§9) emits a ready-to-use WorkManifest YAML stub under
+the Prayog contract (`../../../references/workmanifest-contract.md`). Validate
+with `scripts/workmanifest_contract.py` before claiming P16 PASS.
 
 **After spec PR merge** — not before — run **`/create-board-tickets`** (forge skill,
 stack-agnostic). That skill reads §9, governance board binding from read-only
 meta, creates EPIC + wave sub-issues on the programme Project, and hands off to
-`/pre-implement`.
+`/pre-implement`. Board text is a **projection**, not a second authority.
 
 When authoring §9, set `target.org` and `target.project` from governance
 (`project_board.name` in `{meta_repo}/config/governance-*.yaml`). Do not invent
-board names.
+board names. Do not put mutable board `status` or runtime evidence in §9.
 
 ## Workflow handoff
 

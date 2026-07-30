@@ -5,20 +5,26 @@ You are executing the **ground-spec** skill (Ground spec (wave grounding)).
 ## Bound context
 - ticket: FORGE-1001
 - initiative: INIT-PRAYOG-SKILLS-003-PROMPTS
-- handoff_path: prd/reports/Impact-Map-INIT-PRAYOG-SKILLS-003-PROMPTS.md
+- handoff_path: /tmp/handoff-baton.yaml
 - workspace: /workspace/example-repo
 - skill_id: ground-spec
 
 ## Instruction
-Validate the completed wave against product spec REQ rows and repo artifacts; produce a Ground Report.
+Validate the completed wave against REQs assigned to that wave by the plan /
+WorkManifest and against repo artifacts (including tests/**). Produce
+`Ground-Report-{SPEC}-W{N}.md` with `GF-*` findings. Write locally and prepare
+the exact-head human sign-off package; stop at wave-signoff. Never commit or
+merge.
 
 Follow the full procedure in this skill's `SKILL.md` (and `references/` when present). Treat `SKILL.md` as the procedure SSOT; this brief is the invocation package only.
 
 ## Non-negotiables (summary)
-1. Run ground_command when defined; otherwise manually map each REQ-* to verifiable artifacts.
-2. Check cross-spec contracts against prior waves' Ground Reports.
-3. Populate Contracts Produced — required input for next wave pre-implement.
-4. Do not mark human_approved — that is a human gate only.
+1. Scope = wave-assigned REQs only (G1/G3) — not every future REQ in the full product spec.
+2. Run ground_command when defined; otherwise manually map each assigned REQ-* to verifiable artifacts. Separate unit / ground / live evidence.
+3. Check cross-spec contracts against prior waves' Ground Reports; populate Contracts Produced.
+4. Findings use GF-* (never FF-*). Cite L-* from Learning-Extract when present.
+5. Do not mark human_approved, commit, or merge — human gate only at wave-signoff.
+6. Select outcome deterministically (`pass` / `findings` / `needs-input` / `blocked` / `failed`) per `SKILL.md`. Run G1–G10.
 
 ## Envelope navigation (required)
 After choosing `outcome`, derive `next_candidates` and `human_checkpoint` from
@@ -43,9 +49,9 @@ Root: `/workspace/example-repo`.
 ## Handoff baton (required)
 1. Follow this skill's `SKILL.md`. Persist the usual durable artifact under
    `/workspace/example-repo` and append the `handoff:` envelope to that artifact.
-2. Then **overwrite** the file at exactly `prd/reports/Impact-Map-INIT-PRAYOG-SKILLS-003-PROMPTS.md` with the same
+2. Then **overwrite** the file at exactly `/tmp/handoff-baton.yaml` with the same
    `handoff:` envelope (plain YAML or a single fenced yaml block).
-3. Do not leave `prd/reports/Impact-Map-INIT-PRAYOG-SKILLS-003-PROMPTS.md` empty. Do not rely on docs-only or chat-only
+3. Do not leave `/tmp/handoff-baton.yaml` empty. Do not rely on docs-only or chat-only
    handoff for orchestrator continuation.
-4. If `prd/reports/Impact-Map-INIT-PRAYOG-SKILLS-003-PROMPTS.md` already contains a prior envelope, you may read it for
+4. If `/tmp/handoff-baton.yaml` already contains a prior envelope, you may read it for
    context; your final write replaces it with this stage's envelope.

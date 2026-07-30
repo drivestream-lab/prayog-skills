@@ -15,11 +15,11 @@ Produce a wave-level plan with REQ/TASK/FILE/TEST tables and §9 WorkManifest se
 Follow the full procedure in this skill's `SKILL.md` (and `references/` when present). Treat `SKILL.md` as the procedure SSOT; this brief is the invocation package only.
 
 ## Non-negotiables (summary)
-1. Never skip checks (P1–P15); every TASK has done-when, Implements REQ-*, and toolchain commands.
-2. No shadow REQ-W* ids; wave ids W0, W1, … only.
-3. Commit plan to the open Draft spec PR; board seeding happens after merge via `/create-board-tickets`.
-4. Verify source freshness against canonical handoff before planning.
-5. P15: new/material product surface ⇒ co-ship unit TEST + FILE under `live_verify_dir`; `verify_command` is live (not unit / N/A when P15 applies).
+1. Never skip checks (P1–P16); every TASK has observable exit criteria, proof (command|review), expected, evidence_expected, Implements REQ-*, depends_on, files path/action, and toolchain commands.
+2. No shadow REQ-W* ids; wave ids W0, W1, … only. §9 WorkManifest is `prayog/v1` (Prayog-owned); validate with `scripts/workmanifest_contract.py` (P16).
+3. Persist plan locally and fill Forge readiness (`/commit-workspace`); never commit/push/open PRs/apply labels. Board seeding happens after merge via `/create-board-tickets`.
+4. Verify source freshness against canonical handoff before planning. Map outcomes: missing source → needs-input; Draft ADR / unaccepted TDD → blocked; digest mismatch → stale; P4/P15/P16 contract failure or render failure → failed; clean → pass.
+5. P15: new/material product surface ⇒ co-ship unit TEST + FILE under `live_verify_dir`; `verify_command` / live block is smoke|sandbox (not unit / N/A when P15 applies). Map every acceptance criterion to a verification layer.
 
 ## Envelope navigation (required)
 After choosing `outcome`, derive `next_candidates` and `human_checkpoint` from
@@ -32,10 +32,11 @@ Never set `true` on skill→skill edges (for example never on
 
 
 ## Forge (required awareness)
-Content skills fill `handoff.forge` when the pin expects it; they do **not**
-execute forge mutations. Human forge skills (`/commit-workspace`,
-`/open-draft-pr`, `/create-board-tickets`) or Gateflow ForgeClient apply pin ⋉
-handoff. Never apply `*-lgtm`. See `references/forge-side-effects.md#content-producers`.
+Content skills write local artifacts and fill `handoff.forge` when the pin
+expects it; they do **not** execute forge mutations. Human forge skills
+(`/commit-workspace`, `/open-draft-pr`, `/create-board-tickets`) or Gateflow
+ForgeClient apply pin ⋉ handoff. Never apply `*-lgtm`. See
+`references/forge-side-effects.md#content-producers`.
 
 ## Workspace
 Root: `/workspace/example-repo`.

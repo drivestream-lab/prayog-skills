@@ -70,15 +70,15 @@ PM skills validate and refine PRDs. Dev skills implement spec slices in service 
 
 | Skill | When |
 |-------|------|
-| **spec-draft** | Dev translates PRD → spec slice for this repo |
-| **initiative-feasibility** | Dev reviews spec for buildability |
-| **spec-technical-review** | PE resolves engineering decisions + drafts ADRs |
-| **spec-implementation-plan** | Wave plan + §9 WorkManifest YAML on spec branch |
-| **pre-implement** | Pre-flight before each implementation wave |
-| **loop-spec** | Implement → check/unit → fix per task; deliver live-verify FILEs (do not run live) |
-| **ground-spec** | Wave complete — REQ validation + contracts for next wave |
+| **spec-draft** | Dev translates PRD → spec slice (observable REQs; WHAT not HOW) |
+| **initiative-feasibility** | Read-only buildability triage; lane→outcome routing |
+| **spec-technical-review** | PE options + ADRs bound to approved REQs (T12) |
+| **spec-implementation-plan** | Wave plan + WorkManifest seed on spec branch |
+| **pre-implement** | Gate-only preflight before each wave (no branch/code) |
+| **loop-spec** | Implement → check/unit → fix; Wave-Execution + stage Forge readiness |
+| **ground-spec** | Wave-assigned REQ grounding (`GF-*`, G1–G10); sign-off package |
 | **learning-extract** | After live-verify: structured L-* learning (closeout) |
-| **verify** | Manual live-verify aid (not on Pass-1 edge) |
+| **verify** | Manual live-verify aid (`Live-Verify-*`; not on Pass-1 edge) |
 
 ### Forge (human — meta + app)
 
@@ -113,8 +113,8 @@ PE sets spec-lgtm on exact head → Ready for review → Approve → merge
     ↓
 Merge spec PR → develop → **`/create-board-tickets`** (governance board + EPIC/wave tree)
     ↓
-Per wave Pass-1:  /pre-implement  →  /loop-spec  →  live-verify (human runs co-shipped script)
-Pass-2 closeout:  /learning-extract  →  /ground-spec  →  wave-signoff
+Per wave Pass-1:  /pre-implement → wave-pr-action → /loop-spec → live-verify (human runs co-shipped script)
+Pass-2 closeout:  /learning-extract  →  /ground-spec  →  wave-signoff (human merge; record merge SHA)
 ```
 
 New/material product surfaces **co-ship** a live script under `live_verify_dir`

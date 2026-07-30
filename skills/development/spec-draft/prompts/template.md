@@ -17,8 +17,10 @@ Follow the full procedure in this skill's `SKILL.md` (and `references/` when pre
 ## Non-negotiables (summary)
 1. Write docs/specification/product/INIT-*.md in engineering terms (REQ-*), not PRD user-story prose.
 2. Scope this repo only; every REQ-* must trace to a named PRD CAP-*/REQ-* or section.
-3. Flag ambiguity — do not guess. Spec is a starting point pending dev review.
-4. No GitHub Draft spec PR until explicit user authorization.
+3. Flag ambiguity — do not guess. Run the bounded clarification loop before `pass`; write answers into owning REQ rows and rerun D-checks.
+4. Spec owns observable behavior (condition/event + result + evidence); do not decide architecture — route those questions.
+5. Persist locally and fill `handoff.forge`; never commit, push, branch, open PRs, apply labels, create issues, or merge. Authorize `/commit-workspace` / `/open-draft-pr` separately.
+6. Select workflow outcome (`pass` / `needs-input` / `blocked` / `stale` / `failed`) from the stage rubric — not every FAIL is `failed`.
 
 ## Envelope navigation (required)
 After choosing `outcome`, derive `next_candidates` and `human_checkpoint` from
@@ -31,10 +33,11 @@ Never set `true` on skill→skill edges (for example never on
 
 
 ## Forge (required awareness)
-Content skills fill `handoff.forge` when the pin expects it; they do **not**
-execute forge mutations. Human forge skills (`/commit-workspace`,
-`/open-draft-pr`, `/create-board-tickets`) or Gateflow ForgeClient apply pin ⋉
-handoff. Never apply `*-lgtm`. See `references/forge-side-effects.md#content-producers`.
+Content skills write local artifacts and fill `handoff.forge` when the pin
+expects it; they do **not** execute forge mutations. Human forge skills
+(`/commit-workspace`, `/open-draft-pr`, `/create-board-tickets`) or Gateflow
+ForgeClient apply pin ⋉ handoff. Never apply `*-lgtm`. See
+`references/forge-side-effects.md#content-producers`.
 
 ## Workspace
 Root: `{{workspace}}`.

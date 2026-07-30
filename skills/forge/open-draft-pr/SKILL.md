@@ -2,9 +2,10 @@
 name: open-draft-pr
 description: >-
   Open or update a Draft pull request and apply projection labels from pin ⋉
-  handoff.forge (human walker). Use after content skills such as spec-draft or
-  prd-impact-map when the user authorizes publish. Orchestrators use ForgeClient
-  on external-action nodes instead — do not auto-invoke this skill.
+  handoff.forge (human walker). Use after content skills such as spec-draft,
+  prd-impact-map, or pre-implement (wave Draft PR) when the user authorizes
+  publish. Orchestrators use ForgeClient on external-action nodes instead —
+  do not auto-invoke this skill.
 disable-model-invocation: true
 ---
 
@@ -29,17 +30,22 @@ Human-walker equivalent of Gateflow `ForgeClient` **open/update Draft PR**
 ## Inputs
 
 1. Content-skill handoff with `external_action: true` and `forge:`
-2. Pin node for the next `external-action` (`prd-pr-action` or `spec-pr-action`)
+2. Pin node for the next `external-action` (`prd-pr-action`, `spec-pr-action`,
+   or `wave-pr-action`)
 3. Workspace files referenced by `body_path` / artifact
 
 ## Process
 
 1. Validate `handoff.forge` against pin `requires` and label policy.
 2. Ensure branch exists / matches readiness (without inventing policy).
+   For `wave-pr-action`, require `head_ref` and `base_ref` from the handoff
+   (wave branch → integration base).
 3. Create or update Draft PR (title, body from readiness).
 4. Apply `apply_labels`; remove `remove_labels` / obsolete projection labels
-   per pin.
+   per pin. Wave Draft PRs typically carry no auto labels from the pin.
 5. Report PR URL; emit forge-step handoff.
+6. Never merge. Never apply `*-lgtm`. Wave merge stays human-only at
+   `wave-signoff`.
 
 ## Workflow handoff
 

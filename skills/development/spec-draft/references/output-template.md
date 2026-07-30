@@ -13,22 +13,27 @@
 | Tech-lead approval | {review URL/id, approver, submitted_at; review commit_id must equal approved head} |
 | Repo | {REPO} |
 | Date | {YYYY-MM-DD} |
-| Status | Draft — dev review required before committing |
+| Status | Draft — dev review required before Forge publish |
 
 ## Overview
 
 {2–3 sentences: what this repo delivers for this initiative.
-Scope boundary: what is OUT of scope for this repo.}
+Scope boundary: what is OUT of scope for this repo.
+Ownership: observable behavior only — architecture questions routed, not decided.}
 
 ## Functional requirements
 
-| ID | Requirement | PRD source | Acceptance criteria | Evidence type |
-|----|-------------|-----------|---------------------|---------------|
-| REQ-{nn} | {engineering statement, not user story} | PRD `CAP-*` / `REQ-*` or §{section} | {observable, testable} | unit / integration / live verify / inspection |
+| ID | Requirement | PRD source | Condition / event | Observable result | Evidence layer |
+|----|-------------|-----------|-------------------|-------------------|----------------|
+| REQ-{nn} | {engineering statement of WHAT, not HOW — not a user story} | PRD `CAP-*` / `REQ-*` or §{section} | {Given/When or trigger that makes the REQ applicable} | {externally observable done condition} | unit / integration / live verify / inspection |
 
 > **Id convention:** `REQ-*` is canonical (`../../../references/id-conventions.md`).
 > Legacy display alias `FR-{nn}` ≡ `REQ-{nn}` (same number) — prefer `REQ-*` in
 > new rows. Do not invent wave-scoped `REQ-W*` ids.
+>
+> **Behavioral acceptance vs evidence:** Condition/event + observable result are
+> the product acceptance statement (implementation-neutral). Evidence layer
+> names how it will be proved later — not the implementation design.
 
 ## Negative and failure paths
 
@@ -46,7 +51,11 @@ Use “None — no cross-repository boundary” when not applicable.
 
 | Contract ID | Provider / owner | Consumer / owner | Entry point | Input shape | Output shape | Invariants | Errors | Compatibility / versioning | Contract-test location |
 |-------------|------------------|------------------|-------------|-------------|--------------|------------|--------|----------------------------|------------------------|
-| CTR-{n} | {repo / team} | {repo / team} | {endpoint/event/command/callable} | {accepts} | {returns/emits} | {guarantees} | {failure semantics} | {policy} | {path or planned path} |
+| CTR-{n} | {repo / team} | {repo / team} | {logical operation; concrete endpoint/event/method only when already approved} | {field meaning / accepts} | {field meaning / returns/emits} | {guarantees} | {failure semantics} | {policy} | {path or planned path} |
+
+> Entry point is a **semantic** boundary: name the logical operation and field
+> meaning. Transport, framework, and module realization belong to technical
+> review — not this table.
 
 ## Non-functional requirements
 
@@ -94,28 +103,34 @@ Every row is required. Use N/A only with a concrete reason.
 
 **Draft verdict:** PASS / FAIL / NEEDS INPUT
 
-Do not advance to `/initiative-feasibility` unless the verdict is PASS and the
-developer review below is complete.
+**Selected workflow outcome:** `pass` / `needs-input` / `blocked` / `stale` / `failed`
+**Outcome reason:** {one sentence mapping check verdict + gate state → outcome}
+
+Do not advance to `/initiative-feasibility` unless the workflow outcome is
+`pass`, the draft verdict is PASS, and the developer review below is complete.
 
 ## PR readiness handoff
 
 | Item | Value |
 |------|-------|
+| Workflow outcome | `{outcome}` — {reason} |
 | Verdict | PR READY / PR BLOCKED |
 | Existing spec PR | none / {URL} |
 | Proposed branch | `chore/INIT-{COMPONENT}-{NUMBER}-spec-{repo}` |
 | Proposed base | `develop` |
 | Proposed title | `[INIT-{COMPONENT}-{NUMBER}] Spec — {repo}` |
 | PR type | **Draft** (entire spec lifecycle) |
-| Files to commit | `docs/specification/product/INIT-{id}.md`, `docs/specification/README.md` if new |
+| Local artifacts to publish | `docs/specification/product/INIT-{id}.md`, `docs/specification/README.md` if new |
+| Forge readiness | fill `handoff.forge` for `open_draft_pr`; recommend `/commit-workspace` then `/open-draft-pr` — do not commit/push/open PR inside this skill |
 | Reviewer | @{pe-team} |
 | Initial Gate 2 label | `spec-pending` |
 | Additional invalidation label | none / `spec-revised` / `spec-stale` |
 | Blocking items | none / {IDs and reasons} |
 
-**No GitHub side effects have occurred.** The agent must present this section in
-chat and ask whether to create or update the Draft spec PR. Continue only after
-explicit authorization.
+**No GitHub side effects have occurred.** Persist the draft locally, present
+this section in chat, and ask whether to authorize Forge publish
+(`/commit-workspace` / `/open-draft-pr` or Gateflow ForgeClient). Continue only
+after explicit authorization.
 
 ### Proposed Draft PR body
 
@@ -145,10 +160,10 @@ explicit authorization.
 
 Initial label: `spec-pending`
 
-- [ ] Spec slice committed on this PR head
-- [ ] Feasibility report (later commit)
-- [ ] Technical design + ADRs (later commit)
-- [ ] Implementation plan §9 (later commit)
+- [ ] Spec slice published on this PR head (via Forge `/commit-workspace` / `/open-draft-pr`)
+- [ ] Feasibility report (later Forge publish)
+- [ ] Technical design + ADRs (later Forge publish)
+- [ ] Implementation plan §9 (later Forge publish)
 - [ ] PE sets `spec-lgtm` on exact final head before merge
 
 Requested reviewer: @{pe-team}
@@ -157,8 +172,8 @@ Requested reviewer: @{pe-team}
 ## Developer review
 
 - [ ] Scope matches the approved impact-map repo scope digest
-- [ ] FRs and acceptance criteria are complete
-- [ ] Contracts and NFR applicability are explicit
+- [ ] REQs have condition/event, observable result, and evidence layer
+- [ ] Contracts are semantic (logical operation); no architecture decisions in REQs
 - [ ] No blocking question remains
 - [ ] Developer confirmed draft is ready for feasibility
 

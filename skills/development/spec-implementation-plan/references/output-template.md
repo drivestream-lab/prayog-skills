@@ -73,22 +73,52 @@ wave-scoped shadow ids like `REQ-W{n}`.
 
 **GOAL-W0:** …
 
-| Task | Description | Implements | Codebase | Spec path | Done when | Verify command | MDC notes | ADR notes | Branch |
-|------|-------------|------------|----------|-----------|-----------|----------------|-----------|-----------|--------|
-| TASK-W0-01 | | REQ-01, REQ-02 | {repo} | {SPEC_PATH} | | `{check_command}` | | | |
+| Task | Description | Implements | Depends on | Files (path/action) | Exit criteria | Proof (kind / command\|review) | Expected | Evidence expected | Codebase | Spec path | Verify command | MDC notes | ADR notes | Branch |
+|------|-------------|------------|------------|---------------------|---------------|--------------------------------|----------|-------------------|----------|-----------|----------------|-----------|-----------|--------|
+| TASK-W0-01 | | REQ-01, REQ-02 | — | `src/…` create | observable result | command / `{check_command}` | exit 0 + assertion | Wave-Execution-… § TASK-W0-01 | {repo} | {SPEC_PATH} | `{check_command}` | | | |
 
 #### Files (W0)
 
 | ID | Path | Action |
 |----|------|--------|
-| FILE-W0-01 | | create / edit |
+| FILE-W0-01 | | create / modify / delete / inspect |
 
 #### Tests (W0)
 
 | ID | Layer | Command | Proves |
 |----|-------|---------|--------|
 | TEST-W0-U | unit | (from tests_readme / profile) | REQ-* / TASK-* |
-| TEST-W0-L | live | `{live_verify_dir}/…` (human-run) | new/changed product surface (P15) |
+| TEST-W0-I | integration/contract | (when applicable) | REQ-* / TASK-* |
+| TEST-W0-L | live (smoke\|sandbox) | `{live_verify_dir}/…` (human-run) | new/changed product surface (P15) |
+
+#### Verification Coverage (W0)
+
+Map every in-scope acceptance criterion / REQ for this wave to exactly one
+primary layer (and note secondary layers if needed):
+
+| REQ / criterion | unit | integration/contract | smoke | sandbox | Notes |
+|-----------------|------|----------------------|-------|---------|-------|
+| REQ-01 / … | TEST-W0-U | N/A | TEST-W0-L | N/A | |
+
+#### Live-verification intent (W0)
+
+Planning records **intent** only. Bind actual runtime head / build SHA and
+record observed evidence at human checkpoint `live-verify` — do not invent them
+here.
+
+| Field | Value |
+|-------|-------|
+| Applicable | yes / no — {reason if no} |
+| Environment class | local-compose / staging-sandbox / … |
+| Mode | smoke \| sandbox |
+| Runtime head binding | Bound at `live-verify` against the wave PR head under test (not filled at planning) |
+| Prerequisites | |
+| Safe test data | |
+| Steps / command | `{live_verify_dir}/…` |
+| Expected observations | |
+| Expected evidence | `Live-Verify-{INIT}-W0.md` |
+| Cleanup | |
+| Stop conditions | |
 
 > When the wave FILE list adds/changes a product surface (P15), include ≥1
 > `live_verify_dir` FILE in **Files** and a live row here. Agent implements the
@@ -100,9 +130,9 @@ wave-scoped shadow ids like `REQ-W{n}`.
 
 **GOAL-W1:** …
 
-| Task | Description | Implements | Codebase | Spec path | Done when | Verify command | MDC notes | ADR notes | Branch |
-|------|-------------|------------|----------|-----------|-----------|----------------|-----------|-----------|--------|
-| TASK-W1-01 | | REQ-{nn} | {repo} | {SPEC_PATH} | | | | | |
+| Task | Description | Implements | Depends on | Files (path/action) | Exit criteria | Proof (kind / command\|review) | Expected | Evidence expected | Codebase | Spec path | Verify command | MDC notes | ADR notes | Branch |
+|------|-------------|------------|------------|---------------------|---------------|--------------------------------|----------|-------------------|----------|-----------|----------------|-----------|-----------|--------|
+| TASK-W1-01 | | REQ-{nn} | — | | | | | | {repo} | {SPEC_PATH} | | | | |
 
 #### Files (W1)
 
@@ -113,6 +143,27 @@ wave-scoped shadow ids like `REQ-W{n}`.
 
 | ID | Layer | Command | Proves |
 |----|-------|---------|--------|
+
+#### Verification Coverage (W1)
+
+| REQ / criterion | unit | integration/contract | smoke | sandbox | Notes |
+|-----------------|------|----------------------|-------|---------|-------|
+
+#### Live-verification intent (W1)
+
+| Field | Value |
+|-------|-------|
+| Applicable | |
+| Environment class | |
+| Mode | |
+| Runtime head binding | Bound at `live-verify` (not planning) |
+| Prerequisites | |
+| Safe test data | |
+| Steps / command | |
+| Expected observations | |
+| Expected evidence | |
+| Cleanup | |
+| Stop conditions | |
 
 (Repeat per wave.)
 
@@ -157,14 +208,16 @@ wave-scoped shadow ids like `REQ-W{n}`.
 
 | Check | Status |
 |-------|--------|
-| P1–P15 | |
+| P1–P16 | |
 
 ---
 
-## 8. PR instructions
+## 8. Forge / PR instructions
 
-> Commit this plan to the **Draft spec PR** branch alongside spec, feasibility,
-> and TDD. Label remains **`spec-pending`** until PE completes §10.
+> Persist this plan locally and publish via `/commit-workspace` (or Gateflow
+> ForgeClient) to the **Draft spec PR** branch alongside spec, feasibility,
+> and TDD. Do **not** commit inside this skill. Label remains **`spec-pending`**
+> until PE completes §10.
 
 ```
 Branch:   chore/INIT-{COMPONENT}-{NUMBER}-spec-{repo}  (Draft PR)
@@ -178,9 +231,10 @@ PE checklist (before spec-lgtm):
   [ ] Spec + feasibility + TDD + Accepted ADRs + this plan on current head
   [ ] §0 PE sign-off on TDD marked complete (or N/A with reason)
   [ ] Wave order and dependencies make sense
-  [ ] Done-when criteria are observable and testable
-  [ ] WorkManifest YAML (§9) correct — wave IDs W0, W1, … (one issue per wave)
-  [ ] P1–P15 checks all pass (including P15 co-ship when surface changes)
+  [ ] Done-when / exit criteria are observable and testable (P4)
+  [ ] Verification Coverage maps every criterion to a layer (P5)
+  [ ] WorkManifest YAML (§9) passes workmanifest-contract-pass (P16) — prayog/v1
+  [ ] P1–P16 checks all pass (including P15 co-ship when surface changes)
 
 After spec-lgtm + Approve + merge — **`/create-board-tickets`** from §9 (post-merge only):
   Create one GitHub Issue per wave (W0, W1, …) using §9 titles, bodies, depends_on
@@ -193,16 +247,20 @@ After spec-lgtm + Approve + merge — **`/create-board-tickets`** from §9 (post
 
 ## 10. Coding-readiness unlock (PE — after plan on head)
 
-Present this section in chat when the plan is committed. **No GitHub side
-effects** until PE completes the unlock.
+Present this section in chat when the plan is persisted locally and Forge
+readiness is filled. **No GitHub side effects** until PE completes the unlock
+via authorized Forge / human actions.
 
 | Item | Value |
 |------|-------|
+| Workflow outcome | `{outcome}` — {reason} |
 | Verdict | GATE OPEN REQUEST / BLOCKED |
 | Spec PR | {URL} |
 | Spec PR head SHA | `{SHA}` |
 | Gate label (current) | `spec-pending` |
 | Gate label (target) | `spec-lgtm` |
+| Local plan path | `{reports_dir}/{plan_prefix}-{initiative}.md` |
+| Forge readiness | fill `handoff.forge` for `/commit-workspace` — do not commit inside this skill |
 | Blocking items | none / {reason} |
 
 Provision labels when missing:
@@ -251,7 +309,7 @@ digests must match the same head SHA.
 
 > **Primary:** `/create-board-tickets` creates **one GitHub Issue per wave** (`W0`, `W1`, …)
 > from this section after spec merge. Wave bodies **must list every `TASK-*`**
-> with done-when for human traceability (TASK sub-issues optional).
+> with exit criteria for human traceability (TASK sub-issues optional).
 >
 > Before creation, run `gh auth status` and search existing issues by initiative
 > plus wave id. With explicit developer authorization, create only missing
@@ -259,15 +317,22 @@ digests must match the same head SHA.
 >
 > Wave `id` must be exactly `W0`, `W1`, … — one issue per wave, not per TASK row.
 > Each TASK **implements** one or more product `REQ-*` (never invent `REQ-W*`).
+> Contract: `../../../references/workmanifest-contract.md` (`prayog/v1`).
 > Ids: `../../../references/id-conventions.md`.
+> Validate: `python scripts/workmanifest_contract.py` on this plan (P16 /
+> `workmanifest-contract-pass`).
 > Set `target.org` from governance and `target.project` from
 > `governance.project_board.name` (read-only meta). Resolve with
 > `launchpad board-bind --client <id>` — do not free-text board names.
+>
+> Do **not** put board `status`, observed evidence, or runtime head/SHA in this
+> approved manifest — those live on the board and in Live-Verify / Wave-Execution
+> artifacts.
 
 ```yaml
 # Generated by /spec-implementation-plan — {DATE}
 # LOCAL — do not commit to prayog-skills upstream
-apiVersion: launchpad/v1
+apiVersion: prayog/v1
 kind: WorkManifest
 
 initiative: {INITIATIVE}
@@ -292,7 +357,6 @@ target:
 defaults:
   initiative: {INITIATIVE}
   parent: EPIC
-  status: Backlog
   labels:
     - {initiative-label}
 
@@ -331,14 +395,56 @@ work:
     codebase: {repo}
     spec_path: {SPEC_PATH}
     verify_command: {wave W0 live script under live_verify_dir}
-    status: Backlog
     tasks:
       - id: TASK-W0-01
         implements: [REQ-01, REQ-02]
-        done_when: "{observable criterion}"
+        depends_on: []
+        files:
+          - path: {repo-relative/exact/path.py}
+            action: create
+        exit:
+          criteria:
+            - "{observable engineering result}"
+          proof:
+            kind: command
+            command: "{proving command}"
+            expected: "{expected result}"
+            evidence_expected: "Wave-Execution-{INITIATIVE}-W0.md § TASK-W0-01"
       - id: TASK-W0-02
         implements: [REQ-03]
-        done_when: "{observable criterion}"
+        depends_on: [TASK-W0-01]
+        files:
+          - path: {live_verify_dir/verify_….py}
+            action: create
+        exit:
+          criteria:
+            - "{observable engineering result}"
+          proof:
+            kind: command
+            command: "{live verify command}"
+            expected: "{expected result}"
+            evidence_expected: "Live-Verify-{INITIATIVE}-W0.md"
+    verification:
+      check: "{check_command}"
+      unit: "{test_command}"
+      live:
+        applicable: true
+        mode: smoke
+        command: {wave W0 live script under live_verify_dir}
+        covers: [REQ-01, REQ-02]
+        prerequisites:
+          - "{env up / secrets present}"
+        safe_test_data:
+          - "{synthetic ids — no prod mutation}"
+        steps:
+          - "Run live verify script"
+        expected_observations:
+          - "{observable pass signal}"
+        evidence_expected: "Live-Verify-{INITIATIVE}-W0.md"
+        cleanup:
+          - "{remove synthetic data}"
+        stop_conditions:
+          - "Non-zero exit or unexpected 5xx → stop; do not start Pass-2"
     body: |
       ## Wave goal
 
@@ -346,14 +452,14 @@ work:
 
       ## Tasks (from plan §2) — stable ids for loop-spec / board
 
-      | Task | Implements | Done when |
-      |------|------------|-----------|
-      | TASK-W0-01 | REQ-01, REQ-02 | {done-when} |
-      | TASK-W0-02 | REQ-03 | {done-when} |
+      | Task | Implements | Depends on | Exit criteria | Proof |
+      |------|------------|------------|---------------|-------|
+      | TASK-W0-01 | REQ-01, REQ-02 | — | {exit} | {kind}/{command} |
+      | TASK-W0-02 | REQ-03 | TASK-W0-01 | {exit} | {kind}/{command} |
 
       ## Done when
 
-      - [ ] All W0 tasks complete per plan
+      - [ ] All W0 tasks complete per plan exit proof
 
       ## Spec reference
 
@@ -368,12 +474,28 @@ work:
       - W0
     codebase: {repo}
     spec_path: {SPEC_PATH}
-    verify_command: {wave W1 live script under live_verify_dir}
-    status: Backlog
+    verify_command: {wave W1 live script under live_verify_dir — or N/A — reason}
     tasks:
       - id: TASK-W1-01
         implements: [REQ-{nn}]
-        done_when: "{observable criterion}"
+        depends_on: []
+        files:
+          - path: {repo-relative/path}
+            action: modify
+        exit:
+          criteria:
+            - "{observable engineering result}"
+          proof:
+            kind: command
+            command: "{proving command}"
+            expected: "{expected result}"
+            evidence_expected: "Wave-Execution-{INITIATIVE}-W1.md § TASK-W1-01"
+    verification:
+      check: "{check_command}"
+      unit: "{test_command}"
+      live:
+        applicable: false
+        reason: "{docs-only / no new product surface — P15 N/A}"
     body: |
       ## Wave goal
 
@@ -381,17 +503,17 @@ work:
 
       ## Tasks (from plan §2) — stable ids for loop-spec / board
 
-      | Task | Implements | Done when |
-      |------|------------|-----------|
-      | TASK-W1-01 | REQ-{nn} | {done-when} |
+      | Task | Implements | Depends on | Exit criteria | Proof |
+      |------|------------|------------|---------------|-------|
+      | TASK-W1-01 | REQ-{nn} | — | {exit} | {kind}/{command} |
 
       ## Done when
 
-      - [ ] All W1 tasks complete per plan
+      - [ ] All W1 tasks complete per plan exit proof
 
       ## Spec reference
 
       {SPEC_PATH}
 
-  # (one work: entry per wave — NOT one per TASK row; tasks[] + body table required)
+  # (one work: entry per wave — NOT one per TASK row; tasks[] + verification + body table required)
 ```

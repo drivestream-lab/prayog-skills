@@ -25,15 +25,17 @@ them.
 | Learning | App profiles include **`learning-extract`** |
 | Checkpoints | `prd-impact-acceptance`, `coding-readiness` (not `gate-1` / `gate-2`) |
 | Labels | Unchanged: `impact-map-*`, `spec-*` |
+| WorkManifest | Launchpad **materializes** the pin only — it does **not** own, parse, or execute WorkManifest. Prayog owns the contract; Gateflow/humans validate and project it. |
 
 ## Pass-1 / Pass-2 (copy for playbooks)
 
 ```text
-Pass-1:  /pre-implement → /loop-spec → live-verify (human)
+Pass-1:  /pre-implement → wave-pr-action → /loop-spec → live-verify (human)
 Pass-2:  /learning-extract → /ground-spec → wave-signoff
 ```
 
 Do not document orchestrated auto-verify/ground after `loop-spec`.
+Do not materialize a merge Forge skill — wave merge is human-only.
 
 ## Partner handoff
 

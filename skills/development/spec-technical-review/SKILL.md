@@ -6,9 +6,10 @@ description: >-
   boundaries), draft any required ADRs, and route only true product questions
   back to PM on the meta PRD PR. Use before /spec-implementation-plan when the
   feasibility report contains NEW-ADR findings, Critical/Should-fix engineering
-  items, or unclear module boundaries. Commits TDD and Draft ADRs to the Draft
-  spec PR; PE accepts architecture in files before planning. Final Gate 2
-  unlock (spec-lgtm) happens only after the implementation plan exists.
+  items, or unclear module boundaries. Writes TDD and Draft ADRs locally and
+  emits Forge readiness for the Draft spec PR; PE accepts architecture in files
+  before planning. Final Gate 2 unlock (spec-lgtm) happens only after the
+  implementation plan exists.
 disable-model-invocation: true
 paths: AGENTS.md, docs/specification/**, .cursor/rules/**
 metadata:
@@ -21,10 +22,11 @@ metadata:
 Resolve all **engineering decisions** that block the implementation plan.
 **Do not implement.** Produce a Technical Design Document (TDD) and draft ADRs.
 
-Runs **while the Draft spec PR is open** — commit TDD and ADR files to the spec
-branch. Gate 2 label remains **`spec-pending`**. PE architecture acceptance is
-recorded in **artifact metadata** (`Draft` → `Accepted`); **`spec-lgtm`** is
-set only after the full spec package (including plan) is on head.
+Runs **while the Draft spec PR is open** — write TDD and ADR files locally and
+emit Forge readiness for the spec branch. Gate 2 label remains **`spec-pending`**.
+PE architecture acceptance is recorded in **artifact metadata**
+(`Draft` → `Accepted`); **`spec-lgtm`** is set only after the full spec package
+(including plan) is on head.
 
 Benchmarked against: Stripe/Cloudflare/Oxide RFC process, Sentry design-first
 gate, `agentic_development_workflow` multi-role review, GitHub Spec Kit
@@ -41,7 +43,7 @@ gate, `agentic_development_workflow` multi-role review, GitHub Spec Kit
 4. Every `NEW-ADR` from feasibility maps to exactly one disposition:
    `ADR_REQUIRED` with a Draft file under `adr_dir`, `TDD_ONLY` with rationale,
    or `DEFERRED_WITH_DEFAULT` with risk and revisit trigger.
-5. Dual output: chat summary + saved TDD file committed to spec branch.
+5. Dual output: chat summary + saved TDD file (local persistence + Forge readiness).
 6. Run T0–T5 control loop (Gather → Understand → Analyze → Design → Execute → Verify).
 7. Human PE acceptance is **required** before the implementation plan runs.
    Technical review creates Draft ADR files first; planning consumes only
@@ -49,6 +51,12 @@ gate, `agentic_development_workflow` multi-role review, GitHub Spec Kit
    spec branch — it does **not** set `spec-lgtm`.
 8. Verify that spec, feasibility report, PRD digest, impact-map revision, repo
    scope digest, and approved meta PR head agree. Stop on stale inputs.
+9. **Product/architecture boundary.** PE may frame options and draft ADRs
+   against approved `REQ-*` constraints. An ADR **must not** become `Accepted`
+   when it depends on user-visible behavior not already represented by an
+   approved `REQ-*` — amend and re-approve the spec first. T12 enforces this.
+10. **No forge mutations.** Do not commit, push, branch, open PRs, apply labels,
+    create issues, or merge. Fill `handoff.forge` / recommend `/commit-workspace`.
 
 ## Inputs
 
@@ -88,10 +96,28 @@ Resolve paths from `.harness/profile.yaml` or
    [references/adr-template.md](references/adr-template.md); produce module
    boundaries and public interface contracts
 5. **T4 Execute** — write TDD + every Draft ADR file; make TDD §4 an ADR
-   index; run T1–T11 checks
+   index; run T1–T12 checks
 6. **T5 Verify** — all required ADR files exist and are linked; all engineering
    blockers are resolved/deferred; only genuine PM/domain questions remain;
-   emit `ready_for_pe_review: true` and `ready_for_plan: false`
+   T12 product-boundary integrity passes; select workflow outcome; emit
+   `ready_for_pe_review: true` and `ready_for_plan: false`
+
+## Outcome selection (workflow edges)
+
+Map evidence to exactly one outcome declared for `spec-technical-review` in
+pinned `workflow.yaml`:
+
+| Outcome | When | Next (from workflow) |
+|---------|------|----------------------|
+| `pass` | T1–T12 PASS; engineering decisions resolved/deferred; T12 clean; ready for PE review; no blocking PM/domain that prevents PE package readiness | `technical-review-approval` |
+| `findings` | Unresolved engineering quality gaps that need human clarification before PE can accept (not product input) | `spec-human-decision` |
+| `needs-input` | Blocking PM or domain input required; product behavior missing from approved REQs | `spec-human-decision` |
+| `blocked` | Explicit gate prevents progress | `spec-human-decision` |
+| `stale` | Spec/feasibility/handoff digest or head mismatch | `initiative-feasibility` |
+| `failed` | Execution/render failure on valid inputs | `workflow-stop` |
+
+Product/domain input must prevent `pass`. Stale inputs must emit `stale`.
+Unresolved engineering decisions must not claim PE-review readiness.
 
 ## Output
 
@@ -101,21 +127,23 @@ Use [references/output-template.md](references/output-template.md).
 
 ## PE acceptance (artifact gate — not Gate 2 unlock)
 
-Commit TDD + Draft ADR files to the Draft spec PR. PE reviews on the **same PR**:
+Persist TDD + Draft ADR files locally and publish via Forge
+(`/commit-workspace`) to the Draft spec PR. PE reviews on the **same PR**:
 - Discuss engineering decisions in spec PR comments
 - Request changes until decisions and artifacts are correct
 - CODEOWNERS on `Technical-Review-*` may request PE review when the TDD file is present
 
 When PE explicitly states decisions are ready for acceptance:
 
-1. update required ADR files `Draft` → `Accepted` with PE/date/review evidence,
+1. update required ADR files `Draft` → `Accepted` with PE/date/review evidence
+   **only if** each ADR binds approved `REQ-*` and `changes_user_visible_behavior: false`,
 2. update the TDD `Status` field to **Accepted** and TDD §4 ADR index rows,
-3. commit the acceptance package to the spec branch,
+3. publish the acceptance package via Forge to the spec branch,
 4. record the approved head SHA in TDD/ADR metadata when helpful.
 
 **Do not set `spec-lgtm` at this stage.** `/spec-implementation-plan` reads
 Accepted files (P12/P13). The GitHub Gate 2 unlock (`spec-lgtm` + Approve +
-attestation) happens only after the plan is committed to the same PR head.
+attestation) happens only after the plan is published to the same PR head.
 
 ## Routing rubric
 
@@ -132,26 +160,27 @@ Quick rule:
 
 ## ADR qualification rubric
 
-Use `ADR_REQUIRED` when the decision is cross-module/service, security/privacy
-relevant, chooses data/storage authority or deployment architecture, is hard to
-reverse, constrains later initiatives, or deliberately departs from the
-constitution.
+Use `ADR_REQUIRED` when **all three** hold: (1) independent implementers could
+choose incompatibly, (2) the answer is not obvious from compliant code/current
+rules, and (3) a real trade-off exists — **and** the decision is cross-module/
+service, security/privacy relevant, chooses data/storage authority or deployment
+architecture, is hard to reverse, constrains later initiatives, or deliberately
+departs from the constitution.
 
 Use `TDD_ONLY` for a local, easily reversible implementation choice already
 bounded by rules. Use `DEFERRED_WITH_DEFAULT` only with a named risk, safe
 default, and observable revisit trigger.
 
 Every disposition remains traceable to its feasibility finding. Never satisfy
-T11 with a future promotion task or a target path alone.
+T11 with a future promotion task or a target path alone. Never invent product
+behavior in an ADR (T12).
 
 ## Workflow handoff
 
 1. Append/emit the envelope from `../../../references/handoff-envelope.md` to the TDD. Use stage `spec-technical-review`.
 2. When the invocation binds `handoff_path` (orchestrator / AgentRunner baton), also **overwrite** that path with the same `handoff:` envelope before exit. Leaving the baton empty is a failed stage for automated consumers. `artifact.path` remains the workspace skill output, not the baton path. See `../../../references/handoff-envelope.md` (Orchestrator baton).
 3. Derive `next_candidates` and `human_checkpoint` from pinned root `workflow.yaml` for `(stage: spec-technical-review, outcome)` per `../../../references/handoff-envelope.md` (**Derive from pinned workflow**). Set `human_checkpoint: true` only when the resolved next node's `type` is `human-checkpoint` — never because the artifact "should be reviewed."
-
-
-4. Follow `../../../references/forge-side-effects.md#content-producers` when this stage's pin has `forge.commit_workspace` other than `disabled` or next is an `external-action` with `forge.requires` — fill `handoff.forge` / recommend the matching `/forge` skill; do not treat local CLI as skill success.
+4. Follow `../../../references/forge-side-effects.md#content-producers` when this stage's pin has `forge.commit_workspace` other than `disabled` or next is an `external-action` with `forge.requires` — fill `handoff.forge` / recommend `/commit-workspace`; do not treat local CLI as skill success.
 
 
 **Transitions:** pinned root `workflow.yaml` for this stage (SSOT). Human or

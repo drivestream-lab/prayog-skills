@@ -15,10 +15,11 @@ Resolve engineering decisions that block planning. Produce TDD and draft ADRs. D
 Follow the full procedure in this skill's `SKILL.md` (and `references/` when present). Treat `SKILL.md` as the procedure SSOT; this brief is the invocation package only.
 
 ## Non-negotiables (summary)
-1. Never skip checks in references/checks.md.
+1. Never skip checks in references/checks.md (T1–T12).
 2. Every engineering decision resolved or explicitly deferred with risk + default.
-3. Route only product-scope questions to the meta PRD PR — do not ask PM for architecture choices.
-4. Commit TDD/ADRs to the Draft spec PR; Gate 2 stays spec-pending until plan exists.
+3. Route only product-scope questions to the meta PRD PR — do not ask PM for architecture choices. ADR acceptance requires approved REQ-* bindings; never invent user-visible behavior (T12).
+4. Persist TDD/ADRs locally and fill Forge readiness (`/commit-workspace`); never commit/push/open PRs/apply labels. Gate 2 stays spec-pending until plan exists.
+5. Select workflow outcome from the stage rubric (`pass` / `findings` / `needs-input` / `blocked` / `stale` / `failed`).
 
 ## Envelope navigation (required)
 After choosing `outcome`, derive `next_candidates` and `human_checkpoint` from
@@ -31,10 +32,11 @@ Never set `true` on skill→skill edges (for example never on
 
 
 ## Forge (required awareness)
-Content skills fill `handoff.forge` when the pin expects it; they do **not**
-execute forge mutations. Human forge skills (`/commit-workspace`,
-`/open-draft-pr`, `/create-board-tickets`) or Gateflow ForgeClient apply pin ⋉
-handoff. Never apply `*-lgtm`. See `references/forge-side-effects.md#content-producers`.
+Content skills write local artifacts and fill `handoff.forge` when the pin
+expects it; they do **not** execute forge mutations. Human forge skills
+(`/commit-workspace`, `/open-draft-pr`, `/create-board-tickets`) or Gateflow
+ForgeClient apply pin ⋉ handoff. Never apply `*-lgtm`. See
+`references/forge-side-effects.md#content-producers`.
 
 ## Workspace
 Root: `/workspace/example-repo`.

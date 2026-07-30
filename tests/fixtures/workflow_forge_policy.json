@@ -30,6 +30,12 @@
     "board-tickets-action": {
       "action": "create_board_tickets",
       "requires": ["initiative", "plan_path"]
+    },
+    "wave-pr-action": {
+      "action": "open_draft_pr",
+      "draft": true,
+      "apply_labels": [],
+      "requires": ["title", "body_path", "head_ref", "base_ref"]
     }
   },
   "human_forge_skills": {

@@ -14,10 +14,14 @@ Follow the full procedure in this skill's `SKILL.md`. Treat `SKILL.md` as the
 procedure SSOT; this brief is the invocation package only.
 
 This is a **human forge** skill (Gateflow BoardService / ForgeClient parity for
-`create_board_tickets`). After spec merge: verify gate + board binding, present
-EPIC/waves from plan §9, then create tickets only after explicit authorization.
+`create_board_tickets`). After spec merge: verify gate + board binding, validate
+`prayog/v1` WorkManifest via `scripts/workmanifest_contract.py` before mutate,
+present EPIC/waves/TASK summaries projected from plan §9 (board text is not a
+second authority), then create tickets only after explicit authorization.
 There is no separate `/board-seed` content skill. Never apply `*-lgtm`. Tooling is
-agent-neutral. Orchestrators must not auto-dispatch this skill.
+agent-neutral. Orchestrators must not auto-dispatch this skill. Do not change
+authorization, branch, commit, PR, label, or issue-creation behavior beyond
+contract-gated projection.
 
 ## Envelope navigation (required)
 Forge skills are **not** workflow graph nodes. After a successful seed, continue

@@ -1,0 +1,127 @@
+# Valid prayog/v1 WorkManifest fixture
+apiVersion: prayog/v1
+kind: WorkManifest
+
+initiative: INIT-DEMO-001
+metadata:
+  title: INIT-DEMO-001 — demo wave contract
+  summary: |
+    Minimal valid WorkManifest for contract tests.
+  playbook:
+    - docs/specification/product/INIT-DEMO-001.md
+    - docs/specification/reports/Implementation-Plan-INIT-DEMO-001.md
+
+target:
+  org: example-org
+  project: Example Programme Board
+
+defaults:
+  initiative: INIT-DEMO-001
+  parent: EPIC
+  labels:
+    - INIT-DEMO-001
+
+epic:
+  id: EPIC
+  repo: example-service
+  title: "[feature] INIT-DEMO-001 — demo"
+  codebase: example-service
+  spec_path: docs/specification/product/INIT-DEMO-001.md
+  verify_command: python tests/verify/verify_health.py
+  body: |
+    ## Objective
+    Demo epic for WorkManifest contract validation.
+
+work:
+  - id: W0
+    kind: issue
+    repo: example-service
+    title: "[INIT-DEMO-001 W0] health endpoint"
+    depends_on: []
+    codebase: example-service
+    spec_path: docs/specification/product/INIT-DEMO-001.md
+    verify_command: python tests/verify/verify_health.py
+    tasks:
+      - id: TASK-W0-01
+        implements: [REQ-01]
+        depends_on: []
+        files:
+          - path: src/api/health.py
+            action: create
+        exit:
+          criteria:
+            - "GET /health returns HTTP 200 with {\"ok\": true}"
+          proof:
+            kind: command
+            command: "pytest tests/unit/test_health.py -q"
+            expected: "exit 0; assertion green"
+            evidence_expected: "Wave-Execution-INIT-DEMO-001-W0.md § TASK-W0-01"
+      - id: TASK-W0-02
+        implements: [REQ-01]
+        depends_on: [TASK-W0-01]
+        files:
+          - path: tests/verify/verify_health.py
+            action: create
+        exit:
+          criteria:
+            - "Live verify script exits 0 against local stack for /health"
+          proof:
+            kind: command
+            command: "python tests/verify/verify_health.py"
+            expected: "exit 0; prints PASS"
+            evidence_expected: "Live-Verify-INIT-DEMO-001-W0.md"
+    verification:
+      check: "make check"
+      unit: "pytest tests/unit -q"
+      live:
+        applicable: true
+        mode: smoke
+        command: python tests/verify/verify_health.py
+        covers: [REQ-01]
+        prerequisites:
+          - "Local stack up via docker compose"
+        safe_test_data:
+          - "no durable tenant mutation"
+        steps:
+          - "Run verify_health.py"
+        expected_observations:
+          - "Script exits 0 and prints PASS for /health"
+        evidence_expected: "Live-Verify-INIT-DEMO-001-W0.md"
+        cleanup:
+          - "No durable resources created"
+        stop_conditions:
+          - "Non-zero exit or unexpected 5xx → stop; do not start Pass-2"
+    body: |
+      ## Wave goal
+      Ship health endpoint with co-shipped live verify.
+
+  - id: W1
+    kind: issue
+    repo: example-service
+    title: "[INIT-DEMO-001 W1] docs only"
+    depends_on: [W0]
+    codebase: example-service
+    spec_path: docs/specification/product/INIT-DEMO-001.md
+    verify_command: "N/A — docs-only wave; no new product surface"
+    tasks:
+      - id: TASK-W1-01
+        implements: [REQ-02]
+        depends_on: []
+        files: []
+        exit:
+          criteria:
+            - "Docs-only: README documents /health usage for operators"
+          proof:
+            kind: review
+            review: "PE confirms README section matches REQ-02"
+            expected: "Review notes accept README /health section"
+            evidence_expected: "Wave-Execution-INIT-DEMO-001-W1.md § TASK-W1-01"
+    verification:
+      check: "make check"
+      unit: "pytest tests/unit -q"
+      live:
+        applicable: false
+        reason: "Docs-only wave — no new/changed product surface (P15 N/A)"
+    body: |
+      ## Wave goal
+      Document health endpoint.
