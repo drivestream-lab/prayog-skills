@@ -2,13 +2,13 @@
 name: prd-impact-map
 description: >-
   Map a PRD to affected repos using the service catalog. Reads the PRD and
-  config/service-catalog.yaml from <client>-meta, matches PRD capabilities
+  config/service-catalog-<org>.yaml from <client>-meta, matches PRD capabilities
   to service descriptions, generates a versioned impact-map artifact locally,
   and produces a PR-readiness handoff. After explicit user authorization, the
   agent may use gh to create/update the Draft PR and initialize Gate 1 labels.
   Run in <client>-meta after PRD validation and before app spec PRs.
 disable-model-invocation: true
-paths: prd/**, config/service-catalog-autrio10x.yaml
+paths: prd/**, config/service-catalog-*.yaml
 background_eligible: true
 background_trigger: "validated PRD is ready for impact mapping"
 ---
@@ -21,8 +21,9 @@ opens those after tech lead confirms the map.
 
 ## NON-NEGOTIABLE
 
-1. Read `config/service-catalog-autrio10x.yaml` before reading the PRD. Understand what
-   each service owns before matching.
+1. Read the single `config/service-catalog-*.yaml` before reading the PRD;
+   fail if zero or multiple files match. Understand what each service owns
+   before matching.
 2. Match PRD capabilities to service `description` and `owns` fields
    semantically — do not rely on keyword matching alone.
 3. Include transitively affected repos via `depends_on` chains. If repo B
@@ -51,7 +52,7 @@ opens those after tech lead confirms the map.
 ## Inputs
 
 1. **PRD** — (REQUIRED) `prd/INIT-{id}.md` in `<client>-meta`
-2. **Service catalog** — (REQUIRED) `config/service-catalog-autrio10x.yaml` in `<client>-meta`
+2. **Service catalog** — (REQUIRED) `config/service-catalog-<org>.yaml` in `<client>-meta`
 3. **Git state** — (REQUIRED) current branch/base, changed files, and whether a
    meta PR already exists; an existing PR is not required for the initial map
 4. **Meta PR state** — (OPTIONAL) URL/head/reviews/labels when revising an open PR
