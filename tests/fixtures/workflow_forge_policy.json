@@ -8,7 +8,7 @@
     "initiative-feasibility": "required",
     "spec-technical-review": "required",
     "spec-implementation-plan": "required",
-    "pre-implement": "optional",
+    "pre-implement": "required",
     "loop-spec": "required",
     "verify": "optional",
     "learning-extract": "optional",

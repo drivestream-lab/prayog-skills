@@ -25,7 +25,7 @@ Orientation for orchestrator / AgentRunner maintainers. Pin SSOT:
 
 ```text
 PASS 1 — Enter-at pre-implement (continuous walk)
-  pre-implement → wave-pr-action → loop-spec → live-verify
+  pre-implement → loop-spec → wave-pr-action → live-verify
        live-verify.pass → wave-awaiting-closeout   # terminal park
 
 PASS 2 — separate walk (API Enter-at learning-extract)
@@ -34,8 +34,10 @@ PASS 2 — separate walk (API Enter-at learning-extract)
 
 | Do | Don't |
 |----|--------|
-| STOP on `wave-pr-action`; run ForgeClient `open_draft_pr` after auth | Auto-merge or invent a merge Forge action |
-| Stop after `loop-spec` at `live-verify` | Auto-run `verify` / `ground-spec` / `learning-extract` on Pass-1 |
+| After `pre-implement`, ForgeClient `commit_workspace` (checklist on `head_ref`) then continue to `loop-spec` | STOP / authorize `open_draft_pr` between pre-implement and loop-spec |
+| After `loop-spec`, ForgeClient `commit_workspace` (code) then STOP on `wave-pr-action` | Auto-merge or invent a merge Forge action |
+| Open Draft PR only via ForgeClient at `wave-pr-action` (checklist+code already on tip) | PR-at-start before skills / duplicate open |
+| Stop after authorize at `live-verify` | Auto-run `verify` / `ground-spec` / `learning-extract` on Pass-1 |
 | Treat unit/`make test` green as agent bar only | Treat unit green as live bar or skip human script run |
 | Expect human to run co-shipped `live_verify_dir` script at `live-verify` | Auto-dispatch `/verify` on Pass-1 |
 | Validate §9 via pinned WorkManifest contract before board seed / coding | Accept unsupported manifest versions or mutate approved intent at runtime |

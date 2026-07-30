@@ -145,19 +145,16 @@ When checklist PASS and coding is green, the human at checkpoint `live-verify`:
 
 ---
 
-### Wave Draft-PR readiness (on `pass` — fill handoff.forge; do not open here)
+### Checklist publish readiness (on `pass` — fill handoff.forge commit_workspace)
 
 | Field | Value |
 |-------|-------|
 | Workflow outcome | `pass` — {reason} |
-| Next | `wave-pr-action` (`open_draft_pr`) — `external_action: true` |
-| `title` | Wave {N}: {short title} |
-| `body_path` | `{reports_dir}/Pre-Implement-{INIT}-W{N}.md` (or dedicated PR body) |
-| `head_ref` | `{feature/INIT-*-w{N}-*}` |
-| `base_ref` | `{develop or programme base}` |
-| `draft` | `true` (pin) |
+| Next | `loop-spec` (`skill`) — `external_action: false` |
+| Forge (this hop) | `commit_workspace` **required** — publish `Pre-Implement-{INIT}-W{N}.md` to bound `head_ref` |
+| Later | After `/loop-spec`, `wave-pr-action` opens Draft PR (checklist + code already on tip) |
 
-Recommend `/open-draft-pr` after explicit authorization. Do not merge.
+Recommend `/commit-workspace` after explicit authorization. Do not open the PR here.
 
 ---
 

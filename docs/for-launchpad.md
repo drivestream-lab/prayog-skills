@@ -30,7 +30,7 @@ them.
 ## Pass-1 / Pass-2 (copy for playbooks)
 
 ```text
-Pass-1:  /pre-implement → wave-pr-action → /loop-spec → live-verify (human)
+Pass-1:  /pre-implement → /loop-spec → wave-pr-action → live-verify (human)
 Pass-2:  /learning-extract → /ground-spec → wave-signoff
 ```
 

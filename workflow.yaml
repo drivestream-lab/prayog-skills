@@ -240,16 +240,31 @@ nodes:
     profile: development
     dispatch: orchestrated
     forge:
-      commit_workspace: optional
+      # Checklist artifact must land on head_ref before coding (no PR STOP here).
+      commit_workspace: required
     outcomes:
-      pass: wave-pr-action
+      pass: loop-spec
       needs-input: wave-signoff
       blocked: wave-signoff
       stale: spec-implementation-plan
       failed: workflow-stop
 
-  # Wave Draft-PR preparation (reuse open_draft_pr). Not a merge action.
-  # Coding starts on the bound wave head after this external-action passes.
+  loop-spec:
+    type: skill
+    profile: development
+    dispatch: orchestrated
+    forge:
+      commit_workspace: required
+    outcomes:
+      # Code published via commit_workspace after this hop; then open Draft PR.
+      pass: wave-pr-action
+      findings: loop-spec
+      blocked: wave-signoff
+      failed: loop-spec
+
+  # Wave Draft-PR after checklist + code are on head_ref (reuse open_draft_pr).
+  # Placement after loop-spec avoids a mid-Pass-1 STOP before coding.
+  # Not a merge action — human merge stays at wave-signoff.
   wave-pr-action:
     type: external-action
     owner: engineering
@@ -266,21 +281,9 @@ nodes:
         - head_ref
         - base_ref
     outcomes:
-      pass: loop-spec
+      pass: live-verify
       blocked: wave-signoff
       failed: workflow-stop
-
-  loop-spec:
-    type: skill
-    profile: development
-    dispatch: orchestrated
-    forge:
-      commit_workspace: required
-    outcomes:
-      pass: live-verify
-      findings: loop-spec
-      blocked: wave-signoff
-      failed: loop-spec
 
   live-verify:
     type: human-checkpoint

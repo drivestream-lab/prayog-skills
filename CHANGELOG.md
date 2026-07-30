@@ -7,16 +7,22 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased] — features/rc-2
 
+### Changed — Wave Draft PR after loop-spec (Pass-1 uninterrupted coding)
+
+- Workflow: `pre-implement.pass` → `loop-spec` → `wave-pr-action` → `live-verify`
+  (was PR open before coding). Avoids mid-Pass-1 STOP before `loop-spec`.
+- `pre-implement` `commit_workspace: required` — checklist on `head_ref` before coding.
+- `loop-spec.pass` fills `open_draft_pr` readiness; first Draft PR view has
+  checklist + code. Still no merge Forge action.
+- Prompt packages: pre-implement `@1.6.0`, loop-spec `@1.5.0`.
+
 ### Added — Wave Draft-PR preparation (Initiative C1)
 
-- Workflow: `pre-implement.pass` → new `wave-pr-action` (`forge.action:
-  open_draft_pr`, `draft: true`, requires `title` / `body_path` / `head_ref` /
-  `base_ref`) → `loop-spec`.
+- Workflow: originally `pre-implement.pass` → `wave-pr-action` → `loop-spec`;
+  **superseded** — see “Changed — Wave Draft PR after loop-spec” above.
 - Reuses existing `open_draft_pr` / `/open-draft-pr`; **no** merge Forge action.
 - `wave-signoff.pass` requires human-recorded reviewed head SHA and merge
   commit SHA; Gateflow and Forge cannot merge.
-- `/pre-implement` fills complete `handoff.forge` for wave Draft-PR on pass
-  (`external_action: true`); prompts `@1.4.0` → `@1.5.0`.
 - Docs / forge policy fixture / workflow scenarios updated for `wave-pr-action`.
 
 ### Deferred — Initiative C2 (out of scope)

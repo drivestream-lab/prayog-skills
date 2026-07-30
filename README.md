@@ -113,7 +113,7 @@ PE sets spec-lgtm on exact head → Ready for review → Approve → merge
     ↓
 Merge spec PR → develop → **`/create-board-tickets`** (governance board + EPIC/wave tree)
     ↓
-Per wave Pass-1:  /pre-implement → wave-pr-action → /loop-spec → live-verify (human runs co-shipped script)
+Per wave Pass-1:  /pre-implement → /loop-spec → wave-pr-action → live-verify (human runs co-shipped script)
 Pass-2 closeout:  /learning-extract  →  /ground-spec  →  wave-signoff (human merge; record merge SHA)
 ```
 

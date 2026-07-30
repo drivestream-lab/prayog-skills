@@ -114,20 +114,20 @@
     "next": "pre-implement"
   },
   {
-    "name": "pre-implement pass routes to wave PR action",
+    "name": "pre-implement pass routes to loop-spec",
     "stage": "pre-implement",
-    "outcome": "pass",
-    "next": "wave-pr-action"
-  },
-  {
-    "name": "wave PR action routes to loop-spec",
-    "stage": "wave-pr-action",
     "outcome": "pass",
     "next": "loop-spec"
   },
   {
-    "name": "Pass-1 loop-spec stops at live-verify",
+    "name": "Pass-1 loop-spec routes to wave PR action",
     "stage": "loop-spec",
+    "outcome": "pass",
+    "next": "wave-pr-action"
+  },
+  {
+    "name": "wave PR action routes to live-verify",
+    "stage": "wave-pr-action",
     "outcome": "pass",
     "next": "live-verify"
   },

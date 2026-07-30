@@ -34,9 +34,10 @@ pinned `workflow.yaml` for `(stage: {{skill_id}}, outcome)` per
 `human-checkpoint` — never because the artifact should be reviewed.
 Never set `true` on skill→skill edges (for example never on
 `pre-implement` / `loop-spec` / `verify` `pass`).
-Example: `pre-implement` + `pass` → `wave-pr-action` (`external-action`) →
-`human_checkpoint: false`, `external_action: true`. On pass, fill complete
-`handoff.forge` for wave Draft-PR (`title`, `body_path`, `head_ref`, `base_ref`).
+Example: `pre-implement` + `pass` → `loop-spec` (`skill`) →
+`human_checkpoint: false`, `external_action: false`. Pin requires
+`commit_workspace` for the Pre-Implement artifact; Draft PR opens later at
+`wave-pr-action` after `/loop-spec`.
 
 
 ## Forge (required awareness)

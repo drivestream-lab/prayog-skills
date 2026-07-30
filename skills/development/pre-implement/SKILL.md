@@ -99,10 +99,10 @@ When board/branch readiness is absent: prefer `blocked` (or `needs-input` if
 authority cannot be read) and fill `handoff.forge` / recommend the matching
 forge skill — never create the branch or tickets here.
 
-Happy path: `pass` → `wave-pr-action` (`open_draft_pr`) → then `loop-spec`.
-On `pass`, fill complete `handoff.forge` for wave Draft-PR preparation
-(`title`, `body_path`, `head_ref`, `base_ref`; `draft: true` per pin) and set
-`external_action: true` from the immediate edge.
+Happy path: `pass` → `loop-spec` (no PR STOP here). On `pass`, fill
+`handoff.forge` for **`commit_workspace`** so Forge publishes
+`Pre-Implement-{INIT}-W{N}.md` onto the bound `head_ref` before coding.
+Draft PR open happens later at `wave-pr-action` (after `loop-spec`).
 
 ## Chain position
 
@@ -119,9 +119,11 @@ spec merge (spec-lgtm on head) → board seed (Forge) → wave issue In Progress
   reads: Ground-Report-W{N-1}.md §Contracts produced
   produces: Pre-Implement-{INIT}-W{N}.md
     ↓
-  wave-pr-action (Forge open_draft_pr — head_ref/base_ref)
+  Forge commit_workspace (checklist on head_ref) → /loop-spec
     ↓
-/loop-spec → live-verify (human) → closeout: /learning-extract → /ground-spec
+  Forge commit_workspace (code) → wave-pr-action (open_draft_pr)
+    ↓
+  live-verify (human on Draft PR) → closeout: /learning-extract → /ground-spec
 ```
 
 **Do not run on an open Draft spec PR branch** (`chore/*-spec-*`). Coding
@@ -172,8 +174,8 @@ concrete paths for this repo and slice.
 
 1. Append/emit the envelope from `../../../references/handoff-envelope.md` to the checklist output. Use stage `pre-implement`.
 2. When the invocation binds `handoff_path` (orchestrator / AgentRunner baton), also **overwrite** that path with the same `handoff:` envelope before exit. Leaving the baton empty is a failed stage for automated consumers. `artifact.path` remains the workspace skill output, not the baton path. See `../../../references/handoff-envelope.md` (Orchestrator baton).
-3. Derive `next_candidates`, `human_checkpoint`, and `external_action` from pinned root `workflow.yaml` for `(stage: pre-implement, outcome)` per `../../../references/handoff-envelope.md` (**Derive from pinned workflow**). Set `human_checkpoint: true` only when the resolved next node's `type` is `human-checkpoint` — never because the artifact "should be reviewed." Set `external_action: true` when next is `external-action` (e.g. `wave-pr-action` on `pass`).
-4. Happy path: `outcome: pass` → next `wave-pr-action` (`type: external-action`, `forge.action: open_draft_pr`) → `human_checkpoint: false`, `external_action: true`. Fill complete `handoff.forge` with pin `requires`: `title`, `body_path`, `head_ref`, `base_ref` (and `draft: true` / labels per pin). Recommend `/open-draft-pr` after explicit authorization.
+3. Derive `next_candidates`, `human_checkpoint`, and `external_action` from pinned root `workflow.yaml` for `(stage: pre-implement, outcome)` per `../../../references/handoff-envelope.md` (**Derive from pinned workflow**). Set `human_checkpoint: true` only when the resolved next node's `type` is `human-checkpoint` — never because the artifact "should be reviewed." Set `external_action: true` only when next is `external-action`.
+4. Happy path: `outcome: pass` → next `loop-spec` (`type: skill`) → `human_checkpoint: false`, `external_action: false`. Pin has `forge.commit_workspace: required` — fill `handoff.forge` for `commit_workspace` so Forge publishes the Pre-Implement artifact onto the bound wave head before `/loop-spec`. Do **not** open the Draft PR here.
 
 
 5. Follow `../../../references/forge-side-effects.md#content-producers` when this stage's pin has `forge.commit_workspace` other than `disabled` or next is an `external-action` with `forge.requires` — fill `handoff.forge` / recommend the matching `/forge` skill; do not treat local CLI as skill success.

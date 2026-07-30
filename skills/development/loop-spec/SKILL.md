@@ -60,9 +60,9 @@ Canonical artifact after the wave is green:
    **never claim** human smoke/sandbox success.
 5. Fix failures before moving to the next TASK — do not accumulate failures.
 6. When all TASKs are green: write `Wave-Execution-{INIT}-W{N}.md`, emit
-   completed `TASK-*` IDs/evidence (observed commands + results), fill one
-   stage-level `commit_workspace` Forge package, then **stop** for human
-   checkpoint `live-verify`. Do **not** run `/ground-spec` or
+   completed `TASK-*` IDs/evidence (observed commands + results), fill
+   `commit_workspace` readiness **and** complete `handoff.forge` for next
+   `wave-pr-action` (`open_draft_pr` requires). Do **not** run `/ground-spec` or
    `/learning-extract` in this hop. Do not self-approve the wave. Handoff
    **MUST** list the human `{verify_command}` (co-shipped live script
    path/command).
@@ -82,14 +82,14 @@ Canonical artifact after the wave is green:
 
 | Outcome | When |
 |---------|------|
-| `pass` | All wave TASKs green; `Wave-Execution-*` written with completed TASK ids/evidence; `handoff.forge` filled for stage-level `commit_workspace`; handoff lists human `{verify_command}` |
+| `pass` | All wave TASKs green; `Wave-Execution-*` written; `commit_workspace` readiness filled; `handoff.forge` complete for `wave-pr-action` (`title`, `body_path`, `head_ref`, `base_ref`); handoff lists human `{verify_command}` |
 | `findings` | Check/test failure on a TASK that needs further local fix (keep `TASK-*` in blockers) |
 | `blocked` | Prerequisites fail or an authoritative gate prevents progress (e.g. missing pre-implement PASS, unbound wave head) |
 | `failed` | Execution error running commands or writing the execution artifact |
 
 Do **not** run human live verification or grounding. Do **not** emit `skipped`.
 
-Happy path: `pass` → `live-verify`.
+Happy path: `pass` → `wave-pr-action` → (after authorize) `live-verify`.
 
 ## Inputs
 
@@ -121,10 +121,11 @@ Happy path: `pass` → `live-verify`.
 7. After all TASKs are green:
    - Write `{reports_dir}/Wave-Execution-{INIT}-W{N}.md` listing completed
      `TASK-*` ids and **observed** evidence (not mutated intent).
-   - Fill one stage-level `handoff.forge` `commit_workspace` package
-     (suggested message citing wave + TASK ids). ForgeClient or
-     `/commit-workspace` publishes to the bound wave head.
-   - Hand off with `pass` → pin next `live-verify`. Handoff **MUST** include
+   - Fill `handoff.forge` for stage-level `commit_workspace` (code on
+     `head_ref`) **and** for next `wave-pr-action` / `open_draft_pr`
+     (`title`, `body_path`, `head_ref`, `base_ref`). ForgeClient applies
+     commit after this hop, then STOPs for authorize on `wave-pr-action`.
+   - Hand off with `pass` → pin next `wave-pr-action`. Handoff **MUST** include
      `{verify_command}` for the human. Do **not** run live verify /
      `verify_all` / optional `/verify` as this skill's success, and do not
      claim smoke/sandbox human success.
@@ -152,8 +153,9 @@ Happy path: `pass` → `live-verify`.
 - Agent created planned FILE: yes/no — **did not** run smoke/sandbox as success
 
 ## Forge readiness
-- action: commit_workspace
-- message: [{INIT} W{N}] … — TASK-…
+- After this hop: `commit_workspace` (code on bound `head_ref`)
+- Next external-action: `open_draft_pr` / `wave-pr-action`
+  - title / body_path / head_ref / base_ref
 ```
 
 ## Stop conditions
@@ -161,8 +163,8 @@ Happy path: `pass` → `live-verify`.
 - All wave TASKs complete with local proof recorded
 - `{check_command}` exits 0
 - `{test_command}` exits 0
-- `Wave-Execution-*` written; stage-level `commit_workspace` readiness filled
-- Handoff `pass` toward `live-verify`
+- `Wave-Execution-*` written; `commit_workspace` + `wave-pr-action` forge readiness filled
+- Handoff `pass` toward `wave-pr-action`
 
 ## Chain position
 
@@ -170,16 +172,16 @@ Illustrative only — **transitions SSOT:** pinned root `workflow.yaml`
 (`dispatch: orchestrated` on this node).
 
 ```
-/pre-implement (checklist PASS)
+/pre-implement (checklist PASS) → Forge commit_workspace (checklist)
     ↓
 /loop-spec              ← YOU ARE HERE
   bind WorkManifest TASK + wave issue → implement in file scope
   → check/unit only → fix → record observed proof (do not mutate manifest)
   failures: handoff blockers (TASK-*, why); no commits
     ↓
-  checks/tests green → Wave-Execution-* + commit_workspace readiness
+  checks/tests green → Wave-Execution-* + commit_workspace + wave-pr readiness
     ↓
-live-verify (human prove + patch tip) → wave-awaiting-closeout
+wave-pr-action (Forge open_draft_pr) → live-verify (human on Draft PR)
     ↓ (Pass-2 Enter-at or /learning-extract)
 /learning-extract → /ground-spec → wave-signoff
 ```
@@ -197,11 +199,11 @@ do not commit), fix failures before moving on, stop when all TASKs green.
 
 1. Emit the envelope from `../../../references/handoff-envelope.md` in the final task summary and persist state in `Wave-Execution-*`. Use stage `loop-spec`.
 2. When the invocation binds `handoff_path` (orchestrator / AgentRunner baton), also **overwrite** that path with the same `handoff:` envelope before exit. Leaving the baton empty is a failed stage for automated consumers. `artifact.path` remains the workspace skill output, not the baton path. See `../../../references/handoff-envelope.md` (Orchestrator baton).
-3. Derive `next_candidates` and `human_checkpoint` from pinned root `workflow.yaml` for `(stage: loop-spec, outcome)` per `../../../references/handoff-envelope.md` (**Derive from pinned workflow**). Set `human_checkpoint: true` only when the resolved next node's `type` is `human-checkpoint` — never because the artifact "should be reviewed."
-4. Happy path: `outcome: pass` → next `live-verify` (`type: human-checkpoint`) → `human_checkpoint: true`.
+3. Derive `next_candidates`, `human_checkpoint`, and `external_action` from pinned root `workflow.yaml` for `(stage: loop-spec, outcome)` per `../../../references/handoff-envelope.md` (**Derive from pinned workflow**). Set `human_checkpoint: true` only when the resolved next node's `type` is `human-checkpoint` — never because the artifact "should be reviewed." Set `external_action: true` when next is `external-action`.
+4. Happy path: `outcome: pass` → next `wave-pr-action` (`type: external-action`, `forge.action: open_draft_pr`) → `human_checkpoint: false`, `external_action: true`. After this hop Forge applies `commit_workspace: required` (code on same `head_ref`), then STOP for authorize on `wave-pr-action`. Fill complete `handoff.forge` for `open_draft_pr` with pin `requires`: `title`, `body_path`, `head_ref`, `base_ref`. Recommend `/open-draft-pr` after authorization. First Draft PR view should already include checklist (from pre-implement publish) + code.
 
 
-4. Follow `../../../references/forge-side-effects.md#content-producers` when this stage's pin has `forge.commit_workspace` other than `disabled` or next is an `external-action` with `forge.requires` — fill `handoff.forge` / recommend the matching `/forge` skill; do not treat local CLI as skill success.
+5. Follow `../../../references/forge-side-effects.md#content-producers` when this stage's pin has `forge.commit_workspace` other than `disabled` or next is an `external-action` with `forge.requires` — fill `handoff.forge` / recommend the matching `/forge` skill; do not treat local CLI as skill success.
 
 
 **Transitions:** pinned root `workflow.yaml` for this stage (SSOT). Human or

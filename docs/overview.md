@@ -47,7 +47,7 @@ Content skills do **not** treat local `gh` as automate success. See
 
 ```text
 PASS 1 (orchestrated walk)
-  pre-implement → wave-pr-action → loop-spec → live-verify
+  pre-implement → loop-spec → wave-pr-action → live-verify
        → wave-awaiting-closeout               # park (not wave-complete)
 
 PASS 2 (Enter-at learning-extract, or human /learning-extract)
@@ -59,15 +59,18 @@ PASS 2 (Enter-at learning-extract, or human /learning-extract)
   It consumes the canonical §9 WorkManifest (`prayog/v1`) and fails closed when
   the shared contract check fails, a TASK lacks exit proof, or an applicable
   wave lacks a live-verification contract/script.
-- On `pre-implement.pass`, next is **`wave-pr-action`** (reuse `open_draft_pr`
-  with `title` / `body_path` / `head_ref` / `base_ref`). There is **no** merge
-  Forge action — merge stays human-only at `wave-signoff`.
+  Pin has `commit_workspace: required` so Forge publishes `Pre-Implement-*` onto
+  `head_ref` **before** coding (no Draft-PR STOP between pre-implement and loop).
 - `loop-spec` executes WorkManifest tasks in dependency order within declared
   file scope; records observed proof in `Wave-Execution-*` / handoff without
   mutating approved manifest intent; runs check+unit only; creates planned live
-  scripts but never claims human smoke/sandbox success. Emits one stage-level
-  `commit_workspace` readiness package after the wave is green (no per-TASK
-  commits inside the content skill).
+  scripts but never claims human smoke/sandbox success. Emits `commit_workspace`
+  readiness for code on the same `head_ref`.
+- On `loop-spec.pass`, next is **`wave-pr-action`** (reuse `open_draft_pr` with
+  `title` / `body_path` / `head_ref` / `base_ref`). First Draft PR view should
+  already include checklist + code. There is **no** merge Forge action — merge
+  stays human-only at `wave-signoff`. This placement avoids a mid-Pass-1 STOP
+  before coding (trade: no PR URL during coding).
 - `verify` is **manual** (optional aid) — not on the Pass-1 edge. Layer ownership
   covers unit, integration/contract, smoke, and sandbox; live evidence requires
   expected-versus-observed rows in `Live-Verify-{INIT}-W{N}.md` and must not

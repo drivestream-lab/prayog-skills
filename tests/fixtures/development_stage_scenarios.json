@@ -110,13 +110,13 @@
     "blockers": []
   },
   {
-    "name": "preflight-pass-wave-pr",
+    "name": "preflight-pass-to-loop",
     "stage": "pre-implement",
-    "evidence": "WorkManifest contract pass; exit proof present; board/head readiness read-only OK",
+    "evidence": "WorkManifest contract pass; exit proof present; board/head readiness read-only OK; Pre-Implement artifact ready for commit_workspace",
     "outcome": "pass",
-    "next": "wave-pr-action",
+    "next": "loop-spec",
     "human_checkpoint": false,
-    "external_action": true,
+    "external_action": false,
     "blockers": []
   },
   {
@@ -162,11 +162,11 @@
   {
     "name": "loop-task-evidence-pass",
     "stage": "loop-spec",
-    "evidence": "All wave TASKs green with local proof; Wave-Execution written; commit_workspace readiness filled",
+    "evidence": "All wave TASKs green with local proof; Wave-Execution written; commit_workspace readiness filled; handoff.forge ready for wave-pr-action",
     "outcome": "pass",
-    "next": "live-verify",
-    "human_checkpoint": true,
-    "external_action": false,
+    "next": "wave-pr-action",
+    "human_checkpoint": false,
+    "external_action": true,
     "blockers": []
   },
   {

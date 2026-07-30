@@ -13,8 +13,9 @@ You are executing the **loop-spec** skill (Loop spec (per-wave implement loop)).
 Implement one TASK at a time against the product spec; check/test; fix; record
 local TASK proof. Never commit or push. After the wave is green, write
 `Wave-Execution-{INIT}-W{N}.md`, emit completed TASK ids/evidence, and fill one
-stage-level `commit_workspace` Forge package. Stop at live-verify. Do not
-self-approve or ground.
+stage-level `commit_workspace` Forge package and complete `handoff.forge` for
+`wave-pr-action` (`open_draft_pr`). Next is wave-pr-action then live-verify.
+Do not self-approve or ground.
 
 Follow the full procedure in this skill's `SKILL.md` (and `references/` when present). Treat `SKILL.md` as the procedure SSOT; this brief is the invocation package only.
 
@@ -23,7 +24,9 @@ Follow the full procedure in this skill's `SKILL.md` (and `references/` when pre
 2. Consume WorkManifest TASKs in dependency order; remain within declared file scope. Persist actual command/evidence in Wave-Execution/handoff — do not mutate approved WorkManifest intent.
 3. After each TASK run check_command and test_command only; fix before advancing. Implement planned live-verify FILE TASKs — never run smoke/sandbox or claim human live success.
 4. Bind each iteration to TASK-* + wave issue + implements REQ-* from the manifest.
-5. When green: write Wave-Execution-*; fill commit_workspace Forge readiness; hand off pass → live-verify with human verify_command. Closeout is separate.
+5. When green: write Wave-Execution-*; fill commit_workspace readiness and
+   wave-pr-action open_draft_pr slots; hand off pass → wave-pr-action with
+   human verify_command. Closeout is separate.
 6. Select outcome deterministically (`pass` / `findings` / `blocked` / `failed`) per `SKILL.md`.
 
 ## Envelope navigation (required)
@@ -33,8 +36,9 @@ pinned `workflow.yaml` for `(stage: {{skill_id}}, outcome)` per
 `human_checkpoint` is `true` only when the resolved next node's `type` is
 `human-checkpoint` — never because the artifact should be reviewed.
 Never set `true` on skill→skill edges (for example never on
-`pre-implement` / `loop-spec` `pass`).
-Example: `loop-spec` + `pass` → `live-verify` → `human_checkpoint: true`.
+`pre-implement` / `loop-spec` `pass` when next is another skill).
+Example: `loop-spec` + `pass` → `wave-pr-action` (`external-action`) →
+`human_checkpoint: false`, `external_action: true`.
 
 
 ## Forge (required awareness)
@@ -42,8 +46,9 @@ Content skills fill `handoff.forge` when the pin expects it; they do **not**
 execute forge mutations. Human forge skills (`/commit-workspace`,
 `/open-draft-pr`, `/create-board-tickets`) or Gateflow ForgeClient apply pin ⋉
 handoff. Never apply `*-lgtm`. See `references/forge-side-effects.md#content-producers`.
-After a green wave, prefer one stage-level `commit_workspace` package — ForgeClient
-or `/commit-workspace` publishes to the bound wave head.
+After a green wave: `commit_workspace` publishes code to the bound head; then
+`wave-pr-action` opens/updates the Draft PR (checklist already on tip from
+pre-implement publish).
 
 ## Workspace
 Root: `{{workspace}}`.

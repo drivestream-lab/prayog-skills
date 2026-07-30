@@ -154,8 +154,9 @@ Rules:
 | stage | outcome | next (example) | `human_checkpoint` |
 |-------|---------|----------------|--------------------|
 | `validate-requirements` | `findings` | `review-findings` (`skill`) | `false` |
-| `pre-implement` | `pass` | `wave-pr-action` (`external-action`) | `false` (`external_action: true`) |
-| `loop-spec` | `pass` | `live-verify` (`human-checkpoint`) | `true` |
+| `pre-implement` | `pass` | `loop-spec` (`skill`) | `false` |
+| `loop-spec` | `pass` | `wave-pr-action` (`external-action`) | `false` (`external_action: true`) |
+| `wave-pr-action` | `pass` | `live-verify` (`human-checkpoint`) | `true` |
 
 > At `live-verify`, the human runs the wave's planned live script
 > (`verify_command` under `live_verify_dir`) and inspects the feature — not
