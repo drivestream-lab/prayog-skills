@@ -4,12 +4,12 @@ description: >-
   After feasibility, produce a principal-engineer design document: resolve all
   engineering decisions (ADRs, interface contracts, test policy, module
   boundaries), draft any required ADRs, and route only true product questions
-  back to PM on the meta PRD PR. Use before /spec-implementation-plan when the
-  feasibility report contains NEW-ADR findings, Critical/Should-fix engineering
-  items, or unclear module boundaries. Writes TDD and Draft ADRs locally and
-  emits Forge readiness for the Draft spec PR; PE accepts architecture in files
-  before planning. Final Gate 2 unlock (spec-lgtm) happens only after the
-  implementation plan exists.
+  back to PM on the meta PRD PR. Runs after /initiative-feasibility on both
+  pass and findings (pin always enters this stage before plan). Writes TDD and
+  Draft ADRs locally (or records N/A / light confirmation when feasibility was
+  clean) and emits Forge readiness for the Draft spec PR; PE accepts
+  architecture in files before planning. Final Gate 2 unlock (spec-lgtm)
+  happens only after the implementation plan exists.
 disable-model-invocation: true
 paths: AGENTS.md, docs/specification/**, .cursor/rules/**
 metadata:

@@ -94,7 +94,7 @@ Do not invent a meta path when empty.
 
 Run **while the Draft spec PR is open**, **before spec merge**, after:
 - Feasibility accepted (no blocking PM questions on meta PRD PR)
-- `/spec-technical-review` completed when feasibility had NEW-ADR or PE-lane items
+- `/spec-technical-review` completed (pin always routes feasibility → TDD)
 - **`technical-review-approval` satisfied in files** — TDD `Status: Accepted`
   and every required ADR file in `{adr_dir}` is `Accepted` on the current head
 - All upstream source digests and approval references are CURRENT

@@ -94,7 +94,11 @@ pinned `workflow.yaml`. Prefer the first matching row:
 | `blocked` | Explicit approval/policy gate prevents progress (repo held, gate closed) | `spec-human-decision` |
 | `needs-input` | Unresolved blocking **PM** or **domain** item (missing product/SME answer) | `spec-human-decision` |
 | `findings` | Unresolved blocking **PE** / ADR / engineering item (Critical or Should-fix PE-lane) | `spec-technical-review` |
-| `pass` | Zero unresolved blocking findings; informational/Verify/Gap observations may remain | `spec-implementation-plan` |
+| `pass` | Zero unresolved blocking findings; informational/Verify/Gap observations may remain | `spec-technical-review` |
+
+Both `pass` and `findings` enter `/spec-technical-review` before plan (pin SSOT).
+`pass` still means “no blocking PE findings at feasibility”; TDD may record
+N/A / light confirmation. Do **not** skip technical review on clean feasibility.
 
 Do **not** route PM/domain blockers to technical review via `findings`. Do **not**
 emit `pass` while unresolved PE/ADR blockers remain. Informational observations

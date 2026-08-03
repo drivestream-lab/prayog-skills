@@ -7,6 +7,21 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased] — features/rc-2
 
+_(empty — tip changes land under `[0.5.0-rc.2]`)_
+
+## [0.5.0-rc.2] — 2026-08-03 (tip family)
+
+Consumable tip for programmes remounting `agent_skills.ref: v0.5.0-rc.2`
+(resolve to the retagged tip SHA).
+
+### Changed — Spec Pass-1 always enters technical review
+
+- Pin: `initiative-feasibility` `pass` and `findings` both route to
+  `spec-technical-review` (was: `pass` → `spec-implementation-plan`).
+- First human stop after automated Draft PR + orch hops is
+  `technical-review-approval`; plan stays manual after PE approval.
+- Fixtures / Spec Pass-1 docs / feasibility outcome rubric updated.
+
 ### Fixed — Spec Pass-1 tip hygiene
 
 - CHANGELOG: Spec Pass-1 recorded under `[0.5.0-rc.2]` (not only Unreleased).
@@ -16,16 +31,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - `spec-implementation-plan` template/fixtures surface `meta_workspace` for
   human plan hops.
 
-## [0.5.0-rc.2] — 2026-08-03 (tip family)
-
-Consumable tip for programmes remounting `agent_skills.ref: v0.5.0-rc.2`
-(resolve to the retagged tip SHA, currently Spec Pass-1 inclusive).
-
 ### Added — Spec Pass-1 (orchestrated draft → Draft PR → feasibility / TDD stop)
 
 - Pin: `spec-draft`, `initiative-feasibility`, and `spec-technical-review` are
   `dispatch: orchestrated`. `spec-implementation-plan` stays `manual`; Gate 2 /
   merge / board stay human or `authorization: explicit`.
+- Feasibility always enters TDD before plan (`pass` and `findings` →
+  `spec-technical-review`).
 - Prompt contract: shared optional `meta_workspace` (app `workspace` + meta
   checkout). All packages MINOR-bump schemas; Spec Pass-1 skills (and plan)
   surface dual roots in templates / fixtures / SKILL Inputs where applicable.

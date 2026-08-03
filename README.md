@@ -105,9 +105,9 @@ PM: validated PRD → generate Impact-Map-{INIT}.md locally
 Eng: Draft spec PR (entire spec lifecycle) for approved repo scope
     → spec-pending; Q&A on Draft PR
     ↓
-/spec-draft  →  /initiative-feasibility  →  [/spec-technical-review]
+/spec-draft  →  /initiative-feasibility  →  /spec-technical-review
     ↓
-/spec-implementation-plan  (§9 WorkManifest YAML on spec branch)
+/spec-implementation-plan  (§9 WorkManifest YAML on spec branch; after PE approval)
     ↓
 PE sets spec-lgtm on exact head → Ready for review → Approve → merge
     ↓

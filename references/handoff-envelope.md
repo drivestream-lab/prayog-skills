@@ -119,7 +119,7 @@ Illustrations (live edges always come from the pin):
 
 | stage | outcome | next (example) |
 |-------|---------|----------------|
-| `initiative-feasibility` | `findings` | `spec-technical-review` |
+| `initiative-feasibility` | `pass` / `findings` | `spec-technical-review` |
 | `initiative-feasibility` | `needs-input` | `spec-human-decision` |
 | `spec-technical-review` | `stale` | `initiative-feasibility` |
 | `spec-implementation-plan` | `blocked` | `spec-human-decision` |

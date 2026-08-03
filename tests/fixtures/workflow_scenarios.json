@@ -36,10 +36,10 @@
     "next": "prd-impact-acceptance"
   },
   {
-    "name": "feasibility pass routes to implementation plan",
+    "name": "feasibility pass routes to technical review",
     "stage": "initiative-feasibility",
     "outcome": "pass",
-    "next": "spec-implementation-plan"
+    "next": "spec-technical-review"
   },
   {
     "name": "feasibility engineering findings route to PE",

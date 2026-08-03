@@ -62,12 +62,11 @@ board text is not a second WorkManifest authority.
 PASS 1 — Enter-at spec-draft (continuous walk until human stop)
   spec-draft → spec-pr-action (automated Draft PR)
        → initiative-feasibility
-            pass     → spec-implementation-plan   # manual ⇒ STOP
-            findings → spec-technical-review
+            pass|findings → spec-technical-review
                          → technical-review-approval  # human-checkpoint ⇒ STOP
 
 Human after stop: agree REQs/ADRs on the Draft Spec PR → run
-spec-implementation-plan → coding-readiness → explicit spec-merge / board
+spec-implementation-plan (manual) → coding-readiness → explicit spec-merge / board
 → implement Enter-at.
 ```
 
@@ -77,8 +76,8 @@ spec-implementation-plan → coding-readiness → explicit spec-merge / board
 | Dual-bind `workspace` (app) + `meta_workspace` (meta checkout) into packaged prompts | Invent bind vars or omit meta on spec start |
 | Fail closed when spec start meta checkout is missing/empty (**Gateflow**); packages declare `meta_workspace` optional in the shared schema SSOT | Require `meta_workspace: required: true` only on orch skills without a PE Decision (breaks shared-dict CI / implement binds) |
 | After `spec-draft`, ForgeClient `commit_workspace` then automated `spec-pr-action` | Wait for `/forge/authorize` on Draft Spec PR when pin says automated |
-| Continue to `initiative-feasibility` (± `spec-technical-review` on `findings`) | Auto-dispatch `spec-implementation-plan` (stays `manual`) |
-| STOP at `spec-implementation-plan` (manual) or `technical-review-approval` | Orchestrate coding-readiness / `spec-merge` / board |
+| After feasibility, always continue to `spec-technical-review` (`pass` and `findings`) | Skip TDD on clean feasibility / auto-dispatch `spec-implementation-plan` |
+| STOP at `technical-review-approval` (then human plan) | Orchestrate coding-readiness / `spec-merge` / board |
 | Pass-2 closeout is **lane-agnostic** — Enter-at `learning-extract` on the wave/spec PR; skills do not HTTP to Gateflow | Build a spec-only closeout API shape in skills |
 
 Orchestrated spec skills on this pin: `spec-draft`, `initiative-feasibility`,

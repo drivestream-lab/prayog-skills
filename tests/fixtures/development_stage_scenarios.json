@@ -24,7 +24,7 @@
     "stage": "initiative-feasibility",
     "evidence": "Zero unresolved blocking findings; informational observations only",
     "outcome": "pass",
-    "next": "spec-implementation-plan",
+    "next": "spec-technical-review",
     "human_checkpoint": false,
     "external_action": false,
     "blockers": []

@@ -209,8 +209,7 @@ When ready:
   [ ] All blocking Domain clarifications answered and published via Forge
   [ ] Spec updated to reflect answers (same branch, via Forge)
   [ ] Incremental re-run of /initiative-feasibility on updated spec is clean
-  [ ] Proceed: /spec-technical-review (PE questions exist → findings)
-               OR /spec-implementation-plan (no PE blockers → pass)
+  [ ] Proceed: /spec-technical-review (always — pin routes pass and findings here)
   [ ] After spec + feasibility + TDD (if any) + plan on branch (Forge publish):
       PE sets spec-lgtm + Approve on exact head → Ready for review → merge
   [ ] After merge: `/create-board-tickets` from plan §9 — then /pre-implement → /loop-spec

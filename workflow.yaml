@@ -144,7 +144,8 @@ nodes:
     forge:
       commit_workspace: required
     outcomes:
-      pass: spec-implementation-plan
+      # Always enter PE technical review before plan (pass and findings).
+      pass: spec-technical-review
       findings: spec-technical-review
       needs-input: spec-human-decision
       blocked: spec-human-decision
