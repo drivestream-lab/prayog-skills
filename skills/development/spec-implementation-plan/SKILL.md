@@ -73,6 +73,10 @@ it does not own, parse, or execute WorkManifest.
 
 Resolve paths from `.harness/profile.yaml` or [references/layout-defaults.md](references/layout-defaults.md).
 
+**Dual workspace:** `workspace` = app coding root (plan / WorkManifest).
+`meta_workspace` when bound = meta checkout for PRD / impact-map freshness.
+Do not invent a meta path when empty.
+
 1. **Initiative spec** — on spec branch (REQUIRED)
 2. **Feasibility report** — if exists (RECOMMENDED)
 3. **Technical review** — `Technical-Review-{initiative}.md` if produced (RECOMMENDED; required when feasibility had NEW-ADR findings)
@@ -81,7 +85,8 @@ Resolve paths from `.harness/profile.yaml` or [references/layout-defaults.md](re
 6. **`rules_glob`** — workspace MDC rules (REQUIRED). Read before T2 Analyze.
 7. **`adr_dir`** — architecture decision records (REQUIRED). Run relevant-ADR pass per [references/governance.md](references/governance.md) before T2 Analyze.
 8. **Canonical handoff references** — PRD digest, impact-map revision/scope
-   digest, approved meta PR head/review (REQUIRED)
+   digest, approved meta PR head/review (REQUIRED; resolve under
+   `meta_workspace` when bound)
 9. **Command contract** — canonical check, test, live-verify, and ground
    commands or explicit N/A rationale (REQUIRED)
 

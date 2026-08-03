@@ -7,17 +7,35 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased] — features/rc-2
 
+### Fixed — Spec Pass-1 tip hygiene
+
+- CHANGELOG: Spec Pass-1 recorded under `[0.5.0-rc.2]` (not only Unreleased).
+- `for-gateflow.md`: remove stale “closeout still Gateflow INIT” line; document
+  intentional `meta_workspace` optional-in-schema + Gateflow fail-closed on
+  spec start.
+- `spec-implementation-plan` template/fixtures surface `meta_workspace` for
+  human plan hops.
+
+## [0.5.0-rc.2] — 2026-08-03 (tip family)
+
+Consumable tip for programmes remounting `agent_skills.ref: v0.5.0-rc.2`
+(resolve to the retagged tip SHA, currently Spec Pass-1 inclusive).
+
 ### Added — Spec Pass-1 (orchestrated draft → Draft PR → feasibility / TDD stop)
 
 - Pin: `spec-draft`, `initiative-feasibility`, and `spec-technical-review` are
   `dispatch: orchestrated`. `spec-implementation-plan` stays `manual`; Gate 2 /
   merge / board stay human or `authorization: explicit`.
 - Prompt contract: shared optional `meta_workspace` (app `workspace` + meta
-  checkout). All packages MINOR-bump schemas; the three Spec Pass-1 skills
-  surface dual roots in templates / fixtures / SKILL Inputs.
+  checkout). All packages MINOR-bump schemas; Spec Pass-1 skills (and plan)
+  surface dual roots in templates / fixtures / SKILL Inputs where applicable.
+- **Intentional sharpness:** schemas keep `meta_workspace.required: false`
+  (shared-dict SSOT). Gateflow **fail-closes** on empty meta checkout at
+  `POST /waves/spec/start`; do not flip Pass-1 packages to `required: true`
+  without a PE Decision for per-skill required overrides.
 - Docs: Spec Pass-1 + remount checklist in `docs/for-gateflow.md` (and overview
-  pointer). Breaking for Gateflow: `POST /waves/spec/start` Enter-at is now
-  legal when programmes remount this tip (still `v0.5.0-rc.2` family).
+  pointer). Breaking for Gateflow: `POST /waves/spec/start` Enter-at is legal
+  when programmes remount this tip.
 
 ### Added — External-action `authorization` knob (`explicit` | `automated`)
 

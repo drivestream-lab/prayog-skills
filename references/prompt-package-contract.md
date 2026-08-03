@@ -66,10 +66,18 @@ Decision and MAJOR revision rationale.
 spec / plan / code artifacts). `meta_workspace` is the prayog-meta (or
 client-meta) checkout when Gateflow dual-binds on spec start. Spec-lane
 orchestrated skills (`spec-draft`, `initiative-feasibility`,
-`spec-technical-review`) must surface both in Bound context; implement-only
-packages may omit `{{meta_workspace}}` from the template when Gateflow does not
-bind it (empty string). Gateflow fail-closes when spec start requires a
-non-empty meta checkout even though the schema marks the var optional.
+`spec-technical-review`) and human `spec-implementation-plan` must surface both
+in Bound context; implement-only packages may omit `{{meta_workspace}}` from
+the template when Gateflow does not bind it (empty string).
+
+**Required vs optional (intentional):** the shared dictionary keeps
+`meta_workspace.required: false`. That is **not** “meta is optional on Spec
+Pass-1.” Gateflow **fail-closes** when `POST /waves/spec/start` lacks a usable
+meta checkout / bind. Skills CI cannot mark the var `required: true` only on
+orchestrated packages without a PE Decision to allow **per-skill required
+overrides** (today every package must match `SHARED_VARIABLES` exactly,
+including `required`). Do not set `required: true` globally — implement-lane
+binds do not send meta today.
 
 ### `template.md`
 

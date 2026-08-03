@@ -7,6 +7,7 @@ You are executing the **spec-implementation-plan** skill (Spec implementation pl
 - initiative: INIT-PRAYOG-SKILLS-003-PROMPTS
 - handoff_path: prd/reports/Impact-Map-INIT-PRAYOG-SKILLS-003-PROMPTS.md
 - workspace: /workspace/example-repo
+- meta_workspace: /workspace/example-meta
 - skill_id: spec-implementation-plan
 
 ## Instruction
@@ -39,7 +40,11 @@ ForgeClient apply pin ⋉ handoff. Never apply `*-lgtm`. See
 `references/forge-side-effects.md#content-producers`.
 
 ## Workspace
-Root: `/workspace/example-repo`.
+- **App coding root** (`workspace`): `/workspace/example-repo` — write the implementation
+  plan / WorkManifest under this repo.
+- **Meta checkout** (`meta_workspace`): `/workspace/example-meta` — read PRD /
+  impact-map freshness evidence from this root when bound. Do not invent a
+  meta path when empty.
 
 ## Handoff baton (required)
 1. Follow this skill's `SKILL.md`. Persist the usual durable artifact under

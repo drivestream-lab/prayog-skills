@@ -75,6 +75,7 @@ spec-implementation-plan → coding-readiness → explicit spec-merge / board
 |----|--------|
 | `POST /api/v1/waves/spec/start` with orchestrated `start_node` (default `spec-draft`) | Treat `spec-draft` as manual or overlay `dispatch` in Gateflow |
 | Dual-bind `workspace` (app) + `meta_workspace` (meta checkout) into packaged prompts | Invent bind vars or omit meta on spec start |
+| Fail closed when spec start meta checkout is missing/empty (**Gateflow**); packages declare `meta_workspace` optional in the shared schema SSOT | Require `meta_workspace: required: true` only on orch skills without a PE Decision (breaks shared-dict CI / implement binds) |
 | After `spec-draft`, ForgeClient `commit_workspace` then automated `spec-pr-action` | Wait for `/forge/authorize` on Draft Spec PR when pin says automated |
 | Continue to `initiative-feasibility` (± `spec-technical-review` on `findings`) | Auto-dispatch `spec-implementation-plan` (stays `manual`) |
 | STOP at `spec-implementation-plan` (manual) or `technical-review-approval` | Orchestrate coding-readiness / `spec-merge` / board |
@@ -84,6 +85,11 @@ Orchestrated spec skills on this pin: `spec-draft`, `initiative-feasibility`,
 `spec-technical-review`. Keep `spec-implementation-plan` manual and all Gate 2
 / merge nodes human or `authorization: explicit`.
 
+**`meta_workspace` sharpness:** prompt schemas mark the var optional so
+implement/PM packages stay honest when Gateflow does not bind meta. Spec-lane
+Enter-at still **must** supply a non-empty meta checkout — that fail-closed
+belongs to Gateflow `POST /waves/spec/start` / bind, not a per-package
+`required: true` divergence from the shared dictionary.
 ## Checkpoint ids (breaking vs older pins)
 
 | Old | New |
@@ -141,4 +147,6 @@ Do **not** claim these as implemented on this remount:
 ## Partner handoff
 
 Share [for-gateflow.md](for-gateflow.md) when the pin is tagged/remounted.
-Closeout Enter-at + learning DB ingest remain Gateflow INIT work.
+Pass-2 closeout Enter-at (`learning-extract`) and learning ingest are owned by
+Gateflow (lane-agnostic on wave/spec PR); skills only dual-write the baton —
+they do not HTTP to Gateflow.
