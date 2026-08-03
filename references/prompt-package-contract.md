@@ -56,10 +56,20 @@ skills/<area>/<skill-id>/     # area ∈ {requirements, development, forge}
 | `initiative` | string | false |
 | `handoff_path` | string | true |
 | `workspace` | string | true |
+| `meta_workspace` | string | false |
 | `skill_id` | string | true |
 
 Missing optional → empty string at render. Per-skill deviation needs an explicit
 Decision and MAJOR revision rationale.
+
+**`workspace` vs `meta_workspace`:** `workspace` is the app coding root (product
+spec / plan / code artifacts). `meta_workspace` is the prayog-meta (or
+client-meta) checkout when Gateflow dual-binds on spec start. Spec-lane
+orchestrated skills (`spec-draft`, `initiative-feasibility`,
+`spec-technical-review`) must surface both in Bound context; implement-only
+packages may omit `{{meta_workspace}}` from the template when Gateflow does not
+bind it (empty string). Gateflow fail-closes when spec start requires a
+non-empty meta checkout even though the schema marks the var optional.
 
 ### `template.md`
 

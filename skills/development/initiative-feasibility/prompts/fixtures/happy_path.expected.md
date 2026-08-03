@@ -7,6 +7,7 @@ You are executing the **initiative-feasibility** skill (Initiative feasibility).
 - initiative: INIT-PRAYOG-SKILLS-003-PROMPTS
 - handoff_path: prd/reports/Impact-Map-INIT-PRAYOG-SKILLS-003-PROMPTS.md
 - workspace: /workspace/example-repo
+- meta_workspace: /workspace/example-meta
 - skill_id: initiative-feasibility
 
 ## Instruction
@@ -39,7 +40,11 @@ ForgeClient apply pin ⋉ handoff. Never apply `*-lgtm`. See
 `references/forge-side-effects.md#content-producers`.
 
 ## Workspace
-Root: `/workspace/example-repo`.
+- **App coding root** (`workspace`): `/workspace/example-repo` — read/write this repo's
+  spec slice and feasibility report here.
+- **Meta checkout** (`meta_workspace`): `/workspace/example-meta` — read PRD /
+  impact-map freshness evidence from this root when bound. Do not invent a
+  meta path when empty.
 
 ## Handoff baton (required)
 1. Follow this skill's `SKILL.md`. Persist the usual durable artifact under

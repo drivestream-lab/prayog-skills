@@ -95,6 +95,22 @@ PASS 2 (Enter-at learning-extract, or human /learning-extract)
   `coding-readiness`, `live-verify`, `wave-signoff`). GitHub labels stay
   lane-named (`impact-map-*`, `spec-*`).
 
+## Spec lane — Pass-1 (current pin)
+
+```text
+PASS 1 (orchestrated walk until human stop)
+  spec-draft → spec-pr-action → initiative-feasibility
+       pass     → spec-implementation-plan        # manual ⇒ STOP
+       findings → spec-technical-review
+                    → technical-review-approval   # human-checkpoint ⇒ STOP
+```
+
+Orchestrated: `spec-draft`, `initiative-feasibility`, `spec-technical-review`.
+`spec-pr-action` is `authorization: automated`. Plan / coding-readiness /
+`spec-merge` / board stay human or explicit. Packaged prompts bind optional
+`meta_workspace` (app `workspace` + meta checkout). See
+[`for-gateflow.md`](for-gateflow.md#spec-pass-1-spec-lane).
+
 ## Design lane — ownership and outcomes
 
 - **Spec** owns observable product behavior (`REQ-*`). Architecture questions are

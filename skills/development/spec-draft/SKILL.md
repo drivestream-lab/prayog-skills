@@ -78,16 +78,24 @@ This skill bridges the gap — it reads the PRD and drafts structured spec
 
 Resolve paths from `.harness/profile.yaml` or [references/layout-defaults.md](references/layout-defaults.md).
 
-1. **PRD** — (REQUIRED) from `<client>-meta/prd/INIT-*.md`. Read from the meta
-   PRD PR branch or merged `develop`. Do not assume PRD is on develop if PR is
-   still open — use PR branch when iterating in parallel.
+**Dual workspace (orchestrated / Gateflow):** when the invocation binds
+`meta_workspace`, treat it as the prayog-meta (client-meta) checkout root for
+PRD and impact-map reads. Treat bound `workspace` as this app repo root for
+product spec writes (`docs/specification/…`). Do not invent a meta path when
+`meta_workspace` is empty; do not write product decisions only into meta unless
+procedure explicitly says so.
+
+1. **PRD** — (REQUIRED) from `<client>-meta/prd/INIT-*.md` under
+   `meta_workspace` when bound (else resolve meta checkout as today). Read from
+   the meta PRD PR branch or merged `develop`. Do not assume PRD is on develop
+   if PR is still open — use PR branch when iterating in parallel.
 2. **Impact map** — (REQUIRED) canonical
    `<client>-meta/prd/reports/Impact-Map-{INIT}.md` from the exact approved meta
-   PR head; PR comments are summaries only.
+   PR head (under `meta_workspace` when bound); PR comments are summaries only.
 3. **Approval evidence** — (REQUIRED) meta PR number/URL, current head SHA, and
    latest tech-lead APPROVED review `commit_id`; all must match.
-4. **As-built** — `implementation-status.md` (REQUIRED) — understand what
-   already exists before writing FRs.
+4. **As-built** — `implementation-status.md` (REQUIRED) under `workspace` —
+   understand what already exists before writing FRs.
 5. **Source** — `source_roots` from profile — understand current module structure.
 6. **Service profile** — `docs/specification/product/00-service-profile.md` if
    it exists — understand the repo's existing domain.

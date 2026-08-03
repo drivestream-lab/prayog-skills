@@ -47,10 +47,15 @@ Pattern borrowed from awesome-copilot `create-github-issues-for-unmet-specificat
 
 Gather before starting. Resolve paths from `.harness/profile.yaml` or [references/layout-defaults.md](references/layout-defaults.md).
 
-1. **Initiative spec slice** — primary doc (REQUIRED); written by dev team, lives under `product_spec_dir`
-2. **PRD** — upstream requirements from `<client>-meta/prd/` (OPTIONAL; for conformance context; link from spec header)
+**Dual workspace (orchestrated / Gateflow):** `workspace` = app coding root
+(spec slice + feasibility report). `meta_workspace` when bound = meta checkout
+for PRD / impact-map freshness. Do not invent a meta path when empty.
+
+1. **Initiative spec slice** — primary doc (REQUIRED); written by dev team, lives under `product_spec_dir` in `workspace`
+2. **PRD** — upstream requirements from `<client>-meta/prd/` under
+   `meta_workspace` when bound (OPTIONAL; for conformance context; link from spec header)
 3. **Canonical impact map + approval evidence** — (REQUIRED) exact revision and
-   tech-lead review referenced by the spec header
+   tech-lead review referenced by the spec header (resolve under `meta_workspace` when bound)
 4. **As-built** — `implementation-status.md` (REQUIRED)
 5. **Tests** — `tests_readme`, `unit_tests_dir`, `live_verify_dir`, and toolchain config from profile (REQUIRED)
 6. **Source** — modules under `source_roots` from profile (REQUIRED)

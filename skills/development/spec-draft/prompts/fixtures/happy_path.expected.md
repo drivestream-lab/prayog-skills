@@ -7,6 +7,7 @@ You are executing the **spec-draft** skill (Spec draft (repo slice from PRD)).
 - initiative: INIT-PRAYOG-SKILLS-003-PROMPTS
 - handoff_path: prd/reports/Impact-Map-INIT-PRAYOG-SKILLS-003-PROMPTS.md
 - workspace: /workspace/example-repo
+- meta_workspace: /workspace/example-meta
 - skill_id: spec-draft
 
 ## Instruction
@@ -40,7 +41,12 @@ ForgeClient apply pin ⋉ handoff. Never apply `*-lgtm`. See
 `references/forge-side-effects.md#content-producers`.
 
 ## Workspace
-Root: `/workspace/example-repo`.
+- **App coding root** (`workspace`): `/workspace/example-repo` — write product spec
+  artifacts under this repo (`docs/specification/…`). Do not write product
+  decisions only into meta unless procedure says so.
+- **Meta checkout** (`meta_workspace`): `/workspace/example-meta` — read PRD /
+  impact map / meta approval evidence from this root when bound (Gateflow
+  spec start). Do not invent a meta path when this value is empty.
 
 ## Handoff baton (required)
 1. Follow this skill's `SKILL.md`. Persist the usual durable artifact under

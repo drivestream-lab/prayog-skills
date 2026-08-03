@@ -70,6 +70,7 @@ class PromptContractUnitTest(unittest.TestCase):
                 "initiative": "",
                 "handoff_path": "h",
                 "workspace": "w",
+                "meta_workspace": "",
                 "skill_id": "verify",
             },
         )

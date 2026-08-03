@@ -7,6 +7,7 @@ You are executing the **initiative-feasibility** skill (Initiative feasibility).
 - initiative: {{initiative}}
 - handoff_path: {{handoff_path}}
 - workspace: {{workspace}}
+- meta_workspace: {{meta_workspace}}
 - skill_id: {{skill_id}}
 
 ## Instruction
@@ -39,7 +40,11 @@ ForgeClient apply pin ⋉ handoff. Never apply `*-lgtm`. See
 `references/forge-side-effects.md#content-producers`.
 
 ## Workspace
-Root: `{{workspace}}`.
+- **App coding root** (`workspace`): `{{workspace}}` — read/write this repo's
+  spec slice and feasibility report here.
+- **Meta checkout** (`meta_workspace`): `{{meta_workspace}}` — read PRD /
+  impact-map freshness evidence from this root when bound. Do not invent a
+  meta path when empty.
 
 ## Handoff baton (required)
 1. Follow this skill's `SKILL.md`. Persist the usual durable artifact under

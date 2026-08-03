@@ -3,16 +3,16 @@
     "pre-implement",
     "loop-spec",
     "learning-extract",
-    "ground-spec"
+    "ground-spec",
+    "spec-draft",
+    "initiative-feasibility",
+    "spec-technical-review"
   ],
   "manual": [
     "validate-requirements",
     "review-findings",
     "update-documents",
     "prd-impact-map",
-    "spec-draft",
-    "initiative-feasibility",
-    "spec-technical-review",
     "spec-implementation-plan",
     "verify"
   ],

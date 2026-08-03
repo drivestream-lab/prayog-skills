@@ -7,6 +7,18 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased] — features/rc-2
 
+### Added — Spec Pass-1 (orchestrated draft → Draft PR → feasibility / TDD stop)
+
+- Pin: `spec-draft`, `initiative-feasibility`, and `spec-technical-review` are
+  `dispatch: orchestrated`. `spec-implementation-plan` stays `manual`; Gate 2 /
+  merge / board stay human or `authorization: explicit`.
+- Prompt contract: shared optional `meta_workspace` (app `workspace` + meta
+  checkout). All packages MINOR-bump schemas; the three Spec Pass-1 skills
+  surface dual roots in templates / fixtures / SKILL Inputs.
+- Docs: Spec Pass-1 + remount checklist in `docs/for-gateflow.md` (and overview
+  pointer). Breaking for Gateflow: `POST /waves/spec/start` Enter-at is now
+  legal when programmes remount this tip (still `v0.5.0-rc.2` family).
+
 ### Added — External-action `authorization` knob (`explicit` | `automated`)
 
 - Every `external-action` **must** set `authorization` (`explicit` or

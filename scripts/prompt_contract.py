@@ -31,6 +31,7 @@ SHARED_VARIABLES: dict[str, dict[str, Any]] = {
     "initiative": {"required": False, "type": "string"},
     "handoff_path": {"required": True, "type": "string"},
     "workspace": {"required": True, "type": "string"},
+    "meta_workspace": {"required": False, "type": "string"},
     "skill_id": {"required": True, "type": "string"},
 }
 

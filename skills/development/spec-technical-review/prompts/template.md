@@ -7,6 +7,7 @@ You are executing the **spec-technical-review** skill (Spec technical review (TD
 - initiative: {{initiative}}
 - handoff_path: {{handoff_path}}
 - workspace: {{workspace}}
+- meta_workspace: {{meta_workspace}}
 - skill_id: {{skill_id}}
 
 ## Instruction
@@ -39,7 +40,11 @@ ForgeClient apply pin ⋉ handoff. Never apply `*-lgtm`. See
 `references/forge-side-effects.md#content-producers`.
 
 ## Workspace
-Root: `{{workspace}}`.
+- **App coding root** (`workspace`): `{{workspace}}` — write TDD/ADR drafts
+  and review artifacts under this repo.
+- **Meta checkout** (`meta_workspace`): `{{meta_workspace}}` — read PRD /
+  product-scope context from this root when bound; route product questions to
+  the meta PRD PR. Do not invent a meta path when empty.
 
 ## Handoff baton (required)
 1. Follow this skill's `SKILL.md`. Persist the usual durable artifact under

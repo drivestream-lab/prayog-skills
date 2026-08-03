@@ -63,6 +63,10 @@ gate, `agentic_development_workflow` multi-role review, GitHub Spec Kit
 Resolve paths from `.harness/profile.yaml` or
 [references/layout-defaults.md](references/layout-defaults.md).
 
+**Dual workspace (orchestrated / Gateflow):** `workspace` = app coding root
+(TDD/ADR drafts). `meta_workspace` when bound = meta checkout for PRD /
+product-scope context. Do not invent a meta path when empty.
+
 1. **Feasibility report** — primary input (REQUIRED); source of NEW-ADR
    findings, Critical/Should-fix items, open engineering questions
 2. **Initiative spec** — (REQUIRED)
@@ -71,7 +75,8 @@ Resolve paths from `.harness/profile.yaml` or
 5. **As-built** — `implementation-status.md` (REQUIRED)
 6. **`.harness/profile.yaml`** or layout defaults (REQUIRED)
 7. **Canonical handoff references** — PRD digest, impact-map revision/scope
-   digest, approved meta PR head, and tech-lead review (REQUIRED)
+   digest, approved meta PR head, and tech-lead review (REQUIRED; resolve under
+   `meta_workspace` when bound)
 
 ## When to use
 

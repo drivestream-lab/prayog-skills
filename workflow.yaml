@@ -106,7 +106,7 @@ nodes:
   spec-draft:
     type: skill
     profile: development
-    dispatch: manual
+    dispatch: orchestrated
     forge:
       commit_workspace: required
     outcomes:
@@ -140,7 +140,7 @@ nodes:
   initiative-feasibility:
     type: skill
     profile: development
-    dispatch: manual
+    dispatch: orchestrated
     forge:
       commit_workspace: required
     outcomes:
@@ -154,7 +154,7 @@ nodes:
   spec-technical-review:
     type: skill
     profile: development
-    dispatch: manual
+    dispatch: orchestrated
     forge:
       commit_workspace: required
     outcomes:
