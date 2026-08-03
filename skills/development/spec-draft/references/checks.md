@@ -9,7 +9,7 @@ Check-level PASS/FAIL/NEEDS INPUT feed the stage **outcome rubric** in
 
 | ID | Check | Evidence required |
 |----|-------|-------------------|
-| D1 | **Approved handoff is current** | Canonical impact-map path/revision, PRD digest, current meta PR head SHA, and matching tech-lead APPROVED review; repo is affected and not deferred/blocked |
+| D1 | **Approved handoff is current** | Canonical impact-map path/revision (**H3**), PRD digest (**H1**), current meta PR head SHA + matching tech-lead APPROVED review (**G1**); repo is affected with **H2** `scope_digest` and not deferred/blocked |
 | D2 | **Complete PRD traceability** | Every in-scope PRD `CAP-*` / capability maps to at least one `REQ-*`; every `REQ-*` cites a named PRD section/bullet or `CAP-*`/`REQ-*` |
 | D3 | **Repo-bounded scope** | In-scope, out-of-scope, deferred, and other-repo responsibilities agree with the approved repo scope digest |
 | D4 | **Observable acceptance** | Every applicable REQ states: (1) condition/event (Given/When or equivalent), (2) observable result the system shall produce, (3) proving evidence type. Acceptance remains **implementation-neutral** — no module, framework, transport, or ADR choice. Simple invariants may omit EARS syntax when clearer, but must still name condition, result, and evidence |
@@ -30,7 +30,7 @@ Check-level PASS/FAIL/NEEDS INPUT feed the stage **outcome rubric** in
 | Required handoff/source missing or unreadable | `needs-input` | Do not draft as authoritative; do not advance |
 | Material ambiguity remains after clarification loop | `needs-input` | Answers must be written into owning REQ rows |
 | Explicit gate closed (approval/label/artifact disagree; repo held) | `blocked` | |
-| Digest / head / revision mismatch | `stale` | |
+| Digest / head / revision mismatch (H1–H3 / G1) | `stale` | |
 | Blocking D-check FAIL on present, readable inputs (traceability, scope, acceptance shape, contracts, blockers) | `needs-input` or `blocked` | Choose by whether human input vs gate closure is required — **not** `failed` |
 | Execution/render error on otherwise valid inputs | `failed` | |
 

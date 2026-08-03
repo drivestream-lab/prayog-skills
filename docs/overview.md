@@ -87,13 +87,38 @@ PASS 2 (Enter-at learning-extract, or human /learning-extract)
   wave ships the live script under `live_verify_dir` (plan P15). `/loop-spec`
   runs check+unit only; the human executes the script at `live-verify` before
   Pass-2 closeout automation continues.
-- **WorkManifest authority (Initiative B):** Prayog owns `prayog/v1`. Board tickets
-  and stage artifacts project or record evidence — they are not a second
-  execution-intent authority. Validator: `scripts/workmanifest_contract.py`;
-  plan check P16; predicate `workmanifest-contract-pass`.
+- **WorkManifest authority (Initiative B):** Prayog owns `prayog/v1`. **Board**
+  issues after seed are the long-term WorkManifest home; plan §9 is the
+  walk-time carrier (may be purged at initiative closure). Stage artifacts
+  project or record evidence — they are not a second execution-intent authority.
+  Validator: `scripts/workmanifest_contract.py`; plan check P16; predicate
+  `workmanifest-contract-pass`.
+- **Durable identity:** H1–H4 (PRD digest, scope digest, map revision, product-
+  spec citations) and G1–G3 (gate/merge SHAs). Mid-lane feas/TDD/plan digests are
+  walk-time only — not long-term `stale` SSOT. See
+  [`../references/artifact-write-contract.md`](../references/artifact-write-contract.md).
 - Checkpoints use **purpose-named ids** (`prd-impact-acceptance`,
-  `coding-readiness`, `live-verify`, `wave-signoff`). GitHub labels stay
-  lane-named (`impact-map-*`, `spec-*`).
+  `coding-readiness`, `live-verify`, `wave-signoff`, `initiative-closure`,
+  `initiative-closure-signoff`). GitHub labels stay lane-named
+  (`impact-map-*`, `spec-*`).
+
+## Initiative closure lane (current pin)
+
+After **all** waves are done (not per wave-signoff):
+
+```text
+initiative-closure (human judgment)
+  → purge-initiative-artifacts-app    # app PURGE allowlist; commit_workspace required
+  → purge-initiative-artifacts-meta   # meta PURGE allowlist; commit_workspace required
+  → initiative-closure-pr-action      # open_draft_pr automated
+  → initiative-closure-signoff        # human merge to develop
+  → workflow-complete
+```
+
+One mental model: purge **everything** on the PURGE allowlist for app and meta
+once. KEEP roots (PRD, Impact-Map, product INIT, Accepted ADRs, code/tests/
+verify scripts) and board WM survive. No Gateflow authorize-before-delete;
+safety is allowlist + refuse KEEP. No per-wave purge hop.
 
 ## Spec lane — Pass-1 (current pin)
 

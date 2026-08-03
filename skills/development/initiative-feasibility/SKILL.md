@@ -30,9 +30,11 @@ Pattern borrowed from awesome-copilot `create-github-issues-for-unmet-specificat
 3. Don't fix — flag. Do not edit product source or product specs unless the user explicitly asks after the report.
 4. Dual output: chat summary + saved report file + 4-lane triage.
 5. Run T0–T5 control loop (Gather → Understand → Analyze → Plan → Execute → Verify).
-6. Verify source freshness before F1. The spec's PRD digest, impact-map
-   revision, repo scope digest, approved meta PR head, and approval reference
-   must still match the canonical handoff. Stop on stale input.
+6. Verify **light source freshness** before F1: product-spec header citations
+   (**H1** PRD digest, **H2** scope digest, **H3** map revision) and tip
+   continuity; **G1** meta head + approval while Gate 1 still applies. See
+   `../../../references/artifact-write-contract.md`. Stop on authority drift.
+   Do **not** require mid-lane report digests as staleness SSOT.
 7. Every open item must record lane, blocking, owner, status, required-by
    stage, default-if-deferred, evidence, and resolution reference.
 8. **Read-only content skill.** Persist the feasibility report locally and fill
@@ -72,9 +74,10 @@ for PRD / impact-map freshness. Do not invent a meta path when empty.
 
 ## Process
 
-1. **T0 Gather and freshness gate** — inventory inputs; compare the spec header
-   with the canonical PRD/map/review. If the repo was removed, deferred, or its
-   scope digest changed, stop and emit the map's ripple action.
+1. **T0 Gather and freshness gate** — inventory inputs; compare product-spec
+   **H1–H3** citations (and **G1** when applicable) with live PRD/map/review.
+   If the repo was removed, deferred, or its scope digest changed, stop and
+   emit the map's ripple action. Feasibility report digests are walk-time only.
 2. **T1 Understand** — initiative id, spec branch, review objective
 3. **T2 Analyze** — read spec waves/capabilities; scan repo evidence; cross-reference `rules_glob` and relevant ADRs; flag spec wording that conflicts with MDC patterns or Accepted ADRs
 4. **T3 Plan** — which checks run (full vs incremental)
@@ -89,7 +92,7 @@ pinned `workflow.yaml`. Prefer the first matching row:
 
 | Outcome | When | Next (from workflow) |
 |---------|------|----------------------|
-| `stale` | Spec/PRD/map/approval digest or head mismatch | `spec-draft` |
+| `stale` | Product-spec H1–H3 / G1 / tip authority drift | `spec-draft` |
 | `failed` | Execution/analysis failure on otherwise valid inputs | `workflow-stop` |
 | `blocked` | Explicit approval/policy gate prevents progress (repo held, gate closed) | `spec-human-decision` |
 | `needs-input` | Unresolved blocking **PM** or **domain** item (missing product/SME answer) | `spec-human-decision` |
@@ -112,8 +115,9 @@ are report signals — they do not alone select `findings`.
 - `hold` / `close` — repo removed, deferred, blocked, or approval stale.
 - `re-plan` — dependency/build order changed; invalidate any existing plan.
 
-Never carry a prior feasibility finding forward across changed source digests
-without explicitly re-evaluating that finding.
+Never carry a prior feasibility finding forward across changed **H1–H3**
+authority without explicitly re-evaluating that finding. Feasibility report
+files are PURGE at initiative closure.
 
 ## Output
 

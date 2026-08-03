@@ -65,6 +65,7 @@ PM skills validate and refine PRDs. Dev skills implement spec slices in service 
 | **review-findings** | PM decides on findings |
 | **update-documents** | PM refines PRD after findings |
 | **prd-impact-map** | Generates a versioned PRD → repo map and Draft-PR readiness handoff |
+| **purge-initiative-artifacts-meta** | After initiative-closure: delete meta PURGE allowlist (Validation/Resolution) |
 
 ### Development (app repos — harness seeded)
 
@@ -79,6 +80,7 @@ PM skills validate and refine PRDs. Dev skills implement spec slices in service 
 | **ground-spec** | Wave-assigned REQ grounding (`GF-*`, G1–G10); sign-off package |
 | **learning-extract** | After live-verify: structured L-* learning (closeout) |
 | **verify** | Manual live-verify aid (`Live-Verify-*`; not on Pass-1 edge) |
+| **purge-initiative-artifacts-app** | After initiative-closure: delete app PURGE allowlist (working papers) |
 
 ### Forge (human — meta + app)
 
@@ -115,6 +117,9 @@ Merge spec PR → develop → **`/create-board-tickets`** (governance board + EP
     ↓
 Per wave Pass-1:  /pre-implement → /loop-spec → wave-pr-action → live-verify (human runs co-shipped script)
 Pass-2 closeout:  /learning-extract  →  /ground-spec  →  wave-signoff (human merge; record merge SHA)
+    ↓
+All waves done:  initiative-closure → /purge-initiative-artifacts-app
+  → /purge-initiative-artifacts-meta → closure Draft PR(s) → initiative-closure-signoff
 ```
 
 New/material product surfaces **co-ship** a live script under `live_verify_dir`

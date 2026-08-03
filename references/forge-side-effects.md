@@ -152,9 +152,10 @@ if next.type == external-action:
 | `explicit` | STOP for authorize, then ForgeClient |
 | `automated` | ForgeClient runs immediately when requires are complete |
 
-Day-one pin: `spec-pr-action` and `wave-pr-action` are `automated`; other
-external-actions are `explicit`. Wave merge remains human-only at
-`wave-signoff` (no merge Forge action).
+Day-one pin: `spec-pr-action`, `wave-pr-action`, and
+`initiative-closure-pr-action` are `automated`; other external-actions are
+`explicit`. Wave merge and initiative-closure merge remain human-only at
+`wave-signoff` / `initiative-closure-signoff` (no merge Forge action).
 
 ## Reserved actions
 

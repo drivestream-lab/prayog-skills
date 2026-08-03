@@ -6,6 +6,7 @@
     {"area": "requirements", "skill_id": "review-findings"},
     {"area": "requirements", "skill_id": "update-documents"},
     {"area": "requirements", "skill_id": "prd-impact-map"},
+    {"area": "requirements", "skill_id": "purge-initiative-artifacts-meta"},
     {"area": "development", "skill_id": "spec-draft"},
     {"area": "development", "skill_id": "initiative-feasibility"},
     {"area": "development", "skill_id": "spec-technical-review"},
@@ -15,6 +16,7 @@
     {"area": "development", "skill_id": "learning-extract"},
     {"area": "development", "skill_id": "verify"},
     {"area": "development", "skill_id": "ground-spec"},
+    {"area": "development", "skill_id": "purge-initiative-artifacts-app"},
     {"area": "forge", "skill_id": "commit-workspace"},
     {"area": "forge", "skill_id": "open-draft-pr"},
     {"area": "forge", "skill_id": "create-board-tickets"}

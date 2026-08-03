@@ -10,12 +10,19 @@ the board; they do not become a second authority.
 |----------|------|
 | Identity | `apiVersion: prayog/v1` + `kind: WorkManifest` |
 | Nature | **Immutable** after coding-readiness approval of the plan package |
+| Walk-time carrier | §9 YAML inside `Implementation-Plan-{INIT}.md` (PURGE at initiative closure) |
+| Long-term home | Programme **board** issues after seed — not the plan file forever |
 | Not in manifest | Board runtime status, observed evidence, mutable checkpoint fields |
 | Walkers | Same task contract for human or Gateflow; legality comes from workflow dispatch/checkpoints — not a duplicated executor field on tasks |
 | Deferred (not v1) | `parallel_safe`, `shared_files`, task-level concurrency / resource locks |
 
 Normative producer: `/spec-implementation-plan` §9. Normative validator:
 `scripts/workmanifest_contract.py`. Plan check **P16** requires a clean pass.
+After `/create-board-tickets` (or Gateflow board create), **board projection** is
+the long-term WorkManifest identity. `/pre-implement` spends against **board
+wave + product-spec durable citations** (H1–H4 / G*), not “plan file digest
+forever.” The plan path may be removed by `/purge-initiative-artifacts-app` at
+initiative closure — see [artifact-write-contract.md](artifact-write-contract.md).
 
 ---
 
@@ -31,8 +38,8 @@ metadata:
   summary: |
     …
   playbook:
-    - {SPEC_PATH}
-    - docs/specification/reports/Implementation-Plan-{INIT}.md
+    - {SPEC_PATH}   # durable product spec (KEEP) — prefer over plan path
+    # Implementation-Plan-{INIT}.md is walk-time only (may be purged at closure)
 
 # Projection hints for board seed (not runtime status)
 target:

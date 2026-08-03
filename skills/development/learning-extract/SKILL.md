@@ -38,7 +38,8 @@ context. Ask taxonomy chips only when classification is ambiguous.
    Do **not** open auto-merge codify PRs.
 6. Write durable artifact
    `{reports_dir}/Learning-Extract-{initiative}-W{N}.md` with a human table
-   **and** a fenced `learning_extract:` YAML block (machine payload).
+   **and** a fenced `learning_extract:` YAML block (machine payload). This file
+   is **PURGE** at initiative closure (see artifact-write-contract).
 7. Empty `items: []` only when there is **no** human-fix signal and the tip
    matches intent — state that rationale explicitly. If human fixes clearly
    exist and zero items → do not `pass` (use `findings` / fail-closed).

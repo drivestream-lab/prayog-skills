@@ -153,8 +153,14 @@ class WorkflowContractTest(unittest.TestCase):
                 self.assertEqual(auth, expected[stage])
         self.assertEqual(expected["spec-pr-action"], "automated")
         self.assertEqual(expected["wave-pr-action"], "automated")
+        self.assertEqual(expected["initiative-closure-pr-action"], "automated")
+        automated = {
+            "spec-pr-action",
+            "wave-pr-action",
+            "initiative-closure-pr-action",
+        }
         for stage, auth in expected.items():
-            if stage not in {"spec-pr-action", "wave-pr-action"}:
+            if stage not in automated:
                 self.assertEqual(auth, "explicit", stage)
 
     def test_skill_nodes_have_commit_workspace(self) -> None:

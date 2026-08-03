@@ -14,6 +14,22 @@ _(empty — tip changes land under `[0.5.0-rc.2]`)_
 Consumable tip for programmes remounting `agent_skills.ref: v0.5.0-rc.2`
 (resolve to the retagged tip SHA).
 
+### Added — Durable roots, light freshness, initiative-closure purge lane
+
+- Contract: KEEP/PURGE tables, H1–H4 / G1–G3 identities, digest recipes in
+  `references/artifact-write-contract.md`; WorkManifest board longevity;
+  handoff mid-lane digests are walk-time only.
+- Skills: mint/cite on `prd-impact-map` / `spec-draft`; light T0 on feas / TDD /
+  plan; board spend wording on `create-board-tickets` / `pre-implement`.
+- New skills: `purge-initiative-artifacts-app`, `purge-initiative-artifacts-meta`
+  (procedure/allowlist; no new purge Python script). Profiles list both.
+- Workflow: `initiative-closure.pass` → app purge → meta purge →
+  `initiative-closure-pr-action` (`authorization: automated`) →
+  `initiative-closure-signoff` → `workflow-complete`. Purge once after all
+  waves; no Gateflow authorize-before-delete; no per-wave purge.
+- Docs: overview / for-gateflow / for-launchpad declare consumer remount duties
+  (Launchpad materialize + Gateflow Enter-at are out of this repo).
+
 ### Changed — Spec Pass-1 always enters technical review
 
 - Pin: `initiative-feasibility` `pass` and `findings` both route to

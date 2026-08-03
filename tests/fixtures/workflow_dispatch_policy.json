@@ -6,7 +6,9 @@
     "ground-spec",
     "spec-draft",
     "initiative-feasibility",
-    "spec-technical-review"
+    "spec-technical-review",
+    "purge-initiative-artifacts-app",
+    "purge-initiative-artifacts-meta"
   ],
   "manual": [
     "validate-requirements",
@@ -24,6 +26,7 @@
     "coding-readiness": "coding-readiness",
     "live-verify": "live-verify",
     "wave-signoff": "wave-signoff",
-    "initiative-closure": "initiative-closure"
+    "initiative-closure": "initiative-closure",
+    "initiative-closure-signoff": "initiative-closure-signoff"
   }
 }

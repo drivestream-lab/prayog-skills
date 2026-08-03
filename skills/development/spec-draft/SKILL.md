@@ -40,11 +40,13 @@ This skill bridges the gap — it reads the PRD and drafts structured spec
 4. Every `REQ-*` must trace to a named PRD `CAP-*` / `REQ-*` or section/bullet.
 5. Flag anything in the PRD that is **ambiguous for this repo** — do not guess.
    Put ambiguities in a "Spec questions" section at the bottom.
-6. **Handoff gate first.** The canonical impact-map artifact, source PRD
-   digest, current meta PR head SHA, and tech-lead APPROVED review must match.
-   A label or old LGTM alone is not approval.
+6. **Handoff gate first (Gate 1 / G1 + H1–H3).** The canonical impact-map
+   artifact, source PRD digest (**H1**), current meta PR head SHA, and
+   tech-lead APPROVED review must match. A label or old LGTM alone is not
+   approval.
 7. This repo must be `affected` in the latest map and not deferred or blocked.
-   Record the repo's `scope_digest` in the spec. If any gate fails: stop.
+   Record the repo's `scope_digest` (**H2**) and map revision (**H3**) in the
+   spec header (**H4** citations). If any gate fails: stop.
 8. **No forge mutations in this skill.** Do not create a branch, commit, push,
    PR, comment, review request, apply labels, create issues, or merge here.
    Persist the spec locally and fill `handoff.forge` readiness for
@@ -105,12 +107,14 @@ procedure explicitly says so.
 ## Process
 
 1. **T0 Gather and gate** — PRD, canonical impact map, approval review, as-built,
-   source, service profile. Verify:
-   - current meta PR head SHA = approved review `commit_id`
-   - impact-map `source_prd_digest` = digest of the PRD read
-   - impact-map revision/path = approval attestation
-   - this repo is affected, not deferred/blocked, with a `scope_digest`
-   Stop on any mismatch.
+   source, service profile. Verify full Gate 1 and mint **H4** citations:
+   - current meta PR head SHA = approved review `commit_id` (**G1**)
+   - impact-map `source_prd_digest` = digest of the PRD read (**H1**)
+   - impact-map `map_revision` / path = approval attestation (**H3**)
+   - this repo is affected, not deferred/blocked, with a `scope_digest` (**H2**)
+   Write H1–H3 + G1 into the product spec header (see output template). Stop on
+   any mismatch. `stale` = authority drift on these identities — not mid-lane
+   report digests.
 2. **T1 Understand** — initiative id; approved map revision and scope digest;
    what capabilities land in this repo; what already exists (as-built + source scan)
 3. **T2 Scope** — list ONLY what this repo owns. Explicitly exclude what belongs
@@ -153,7 +157,7 @@ Map evidence to exactly one outcome declared for `spec-draft` in pinned
 | `pass` | D1–D12 PASS, zero unresolved material questions, PR READY, sources CURRENT | `spec-pr-action` |
 | `needs-input` | Required handoff/source input missing or unreadable; or material PM/domain ambiguity remains after the clarification loop | `spec-human-decision` |
 | `blocked` | Explicit gate closure (approval/label/artifact disagree; repo deferred/blocked; PE gate closed) | `spec-human-decision` |
-| `stale` | Digest/head/revision mismatch vs approved handoff | `prd-impact-map` |
+| `stale` | Authority drift: H1–H3 / G1 / head mismatch vs approved handoff | `prd-impact-map` |
 | `failed` | Execution/render error on otherwise valid inputs | `workflow-stop` |
 
 Check verdicts (PASS/FAIL/NEEDS INPUT) feed this rubric — a FAIL on a blocking

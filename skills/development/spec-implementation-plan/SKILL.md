@@ -47,8 +47,10 @@ it does not own, parse, or execute WorkManifest.
    **Implements `REQ-*`**, `depends_on`, file path/action scope, and exit
    proof fields — required for WorkManifest generation. §9 wave entries must
    include `tasks[]`, `verification`, and a body table listing those TASK ids.
-8. Spec, feasibility, TDD (when present), PRD digest, impact-map revision,
-   scope digest, and approvals must agree. Stop on stale sources.
+8. Spec product-spec **H1–H3** citations (and **G1** when applicable) must agree
+   with live handoff; tip continuous. Stop on authority drift. Feas/TDD file
+   digests are walk-time only — not long-term `stale` SSOT. Implementation-Plan
+   is walk-time (§9 → board); may be purged at initiative closure.
 9. Resolve canonical `check_command`, `test_command`, `verify_command`, and
    `ground_command` before planning. Required commands may come from the
    consumer profile, `AGENTS.md`, or `tests_readme`; missing required commands
@@ -84,9 +86,8 @@ Do not invent a meta path when empty.
 5. **Layout** — `.harness/profile.yaml` or [references/layout-defaults.md](references/layout-defaults.md)
 6. **`rules_glob`** — workspace MDC rules (REQUIRED). Read before T2 Analyze.
 7. **`adr_dir`** — architecture decision records (REQUIRED). Run relevant-ADR pass per [references/governance.md](references/governance.md) before T2 Analyze.
-8. **Canonical handoff references** — PRD digest, impact-map revision/scope
-   digest, approved meta PR head/review (REQUIRED; resolve under
-   `meta_workspace` when bound)
+8. **Canonical handoff references** — product-spec H1–H3 (+ G1 when applicable)
+   (REQUIRED; resolve under `meta_workspace` when bound)
 9. **Command contract** — canonical check, test, live-verify, and ground
    commands or explicit N/A rationale (REQUIRED)
 
@@ -97,7 +98,8 @@ Run **while the Draft spec PR is open**, **before spec merge**, after:
 - `/spec-technical-review` completed (pin always routes feasibility → TDD)
 - **`technical-review-approval` satisfied in files** — TDD `Status: Accepted`
   and every required ADR file in `{adr_dir}` is `Accepted` on the current head
-- All upstream source digests and approval references are CURRENT
+- Product-spec H1–H3 citations and approval references are CURRENT (authority,
+  not feas/TDD digests as SSOT)
 
 > **Artifact gate vs GitHub gate**
 > Planning requires **Accepted TDD/ADR files** (P12/P13). It does **not**
@@ -108,8 +110,8 @@ Run **while the Draft spec PR is open**, **before spec merge**, after:
 ## Process
 
 1. **T0 Gather and freshness gate** — spec waves, feasibility findings,
-   technical review, canonical handoff references, command contract, repo
-   layout; stop if a digest/approval is stale or a required command is unresolved
+   technical review, H1–H3 / G1 references, command contract, repo layout; stop
+   if durable authority is stale or a required command is unresolved
 2. **T1 Understand** — initiative id, wave boundaries, PR granularity from spec
 3. **T2 Analyze** — map each wave to concrete files and tests; cross-reference `rules_glob` and relevant ADRs; flag spec wording that conflicts with MDC patterns or Accepted ADRs as **MDC notes** / **ADR notes** in the TASK table
 4. **T3 Plan** — build REQ/TASK/FILE tables per wave; verify every TDD §4
@@ -135,7 +137,7 @@ pinned `workflow.yaml` (this stage has no `findings` edge):
 | `pass` | P1–P16 PASS; sources CURRENT; Accepted TDD/ADRs when required; plan ready for coding-readiness | `coding-readiness` |
 | `needs-input` | Authoritative source is **absent or unreadable**, so the requirement cannot be determined | `spec-human-decision` |
 | `blocked` | Authoritative source **exists** and shows an unsatisfied gate: Draft ADR, unaccepted TDD, missing PE approval, or unresolved blocker (P12/P13 FAIL) | `spec-human-decision` |
-| `stale` | Digest / head / revision mismatch vs upstream artifacts | `initiative-feasibility` |
+| `stale` | Product-spec H1–H3 / G1 / tip authority drift | `initiative-feasibility` |
 | `failed` | Rendering/validation failure, or P4/P15/P16 contract failures (vague exit, dependency cycle, missing proof/live, unit-as-live) on otherwise present inputs | `workflow-stop` |
 
 Check FAIL is not automatically `failed` — classify per the table (P12/P13 Draft

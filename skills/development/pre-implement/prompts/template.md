@@ -21,7 +21,8 @@ Follow the full procedure in this skill's `SKILL.md` (and `references/` when pre
 2. Consume canonical §9 WorkManifest (`prayog/v1`); fail closed when `workmanifest_contract` fails, a TASK lacks exit proof, or an applicable wave lacks live-verification contract/script.
 3. Read domain-filtered rules and relevant ADRs; cite concrete paths for this slice.
 4. Resolve check/test/verify/ground commands; stop on MISSING command. When P15 applies, live `verify_command` under `live_verify_dir` is required (not unit / N/A).
-5. Stop if plan source-freshness or impact-map revision/scope digest is stale.
+5. Stop if product-spec H1–H3 citations (or G2 merge attestation) show authority
+   drift; do not require plan-file digest as long-term SSOT.
 6. When board/wave-head readiness is absent: emit Forge/external-action readiness — do not invoke mutation.
 7. Human runs the co-shipped live script at checkpoint `live-verify`; this skill does not execute it.
 8. Select outcome deterministically (`pass` / `needs-input` / `blocked` / `stale` / `failed`) per `SKILL.md`.

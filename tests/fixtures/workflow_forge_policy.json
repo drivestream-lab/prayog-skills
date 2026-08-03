@@ -12,7 +12,9 @@
     "loop-spec": "required",
     "verify": "optional",
     "learning-extract": "optional",
-    "ground-spec": "required"
+    "ground-spec": "required",
+    "purge-initiative-artifacts-app": "required",
+    "purge-initiative-artifacts-meta": "required"
   },
   "external_action_authorization": {
     "prd-pr-action": "explicit",
@@ -20,7 +22,8 @@
     "spec-pr-action": "automated",
     "spec-merge": "explicit",
     "board-tickets-action": "explicit",
-    "wave-pr-action": "automated"
+    "wave-pr-action": "automated",
+    "initiative-closure-pr-action": "automated"
   },
   "external_action_forge": {
     "prd-pr-action": {
@@ -44,6 +47,12 @@
       "draft": true,
       "apply_labels": [],
       "requires": ["title", "body_path", "head_ref", "base_ref"]
+    },
+    "initiative-closure-pr-action": {
+      "action": "open_draft_pr",
+      "draft": true,
+      "apply_labels": [],
+      "requires": ["title", "body_path"]
     }
   },
   "human_forge_skills": {

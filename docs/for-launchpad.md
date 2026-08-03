@@ -23,28 +23,39 @@ them.
 | Forge trio | `commit-workspace`, `open-draft-pr`, `create-board-tickets` on every profile `forge_skills` |
 | Board seeding | **No** content `board-seed`; humans use `/create-board-tickets` |
 | Learning | App profiles include **`learning-extract`** |
-| Checkpoints | `prd-impact-acceptance`, `coding-readiness` (not `gate-1` / `gate-2`) |
+| Purge (initiative closure) | App profiles include **`purge-initiative-artifacts-app`**; meta profile includes **`purge-initiative-artifacts-meta`** |
+| Checkpoints | `prd-impact-acceptance`, `coding-readiness`, `initiative-closure-signoff` (not `gate-1` / `gate-2`) |
 | Labels | Unchanged: `impact-map-*`, `spec-*` |
-| WorkManifest | Launchpad **materializes** the pin only — it does **not** own, parse, or execute WorkManifest. Prayog owns the contract; Gateflow/humans validate and project it. |
-| External-action auth | Pin may set `authorization: automated` on `spec-pr-action` / `wave-pr-action` (Forge opens Draft PR without human forge confirm). Playbooks should not require a human `/open-draft-pr` click for those nodes when remounted on this tip. |
+| WorkManifest | Launchpad **materializes** the pin only — it does **not** own, parse, or execute WorkManifest. Prayog owns the contract; Gateflow/humans validate and project it. Board is long-term WM home after seed; plan §9 is walk-time. |
+| External-action auth | Pin may set `authorization: automated` on `spec-pr-action` / `wave-pr-action` / `initiative-closure-pr-action`. Playbooks should not require a human `/open-draft-pr` click for those nodes when remounted on this tip. |
+| KEEP/PURGE | Declared in `references/artifact-write-contract.md` — Launchpad does not implement purge logic |
 
-## Pass-1 / Pass-2 (copy for playbooks)
+## Pass-1 / Pass-2 / closure (copy for playbooks)
 
 ```text
 Pass-1:  /pre-implement → /loop-spec → wave-pr-action → live-verify (human)
 Pass-2:  /learning-extract → /ground-spec → wave-signoff
+Closure (all waves done):
+  initiative-closure → /purge-initiative-artifacts-app
+    → /purge-initiative-artifacts-meta → initiative-closure-pr-action
+    → initiative-closure-signoff (human merge)
 ```
 
 Do not document orchestrated auto-verify/ground after `loop-spec`.
-Do not materialize a merge Forge skill — wave merge is human-only.
+Do not materialize a merge Forge skill — wave / initiative-closure merge is
+human-only.
+Do not document per-wave purge.
 
 ## Partner handoff
 
 Share [for-launchpad.md](for-launchpad.md) with the launchpad team when the pin
-lands (they track fixture/`review_roles`/materialize changes on their side).
-Launchpad **0.5.24** already aligns with this pin slice.
+lands (they track fixture/`review_roles`/materialize/AGENTS changes on **their**
+side). Purge skill **semantics** live in prayog skill packages; Launchpad only
+materializes and lists slash commands.
 
+## Out of scope for Launchpad
 
 - Implementing Gateflow Enter-at or learning DB
 - Putting forge skills on workflow `outcomes`
 - Confusing kit **forge templates** (`apply-forge-templates`) with **forge skills**
+- Implementing purge allowlist logic (prayog skills own that)

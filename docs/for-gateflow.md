@@ -23,8 +23,30 @@ Orientation for orchestrator / AgentRunner maintainers. Pin SSOT:
    Reject unsupported `apiVersion` / `kind` pairs fail-closed. Do not invent a
    Gateflow-local manifest schema.
 8. **`authorization` on every external-action** — required `explicit` |
-   `automated`. Missing/unknown → fail closed. Day-one: `spec-pr-action` and
-   `wave-pr-action` are `automated`; others `explicit`.
+   `automated`. Missing/unknown → fail closed. Day-one: `spec-pr-action`,
+   `wave-pr-action`, and `initiative-closure-pr-action` are `automated`; others
+   `explicit`.
+
+## Initiative closure lane
+
+```text
+initiative-closure (human) → purge-initiative-artifacts-app
+  → purge-initiative-artifacts-meta → initiative-closure-pr-action (automated)
+  → initiative-closure-signoff (human merge) → workflow-complete
+```
+
+| Do | Don't |
+|----|--------|
+| Enter-at / orch purge skills after `initiative-closure.pass` | Purge per `wave-signoff` |
+| Bind **app** workspace for app purge; **meta** for meta purge | Invent a Gateflow-only delete path |
+| Allowlist delete only; refuse KEEP (PRD, Impact-Map, product INIT, Accepted ADRs, scripts) | Authorize-before-delete STOP on purge skills |
+| `commit_workspace: required` on purge nodes; open closure Draft PR(s) from develop | Merge via Forge at signoff |
+| Treat board + product-spec H1–H4 as long-term identity after purge | Fail closed on missing feas/TDD/plan digests post-purge |
+| Mid-lane freshness = product-spec H1–H3 + tip (light) | Mid-lane digest theatre as staleness SSOT |
+
+Purge once for **both** repos after **all** waves. Launchpad materializes the
+two purge skills; Gateflow implements Enter-at / dual-repo PR open on remount —
+not inside skill packages.
 
 ## Pass-1 / Pass-2 (implement lane)
 
@@ -130,7 +152,8 @@ equal** the consumed prayog-skills submodule SHA (or immutable tag tip). Do
 Content skills still fill `handoff.forge` only — they never commit, push,
 branch, open PRs, apply labels, or create board issues. On remount, Gateflow
 must honor `authorization` (automated Draft PR open on `spec-pr-action` /
-`wave-pr-action`) and must **not** merge at `wave-signoff`.
+`wave-pr-action` / `initiative-closure-pr-action`) and must **not** merge at
+`wave-signoff` or `initiative-closure-signoff`.
 
 ## Out of scope (Initiative C2 — deferred)
 

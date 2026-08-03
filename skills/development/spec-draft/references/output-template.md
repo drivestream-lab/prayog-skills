@@ -4,16 +4,21 @@
 |-------|-------|
 | Initiative | {INIT-id} |
 | PRD | `{client-meta}/prd/{INIT-id}.md` |
-| PRD digest | `sha256:{hex}` |
+| PRD digest (H1) | `sha256:{hex}` |
 | Meta PR | {URL} |
-| Meta PR approved head | `{SHA}` |
+| Meta PR approved head (G1) | `{SHA}` |
 | Impact map | `{client-meta}/prd/reports/Impact-Map-{INIT-id}.md` |
-| Impact-map revision | `{N}` |
-| Repo scope digest | `sha256:{hex}` |
+| Impact-map revision (H3) | `{N}` |
+| Repo scope digest (H2) | `sha256:{hex}` |
 | Tech-lead approval | {review URL/id, approver, submitted_at; review commit_id must equal approved head} |
 | Repo | {REPO} |
 | Date | {YYYY-MM-DD} |
 | Status | Draft — dev review required before Forge publish |
+
+> **H4 citations:** The H1–H3 (and G1) rows above are the durable authority
+> carrier for mid-lane freshness. Feas / TDD / plan digests are walk-time only
+> and may be purged at initiative closure — see
+> `../../../references/artifact-write-contract.md`.
 
 ## Overview
 

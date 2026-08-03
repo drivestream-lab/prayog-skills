@@ -8,6 +8,7 @@ requirements_skills:
   - review-findings
   - update-documents
   - prd-impact-map
+  - purge-initiative-artifacts-meta
 
 layout:
   prd_root: prd/

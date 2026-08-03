@@ -41,8 +41,11 @@ Canonical artifact:
 6. Cite concrete file paths for this repo and slice.
 7. Describe contracts in engineering terms — entry points, input/output shapes,
    invariants. Do not use language-specific syntax.
-8. Verify the plan's source-freshness table is CURRENT and its impact-map
-   revision/scope digest still match the canonical handoff. Stop on stale input.
+8. Verify **spend freshness**: product-spec **H1–H3** citations (and **G2**
+   spec merge when applicable) still match live durable roots; board wave
+   issue exists for this W{N}. Stop on authority drift. Do **not** require
+   Implementation-Plan source-freshness / plan-file digest as long-term SSOT
+   (plan is walk-time; may be purged at initiative closure).
 9. Resolve `check_command` and `test_command`. Resolve `verify_command` as the
    **live** script under `live_verify_dir` when the wave plan triggers P15
    (new/material product surface) — **FAIL** the gate on bare N/A or
@@ -50,20 +53,18 @@ Canonical artifact:
    applicable. If the plan/profile/`AGENTS.md`/`tests_readme` cannot supply a
    required command, stop with MISSING command. The human runs
    `{verify_command}` at checkpoint `live-verify`; this skill does not execute it.
-10. **Canonical WorkManifest** — consume plan §9 (`prayog/v1` `WorkManifest`)
-    as the execution-intent authority (see
+10. **WorkManifest spend authority** — prefer the **board** wave/EPIC issues
+    seeded from plan §9 as long-term intent (see
     [`../../../references/workmanifest-contract.md`](../../../references/workmanifest-contract.md)).
-    Run `scripts/workmanifest_contract.py` (or import `validate_workmanifest`)
-    against the merged plan / §9 YAML. **Fail closed** (`blocked` or `failed`)
-    when any of the following hold for this wave:
-    - contract check fails (`workmanifest-contract-pass` false);
-    - any `TASK-*` lacks complete `exit.criteria` + `exit.proof`
-      (kind/command|review/expected/evidence_expected);
-    - P15 applies and the wave lacks a live-verification contract (`verification.live`
-      applicable with script under `live_verify_dir`) or unit-as-live command.
-    Do **not** treat board issue text as a second authority — project TASK ids /
-    REQ mappings / exit summaries from the manifest into the checklist.
-11. Confirm board seed from plan §9: **EPIC** issue exists, every declared wave
+    When `Implementation-Plan-{initiative}.md` is still on the tree, validate
+    §9 with `scripts/workmanifest_contract.py` / `validate_workmanifest` and
+    fail closed on contract / incomplete TASK exit / P15 live gaps as today.
+    When the plan file is already gone (post–initiative-closure purge is
+    initiative-end only — during waves the plan should still exist), reconstruct
+    TASK/REQ/exit/live intent from **board issue bodies** projected at seed
+    plus product-spec REQs — do **not** invent ids. Board text is projection
+    of the approved manifest, not a second libre authority.
+11. Confirm board seed: **EPIC** issue exists, every declared wave
     issue exists, and waves are **sub-issues of the EPIC** on the programme
     board (governance `project_board.name`). Board/branch/PR state is
     **read-only**. If seed or bound wave head is missing/partial: stop, emit
@@ -74,8 +75,10 @@ Canonical artifact:
       `feature/INIT-*-w{N}-*` wave branch cut from it — **not** an open
       `chore/*-spec-*` Draft spec PR branch (wave head is bound by Forge/human
       context — this skill does not open it);
-    - `docs/specification/reports/Implementation-Plan-{initiative}.md` exists on
-      the integration branch (spec PR was merged);
+    - product spec `INIT-*.md` with **H1–H3** citations exists on the
+      integration branch; prefer also verifying merged
+      `Implementation-Plan-{initiative}.md` when still present (spec PR merge /
+      **G2**);
     - the merged spec PR head carried **`spec-lgtm`** (verify via `gh pr view`
       on the closed spec PR: label present and `mergeCommit`/`headRefOid`
       matches attestation or Approve `commit_id`);
@@ -92,7 +95,7 @@ Map evidence to delivery outcomes only (pinned `workflow.yaml`):
 | `pass` | Gate verdict PASS; WorkManifest contract clean for this wave; preflight artifact written; commands resolved; board seeded; prior wave approved (or W0 plan PE sign-off); wave head bound in Forge/human context |
 | `needs-input` | Authoritative source absent/unreadable (plan, Ground Report, commands, profile, §9 YAML) so readiness cannot be determined |
 | `blocked` | Authoritative source exists and shows an unsatisfied gate (WorkManifest contract fail, TASK missing exit proof, missing/applicable live-verify contract when P15 applies, prior wave not `human_approved`, board seed missing/partial, open Draft spec branch) |
-| `stale` | Plan source-freshness not CURRENT, or impact-map revision/scope digest mismatch |
+| `stale` | Product-spec H1–H3 / G2 / tip authority drift |
 | `failed` | Execution error while reading inputs, running the WorkManifest validator, or writing the preflight artifact |
 
 When board/branch readiness is absent: prefer `blocked` (or `needs-input` if

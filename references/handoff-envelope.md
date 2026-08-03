@@ -35,8 +35,8 @@ Canonical artifact paths and revision rules:
 | `contract` | Delivery contract implemented by the producer |
 | `stage` | Node id from `workflow.yaml` |
 | `outcome` | One of the contract outcomes |
-| `artifact.path` | Durable stage output (canonical path) |
-| `artifact.digest` | Digest of the output after it is saved |
+| `artifact.path` | Stage output (canonical path while the file exists) |
+| `artifact.digest` | Digest of that output after save — **walk-time integrity only** |
 | `blockers` | Stable process/delivery ids that prevent progress |
 | `signals` | Stage-specific routing facts; never implicit prose |
 | `next_candidates` | Must match the pinned `workflow.yaml` transition for `(stage, outcome)`; never an authorization to execute |
@@ -46,6 +46,20 @@ Canonical artifact paths and revision rules:
 
 Optional future field (not required in v1): `executed_by: manual | orchestrated`
 records who ran a skill; it does not change navigation or eligibility.
+
+### Durable identity vs mid-lane digests
+
+`artifact.digest` on feas / TDD / plan / wave reports proves **this hop’s file**
+was written. It is **not** long-term freshness SSOT after initiative-closure
+purge (those paths are PURGE — see
+[artifact-write-contract.md](artifact-write-contract.md)).
+
+Long-term / mid-lane **`stale`** authority is **H1–H4 + G1–G3** (PRD digest,
+scope digest, map revision, product-spec citations, gate/merge SHAs) and board
+WorkManifest after seed — not recomputing or requiring purged-file digests.
+
+Purge-stage handoffs list `deleted` / `refused` / `missing_ok` under `signals`
+(or the purge artifact body); they do not invent extra digest gates.
 
 ## `handoff.forge` (instance readiness)
 
@@ -111,7 +125,7 @@ stage. Same word, different next node — always read `workflow.yaml`.
 | `findings` | Blocking engineering findings need an owning stage (e.g. PE review) |
 | `needs-input` | Required answer or source is missing/unreadable; human clarification |
 | `blocked` | Authoritative source exists and shows an unsatisfied gate |
-| `stale` | Digest/head/revision mismatch vs canonical inputs |
+| `stale` | Authority drift (H1–H3 / G1 / head / tip) vs canonical inputs — not missing mid-lane report digests |
 | `failed` | Execution/validation failure on otherwise valid inputs |
 | `skipped` | Only where the pin defines a skip edge (e.g. `verify`) |
 
@@ -237,7 +251,7 @@ Rules:
 - `findings` — durable findings require a workflow-defined resolution path.
 - `needs-input` — required information is unavailable.
 - `blocked` — an explicit gate prevents progress.
-- `stale` — an upstream artifact or approval no longer matches.
+- `stale` — durable authority (H1–H3 / G* / head / tip) no longer matches.
 - `failed` — execution or verification failed.
 - `skipped` — stage is legitimately inapplicable with a recorded reason.
 

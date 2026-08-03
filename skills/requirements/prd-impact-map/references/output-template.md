@@ -69,18 +69,12 @@ handoff:
 |---------|------|------|---------------|--------------|----------------|------------|
 | {name} | {org}/{repo} | @{org}/{team} | {repo-bounded capabilities and contracts} | `sha256:{hex}` | `INIT-{id}-{slug}.md` | High/Medium/Low |
 
-For every affected repository, calculate `scope_digest` from this canonical
-UTF-8/LF payload, with sorted list values and exactly one final newline:
-
-```text
-repo={org}/{repo}
-status=affected
-capabilities={sorted CAP-* and/or REQ-* identifiers (legacy FR-* ≡ REQ-*), comma-separated}
-contracts={sorted provider->consumer contract identifiers, comma-separated}
-depends_on={sorted repository names, comma-separated}
-scope={single-line normalized scope summary}
-```
-
+For every affected repository, calculate `scope_digest` (**H2**) from the
+canonical UTF-8/LF payload in
+`../../../references/artifact-write-contract.md` (Durable identity), with
+sorted list values and exactly one final newline. Record **H1**
+`source_prd_digest` and **H3** `map_revision` in front matter — these survive
+initiative-closure purge; Validation/Resolution reports do not.
 ## 3. Deferred repositories
 
 | Service | Repo | Reason | Revisit condition |

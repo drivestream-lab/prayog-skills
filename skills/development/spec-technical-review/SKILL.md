@@ -49,8 +49,10 @@ gate, `agentic_development_workflow` multi-role review, GitHub Spec Kit
    Technical review creates Draft ADR files first; planning consumes only
    **Accepted** files in `{adr_dir}`. Mid-lane PE work updates files on the
    spec branch — it does **not** set `spec-lgtm`.
-8. Verify that spec, feasibility report, PRD digest, impact-map revision, repo
-   scope digest, and approved meta PR head agree. Stop on stale inputs.
+8. Verify **light freshness**: product-spec **H1–H3** citations, tip continuity,
+   and **G1** when applicable agree with live handoff. Stop on authority drift.
+   Do **not** fail closed solely on feasibility `artifact.digest` mismatch —
+   feas/TDD digests are walk-time (PURGE at initiative closure).
 9. **Product/architecture boundary.** PE may frame options and draft ADRs
    against approved `REQ-*` constraints. An ADR **must not** become `Accepted`
    when it depends on user-visible behavior not already represented by an
@@ -74,9 +76,10 @@ product-scope context. Do not invent a meta path when empty.
 4. **`rules_glob`** — workspace MDC rules (REQUIRED). Read before T2 Analyze.
 5. **As-built** — `implementation-status.md` (REQUIRED)
 6. **`.harness/profile.yaml`** or layout defaults (REQUIRED)
-7. **Canonical handoff references** — PRD digest, impact-map revision/scope
-   digest, approved meta PR head, and tech-lead review (REQUIRED; resolve under
-   `meta_workspace` when bound)
+7. **Canonical handoff references** — product-spec H1–H3 citations, approved
+   meta PR head / tech-lead review when Gate 1 still applies (REQUIRED; resolve
+   under `meta_workspace` when bound). Feasibility report is an input artifact,
+   not long-term digest SSOT.
 
 ## When to use
 
@@ -88,9 +91,9 @@ product-scope context. Do not invent a meta path when empty.
 
 ## Process
 
-1. **T0 Gather and freshness gate** — feasibility report, spec, canonical
-   handoff references, ADRs, rules_glob, as-built; stop if any source digest or
-   approval reference is stale
+1. **T0 Gather and freshness gate** — feasibility report, spec, H1–H3 / G1
+   references, ADRs, rules_glob, as-built; stop if durable authority or tip is
+   stale (not solely on feas file digest)
 2. **T1 Understand** — list all NEW-ADR items, Critical/Should-fix engineering
    findings, and open engineering questions from feasibility
 3. **T2 Analyze** — read relevant Accepted ADRs; read rules_glob; map each
@@ -118,7 +121,7 @@ pinned `workflow.yaml`:
 | `findings` | Unresolved engineering quality gaps that need human clarification before PE can accept (not product input) | `spec-human-decision` |
 | `needs-input` | Blocking PM or domain input required; product behavior missing from approved REQs | `spec-human-decision` |
 | `blocked` | Explicit gate prevents progress | `spec-human-decision` |
-| `stale` | Spec/feasibility/handoff digest or head mismatch | `initiative-feasibility` |
+| `stale` | Product-spec H1–H3 / G1 / tip authority drift | `initiative-feasibility` |
 | `failed` | Execution/render failure on valid inputs | `workflow-stop` |
 
 Product/domain input must prevent `pass`. Stale inputs must emit `stale`.

@@ -16,8 +16,12 @@ Human-walker equivalent of Gateflow **board create**
 (`forge.action: create_board_tickets`).
 
 **One command after merge:** read plan §9 → preflight → confirm → create.
-There is no separate `/board-seed` content skill. WorkManifest already lives in
-the implementation plan.
+There is no separate `/board-seed` content skill. At seed time WorkManifest
+lives in the implementation plan §9 (**walk-time carrier**). After successful
+seed, **board issues are the long-term WorkManifest home** — the plan file may
+be purged at initiative closure
+([`../../../references/artifact-write-contract.md`](../../../references/artifact-write-contract.md),
+[`../../../references/workmanifest-contract.md`](../../../references/workmanifest-contract.md)).
 
 **Do not run before spec merge.** **Do not write product code.**
 
@@ -42,9 +46,11 @@ the implementation plan.
    and verification as defined in
    [`../../../references/workmanifest-contract.md`](../../../references/workmanifest-contract.md).
 5. **Projection only** — project epic/wave/task **summaries** from the
-   canonical WorkManifest into board issue titles/bodies. Board issue text is
-   **never** a second authority: do not invent TASK ids, REQ mappings,
-   dependencies, exit criteria, or proof summaries that are absent from §9.
+   canonical WorkManifest into board issue titles/bodies. After seed, board
+   holds long-term identity; do not invent TASK ids, REQ mappings,
+   dependencies, exit criteria, or proof summaries that are absent from §9
+   at seed time. Record created issue URLs/ids in the seed summary so
+   `/pre-implement` can spend without requiring the plan file forever.
 6. **Idempotent** — search existing issues by initiative label; create only
    missing items; link existing waves under EPIC when parent missing.
 7. **Hierarchy** — EPIC first, then each wave as sub-issue on the same org
