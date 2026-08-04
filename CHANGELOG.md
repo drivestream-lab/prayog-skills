@@ -14,6 +14,16 @@ _(empty — tip changes land under `[0.5.0-rc.2]`)_
 Consumable tip for programmes remounting `agent_skills.ref: v0.5.0-rc.2`
 (resolve to the retagged tip SHA).
 
+### Breaking — Stack identity equality (retagged tip)
+
+- Rename `profiles/frontend.yaml` → `profiles/nextjs-frontend.yaml`
+  (`profile: nextjs-frontend`). No `prayog_profile` aliases.
+- Add `profiles/flink.yaml` and `profiles/edge-agent.yaml`.
+- Remount: keep pin tag **`v0.5.0-rc.2`**, fetch retagged tip, then
+  `launchpad reset-harness` → `apply-harness`. Drop harness `prayog_profile:`
+  keys and any `data-platform` **stack** keys (team `data-platform-devs` is
+  domain ownership, not a stack).
+
 ### Added — Durable roots, light freshness, initiative-closure purge lane
 
 - Contract: KEEP/PURGE tables, H1–H4 / G1–G3 identities, digest recipes in

@@ -90,7 +90,11 @@ PM skills validate and refine PRDs. Dev skills implement spec slices in service 
 | **open-draft-pr** | Open draft PR with pin labels (ForgeClient parity) |
 | **create-board-tickets** | After spec merge: preflight + authorize + seed EPIC/waves from plan §9 |
 
-Profile manifests (`profiles/*.yaml`) list which dev skills apply per harness profile (`python-backend`, `frontend`, `data-platform`, `meta-pm`). **Launchpad** reads these at sync time — when adding or removing a dev skill, update every relevant `profiles/*.yaml` and bump the harness `agent_skills.ref`.
+Profile manifests (`profiles/*.yaml`) list which skills apply per **stack key**
+(`python-backend`, `nextjs-frontend`, `terraform-iac`, `flink`, `edge-agent`,
+`meta-pm`). Filename = YAML `profile:` = Launchpad harness profile (no aliases).
+**Launchpad** reads these at sync time — when adding or removing a skill, update
+every relevant `profiles/*.yaml` and bump the harness `skills[].ref`.
 
 ---
 
@@ -185,9 +189,12 @@ npx skills add drivestream-lab/prayog-skills \
 ```text
 prayog-skills/
   VERSION
-  profiles/           # SSOT skill lists per harness profile
+  profiles/           # SSOT skill lists per stack_key (identity equality)
     python-backend.yaml
-    frontend.yaml
+    nextjs-frontend.yaml
+    terraform-iac.yaml
+    flink.yaml
+    edge-agent.yaml
     meta-pm.yaml
   references/         # normative: handoff, forge, ids, artifacts, prompts
   docs/               # human orientation (overview, for-launchpad/gateflow)
