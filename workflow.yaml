@@ -234,6 +234,23 @@ nodes:
       # file scope, exit proof, live-verification completeness). Plan P16.
       - workmanifest-contract-pass
     outcomes:
+      pass: wave-in-progress-action
+      blocked: board-tickets-action
+      failed: workflow-stop
+
+  # Orch process hop (pin SSOT): move wave ticket → In Progress before coding.
+  # No human forge skill — ForgeClient only. Humans may move the card by habit.
+  wave-in-progress-action:
+    type: external-action
+    owner: engineering
+    provider: github
+    authorization: automated
+    forge:
+      action: update_board_status
+      status: in_progress
+      requires:
+        - ticket
+    outcomes:
       pass: pre-implement
       blocked: board-tickets-action
       failed: workflow-stop
@@ -333,11 +350,28 @@ nodes:
     forge:
       commit_workspace: required
     outcomes:
-      pass: wave-signoff
+      pass: wave-done-action
       findings: loop-spec
       needs-input: wave-signoff
       blocked: wave-signoff
       failed: loop-spec
+
+  # Orch process hop (pin SSOT): move wave ticket → Done, then human merges.
+  # No human forge skill — ForgeClient only. Merge stays at wave-signoff.
+  wave-done-action:
+    type: external-action
+    owner: engineering
+    provider: github
+    authorization: automated
+    forge:
+      action: update_board_status
+      status: done
+      requires:
+        - ticket
+    outcomes:
+      pass: wave-signoff
+      blocked: wave-signoff
+      failed: workflow-stop
 
   # Human-only exact-head approval + merge. Gateflow/Forge must not merge.
   # pass is legal only after the human confirms the reviewed PR head SHA,

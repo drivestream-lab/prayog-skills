@@ -5,7 +5,8 @@ description: >-
   WorkManifest, plus repo artifacts and cross-spec contracts. Produces a Ground
   Report (GF-* findings) including Contracts Produced for next-wave
   pre-implement. Writes locally and emits Forge readiness — never commits or
-  merges. Use after Pass-2 learning-extract, before human wave-signoff.
+  merges. Use after Pass-2 learning-extract, before wave-done-action /
+  human wave-signoff.
 disable-model-invocation: true
 paths: AGENTS.md, docs/specification/**, src/**, tests/**
 metadata:
@@ -58,7 +59,8 @@ Ids: `../../../references/id-conventions.md` (`GF-*` for findings).
 10. Discrepancy / blocker ids use stable **`GF-*`** — cite `REQ-*` in the row,
     not as the blocker primary key. Do **not** reuse feasibility `FF-*`.
 11. Write Ground Report and as-built updates **locally**; prepare the
-    exact-head human sign-off package; stop at `wave-signoff`. Never commit or
+    exact-head human sign-off package; pin routes to `wave-done-action` then
+    `wave-signoff`. Never commit or
     merge from this skill.
 
 ## Outcome selection
@@ -71,13 +73,13 @@ Ids: `../../../references/id-conventions.md` (`GF-*` for findings).
 | `blocked` | Gate prevents grounding (e.g. Pass-1 incomplete, missing live evidence when required) |
 | `failed` | Execution error running ground command or writing the report |
 
-Happy path: `pass` → `wave-signoff`.
+Happy path: `pass` → `wave-done-action` → `wave-signoff`.
 
 ## Chain position
 
 Illustrative only — **transitions SSOT:** pinned root `workflow.yaml`
 (`dispatch: orchestrated` on this node). Closeout path: `learning-extract`
-→ this skill → `wave-signoff`. Pass-1 does **not** route here from `loop-spec`.
+→ this skill → `wave-done-action` → `wave-signoff`. Pass-1 does **not** route here from `loop-spec`.
 
 ```
 /learning-extract (Pass-2 / Enter-at)
@@ -88,6 +90,7 @@ Illustrative only — **transitions SSOT:** pinned root `workflow.yaml`
             └── cites L-* from Learning-Extract when present
             └── GF-* findings (not FF-*)
     ↓
+  wave-done-action (Forge update_board_status → Done)
   human checkpoint wave-signoff (exact head; human merge)
   → as-built W{N} = human_approved
     ↓
@@ -118,7 +121,12 @@ Save report to `{reports_dir}/Ground-Report-{SPEC}-W{N}.md` using
 1. Append/emit the envelope from `../../../references/handoff-envelope.md` to the saved Ground Report. Use stage `ground-spec`.
 2. When the invocation binds `handoff_path` (orchestrator / AgentRunner baton), also **overwrite** that path with the same `handoff:` envelope before exit. Leaving the baton empty is a failed stage for automated consumers. `artifact.path` remains the workspace skill output, not the baton path. See `../../../references/handoff-envelope.md` (Orchestrator baton).
 3. Derive `next_candidates` and `human_checkpoint` from pinned root `workflow.yaml` for `(stage: ground-spec, outcome)` per `../../../references/handoff-envelope.md` (**Derive from pinned workflow**). Set `human_checkpoint: true` only when the resolved next node's `type` is `human-checkpoint` — never because the artifact "should be reviewed."
-4. Happy path: `outcome: pass` → next `wave-signoff` (`type: human-checkpoint`) → `human_checkpoint: true`. Do **not** copy this `true` into earlier implement-lane skills on skill→skill edges.
+4. Happy path: `outcome: pass` → next `wave-done-action` (`type: external-action`,
+   `forge.action: update_board_status`, `authorization: automated`) →
+   `human_checkpoint: false`, `external_action: true`. Fill `handoff.forge`
+   `ticket` when bound so ForgeClient can apply Done. Then pin routes to
+   `wave-signoff` (human merge). Do **not** copy `human_checkpoint: true` into
+   earlier implement-lane skills on skill→skill edges.
 
 
 4. Follow `../../../references/forge-side-effects.md#content-producers` when this stage's pin has `forge.commit_workspace` other than `disabled` or next is an `external-action` with `forge.requires` — fill `handoff.forge` / recommend the matching `/forge` skill; do not treat local CLI as skill success.
@@ -142,11 +150,13 @@ handoff:
     contracts_produced: {count}
     assigned_reqs: [...]
   next_candidates:
-    # Must match workflow.yaml for outcome — typically wave-signoff
-    - wave-signoff
-  # true because next.type is human-checkpoint — not "please review"
-  human_checkpoint: true
-  external_action: false
+    # Must match workflow.yaml for outcome — typically wave-done-action
+    - wave-done-action
+  human_checkpoint: false
+  external_action: true
+  forge:
+    action: update_board_status
+    ticket: {bound_wave_ticket}
 ```
 
 The Ground Report is not complete without this handoff. Outcome routes follow

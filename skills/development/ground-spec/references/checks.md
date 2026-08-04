@@ -18,7 +18,7 @@ feasibility-owned `FF-*`.
 | G7 | **Contracts consumed / produced** | Consumed contracts match prior Ground Reports; §Contracts produced complete for next-wave `/pre-implement` |
 | G8 | **Learning citations** | When `Learning-Extract-{INIT}-W{N}.md` exists, cite `L-*` ids only — do not re-author learning SSOT |
 | G9 | **Stable GF-* findings** | Discrepancies use stable `GF-{nn}` ids; cite `REQ-*` in the row; blockers use `GF-*` not bare check numbers |
-| G10 | **Complete handoff** | Canonical Ground Report path written; as-built row updated locally when appropriate; exact-head human sign-off package prepared; envelope stage `ground-spec` with outcome + next `wave-signoff` on pass — no commit/merge by this skill |
+| G10 | **Complete handoff** | Canonical Ground Report path written; as-built row updated locally when appropriate; exact-head human sign-off package prepared; envelope stage `ground-spec` with outcome + next `wave-done-action` on pass (then `wave-signoff`) — no commit/merge by this skill |
 
 Severity: **Blocking** (cannot `pass` to wave-signoff), **Should fix**, **Verify**.
 

@@ -155,11 +155,15 @@ class WorkflowContractTest(unittest.TestCase):
         self.assertEqual(expected["wave-pr-action"], "automated")
         self.assertEqual(expected["initiative-closure-pr-action-app"], "automated")
         self.assertEqual(expected["initiative-closure-pr-action-meta"], "automated")
+        self.assertEqual(expected["wave-in-progress-action"], "automated")
+        self.assertEqual(expected["wave-done-action"], "automated")
         automated = {
             "spec-pr-action",
             "wave-pr-action",
             "initiative-closure-pr-action-app",
             "initiative-closure-pr-action-meta",
+            "wave-in-progress-action",
+            "wave-done-action",
         }
         for stage, auth in expected.items():
             if stage not in automated:
@@ -192,8 +196,23 @@ class WorkflowContractTest(unittest.TestCase):
                 if "apply_labels" in expected:
                     self.assertEqual(forge.get("apply_labels"), expected["apply_labels"])
                 self.assertEqual(forge.get("requires"), expected["requires"])
+                if "status" in expected:
+                    self.assertEqual(forge.get("status"), expected["status"])
                 for label in forge.get("apply_labels") or []:
                     self.assertFalse(str(label).endswith("-lgtm"))
+
+    def test_update_board_status_has_no_human_forge_skill(self) -> None:
+        """Orch-only board status — keep human slash surface flat."""
+        policy = json.loads(
+            (ROOT / "tests" / "fixtures" / "workflow_forge_policy.json").read_text()
+        )
+        self.assertNotIn("update_board_status", policy["human_forge_skills"])
+        self.assertFalse(
+            (ROOT / "skills" / "forge" / "update-board-status" / "SKILL.md").is_file()
+        )
+        actions = (self.contract.get("forge") or {}).get("actions") or {}
+        self.assertIn("update_board_status", actions.get("enum") or [])
+        self.assertNotIn("update_board_status", actions.get("reserved_future") or [])
 
     def test_human_forge_skills_exist(self) -> None:
         policy = json.loads(

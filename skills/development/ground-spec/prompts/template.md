@@ -13,7 +13,8 @@ You are executing the **ground-spec** skill (Ground spec (wave grounding)).
 Validate the completed wave against REQs assigned to that wave by the plan /
 WorkManifest and against repo artifacts (including tests/**). Produce
 `Ground-Report-{SPEC}-W{N}.md` with `GF-*` findings. Write locally and prepare
-the exact-head human sign-off package; stop at wave-signoff. Never commit or
+the exact-head human sign-off package; next is wave-done-action then
+wave-signoff. Never commit or
 merge.
 
 Follow the full procedure in this skill's `SKILL.md` (and `references/` when present). Treat `SKILL.md` as the procedure SSOT; this brief is the invocation package only.
@@ -34,7 +35,8 @@ pinned `workflow.yaml` for `(stage: {{skill_id}}, outcome)` per
 `human-checkpoint` — never because the artifact should be reviewed.
 Never set `true` on skill→skill edges (for example never on
 `pre-implement` / `loop-spec` / `verify` `pass`).
-Example: `ground-spec` + `pass` → `wave-signoff` → `human_checkpoint: true` (do not copy into earlier lane skills).
+Example: `ground-spec` + `pass` → `wave-done-action` → `human_checkpoint: false`,
+`external_action: true` (then pin → `wave-signoff`). Do not copy into earlier lane skills.
 
 
 ## Forge (required awareness)

@@ -32,8 +32,12 @@ binds the remote ref from run context (wave PR, meta PR, spec branch, …).
 | `commit_workspace` | `commit-workspace` | Publish workspace tree |
 | `open_draft_pr` | `open-draft-pr` | Open/update Draft PR + projection labels |
 | `create_board_tickets` | `create-board-tickets` | Create epic/wave tickets from readiness |
+| `update_board_status` | *(none — orch only)* | Move board wave ticket column (In Progress / Done) |
 
-Naming rule: human skill id = `action` with `_` → `-`.
+Naming rule: human skill id = `action` with `_` → `-` **when** a
+`skills/forge/<id>/` package exists. `update_board_status` has **no** human
+package — keep the AGENTS slash surface thin; Gateflow `ForgeClient` applies
+it from pin nodes only.
 
 Typical `open_draft_pr` pin shape:
 
@@ -52,13 +56,30 @@ prd-pr-action:
       - body_path
 ```
 
+Typical `update_board_status` pin shape (orch process hop):
+
+```yaml
+wave-done-action:
+  type: external-action
+  authorization: automated
+  forge:
+    action: update_board_status
+    status: done          # pin policy: in_progress | done (column vocabulary)
+    requires:
+      - ticket            # run context / handoff instance
+```
+
 Rules:
 
 - `apply_labels` / `remove_labels` are **projection** only. Never auto-apply
   approval labels whose names end in `-lgtm`.
-- `requires` lists instance slots content skills must fill into `handoff.forge`.
-- Pin wins on policy (action, draft, labels). Handoff supplies instance values.
+- `requires` lists instance slots content skills must fill into `handoff.forge`
+  (or run context must supply).
+- Pin wins on policy (action, draft, labels, **status**). Handoff supplies
+  instance values.
 - Conflict (handoff invents a label outside pin policy) → fail closed.
+- Orch execution is **only** what `workflow.yaml` declares — no off-graph
+  board/status side effects outside pin nodes.
 
 ## Two executors
 
@@ -68,6 +89,7 @@ Content skill
        │
        ├─ Human:  /commit-workspace | /open-draft-pr | /create-board-tickets
        └─ Runner: ForgeClient / BoardService (same pin ⋉ handoff)
+                  (includes update_board_status — no human slash)
 ```
 
 - Human forge skills live under `skills/forge/`. They are **not** workflow
@@ -106,9 +128,10 @@ execute forge mutations (commit, Draft PR, board tickets).
 
 1. Treat forge success (PR opened, tickets created, push succeeded) as this
    content skill’s success criteria.
-2. Call forge / open PRs / create board tickets inside the content skill
-   procedure as an automatic side effect.
+2. Call forge / open PRs / create board tickets / update board status inside the
+   content skill procedure as an automatic side effect.
 3. Hardcode skill-id allowlists or walker-specific exemptions.
+4. Invent off-graph Forge mutations not declared on the pin.
 
 ### Incomplete handoff
 
@@ -153,16 +176,22 @@ if next.type == external-action:
 | `automated` | ForgeClient runs immediately when requires are complete |
 
 Day-one pin: `spec-pr-action`, `wave-pr-action`,
-`initiative-closure-pr-action-app`, and `initiative-closure-pr-action-meta`
-are `automated`; other external-actions are `explicit`. Wave merge and
-initiative-closure merges remain human-only at `wave-signoff` /
-`initiative-closure-signoff-app` / `initiative-closure-signoff-meta`
-(no merge Forge action).
+`initiative-closure-pr-action-app`, `initiative-closure-pr-action-meta`,
+`wave-in-progress-action`, and `wave-done-action` are `automated`; other
+external-actions are `explicit`. Wave merge and initiative-closure merges
+remain human-only at `wave-signoff` / `initiative-closure-signoff-app` /
+`initiative-closure-signoff-meta` (no merge Forge action).
+
+Board status hops (pin SSOT):
+
+```text
+board-tickets-action → wave-in-progress-action → pre-implement → …
+ground-spec → wave-done-action → wave-signoff (human merge)
+```
 
 ## Reserved actions
 
 Documented for later pins / skills (not required in this RC slice):
 
 - `link_pr_to_ticket`
-- `update_board_status`
 - `post_forge_comment`

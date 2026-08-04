@@ -22,7 +22,9 @@
     "spec-pr-action": "automated",
     "spec-merge": "explicit",
     "board-tickets-action": "explicit",
+    "wave-in-progress-action": "automated",
     "wave-pr-action": "automated",
+    "wave-done-action": "automated",
     "initiative-closure-pr-action-app": "automated",
     "initiative-closure-pr-action-meta": "automated"
   },
@@ -43,11 +45,21 @@
       "action": "create_board_tickets",
       "requires": ["initiative", "plan_path"]
     },
+    "wave-in-progress-action": {
+      "action": "update_board_status",
+      "status": "in_progress",
+      "requires": ["ticket"]
+    },
     "wave-pr-action": {
       "action": "open_draft_pr",
       "draft": true,
       "apply_labels": [],
       "requires": ["title", "body_path", "head_ref", "base_ref"]
+    },
+    "wave-done-action": {
+      "action": "update_board_status",
+      "status": "done",
+      "requires": ["ticket"]
     },
     "initiative-closure-pr-action-app": {
       "action": "open_draft_pr",

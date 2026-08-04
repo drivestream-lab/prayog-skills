@@ -87,15 +87,18 @@ dispatch:
 # Every external-action MUST set authorization: explicit | automated (required;
 # no omission / no default). explicit = STOP for interactive authorize;
 # automated = ForgeClient runs when handoff.forge is complete (no interactive
-# STOP). `open_draft_pr` is reused for PRD/spec/wave Draft PRs. There is **no**
-# merge Forge action — wave approval and merge remain human-only at
-# `wave-signoff`. Head/ref binding is run context (not pin). Approval labels
-# (*-lgtm) never auto.
+# STOP). `open_draft_pr` is reused for PRD/spec/wave Draft PRs.
+# `update_board_status` is pin-declared (wave In Progress / Done); orch
+# ForgeClient only — **no** human forge skill package (keep AGENTS thin).
+# There is **no** merge Forge action — wave approval and merge remain
+# human-only at `wave-signoff`. Head/ref binding is run context (not pin).
+# Approval labels (*-lgtm) never auto.
 #
-# Human skill id = forge.action with '_' → '-'. Orchestrators never auto-dispatch
-# forge skills (not on workflow outcomes; disable-model-invocation: true).
-# `automated` means pre-authorized ForgeClient / programme executor — not that
-# content skills may mutate GitHub.
+# Human skill id = forge.action with '_' → '-' **when** a skills/forge package
+# exists. Orchestrators never auto-dispatch forge skills (not on workflow
+# outcomes; disable-model-invocation: true). `automated` means pre-authorized
+# ForgeClient / programme executor — not that content skills may mutate GitHub.
+# Orch process hops are declared only in workflow.yaml (no off-graph side effects).
 forge:
   commit_workspace:
     enum:
@@ -115,11 +118,12 @@ forge:
       - commit_workspace
       - open_draft_pr
       - create_board_tickets
+      - update_board_status
     reserved_future:
       - link_pr_to_ticket
-      - update_board_status
       - post_forge_comment
   human_skill_id: action_with_underscores_to_hyphens
+  # update_board_status: orch ForgeClient only — omit from human_forge_skills
   forbid_auto_labels_suffix: "-lgtm"
   policy_fixture: tests/fixtures/workflow_forge_policy.json
   contract: references/forge-side-effects.md

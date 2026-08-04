@@ -107,7 +107,8 @@ Use [references/output-template.md](references/output-template.md) and
 1. Append/emit envelope from `../../../references/handoff-envelope.md`. Stage id
    for this forge skill note: `create-board-tickets` (not a graph node).
 2. Dual-write `handoff_path` when bound.
-3. After successful seed, programme continues at `pre-implement` per pin
-   (`board-tickets-action` `pass` → `pre-implement`). Do not invent graph edges.
+3. After successful seed, programme continues per pin
+   (`board-tickets-action` `pass` → `wave-in-progress-action` → `pre-implement`).
+   Do not invent graph edges.
 4. Honor pin `requires` on `board-tickets-action` (spec merged, plan current,
    `workmanifest-contract-pass`).

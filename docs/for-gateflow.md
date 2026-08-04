@@ -24,8 +24,9 @@ Orientation for orchestrator / AgentRunner maintainers. Pin SSOT:
    Gateflow-local manifest schema.
 8. **`authorization` on every external-action** — required `explicit` |
    `automated`. Missing/unknown → fail closed. Day-one: `spec-pr-action`,
-   `wave-pr-action`, `initiative-closure-pr-action-app`, and
-   `initiative-closure-pr-action-meta` are `automated`; others `explicit`.
+   `wave-pr-action`, `initiative-closure-pr-action-app`,
+   `initiative-closure-pr-action-meta`, `wave-in-progress-action`, and
+   `wave-done-action` are `automated`; others `explicit`.
 
 ## Initiative closure lane
 
@@ -56,12 +57,14 @@ per-repo PR open on remount — not inside skill packages.
 ## Pass-1 / Pass-2 (implement lane)
 
 ```text
-PASS 1 — Enter-at pre-implement (continuous walk)
-  pre-implement → loop-spec → wave-pr-action → live-verify
+PASS 1 — Enter-at pre-implement (or board-tickets-action when seed needed)
+  board-tickets-action → wave-in-progress-action (automated → In Progress)
+       → pre-implement → loop-spec → wave-pr-action → live-verify
        live-verify.pass → wave-awaiting-closeout   # terminal park
 
 PASS 2 — separate walk (API Enter-at learning-extract)
-  learning-extract → ground-spec → wave-signoff
+  learning-extract → ground-spec → wave-done-action (automated → Done)
+       → wave-signoff   # human merge only
 ```
 
 | Do | Don't |
@@ -74,6 +77,7 @@ PASS 2 — separate walk (API Enter-at learning-extract)
 | Treat unit/`make test` green as agent bar only | Treat unit green as live bar or skip human script run |
 | Expect human to run co-shipped `live_verify_dir` script at `live-verify` | Auto-dispatch `/verify` on Pass-1 |
 | Validate §9 via pinned WorkManifest contract before board seed / coding | Accept unsupported manifest versions or mutate approved intent at runtime |
+| Apply pin `wave-in-progress-action` / `wave-done-action` via ForgeClient (`update_board_status`) | Invent off-graph board status; add `/update-board-status` human skill |
 | Require reviewed head SHA + human merge SHA at `wave-signoff.pass` | Let Gateflow/Forge merge the wave PR |
 | Start closeout with Enter-at `learning-extract` | Treat `live-verify.pass` as resume into closeout skills (no authorize-resume in this slice) |
 | Ingest Learning-Extract artifact / baton into DB (INIT-007) | Require the skill to HTTP POST as success |
@@ -81,7 +85,8 @@ PASS 2 — separate walk (API Enter-at learning-extract)
 `verify` is `dispatch: manual` — optional freeform path into `learning-extract`.
 Unit green ≠ live prove; human runs the planned live script at `live-verify`.
 BoardService / ForgeClient **project** epic/wave/task summaries onto the board;
-board text is not a second WorkManifest authority.
+board text is not a second WorkManifest authority. Orch board **status** moves
+only via pin nodes (`wave-in-progress-action`, `wave-done-action`).
 
 ## Spec Pass-1 (spec lane)
 
@@ -158,7 +163,8 @@ Content skills still fill `handoff.forge` only — they never commit, push,
 branch, open PRs, apply labels, or create board issues. On remount, Gateflow
 must honor `authorization` (automated Draft PR open on `spec-pr-action` /
 `wave-pr-action` / `initiative-closure-pr-action-app` /
-`initiative-closure-pr-action-meta`) and must **not** merge at `wave-signoff`
+`initiative-closure-pr-action-meta` / `wave-in-progress-action` /
+`wave-done-action`) and must **not** merge at `wave-signoff`
 or `initiative-closure-signoff-app` / `initiative-closure-signoff-meta`.
 
 ## Out of scope (Initiative C2 — deferred)

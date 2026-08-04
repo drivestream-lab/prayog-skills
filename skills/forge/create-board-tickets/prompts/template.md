@@ -25,7 +25,8 @@ contract-gated projection.
 
 ## Envelope navigation (required)
 Forge skills are **not** workflow graph nodes. After a successful seed, continue
-at `pre-implement` per pinned `workflow.yaml` `board-tickets-action` `pass`.
+at `wave-in-progress-action` then `pre-implement` per pinned `workflow.yaml`
+`board-tickets-action` `pass`.
 `human_checkpoint` is `true` only when a resolved next node's `type` is
 `human-checkpoint`. Prefer re-reading the content-skill baton after mutation.
 

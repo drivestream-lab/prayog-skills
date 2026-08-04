@@ -43,6 +43,15 @@ Consumable tip for programmes remounting `agent_skills.ref: v0.5.0-rc.2`
 - Docs: overview / for-gateflow / for-launchpad declare consumer remount duties
   (Launchpad materialize + Gateflow Enter-at are out of this repo).
 
+### Added — Pin-declared board status hops (orch-only Forge)
+
+- Workflow: `board-tickets-action` → `wave-in-progress-action` (`update_board_status`
+  / `in_progress`, automated) → `pre-implement`; `ground-spec` →
+  `wave-done-action` (`done`, automated) → `wave-signoff` (human merge).
+- Contract: `update_board_status` promoted from reserved to forge `actions.enum`;
+  **no** human `skills/forge/update-board-status` (AGENTS stays on forge trio).
+- Orch process is pin-only (`workflow.yaml`); no off-graph status side effects.
+
 ### Changed — Spec Pass-1 always enters technical review
 
 - Pin: `initiative-feasibility` `pass` and `findings` both route to

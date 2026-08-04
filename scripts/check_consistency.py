@@ -27,7 +27,12 @@ SKILLS_DIR = ROOT / "skills"
 DISPATCH_ENUM = frozenset({"manual", "orchestrated"})
 COMMIT_WORKSPACE_ENUM = frozenset({"disabled", "optional", "required"})
 FORGE_ACTION_ENUM = frozenset(
-    {"commit_workspace", "open_draft_pr", "create_board_tickets"}
+    {
+        "commit_workspace",
+        "open_draft_pr",
+        "create_board_tickets",
+        "update_board_status",
+    }
 )
 
 # ── Invariants ────────────────────────────────────────────────────────────────
@@ -902,6 +907,8 @@ def check_workflow_forge() -> list[str]:
                     expected.get("requires") or []
                 ):
                     errors.append(f"  {stage}: forge.requires mismatch policy")
+                if "status" in expected and forge.get("status") != expected.get("status"):
+                    errors.append(f"  {stage}: forge.status mismatch policy")
             for label in forge.get("apply_labels") or []:
                 if str(label).endswith(forbid_suffix):
                     errors.append(

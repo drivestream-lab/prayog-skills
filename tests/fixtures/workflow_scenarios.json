@@ -108,8 +108,14 @@
     "next": "board-tickets-action"
   },
   {
-    "name": "board tickets action must pass before pre-implement",
+    "name": "board tickets action routes to in-progress status",
     "stage": "board-tickets-action",
+    "outcome": "pass",
+    "next": "wave-in-progress-action"
+  },
+  {
+    "name": "in-progress status routes to pre-implement",
+    "stage": "wave-in-progress-action",
     "outcome": "pass",
     "next": "pre-implement"
   },
@@ -150,8 +156,14 @@
     "next": "ground-spec"
   },
   {
-    "name": "ground pass stops at wave-signoff",
+    "name": "ground pass routes to done status then signoff",
     "stage": "ground-spec",
+    "outcome": "pass",
+    "next": "wave-done-action"
+  },
+  {
+    "name": "done status routes to wave-signoff",
+    "stage": "wave-done-action",
     "outcome": "pass",
     "next": "wave-signoff"
   },

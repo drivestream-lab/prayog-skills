@@ -47,13 +47,16 @@ Content skills do **not** treat local `gh` as automate success. See
 
 ```text
 PASS 1 (orchestrated walk)
-  pre-implement → loop-spec → wave-pr-action → live-verify
+  board-tickets-action → wave-in-progress-action → pre-implement
+       → loop-spec → wave-pr-action → live-verify
        → wave-awaiting-closeout               # park (not wave-complete)
 
 PASS 2 (Enter-at learning-extract, or human /learning-extract)
-  learning-extract → ground-spec → wave-signoff
+  learning-extract → ground-spec → wave-done-action → wave-signoff
 ```
 
+- Board status moves are **pin nodes** (`wave-in-progress-action`,
+  `wave-done-action`) via Forge `update_board_status` — **no** human slash skill.
 - `pre-implement` is **gate-only** (read-only board/head checks). It never opens
   a wave branch or implements product code — that belongs to Forge + `loop-spec`.
   It consumes the canonical §9 WorkManifest (`prayog/v1`) and fails closed when
@@ -73,14 +76,14 @@ PASS 2 (Enter-at learning-extract, or human /learning-extract)
   should already include checklist + code. There is **no** merge Forge action —
   merge stays human-only at `wave-signoff`. This placement avoids a mid-Pass-1
   STOP before coding (trade: no PR URL during coding).
-  (`spec-pr-action` is also `automated`; other external-actions stay `explicit`.)
 - `verify` is **manual** (optional aid) — not on the Pass-1 edge. Layer ownership
   covers unit, integration/contract, smoke, and sandbox; live evidence requires
   expected-versus-observed rows in `Live-Verify-{INIT}-W{N}.md` and must not
   duplicate unit-only assertions.
 - `ground-spec` validates only WorkManifest-assigned wave REQs, uses **`GF-*`**
-  findings (G1–G10), and never commits or merges. It prepares the exact-head
-  human sign-off package (PR URL, reviewed head SHA, evidence refs).
+  findings (G1–G10), and never commits or merges. On pass, pin routes to
+  `wave-done-action` then the exact-head human sign-off package at
+  `wave-signoff` (PR URL, reviewed head SHA, evidence refs).
 - `wave-signoff.pass` is legal only after the human confirms the reviewed PR
   head, merges manually, and records the merge commit SHA.
 - **Co-ship live verify:** when a wave adds/changes a product surface, the same
