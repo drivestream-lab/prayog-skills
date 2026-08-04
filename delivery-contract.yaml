@@ -198,6 +198,9 @@ github:
     coding-readiness:
       role: engineering-gate
       profiles: [app]
-    initiative-closure-signoff:
+    initiative-closure-signoff-app:
       role: engineering-gate
-      profiles: [app, meta-pm]
+      profiles: [app]
+    initiative-closure-signoff-meta:
+      role: engineering-gate
+      profiles: [meta-pm]

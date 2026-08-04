@@ -44,16 +44,28 @@ Working papers accumulate through all waves. **One mental model:** purge
 | **meta** | `prd/INIT-*.md`, `Impact-Map-{INIT}.md` | `Validation-Report-{INIT}.md`, `Resolution-{INIT}.md` |
 | **app** | `product/INIT-*.md`, Accepted ADRs, source / unit / live-verify **scripts** | Feas, TDD, Implementation-Plan, Pre-Implement-W*, Wave-Execution-W*, Live-Verify-W*, Ground-Report-W*, Learning-Extract-W*, Draft ADRs |
 
-**Lane (pin):** `initiative-closure` → `purge-initiative-artifacts-app` →
-`purge-initiative-artifacts-meta` → `initiative-closure-pr-action` →
-`initiative-closure-signoff` → `workflow-complete`. Closure work branches from
-`develop`; Forge opens closure Draft PR(s); human merges (Gateflow does not
-merge). No Gateflow authorize-before-delete — safety is allowlist + refuse KEEP
-+ idempotent delete. Dual-walker: same skill packages for human `/skill` and
-Gateflow orch.
+**Lane (pin):** eng loop then PM loop, each self-contained:
+
+```text
+initiative-closure
+  → purge-initiative-artifacts-app
+  → initiative-closure-pr-action-app (automated)
+  → initiative-closure-signoff-app (human merge app)
+  → purge-initiative-artifacts-meta
+  → initiative-closure-pr-action-meta (automated)
+  → initiative-closure-signoff-meta (human merge meta)
+  → workflow-complete
+```
+
+Closure work branches from `develop`. Skills are independent (eng vs PM);
+pin order is orchestration-only. No Gateflow authorize-before-delete; no merge
+by Forge. Handoff-only success (no `Purge-*.md` under reports).
 
 Purge skills may delete **only** allowlisted paths for `{INIT}`. They **must
 refuse** any KEEP path. Missing allowlisted files → ok (idempotent `pass`).
+Purge skills emit **handoff only** (no `Purge-*.md` under `reports/`). App and
+meta purge packages are **independent** (eng vs PM lanes); pin order is
+orchestration-only.
 
 ## Durable identity (H1–H4, G1–G3)
 

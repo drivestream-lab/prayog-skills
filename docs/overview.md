@@ -99,27 +99,28 @@ PASS 2 (Enter-at learning-extract, or human /learning-extract)
   [`../references/artifact-write-contract.md`](../references/artifact-write-contract.md).
 - Checkpoints use **purpose-named ids** (`prd-impact-acceptance`,
   `coding-readiness`, `live-verify`, `wave-signoff`, `initiative-closure`,
-  `initiative-closure-signoff`). GitHub labels stay lane-named
-  (`impact-map-*`, `spec-*`).
+  `initiative-closure-signoff-app`, `initiative-closure-signoff-meta`).
+  GitHub labels stay lane-named (`impact-map-*`, `spec-*`).
 
 ## Initiative closure lane (current pin)
 
-After **all** waves are done (not per wave-signoff):
+After **all** waves are done (not per wave-signoff), eng then PM — each loop
+self-contained (purge → commit → Draft PR → human merge):
 
 ```text
 initiative-closure (human judgment)
-  → purge-initiative-artifacts-app    # app PURGE allowlist; commit_workspace required
-  → purge-initiative-artifacts-meta   # meta PURGE allowlist; commit_workspace required
-  → initiative-closure-pr-action      # open_draft_pr automated
-  → initiative-closure-signoff        # human merge to develop
+  → purge-initiative-artifacts-app
+  → initiative-closure-pr-action-app → initiative-closure-signoff-app
+  → purge-initiative-artifacts-meta
+  → initiative-closure-pr-action-meta → initiative-closure-signoff-meta
   → workflow-complete
 ```
 
-One mental model: purge **everything** on the PURGE allowlist for app and meta
-once. KEEP roots (PRD, Impact-Map, product INIT, Accepted ADRs, code/tests/
-verify scripts) and board WM survive. No Gateflow authorize-before-delete;
-safety is allowlist + refuse KEEP. No per-wave purge hop.
-
+One mental model: purge **once** after initiative closure for both repos, each
+with its own PR. KEEP roots (PRD, Impact-Map, product INIT, Accepted ADRs,
+code/tests/verify scripts) and board WM survive. No Gateflow
+authorize-before-delete; no `Purge-*.md` reports; skills stay independent.
+No per-wave purge hop.
 ## Spec lane — Pass-1 (current pin)
 
 ```text

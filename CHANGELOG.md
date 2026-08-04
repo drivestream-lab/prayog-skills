@@ -31,12 +31,15 @@ Consumable tip for programmes remounting `agent_skills.ref: v0.5.0-rc.2`
   handoff mid-lane digests are walk-time only.
 - Skills: mint/cite on `prd-impact-map` / `spec-draft`; light T0 on feas / TDD /
   plan; board spend wording on `create-board-tickets` / `pre-implement`.
-- New skills: `purge-initiative-artifacts-app`, `purge-initiative-artifacts-meta`
-  (procedure/allowlist; no new purge Python script). Profiles list both.
-- Workflow: `initiative-closure.pass` → app purge → meta purge →
-  `initiative-closure-pr-action` (`authorization: automated`) →
-  `initiative-closure-signoff` → `workflow-complete`. Purge once after all
-  waves; no Gateflow authorize-before-delete; no per-wave purge.
+- New skills: `purge-initiative-artifacts-app` (eng), 
+  `purge-initiative-artifacts-meta` (PM) — independent packages; **handoff-only**
+  success (no `Purge-*.md` reports). Profiles list both.
+- Workflow: eng then PM self-contained loops —
+  `initiative-closure` → app purge → `initiative-closure-pr-action-app`
+  (automated) → `initiative-closure-signoff-app` → meta purge →
+  `initiative-closure-pr-action-meta` (automated) →
+  `initiative-closure-signoff-meta` → `workflow-complete`. Purge once after
+  all waves; no Gateflow authorize-before-delete; no per-wave purge.
 - Docs: overview / for-gateflow / for-launchpad declare consumer remount duties
   (Launchpad materialize + Gateflow Enter-at are out of this repo).
 

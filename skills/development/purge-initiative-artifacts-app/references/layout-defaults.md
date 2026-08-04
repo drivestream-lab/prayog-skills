@@ -11,5 +11,5 @@ When `.harness/profile.yaml` is absent, use:
 | `unit_tests_dir` | `tests/unit` |
 | `live_verify_dir` | `tests/verify` |
 
-Purge note: `Purge-App-{INIT}.md` under `reports_dir`.
+No purge report path — handoff only.
 Allowlist SSOT: `../../../references/artifact-write-contract.md`.

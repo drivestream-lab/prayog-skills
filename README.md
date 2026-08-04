@@ -122,8 +122,9 @@ Merge spec PR → develop → **`/create-board-tickets`** (governance board + EP
 Per wave Pass-1:  /pre-implement → /loop-spec → wave-pr-action → live-verify (human runs co-shipped script)
 Pass-2 closeout:  /learning-extract  →  /ground-spec  →  wave-signoff (human merge; record merge SHA)
     ↓
-All waves done:  initiative-closure → /purge-initiative-artifacts-app
-  → /purge-initiative-artifacts-meta → closure Draft PR(s) → initiative-closure-signoff
+All waves done (eng then PM):
+  initiative-closure → /purge-initiative-artifacts-app → app Draft PR → merge
+  → /purge-initiative-artifacts-meta → meta Draft PR → merge → complete
 ```
 
 New/material product surfaces **co-ship** a live script under `live_verify_dir`

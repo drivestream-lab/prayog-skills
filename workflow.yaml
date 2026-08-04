@@ -364,9 +364,9 @@ nodes:
       pass: purge-initiative-artifacts-app
       findings: wave-signoff
 
-  # Initiative-closure lane: purge allowlisted working papers on develop-based
-  # heads (app then meta), open closure Draft PR(s), human merge. No
-  # authorize-before-delete — allowlist + refuse KEEP. No merge Forge action.
+  # Eng closure loop (independent): purge → commit → automated Draft PR → human merge.
+  # Then PM closure loop (independent): same shape on meta. Skills do not couple.
+  # Handoff-only success (no Purge-*.md). No authorize-before-delete. No merge Forge.
   purge-initiative-artifacts-app:
     type: skill
     profile: development
@@ -374,24 +374,12 @@ nodes:
     forge:
       commit_workspace: required
     outcomes:
-      pass: purge-initiative-artifacts-meta
+      pass: initiative-closure-pr-action-app
       needs-input: initiative-closure
       blocked: initiative-closure
       failed: initiative-closure
 
-  purge-initiative-artifacts-meta:
-    type: skill
-    profile: meta-pm
-    dispatch: orchestrated
-    forge:
-      commit_workspace: required
-    outcomes:
-      pass: initiative-closure-pr-action
-      needs-input: initiative-closure
-      blocked: initiative-closure
-      failed: initiative-closure
-
-  initiative-closure-pr-action:
+  initiative-closure-pr-action-app:
     type: external-action
     owner: product
     provider: github
@@ -405,13 +393,51 @@ nodes:
         - title
         - body_path
     outcomes:
-      pass: initiative-closure-signoff
+      pass: initiative-closure-signoff-app
       blocked: initiative-closure
       failed: workflow-stop
 
-  initiative-closure-signoff:
+  initiative-closure-signoff-app:
     type: human-checkpoint
-    purpose: initiative-closure-signoff
+    purpose: initiative-closure-signoff-app
+    outcomes:
+      pass: purge-initiative-artifacts-meta
+      findings: initiative-closure
+      blocked: workflow-stop
+
+  purge-initiative-artifacts-meta:
+    type: skill
+    profile: meta-pm
+    dispatch: orchestrated
+    forge:
+      commit_workspace: required
+    outcomes:
+      pass: initiative-closure-pr-action-meta
+      needs-input: initiative-closure
+      blocked: initiative-closure
+      failed: initiative-closure
+
+  initiative-closure-pr-action-meta:
+    type: external-action
+    owner: product
+    provider: github
+    authorization: automated
+    forge:
+      action: open_draft_pr
+      draft: true
+      apply_labels: []
+      remove_labels: []
+      requires:
+        - title
+        - body_path
+    outcomes:
+      pass: initiative-closure-signoff-meta
+      blocked: initiative-closure
+      failed: workflow-stop
+
+  initiative-closure-signoff-meta:
+    type: human-checkpoint
+    purpose: initiative-closure-signoff-meta
     outcomes:
       pass: workflow-complete
       findings: initiative-closure

@@ -27,6 +27,7 @@
     "live-verify": "live-verify",
     "wave-signoff": "wave-signoff",
     "initiative-closure": "initiative-closure",
-    "initiative-closure-signoff": "initiative-closure-signoff"
+    "initiative-closure-signoff-app": "initiative-closure-signoff-app",
+    "initiative-closure-signoff-meta": "initiative-closure-signoff-meta"
   }
 }

@@ -1,12 +1,12 @@
 ---
 name: purge-initiative-artifacts-app
 description: >-
-  After initiative-closure judgment, delete allowlisted app working papers for
-  one initiative (feas, TDD, plan, per-wave reports, Draft ADRs). Refuse KEEP
-  paths (product INIT, Accepted ADRs, source/tests/verify scripts). Part of the
-  initiative-closure lane from develop; commit via Forge. No authorize-before-
-  delete — safety is allowlist + refuse KEEP. Use Enter-at or
-  /purge-initiative-artifacts-app after all waves are done.
+  Engineering-lane purge: after initiative-closure judgment, delete allowlisted
+  app working papers for one initiative (feas, TDD, plan, per-wave reports,
+  Draft ADRs). Refuse KEEP paths (product INIT, Accepted ADRs, source/tests/
+  verify scripts). Commit via Forge when pin requires it. No report file —
+  success is handoff only. No authorize-before-delete. Use Enter-at or
+  /purge-initiative-artifacts-app when the eng closure hop is due.
 disable-model-invocation: true
 paths: AGENTS.md, docs/specification/**, .harness/profile.yaml
 metadata:
@@ -16,9 +16,14 @@ metadata:
 
 # Purge initiative artifacts (app)
 
-Delete **PURGE-set** files under the **app** repo for one initiative after all
-waves are done. **Do not** delete durable KEEP roots. Git history remains the
-archive.
+**Lane:** engineering / app repo (`profile: development`).
+
+Delete **PURGE-set** files under the **app** repo for one initiative.
+**Do not** delete durable KEEP roots. Git history remains the archive.
+
+This skill is **independent** of meta/PM purge. Do not require, invoke, or
+document `/purge-initiative-artifacts-meta` as a prerequisite or next step —
+orchestration order lives only in pinned `workflow.yaml`.
 
 Normative allowlist / refuse:
 [`../../../references/artifact-write-contract.md`](../../../references/artifact-write-contract.md).
@@ -42,16 +47,16 @@ Normative allowlist / refuse:
    initiative; **Accepted** ADRs; anything under `source_roots`,
    `unit_tests_dir`, `live_verify_dir` **scripts**; `.harness/`; product source.
 5. Idempotent: missing allowlisted files → ok. Empty delete set → still `pass`
-   with rationale.
+   with rationale in handoff signals.
 6. Work on the **initiative-closure** head cut from integration (`develop`)
    when bound; do not invent a branch. Fill `handoff.forge` for
-   `commit_workspace` when pin requires commit. Do **not** open the closure PR
-   here — that is `initiative-closure-pr-action`.
+   `commit_workspace` when pin requires commit. When pin next is an
+   `open_draft_pr` external-action (eng closure PR), fill title/body from
+   signals **without** creating a reports/ file (see output template).
 7. No Gateflow authorize-before-delete. No merge. Never apply `*-lgtm`.
-8. Write a short purge note under `{reports_dir}/Purge-App-{INIT}.md` listing
-   `deleted`, `missing_ok`, `refused`, then handoff. (The purge note itself may
-   be left for the human or included on the closure tip — do not add it to a
-   recursive purge of itself in the same run after writing.)
+8. **No report file.** Do **not** write `Purge-*.md` (or any new artifact)
+   under `{reports_dir}`. Goal achieved = handoff envelope (+ baton when bound)
+   with delete/refuse lists in `signals`. Chat may repeat the same summary.
 9. Dual-walker: same procedure for human `/purge-initiative-artifacts-app` and
    Gateflow orch.
 
@@ -68,34 +73,45 @@ Normative allowlist / refuse:
    list from allowlist globs.
 2. **T1** — classify each path: delete / missing_ok / refused (if somehow KEEP).
 3. **T2** — delete delete-set only.
-4. **T3** — write purge note + handoff (`stage: purge-initiative-artifacts-app`).
-5. **T4** — fill `handoff.forge` for `commit_workspace` when pin expects it.
+4. **T3** — emit handoff only (`stage: purge-initiative-artifacts-app`); no
+   reports file.
+5. **T4** — fill `handoff.forge` for `commit_workspace` when pin expects it;
+   when pin next is `open_draft_pr`, also fill that action (title + body from
+   signals — no reports path).
 
 ## Outcome selection
 
-| Outcome | When | Next (from workflow) |
-|---------|------|----------------------|
-| `pass` | Allowlist processed; no KEEP deleted; purge note written | `purge-initiative-artifacts-meta` |
-| `needs-input` | Initiative id or layout unreadable | `initiative-closure` |
-| `blocked` | Attempt would touch KEEP; refuse and stop | `initiative-closure` |
-| `failed` | Delete/IO error on otherwise valid allowlist | `initiative-closure` |
+Map evidence to pinned `workflow.yaml` for this stage. Do not hardcode sibling
+skill names as procedure dependencies.
+
+| Outcome | When |
+|---------|------|
+| `pass` | Allowlist processed; no KEEP deleted; handoff emitted with signals |
+| `needs-input` | Initiative id or layout unreadable |
+| `blocked` | Attempt would touch KEEP; refuse and stop |
+| `failed` | Delete/IO error on otherwise valid allowlist |
 
 ## Output
 
-Use [references/output-template.md](references/output-template.md).
-Checks: [references/checks.md](references/checks.md).
+Use [references/output-template.md](references/output-template.md) (handoff
+only). Checks: [references/checks.md](references/checks.md).
 
 ## Workflow handoff
 
-1. Append/emit envelope from `../../../references/handoff-envelope.md`. Stage
-   `purge-initiative-artifacts-app`.
+1. Emit envelope from `../../../references/handoff-envelope.md`. Stage
+   `purge-initiative-artifacts-app`. Set `artifact.path: null` (no durable
+   report). Put path lists under `signals` (`deleted`, `missing_ok`, `refused`,
+   counts). Optionally set `signals.pr_body` to a short markdown summary for
+   Forge/PR consumers.
 2. When `handoff_path` is bound, **overwrite** that path with the same
    `handoff:` envelope before exit.
-3. Derive `next_candidates` and `human_checkpoint` from pinned `workflow.yaml`
-   for `(stage: purge-initiative-artifacts-app, outcome)`. Set
-   `human_checkpoint: true` only when the resolved next node's `type` is
+3. Derive `next_candidates`, `human_checkpoint`, and `external_action` from
+   pinned `workflow.yaml` for `(stage: purge-initiative-artifacts-app, outcome)`.
+   Set `human_checkpoint: true` only when the resolved next node's `type` is
    `human-checkpoint`.
-4. Happy path: `outcome: pass` → next `purge-initiative-artifacts-meta` →
-   `human_checkpoint: false`.
+4. When next is an `external-action` with `open_draft_pr`, fill `handoff.forge`
+   per pin `requires`. Prefer synthesizing PR body from `signals` / `pr_body`
+   (runner may materialize an ephemeral body file **outside** `{reports_dir}`).
+   Never create `Purge-*.md` under reports.
 5. Follow `../../../references/forge-side-effects.md#content-producers` when pin
-   `forge.commit_workspace` is not `disabled`.
+   `forge.commit_workspace` is not `disabled` or next is an external-action.

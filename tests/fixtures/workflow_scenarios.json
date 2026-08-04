@@ -168,26 +168,38 @@
     "next": "purge-initiative-artifacts-app"
   },
   {
-    "name": "app purge routes to meta purge",
+    "name": "app purge opens app closure PR",
     "stage": "purge-initiative-artifacts-app",
+    "outcome": "pass",
+    "next": "initiative-closure-pr-action-app"
+  },
+  {
+    "name": "app closure PR routes to app signoff",
+    "stage": "initiative-closure-pr-action-app",
+    "outcome": "pass",
+    "next": "initiative-closure-signoff-app"
+  },
+  {
+    "name": "app signoff starts meta purge",
+    "stage": "initiative-closure-signoff-app",
     "outcome": "pass",
     "next": "purge-initiative-artifacts-meta"
   },
   {
-    "name": "meta purge opens closure PR",
+    "name": "meta purge opens meta closure PR",
     "stage": "purge-initiative-artifacts-meta",
     "outcome": "pass",
-    "next": "initiative-closure-pr-action"
+    "next": "initiative-closure-pr-action-meta"
   },
   {
-    "name": "closure PR routes to signoff",
-    "stage": "initiative-closure-pr-action",
+    "name": "meta closure PR routes to meta signoff",
+    "stage": "initiative-closure-pr-action-meta",
     "outcome": "pass",
-    "next": "initiative-closure-signoff"
+    "next": "initiative-closure-signoff-meta"
   },
   {
-    "name": "closure signoff completes workflow",
-    "stage": "initiative-closure-signoff",
+    "name": "meta signoff completes workflow",
+    "stage": "initiative-closure-signoff-meta",
     "outcome": "pass",
     "next": "workflow-complete"
   }

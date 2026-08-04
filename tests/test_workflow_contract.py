@@ -153,11 +153,13 @@ class WorkflowContractTest(unittest.TestCase):
                 self.assertEqual(auth, expected[stage])
         self.assertEqual(expected["spec-pr-action"], "automated")
         self.assertEqual(expected["wave-pr-action"], "automated")
-        self.assertEqual(expected["initiative-closure-pr-action"], "automated")
+        self.assertEqual(expected["initiative-closure-pr-action-app"], "automated")
+        self.assertEqual(expected["initiative-closure-pr-action-meta"], "automated")
         automated = {
             "spec-pr-action",
             "wave-pr-action",
-            "initiative-closure-pr-action",
+            "initiative-closure-pr-action-app",
+            "initiative-closure-pr-action-meta",
         }
         for stage, auth in expected.items():
             if stage not in automated:

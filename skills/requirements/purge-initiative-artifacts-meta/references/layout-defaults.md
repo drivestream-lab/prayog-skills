@@ -7,5 +7,5 @@ When `.harness/profile.yaml` is absent, use:
 | `prd_root` | `prd/` |
 | `reports_dir` | `prd/reports/` |
 
-Purge note: `Purge-Meta-{INIT}.md` under `reports_dir`.
+No purge report path — handoff only.
 Allowlist SSOT: `../../../references/artifact-write-contract.md`.
