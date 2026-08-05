@@ -48,7 +48,7 @@ Content skills do **not** treat local `gh` as automate success. See
 ```text
 PASS 1 (orchestrated walk)
   board-tickets-action → wave-in-progress-action → pre-implement
-       → loop-spec → wave-pr-action → live-verify
+       → loop-spec → wave-pr-action → wave-acceptance
        → wave-awaiting-closeout               # park (not wave-complete)
 
 PASS 2 (Enter-at learning-extract, or human /learning-extract)
@@ -76,20 +76,24 @@ PASS 2 (Enter-at learning-extract, or human /learning-extract)
   should already include checklist + code. There is **no** merge Forge action —
   merge stays human-only at `wave-signoff`. This placement avoids a mid-Pass-1
   STOP before coding (trade: no PR URL during coding).
-- `verify` is **manual** (optional aid) — not on the Pass-1 edge. Layer ownership
-  covers unit, integration/contract, smoke, and sandbox; live evidence requires
-  expected-versus-observed rows in `Live-Verify-{INIT}-W{N}.md` and must not
-  duplicate unit-only assertions.
+- There is **no** `/verify` content skill. Layer ownership covers unit,
+  integration/contract, smoke, and sandbox (see
+  `skills/development/pre-implement/references/live-smoke-policy.md`). Human
+  prove is checkpoint **`wave-acceptance`**; accept ingress is GitHub label
+  `wave-accepted` (skills never apply labels). Optional/legacy `Live-Verify-*`
+  prose is PURGE-only — not required for the gate.
 - `ground-spec` validates only WorkManifest-assigned wave REQs, uses **`GF-*`**
-  findings (G1–G10), and never commits or merges. On pass, pin routes to
-  `wave-done-action` then the exact-head human sign-off package at
-  `wave-signoff` (PR URL, reviewed head SHA, evidence refs).
-- `wave-signoff.pass` is legal only after the human confirms the reviewed PR
-  head, merges manually, and records the merge commit SHA.
+  findings (G1–G10), and never commits, merges, or marks `human_approved`
+  (already set at `wave-acceptance`). On pass, pin routes to `wave-done-action`
+  then the exact-head **merge package** at `wave-signoff`.
+- `wave-signoff` is **merge/publish only** — not a second human approve.
+  `wave-signoff.pass` records reviewed head SHA + merge commit SHA after the
+  human merges manually. Forge/Gateflow must not merge.
 - **Co-ship live verify:** when a wave adds/changes a product surface, the same
   wave ships the live script under `live_verify_dir` (plan P15). `/loop-spec`
-  runs check+unit only; the human executes the script at `live-verify` before
-  Pass-2 closeout automation continues.
+  runs check+unit only; the human executes the script at `wave-acceptance`
+  before Pass-2 closeout. Pass-2 (`learning-extract` → `ground-spec`) closes
+  the wave.
 - **WorkManifest authority (Initiative B):** Prayog owns `prayog/v1`. **Board**
   issues after seed are the long-term WorkManifest home; plan §9 is the
   walk-time carrier (may be purged at initiative closure). Stage artifacts
@@ -101,7 +105,7 @@ PASS 2 (Enter-at learning-extract, or human /learning-extract)
   walk-time only — not long-term `stale` SSOT. See
   [`../references/artifact-write-contract.md`](../references/artifact-write-contract.md).
 - Checkpoints use **purpose-named ids** (`prd-impact-acceptance`,
-  `coding-readiness`, `live-verify`, `wave-signoff`, `initiative-closure`,
+  `coding-readiness`, `wave-acceptance`, `wave-signoff`, `initiative-closure`,
   `initiative-closure-signoff-app`, `initiative-closure-signoff-meta`).
   GitHub labels stay lane-named (`impact-map-*`, `spec-*`).
 

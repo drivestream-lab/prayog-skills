@@ -127,7 +127,7 @@ stage. Same word, different next node — always read `workflow.yaml`.
 | `blocked` | Authoritative source exists and shows an unsatisfied gate |
 | `stale` | Authority drift (H1–H3 / G1 / head / tip) vs canonical inputs — not missing mid-lane report digests |
 | `failed` | Execution/validation failure on otherwise valid inputs |
-| `skipped` | Only where the pin defines a skip edge (e.g. `verify`) |
+| `skipped` | Only where the pin defines a skip edge (e.g. `wave-complete`) |
 
 Illustrations (live edges always come from the pin):
 
@@ -141,9 +141,12 @@ Illustrations (live edges always come from the pin):
 No branch, commit, PR, label, issue, or cleanup operation is added by choosing
 an outcome — Forge mutations stay on `external-action` nodes / forge skills.
 
-Human-checkpoint evidence (e.g. at `wave-signoff`) may record **reviewed head
-SHA** and **merge commit SHA** after the human merges manually. That is
-checkpoint state, **not** `handoff.forge` authorization and never a Forge merge
+Human-checkpoint **`wave-acceptance`** is the only **human approved** signal for
+the wave tip (smoke or P15 N/A). Ingress is GitHub label `wave-accepted`
+(phase-1); content skills never apply it. Human-checkpoint **`wave-signoff`**
+is **merge/publish only** — record **reviewed head SHA** and **merge commit
+SHA** after the human merges manually. That is checkpoint state, **not** a
+second approval, **not** `handoff.forge` authorization, and never a Forge merge
 action.
 
 ## Derive from pinned `workflow.yaml`
@@ -175,13 +178,15 @@ Rules:
 | `validate-requirements` | `findings` | `review-findings` (`skill`) | `false` |
 | `pre-implement` | `pass` | `loop-spec` (`skill`) | `false` |
 | `loop-spec` | `pass` | `wave-pr-action` (`external-action`) | `false` (`external_action: true`) |
-| `wave-pr-action` | `pass` | `live-verify` (`human-checkpoint`) | `true` |
+| `wave-pr-action` | `pass` | `wave-acceptance` (`human-checkpoint`) | `true` |
 
-> At `live-verify`, the human runs the wave's planned live script
-> (`verify_command` under `live_verify_dir`) and inspects the feature — not
-> unit/`make test` alone. Optional skill `/verify` is separate (`dispatch: manual`).
+> At `wave-acceptance`, the human runs the wave's planned live script
+> (`verify_command` under `live_verify_dir`) or accepts P15 N/A, then signals
+> accept (`wave-accepted` on tip). That `pass` is **human approved** — not
+> unit/`make test` alone. There is **no** `/verify` content skill.
 | `learning-extract` | `pass` | `ground-spec` (`skill`) | `false` |
-| `ground-spec` | `pass` | `wave-signoff` (`human-checkpoint`) | `true` |
+| `ground-spec` | `pass` | `wave-done-action` (`external-action`) | `false` (`external_action: true`) |
+| `wave-done-action` | `pass` | `wave-signoff` (`human-checkpoint`) | `true` |
 
 ## Orchestrator baton (`handoff_path`)
 

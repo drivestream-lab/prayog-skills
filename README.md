@@ -78,8 +78,7 @@ PM skills validate and refine PRDs. Dev skills implement spec slices in service 
 | **pre-implement** | Gate-only preflight before each wave (no branch/code) |
 | **loop-spec** | Implement → check/unit → fix; Wave-Execution + stage Forge readiness |
 | **ground-spec** | Wave-assigned REQ grounding (`GF-*`, G1–G10); sign-off package |
-| **learning-extract** | After live-verify: structured L-* learning (closeout) |
-| **verify** | Manual live-verify aid (`Live-Verify-*`; not on Pass-1 edge) |
+| **learning-extract** | After wave-acceptance: structured L-* learning (closeout) |
 | **purge-initiative-artifacts-app** | After initiative-closure: delete app PURGE allowlist (working papers) |
 
 ### Forge (human — meta + app)
@@ -119,8 +118,8 @@ PE sets spec-lgtm on exact head → Ready for review → Approve → merge
     ↓
 Merge spec PR → develop → **`/create-board-tickets`** (governance board + EPIC/wave tree)
     ↓
-Per wave Pass-1:  /pre-implement → /loop-spec → wave-pr-action → live-verify (human runs co-shipped script)
-Pass-2 closeout:  /learning-extract  →  /ground-spec  →  wave-signoff (human merge; record merge SHA)
+Per wave Pass-1:  /pre-implement → /loop-spec → wave-pr-action → wave-acceptance (human runs co-shipped script; label wave-accepted)
+Pass-2 closeout:  /learning-extract  →  /ground-spec  →  wave-signoff (human merge only; record merge SHA)
     ↓
 All waves done (eng then PM):
   initiative-closure → /purge-initiative-artifacts-app → app Draft PR → merge
@@ -129,7 +128,9 @@ All waves done (eng then PM):
 
 New/material product surfaces **co-ship** a live script under `live_verify_dir`
 in the same wave (plan P15). Agent bar is check+unit; human executes the script
-at `live-verify`. Optional `/verify` remains manual — not on the Pass-1 edge.
+at `wave-acceptance` (only approval signal). There is **no** `/verify` content
+skill. Content skills never apply labels / commit / merge (Forge boundary).
+`wave-signoff` is merge/publish only.
 Full process: [launchpad delivery workflow](https://github.com/drivestream-lab/launchpad/blob/main/playbook/delivery-workflow.md).
 
 Artifacts are the source of truth. GitHub labels are status projections only.
@@ -178,8 +179,8 @@ npx skills add drivestream-lab/prayog-skills \
   --skill spec-implementation-plan \
   --skill pre-implement \
   --skill loop-spec \
+  --skill learning-extract \
   --skill ground-spec \
-  --skill verify \
   -a cursor -y
 ```
 
@@ -266,7 +267,7 @@ python3 /tmp/install_engg_reviews.py --target /path/to/pe-workspace --ref pe-rc-
 | Skill area | Origin |
 |------------|--------|
 | validate-requirements, review-findings, update-documents | Vendored from rushikeshpol02/ai-skills |
-| pre-implement, verify | Adapted from early platform skills work |
+| pre-implement | Adapted from early platform skills work |
 | initiative-feasibility, spec-implementation-plan | Patterns from awesome-copilot |
 | spec-technical-review, loop-spec, ground-spec, spec-draft | Platform SDD design (RFC-style review, spec kit patterns) |
 

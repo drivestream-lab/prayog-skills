@@ -285,7 +285,7 @@ nodes:
   # Wave Draft-PR after checklist + code are on head_ref (reuse open_draft_pr).
   # Placement after loop-spec avoids a mid-Pass-1 STOP before coding.
   # authorization: automated — ForgeClient opens PR without interactive STOP.
-  # Not a merge action — human merge stays at wave-signoff.
+  # Not a merge action — human merge stays at wave-signoff (publish only).
   wave-pr-action:
     type: external-action
     owner: engineering
@@ -302,13 +302,18 @@ nodes:
         - head_ref
         - base_ref
     outcomes:
-      pass: live-verify
+      pass: wave-acceptance
       blocked: wave-signoff
       failed: workflow-stop
 
-  live-verify:
+  # Human prove on Draft PR tip (smoke under live_verify_dir, or P15 N/A).
+  # pass = human approved for this wave tip — only approval signal.
+  # Ingress: GitHub label wave-accepted (phase-1) or Gateflow Accept (later).
+  # Not a content skill; skills must not apply the label or mutate GitHub.
+  # pass parks; Pass-2 Enter-at learning-extract closes the wave.
+  wave-acceptance:
     type: human-checkpoint
-    purpose: live-verify
+    purpose: wave-acceptance
     outcomes:
       pass: wave-awaiting-closeout
       findings: loop-spec
@@ -316,19 +321,6 @@ nodes:
 
   wave-awaiting-closeout:
     type: terminal
-
-  verify:
-    type: skill
-    profile: development
-    dispatch: manual
-    forge:
-      commit_workspace: optional
-    outcomes:
-      pass: learning-extract
-      skipped: learning-extract
-      findings: loop-spec
-      blocked: wave-signoff
-      failed: loop-spec
 
   learning-extract:
     type: skill
@@ -373,10 +365,10 @@ nodes:
       blocked: wave-signoff
       failed: workflow-stop
 
-  # Human-only exact-head approval + merge. Gateflow/Forge must not merge.
-  # pass is legal only after the human confirms the reviewed PR head SHA,
-  # merges manually, and records the resulting merge commit SHA in checkpoint
-  # evidence (not via handoff.forge authorization or approval labels).
+  # Human merge/publish only — not a second approval.
+  # Human approved was wave-acceptance; closeout already closed the wave.
+  # Gateflow/Forge must not merge. pass records merge commit SHA on the
+  # accepted tip (not via handoff.forge or approval labels).
   wave-signoff:
     type: human-checkpoint
     purpose: wave-signoff

@@ -24,7 +24,7 @@ them.
 | Board seeding | **No** content `board-seed`; humans use `/create-board-tickets` |
 | Learning | App profiles include **`learning-extract`** |
 | Purge (initiative closure) | App profiles include **`purge-initiative-artifacts-app`**; meta profile includes **`purge-initiative-artifacts-meta`** |
-| Checkpoints | `prd-impact-acceptance`, `coding-readiness`, `initiative-closure-signoff-app`, `initiative-closure-signoff-meta` (not `gate-1` / `gate-2`) |
+| Checkpoints | `prd-impact-acceptance`, `coding-readiness`, `wave-acceptance`, `wave-signoff`, `initiative-closure-signoff-app`, `initiative-closure-signoff-meta` (not `gate-1` / `gate-2` / `live-verify`) |
 | Labels | Unchanged: `impact-map-*`, `spec-*` |
 | WorkManifest | Launchpad **materializes** the pin only — it does **not** own, parse, or execute WorkManifest. Prayog owns the contract; Gateflow/humans validate and project it. Board is long-term WM home after seed; plan §9 is walk-time. |
 | External-action auth | Pin may set `authorization: automated` on `spec-pr-action` / `wave-pr-action` / `initiative-closure-pr-action-app` / `initiative-closure-pr-action-meta` / `wave-in-progress-action` / `wave-done-action`. Playbooks should not require a human `/open-draft-pr` click for those nodes when remounted on this tip. |
@@ -34,8 +34,8 @@ them.
 ## Pass-1 / Pass-2 / closure (copy for playbooks)
 
 ```text
-Pass-1:  board seed → In Progress → /pre-implement → /loop-spec → wave-pr-action → live-verify (human)
-Pass-2:  /learning-extract → /ground-spec → Done (orch) → wave-signoff (human merge)
+Pass-1:  board seed → In Progress → /pre-implement → /loop-spec → wave-pr-action → wave-acceptance (human)
+Pass-2:  /learning-extract → /ground-spec → Done (orch) → wave-signoff (human merge only)
 Closure (all waves done; eng loop then PM loop):
   initiative-closure
     → /purge-initiative-artifacts-app → initiative-closure-pr-action-app
@@ -44,7 +44,7 @@ Closure (all waves done; eng loop then PM loop):
     → initiative-closure-signoff-meta (human merge meta)
 ```
 
-Do not document orchestrated auto-verify/ground after `loop-spec`.
+Do not document a `/verify` skill or orchestrated auto-ground after `loop-spec`.
 Do not materialize a merge Forge skill — wave / initiative-closure merge is
 human-only.
 Do not materialize `/update-board-status` — keep human forge trio only.

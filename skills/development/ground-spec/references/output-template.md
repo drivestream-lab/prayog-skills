@@ -29,7 +29,7 @@ Run checks G1–G10 per [checks.md](checks.md). Findings use **`GF-*`**.
 |-------|--------|---------|
 | Unit | `{test_command}` / Wave-Execution proof | … |
 | Ground | `{ground_command}` or manual source+tests scan | … |
-| Live | `Live-Verify-{INIT}-W{N}.md` / human checkpoint evidence | … |
+| Accept | `wave-accepted` on tip / wave-acceptance (optional/legacy Live-Verify-* only) | … |
 
 ## Automated ground check output
 (paste full output of `{ground_command}` when defined)
@@ -70,30 +70,31 @@ output shape, invariants. Do NOT use language-specific syntax.)
 |----------|--------------------|-------------|-------------|--------------|------------|-----------|
 | {name} | {module} | {callable/command/endpoint} | {accepts} | {returns/emits} | {guarantees} | W{N+1} |
 
-## Exact-head human sign-off package
+## Exact-head merge package (for wave-signoff)
 
 > Write the Ground Report and as-built updates **locally**. Emit Forge
 > readiness for publication. Do **not** commit, push, merge, or apply labels
-> from this skill. Human reviews the **exact wave head**, records approval,
-> and merges manually at `wave-signoff`.
+> from this skill. Human approved was `wave-acceptance`. At `wave-signoff`
+> the human merges/publishes the **exact wave head** only.
 
 - PR URL / wave head: {url} @ `{sha}` — **expected reviewed head SHA**
 - Ground Report path: `{reports_dir}/Ground-Report-{SPEC}-W{N}.md`
-- Live evidence path: `{reports_dir}/Live-Verify-{INIT}-W{N}.md` (when applicable)
+- Accept evidence: `wave-accepted` on tip (wave-acceptance) — human approved already
 - Wave-Execution path: `{reports_dir}/Wave-Execution-{INIT}-W{N}.md`
-- As-built row prepared locally: W{N} → pending human_approved
-- Required checkpoint evidence fields (human fills at `wave-signoff`; not
-  `handoff.forge`): `reviewed_head_sha`, `merge_commit_sha`
+- Optional/legacy Live-Verify path: `{reports_dir}/Live-Verify-{INIT}-W{N}.md` (not required)
+- As-built: W{N} `human_approved` from wave-acceptance (do not re-mark here)
+- Required merge fields (human fills at `wave-signoff`; not `handoff.forge`):
+  `reviewed_head_sha`, `merge_commit_sha`
 
-### Human sign-off / merge checklist
+### Human merge checklist (wave-signoff)
 - [ ] Review REQ checklist — all wave-assigned REQs pass or explicitly deferred
 - [ ] Review §Contracts produced — accurate and complete for next wave
 - [ ] Confirm reviewed head SHA matches the package above
-- [ ] Mark as-built: {SPEC} W{N} = human_approved (human only)
-- [ ] Merge the wave PR manually (human only) — record merge commit SHA
+- [ ] Confirm human_approved already recorded at wave-acceptance (do not re-mark)
+- [ ] Merge the wave PR manually at wave-signoff (human only) — record merge commit SHA
 - [ ] Do not ask Gateflow/Forge to merge; no approval-label auto-merge
 
-## Ready for human checkpoint?
+## Ready for wave-signoff (merge)?
 yes / no — reason
 ```
 

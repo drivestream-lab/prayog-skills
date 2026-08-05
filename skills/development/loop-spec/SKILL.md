@@ -3,7 +3,7 @@ name: loop-spec
 description: >-
   Execute the per-wave implementation loop: implement against spec one TASK at
   a time, run checks/tests, fix failures, record local TASK proof — then stop
-  for human live-verify. Writes Wave-Execution artifact and one stage-level
+  for human wave-acceptance. Writes Wave-Execution artifact and one stage-level
   commit_workspace Forge package after the wave is green. Never commits/pushes.
   Use during active wave development. Does not run ground-spec or learning-extract.
 disable-model-invocation: true
@@ -20,11 +20,11 @@ Execute the per-wave Pass-1 loop:
 ```
 implement TASK → check/test → fix → record local proof → repeat
 → write Wave-Execution + Forge commit_workspace readiness
-→ stop at live-verify (human prove + patch tip)
+→ stop at wave-acceptance (human prove + patch tip)
 ```
 
 Closeout (`/learning-extract` → `/ground-spec`) is a **separate** Pass-2 after
-human live-verify — not this skill's job.
+human wave-acceptance — not this skill's job.
 
 Content skills write locally and emit Forge readiness; they do not commit,
 push, branch, open PRs, label, create issues, or merge.
@@ -53,7 +53,7 @@ Canonical artifact after the wave is green:
    `Wave-Execution-{INIT}-W{N}.md` and the stage handoff.
 4. After each **TASK**, run `{check_command}` and `{test_command}` from the
    harness profile (or `tests_readme`) — **check/unit layers only**. Both must
-   pass before recording the TASK complete. Implement live-verify **FILE**
+   pass before recording the TASK complete. Implement co-shipped live **FILE**
    TASKs (scripts under `live_verify_dir`) when the plan/manifest includes
    them — deliver the planned artifact; do **not** execute live verify,
    `verify_all`, or `{verify_command}` as this skill's success bar, and
@@ -89,7 +89,7 @@ Canonical artifact after the wave is green:
 
 Do **not** run human live verification or grounding. Do **not** emit `skipped`.
 
-Happy path: `pass` → `wave-pr-action` → (after authorize) `live-verify`.
+Happy path: `pass` → `wave-pr-action` → (after authorize) `wave-acceptance`.
 
 ## Inputs
 
@@ -101,7 +101,7 @@ Happy path: `pass` → `wave-pr-action` → (after authorize) `live-verify`.
 - Pre-implement checklist — `{reports_dir}/Pre-Implement-{INIT}-W{N}.md`
 - `{check_command}` — static checks (from harness profile or `AGENTS.md`)
 - `{test_command}` — unit verification (from harness profile or `tests_readme`)
-- `{verify_command}` — **human** live-verify entry (script under `live_verify_dir`);
+- `{verify_command}` — **human** live script entry (under `live_verify_dir`);
   document on handoff; **never** run as exit criteria of this skill
 
 ## Loop body (each TASK iteration)
@@ -128,7 +128,7 @@ Happy path: `pass` → `wave-pr-action` → (after authorize) `live-verify`.
      (`authorization: automated` — no interactive STOP when requires complete).
    - Hand off with `pass` → pin next `wave-pr-action`. Handoff **MUST** include
      `{verify_command}` for the human. Do **not** run live verify /
-     `verify_all` / optional `/verify` as this skill's success, and do not
+     `verify_all` as this skill's success, and do not
      claim smoke/sandbox human success.
 
 ## Wave-Execution artifact (minimum)
@@ -182,7 +182,7 @@ Illustrative only — **transitions SSOT:** pinned root `workflow.yaml`
     ↓
   checks/tests green → Wave-Execution-* + commit_workspace + wave-pr readiness
     ↓
-wave-pr-action (Forge open_draft_pr) → live-verify (human on Draft PR)
+wave-pr-action (Forge open_draft_pr) → wave-acceptance (human on Draft PR)
     ↓ (Pass-2 Enter-at or /learning-extract)
 /learning-extract → /ground-spec → wave-signoff
 ```

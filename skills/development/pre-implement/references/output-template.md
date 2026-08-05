@@ -34,7 +34,7 @@
 | `verify_command` | live script under `live_verify_dir` when P15 applies; else command or N/A with reason | [ ] command / N/A / missing |
 | `ground_command` | resolved or N/A with reason | [ ] command / N/A / missing |
 | Co-shipped live verify (P15) | If wave adds/changes product surface: FILE path under `live_verify_dir` listed | [ ] path / N/A (no surface) / missing |
-| Prior wave as-built row | `human_approved` | [ ] {wave id} = {status} |
+| Prior wave as-built row | `human_approved` (from prior `wave-acceptance`) | [ ] {wave id} = {status} |
 | Prior Ground Report exists | `reports/Ground-Report-{SPEC}-W{N-1}.md` | [ ] exists / missing |
 | Plan PE sign-off (W0 only) | Implementation-Plan §0 marked complete | [ ] complete / pending |
 
@@ -92,7 +92,7 @@ recommend `/create-board-tickets` or wave-head binding — do **not** mutate.
 - [ ] `as-built/implementation-status.md` — verification row for this wave
 - [ ] `tests_readme` — feature map row if verification coverage changes
 - [ ] Unit verification scope — edges and boundary behaviour (mocked dependencies)
-- [ ] Live verification — co-shipped script under `live_verify_dir` (human-run at `live-verify`)
+- [ ] Live verification — co-shipped script under `live_verify_dir` (human-run at `wave-acceptance`)
 - [ ] ADR — update when this wave supersedes an Accepted ADR (requires PE review)
 
 ---
@@ -101,7 +101,7 @@ recommend `/create-board-tickets` or wave-head binding — do **not** mutate.
 
 - [ ] Implement against spec wording that contradicts an Accepted ADR without
   first superseding that ADR
-- [ ] Duplicate unit verification assertions in live-verify scripts
+- [ ] Duplicate unit verification assertions in live smoke scripts
 - [ ] Assume a contract from a prior wave is correct without checking the
   Ground Report (or flagging it as unconfirmed above)
 - [ ] Open a branch, commit, push, open a PR, apply labels, or create board
@@ -115,22 +115,25 @@ recommend `/create-board-tickets` or wave-head binding — do **not** mutate.
 |-------|----------------|---------------------------------------|
 | Static check | Formatting, linting, types, or equivalent repository checks | `{check_command}` |
 | Unit | Module logic, boundary behaviour, edge cases (no external I/O) | `{test_command}` |
-| Live verify | Product behaviour on running stack (human-run at `live-verify`) | `{verify_command}` — path under `live_verify_dir` when P15; else N/A — reason |
+| Live verify | Product behaviour on running stack (human-run at `wave-acceptance`) | `{verify_command}` — path under `live_verify_dir` when P15; else N/A — reason |
 | Ground check | Assigned wave REQs satisfied; boundaries respected | `{ground_command}` or N/A — reason |
 
 > When P15 applies: N/A or unit-only for live verify **blocks** the gate.
 > Agent implements the script in `/loop-spec`; does **not** run it as success.
+> Policy: [live-smoke-policy.md](live-smoke-policy.md).
 
-### Human live-verify (after loop-spec)
+### Human wave-acceptance (after loop-spec + Draft PR)
 
-When checklist PASS and coding is green, the human at checkpoint `live-verify`:
+When checklist PASS and coding is green, the human at checkpoint
+`wave-acceptance`:
 
-- [ ] Run the documented `{verify_command}` (co-shipped script) in the sandbox
+- [ ] Run the documented `{verify_command}` (co-shipped script) in the sandbox,
+  or accept P15 N/A
 - [ ] Experience / inspect the feature to the depth env access allows
-- [ ] Capture exit evidence (command + exit code / key output) for
-  `Live-Verify-{INIT}-W{N}.md` / Forge publication — content skills do not
-  update the PR/tracker themselves
+- [ ] Signal accept with GitHub label `wave-accepted` on the tip (phase-1) —
+  content skills do **not** apply labels; that `pass` is **human approved**
 - [ ] Apply tip hygiene for any hotfixes before Enter-at Pass-2 closeout
+- [ ] Optional/legacy notes may land in `Live-Verify-*` — not required for the gate
 
 ---
 

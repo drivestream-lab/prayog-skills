@@ -14,6 +14,22 @@ _(empty — tip changes land under `[0.5.0-rc.2]`)_
 Consumable tip for programmes remounting `agent_skills.ref: v0.5.0-rc.2`
 (resolve to the retagged tip SHA).
 
+### Breaking — Wave-acceptance replaces live-verify; remove `/verify`
+
+- Checkpoint `live-verify` → **`wave-acceptance`**. `pass` = **human approved**
+  for the wave tip (only approval signal). Phase-1 accept ingress: GitHub label
+  `wave-accepted` (docs/contract; content skills never apply labels).
+- Skill **`/verify` removed** — no content skill for live smoke; policy folded
+  into `skills/development/pre-implement/references/live-smoke-policy.md`.
+- Pass-2 closeout (`learning-extract` → `ground-spec`) **closes the wave**.
+  `wave-signoff` = **merge/publish only** — not a second human approve.
+  `human_approved` comes from `wave-acceptance`, not signoff.
+- WorkManifest / plan `evidence_expected` for live intent prefers
+  `wave-accepted on tip` / human wave-acceptance; optional/legacy
+  `Live-Verify-*` reports are PURGE-only and not gate SSOT.
+- Keep `live_verify_dir` / `tests/verify` script paths and WorkManifest
+  `verify_command` field names.
+
 ### Added — ADR product-boundary lint (spec lane)
 
 - `scripts/adr_boundary_lint.py` (+ byte-identical copies under

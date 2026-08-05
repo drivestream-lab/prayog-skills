@@ -20,7 +20,7 @@ See also: [id-conventions.md](id-conventions.md),
 | Implementation plan | `{reports_dir}/Implementation-Plan-{INIT}.md` | digests | PURGE (app) — walk-time |
 | Pre-implement checklist | `{reports_dir}/Pre-Implement-{INIT}-W{N}.md` | per wave | PURGE (app) |
 | Wave execution | `{reports_dir}/Wave-Execution-{INIT}-W{N}.md` | per wave | PURGE (app) |
-| Live verify report | `{reports_dir}/Live-Verify-{INIT}-W{N}.md` | per wave | PURGE (app) |
+| Live verify report (optional/legacy) | `{reports_dir}/Live-Verify-{INIT}-W{N}.md` | per wave | PURGE (app) — **not** required for the gate; human accept is `wave-acceptance` / `wave-accepted` |
 | Ground report | `{reports_dir}/Ground-Report-{SPEC}-W{N}.md` | per wave | PURGE (app) |
 | Learning extract | `{reports_dir}/Learning-Extract-{INIT}-W{N}.md` | per wave | PURGE (app) |
 
@@ -42,7 +42,7 @@ Working papers accumulate through all waves. **One mental model:** purge
 | Repo | KEEP (refuse delete) | PURGE allowlist |
 |------|----------------------|-----------------|
 | **meta** | `prd/INIT-*.md`, `Impact-Map-{INIT}.md` | `Validation-Report-{INIT}.md`, `Resolution-{INIT}.md` |
-| **app** | `product/INIT-*.md`, Accepted ADRs, source / unit / live-verify **scripts** | Feas, TDD, Implementation-Plan, Pre-Implement-W*, Wave-Execution-W*, Live-Verify-W*, Ground-Report-W*, Learning-Extract-W*, Draft ADRs |
+| **app** | `product/INIT-*.md`, Accepted ADRs, source / unit / live-verify **scripts** | Feas, TDD, Implementation-Plan, Pre-Implement-W*, Wave-Execution-W*, optional/legacy Live-Verify-W*, Ground-Report-W*, Learning-Extract-W*, Draft ADRs |
 
 **Lane (pin):** eng loop then PM loop, each self-contained:
 
@@ -118,9 +118,11 @@ drift**, not “missing feas/TDD/plan digest.”
    `prd/reports/Validation-Report-INIT-….md` revision N”), never imply a new
    filename family.
 4. **Per-wave implement-lane artifacts** — `Pre-Implement-…-W{N}`,
-   `Wave-Execution-…-W{N}`, `Live-Verify-…-W{N}`,
-   `Ground-Report-…-W{N}`, and `Learning-Extract-…-W{N}` are different concerns
-   per wave, not revisions of one file.
+   `Wave-Execution-…-W{N}`, optional/legacy `Live-Verify-…-W{N}` (PURGE only;
+   not a gate SSOT), `Ground-Report-…-W{N}`, and `Learning-Extract-…-W{N}` are
+   different concerns per wave, not revisions of one file. Human approve for
+   the tip is checkpoint `wave-acceptance` (label `wave-accepted`), not a
+   Live-Verify report.
 5. **ADRs** use `adr-{NNN}-{slug}.md` lifecycle (Draft → Accepted), not
    `adr-…-rev2.md`. Accepted ADRs are KEEP; Draft ADRs are PURGE.
 6. If a non-canonical sibling already exists from older runs, **migrate**:

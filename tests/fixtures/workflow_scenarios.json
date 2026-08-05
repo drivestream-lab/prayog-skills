@@ -132,22 +132,16 @@
     "next": "wave-pr-action"
   },
   {
-    "name": "wave PR action routes to live-verify",
+    "name": "wave PR action routes to wave-acceptance",
     "stage": "wave-pr-action",
     "outcome": "pass",
-    "next": "live-verify"
+    "next": "wave-acceptance"
   },
   {
-    "name": "live-verify pass parks awaiting closeout",
-    "stage": "live-verify",
+    "name": "wave-acceptance pass parks awaiting closeout",
+    "stage": "wave-acceptance",
     "outcome": "pass",
     "next": "wave-awaiting-closeout"
-  },
-  {
-    "name": "manual verify routes to learning-extract",
-    "stage": "verify",
-    "outcome": "pass",
-    "next": "learning-extract"
   },
   {
     "name": "closeout learning-extract routes to ground-spec",

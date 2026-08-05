@@ -15,8 +15,7 @@
     "review-findings",
     "update-documents",
     "prd-impact-map",
-    "spec-implementation-plan",
-    "verify"
+    "spec-implementation-plan"
   ],
   "human_checkpoint_purposes": {
     "requirements-human-decision": "requirements-clarification",
@@ -24,7 +23,7 @@
     "technical-review-approval": "tdd-adr-acceptance",
     "spec-human-decision": "spec-clarification",
     "coding-readiness": "coding-readiness",
-    "live-verify": "live-verify",
+    "wave-acceptance": "wave-acceptance",
     "wave-signoff": "wave-signoff",
     "initiative-closure": "initiative-closure",
     "initiative-closure-signoff-app": "initiative-closure-signoff-app",

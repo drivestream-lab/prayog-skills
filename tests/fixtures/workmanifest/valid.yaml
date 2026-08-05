@@ -69,7 +69,7 @@ work:
             kind: command
             command: "python tests/verify/verify_health.py"
             expected: "exit 0; prints PASS"
-            evidence_expected: "Live-Verify-INIT-DEMO-001-W0.md"
+            evidence_expected: "wave-accepted on tip"
     verification:
       check: "make check"
       unit: "pytest tests/unit -q"
@@ -86,7 +86,7 @@ work:
           - "Run verify_health.py"
         expected_observations:
           - "Script exits 0 and prints PASS for /health"
-        evidence_expected: "Live-Verify-INIT-DEMO-001-W0.md"
+        evidence_expected: "wave-accepted on tip"
         cleanup:
           - "No durable resources created"
         stop_conditions:

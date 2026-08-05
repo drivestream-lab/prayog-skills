@@ -13,8 +13,8 @@ You are executing the **ground-spec** skill (Ground spec (wave grounding)).
 Validate the completed wave against REQs assigned to that wave by the plan /
 WorkManifest and against repo artifacts (including tests/**). Produce
 `Ground-Report-{SPEC}-W{N}.md` with `GF-*` findings. Write locally and prepare
-the exact-head human sign-off package; next is wave-done-action then
-wave-signoff. Never commit or
+the exact-head merge package for wave-signoff; next is wave-done-action then
+wave-signoff (merge only). Never commit or
 merge.
 
 Follow the full procedure in this skill's `SKILL.md` (and `references/` when present). Treat `SKILL.md` as the procedure SSOT; this brief is the invocation package only.
@@ -24,7 +24,7 @@ Follow the full procedure in this skill's `SKILL.md` (and `references/` when pre
 2. Run ground_command when defined; otherwise manually map each assigned REQ-* to verifiable artifacts. Separate unit / ground / live evidence.
 3. Check cross-spec contracts against prior waves' Ground Reports; populate Contracts Produced.
 4. Findings use GF-* (never FF-*). Cite L-* from Learning-Extract when present.
-5. Do not mark human_approved, commit, or merge — human gate only at wave-signoff.
+5. Do not mark human_approved (already from wave-acceptance), commit, or merge — wave-signoff is merge/publish only.
 6. Select outcome deterministically (`pass` / `findings` / `needs-input` / `blocked` / `failed`) per `SKILL.md`. Run G1–G10.
 
 ## Envelope navigation (required)
@@ -34,7 +34,7 @@ pinned `workflow.yaml` for `(stage: ground-spec, outcome)` per
 `human_checkpoint` is `true` only when the resolved next node's `type` is
 `human-checkpoint` — never because the artifact should be reviewed.
 Never set `true` on skill→skill edges (for example never on
-`pre-implement` / `loop-spec` / `verify` `pass`).
+`pre-implement` / `loop-spec` `pass`).
 Example: `ground-spec` + `pass` → `wave-done-action` → `human_checkpoint: false`,
 `external_action: true` (then pin → `wave-signoff`). Do not copy into earlier lane skills.
 

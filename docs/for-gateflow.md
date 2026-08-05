@@ -59,12 +59,12 @@ per-repo PR open on remount — not inside skill packages.
 ```text
 PASS 1 — Enter-at pre-implement (or board-tickets-action when seed needed)
   board-tickets-action → wave-in-progress-action (automated → In Progress)
-       → pre-implement → loop-spec → wave-pr-action → live-verify
-       live-verify.pass → wave-awaiting-closeout   # terminal park
+       → pre-implement → loop-spec → wave-pr-action → wave-acceptance
+       wave-acceptance.pass → wave-awaiting-closeout   # terminal park
 
 PASS 2 — separate walk (API Enter-at learning-extract)
   learning-extract → ground-spec → wave-done-action (automated → Done)
-       → wave-signoff   # human merge only
+       → wave-signoff   # human merge/publish only (not a second approve)
 ```
 
 | Do | Don't |
@@ -73,17 +73,19 @@ PASS 2 — separate walk (API Enter-at learning-extract)
 | After `loop-spec`, ForgeClient `commit_workspace` (code) then resolve `wave-pr-action` | Auto-merge or invent a merge Forge action |
 | `wave-pr-action` is `authorization: automated` — ForgeClient `open_draft_pr` **without** interactive STOP when requires complete | Wait for human `/forge/authorize` on wave/spec Draft PR when pin says automated |
 | First Draft PR view has checklist + code already on tip | PR-at-start before skills / duplicate open |
-| Stop after authorize at `live-verify` | Auto-run `verify` / `ground-spec` / `learning-extract` on Pass-1 |
+| Stop after authorize at `wave-acceptance` | Auto-run `ground-spec` / `learning-extract` on Pass-1 |
 | Treat unit/`make test` green as agent bar only | Treat unit green as live bar or skip human script run |
-| Expect human to run co-shipped `live_verify_dir` script at `live-verify` | Auto-dispatch `/verify` on Pass-1 |
+| Expect human to run co-shipped `live_verify_dir` script at `wave-acceptance` | Invent a `/verify` content skill or auto-dispatch smoke |
+| Treat `wave-acceptance.pass` as **human approved** (label `wave-accepted`) | Treat `wave-signoff` as a second approve; let content skills apply labels |
 | Validate §9 via pinned WorkManifest contract before board seed / coding | Accept unsupported manifest versions or mutate approved intent at runtime |
 | Apply pin `wave-in-progress-action` / `wave-done-action` via ForgeClient (`update_board_status`) | Invent off-graph board status; add `/update-board-status` human skill |
-| Require reviewed head SHA + human merge SHA at `wave-signoff.pass` | Let Gateflow/Forge merge the wave PR |
-| Start closeout with Enter-at `learning-extract` | Treat `live-verify.pass` as resume into closeout skills (no authorize-resume in this slice) |
+| Require reviewed head SHA + human merge SHA at `wave-signoff.pass` (merge only) | Let Gateflow/Forge merge the wave PR |
+| Start closeout with Enter-at `learning-extract` | Treat `wave-acceptance.pass` as resume into closeout skills (no authorize-resume in this slice) |
 | Ingest Learning-Extract artifact / baton into DB (INIT-007) | Require the skill to HTTP POST as success |
 
-`verify` is `dispatch: manual` — optional freeform path into `learning-extract`.
-Unit green ≠ live prove; human runs the planned live script at `live-verify`.
+There is **no** `/verify` content skill. Unit green ≠ live prove; human runs the
+planned live script at `wave-acceptance`. Content skills never apply labels,
+commit, or merge (Forge boundary).
 BoardService / ForgeClient **project** epic/wave/task summaries onto the board;
 board text is not a second WorkManifest authority. Orch board **status** moves
 only via pin nodes (`wave-in-progress-action`, `wave-done-action`).
@@ -128,8 +130,11 @@ belongs to Gateflow `POST /waves/spec/start` / bind, not a per-package
 | `gate-1` | `prd-impact-acceptance` |
 | `gate-2` | `coding-readiness` |
 | `wave-human-decision` | `wave-signoff` |
+| `live-verify` | `wave-acceptance` |
 
-`review_roles` keys on the contract match the **new** ids. Labels unchanged.
+`review_roles` keys on the contract match the **new** ids. Labels: add
+`wave-accepted` (accept ingress); `impact-map-*` / `spec-*` unchanged.
+`wave-signoff` = merge/publish only; human approved = `wave-acceptance`.
 
 ## Handoff / baton
 

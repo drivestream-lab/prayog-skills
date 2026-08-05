@@ -11,13 +11,13 @@ Governance detail: [governance.md](governance.md).
 
 | ID | Check | Evidence required |
 |----|-------|-------------------|
-| F1 | **Baseline snapshot** | Current test layout, toolchain config, live-verify inventory, as-built state |
+| F1 | **Baseline snapshot** | Current test layout, toolchain config, live verify script inventory (`live_verify_dir`), as-built state |
 | F2 | **Spec → code map** | Each spec capability/wave maps to a module under `source_roots` or SKIPPED if N/A |
-| F3 | **Spec → verify map** | Named live-verify artifacts exist; aggregator list matches if spec claims it |
+| F3 | **Spec → verify map** | Named live verify scripts exist under `live_verify_dir`; aggregator list matches if spec claims it |
 | F4 | **Spec → unit map** | Planned unit areas vs existing `unit_tests_dir` |
 | F5 | **As-built drift** | Spec claims vs `implementation-status.md` rows |
 | F6 | **Docs drift** | `tests_readme`, `AGENTS.md`, `rules_glob`, `adr_dir` index vs spec |
-| F7 | **Overlap risk** | Same user journey in unit and live-verify for same capability |
+| F7 | **Overlap risk** | Same user journey in unit and live smoke for same capability |
 | F8 | **CI vs live boundary** | What runs in CI vs closure/live verify per spec and tests_readme |
 | F9 | **Cross-service touch** | Integration specs / contracts referenced and files exist |
 | F10 | **Assumptions** | Spec asserts facts not evidenced in repo |

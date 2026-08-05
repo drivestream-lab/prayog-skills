@@ -160,7 +160,7 @@
     "blockers": ["TASK-W0-01"]
   },
   {
-    "name": "preflight-missing-live-verify-blocked",
+    "name": "preflight-missing-live-verification-blocked",
     "stage": "pre-implement",
     "evidence": "P15 applies but wave lacks live-verification contract/script (or unit-as-live)",
     "outcome": "blocked",
@@ -190,24 +190,24 @@
     "blockers": ["TASK-W0-01"]
   },
   {
-    "name": "live-verify-findings",
-    "stage": "verify",
-    "evidence": "Expected-versus-observed mismatch on smoke/sandbox; Live-Verify artifact recorded",
+    "name": "wave-acceptance-findings",
+    "stage": "wave-acceptance",
+    "evidence": "Expected-versus-observed mismatch on smoke/sandbox at wave-acceptance",
     "outcome": "findings",
     "next": "loop-spec",
     "human_checkpoint": false,
     "external_action": false,
-    "blockers": ["TASK-W0-02"]
+    "blockers": []
   },
   {
-    "name": "live-verify-unit-overlap-findings",
-    "stage": "verify",
-    "evidence": "Smoke/sandbox script duplicates unit-only assertions; expected-versus-observed findings recorded",
-    "outcome": "findings",
-    "next": "loop-spec",
+    "name": "wave-acceptance-pass-parks",
+    "stage": "wave-acceptance",
+    "evidence": "Human approved tip (smoke or P15 N/A); wave-accepted on tip",
+    "outcome": "pass",
+    "next": "wave-awaiting-closeout",
     "human_checkpoint": false,
     "external_action": false,
-    "blockers": ["TASK-W0-01"]
+    "blockers": []
   },
   {
     "name": "grounding-findings",

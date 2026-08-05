@@ -49,18 +49,18 @@ class PromptContractUnitTest(unittest.TestCase):
 
     def test_normative_schema_defaults(self) -> None:
         schema = {
-            "prompt_id": "verify",
+            "prompt_id": "ground-spec",
             "revision": "1.0.0",
             "variables": {
                 name: {"required": spec["required"], "type": spec["type"]}
                 for name, spec in SHARED_VARIABLES.items()
             },
         }
-        self.assertEqual(validate_schema(schema, expected_prompt_id="verify"), [])
+        self.assertEqual(validate_schema(schema, expected_prompt_id="ground-spec"), [])
         bad = dict(schema)
         bad["variables"] = dict(schema["variables"])
         bad["variables"]["ticket"] = {"required": False, "type": "string"}
-        self.assertTrue(validate_schema(bad, expected_prompt_id="verify"))
+        self.assertTrue(validate_schema(bad, expected_prompt_id="ground-spec"))
 
     def test_required_bound_inputs(self) -> None:
         errors = validate_bound_inputs(
@@ -71,7 +71,7 @@ class PromptContractUnitTest(unittest.TestCase):
                 "handoff_path": "h",
                 "workspace": "w",
                 "meta_workspace": "",
-                "skill_id": "verify",
+                "skill_id": "ground-spec",
             },
         )
         self.assertTrue(any("ticket" in e for e in errors))
@@ -86,7 +86,7 @@ class PromptPackageInventoryTest(unittest.TestCase):
         }
 
     def test_inventory_count_and_areas(self) -> None:
-        self.assertEqual(len(self.expected), 18)
+        self.assertEqual(len(self.expected), 17)
         areas = {area for area, _ in self.expected}
         self.assertEqual(areas, {"requirements", "development", "forge"})
         self.assertFalse(any(a == "engg-reviews" for a, _ in self.expected))

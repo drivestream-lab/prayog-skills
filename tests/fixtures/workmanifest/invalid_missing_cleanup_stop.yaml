@@ -34,7 +34,7 @@ work:
             kind: command
             command: "python tests/verify/verify_items.py"
             expected: "exit 0; prints PASS"
-            evidence_expected: "Live-Verify-INIT-DEMO-001-W0.md"
+            evidence_expected: "wave-accepted on tip"
     verification:
       check: "make check"
       unit: "pytest -q"

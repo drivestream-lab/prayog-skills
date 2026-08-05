@@ -18,4 +18,4 @@ When `.harness/profile.yaml` is absent, use:
 
 Reports filename: `Ground-Report-{SPEC}-W{N}.md` under `reports_dir`.
 Related wave artifacts: `Wave-Execution-{INIT}-W{N}.md`,
-`Live-Verify-{INIT}-W{N}.md`, `Learning-Extract-{INIT}-W{N}.md`.
+`Learning-Extract-{INIT}-W{N}.md`; optional/legacy `Live-Verify-{INIT}-W{N}.md` (PURGE only, not gate SSOT).

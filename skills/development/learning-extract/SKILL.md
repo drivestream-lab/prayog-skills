@@ -1,21 +1,21 @@
 ---
 name: learning-extract
 description: >-
-  After human live-verify / tip fixes on a wave PR, extract structured programme
+  After human wave-acceptance / tip fixes on a wave PR, extract structured programme
   learning (SPEC / SKILL / HARNESS / ENV) with stable L-* ids for Gateflow to
   persist and for ground-spec to cite. Closeout hop — does not write the Ground
-  Report. Use Enter-at or /learning-extract after Pass-1 stop at live-verify.
+  Report. Use Enter-at or /learning-extract after Pass-1 stop at wave-acceptance.
 disable-model-invocation: true
 paths: AGENTS.md, docs/specification/**, .harness/profile.yaml
 metadata:
   background_eligible: true
-  background_trigger: "wave closeout Enter-at after human live-verify"
+  background_trigger: "wave closeout Enter-at after human wave-acceptance"
 ---
 
 # Learning extract
 
 Producer of **structured learning** after Pass-1 (implement) and human
-live-verify / tip fixes. Gateflow may persist records in a global DB; this skill
+wave-acceptance / tip fixes. Gateflow may persist records in a global DB; this skill
 only writes a workspace artifact + handoff. **`/ground-spec`** still owns the
 wave Ground Report and §Contracts produced.
 
@@ -63,12 +63,12 @@ context. Ask taxonomy chips only when classification is ambiguous.
 ## Inputs
 
 1. **Initiative + wave** — (REQUIRED)
-2. **Workspace / PR tip** — run head after human live-verify
+2. **Workspace / PR tip** — run head after human wave-acceptance
 3. **Optional bind** — ticket, PR/run ids from orchestrator
 
 ## Prerequisite
 
-- Pass-1 complete enough that a tip exists (typically after `live-verify` park
+- Pass-1 complete enough that a tip exists (typically after `wave-acceptance` park
   or equivalent human prove + patch)
 - Pin next on `pass`: `ground-spec`
 
@@ -86,11 +86,14 @@ context. Ask taxonomy chips only when classification is ambiguous.
 Illustrative — **transitions SSOT:** pinned `workflow.yaml`.
 
 ```text
-Pass-1: … → loop-spec → live-verify (human) → wave-awaiting-closeout
+Pass-1: … → loop-spec → wave-acceptance (human) → wave-awaiting-closeout
 Pass-2 Enter-at /human:
   /learning-extract  ← YOU ARE HERE
        ↓
-  /ground-spec → wave-signoff
+  /ground-spec → wave-done-action → wave-signoff (merge only)
+
+Pass-2 closeout (`learning-extract` → `ground-spec`) closes the wave;
+`wave-signoff` is merge/publish only — not a second human approve.
 ```
 
 ## Workflow handoff

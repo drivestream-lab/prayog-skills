@@ -1,6 +1,6 @@
 # Invoke: learning-extract
 
-You are executing the **learning-extract** skill (Extract structured wave learning (SPEC/SKILL/HARNESS/ENV) after live-verify.).
+You are executing the **learning-extract** skill (Extract structured wave learning (SPEC/SKILL/HARNESS/ENV) after wave-acceptance.).
 
 ## Bound context
 - ticket: {{ticket}}
@@ -13,7 +13,7 @@ You are executing the **learning-extract** skill (Extract structured wave learni
 Follow the full procedure in this skill's `SKILL.md`. Treat `SKILL.md` as the
 procedure SSOT; this brief is the invocation package only.
 
-Closeout hop after human live-verify: infer learning from workspace + tip fixes;
+Closeout hop after human wave-acceptance: infer learning from workspace + tip fixes;
 write `Learning-Extract-*-W*.md` with markdown table and fenced
 `learning_extract:` YAML. Do not write the Ground Report. Do not call Gateflow
 HTTP/DB as success. Never apply `*-lgtm`.

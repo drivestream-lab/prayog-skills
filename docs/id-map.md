@@ -21,9 +21,9 @@ PRD CAP-* / REQ-* / OQ-*
   → plan TASK-* implements REQ-*
   → coding-readiness (checkpoint) → spec merge
   → /create-board-tickets — EPIC → W* (TASK table in wave body)
-  → Pass-1: pre-implement → loop-spec (TASK-*) → live-verify
+  → Pass-1: pre-implement → loop-spec (TASK-*) → wave-acceptance (human approved)
   → Pass-2: learning-extract (L-*) → ground-spec (REQ checklist + cite L-*)
-  → wave-signoff
+  → wave-signoff (merge only)
 ```
 
 ## Defaults

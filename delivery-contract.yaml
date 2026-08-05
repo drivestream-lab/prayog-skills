@@ -49,7 +49,7 @@ principles:
 #
 # Human-checkpoint nodes require `purpose` (intent slug). Mechanism is always
 # `type: human-checkpoint` — do not invent `type: gate`. Prefer node id ≡ purpose
-# (e.g. prd-impact-acceptance, coding-readiness, live-verify, wave-signoff).
+# (e.g. prd-impact-acceptance, coding-readiness, wave-acceptance, wave-signoff).
 # GitHub projection labels stay lane-named (impact-map-*, spec-*); they are not
 # renamed when checkpoint ids change.
 #
@@ -90,9 +90,10 @@ dispatch:
 # STOP). `open_draft_pr` is reused for PRD/spec/wave Draft PRs.
 # `update_board_status` is pin-declared (wave In Progress / Done); orch
 # ForgeClient only — **no** human forge skill package (keep AGENTS thin).
-# There is **no** merge Forge action — wave approval and merge remain
-# human-only at `wave-signoff`. Head/ref binding is run context (not pin).
-# Approval labels (*-lgtm) never auto.
+# There is **no** merge Forge action — merge remains human-only at
+# `wave-signoff` (publish). Human approved is `wave-acceptance` (label
+# `wave-accepted` phase-1 ingress). Head/ref binding is run context (not pin).
+# Approval labels (*-lgtm, wave-accepted) never auto from content skills.
 #
 # Human skill id = forge.action with '_' → '-' **when** a skills/forge package
 # exists. Orchestrators never auto-dispatch forge skills (not on workflow
@@ -195,11 +196,23 @@ github:
       color: E99695
       description: Upstream meta or PRD approval is stale
       profiles: [app]
+    - name: wave-accepted
+      color: 0E8A16
+      description: >-
+        Wave tip human-approved at wave-acceptance (smoke or P15 N/A);
+        not a merge signal
+      profiles: [app]
   review_roles:
     prd-impact-acceptance:
       role: engineering-gate
       profiles: [meta-pm]
     coding-readiness:
+      role: engineering-gate
+      profiles: [app]
+    wave-acceptance:
+      role: engineering-gate
+      profiles: [app]
+    wave-signoff:
       role: engineering-gate
       profiles: [app]
     initiative-closure-signoff-app:

@@ -5,13 +5,13 @@ description: >-
   WorkManifest, plus repo artifacts and cross-spec contracts. Produces a Ground
   Report (GF-* findings) including Contracts Produced for next-wave
   pre-implement. Writes locally and emits Forge readiness — never commits or
-  merges. Use after Pass-2 learning-extract, before wave-done-action /
-  human wave-signoff.
+  merges. Use after Pass-2 learning-extract (closes the wave), before
+  wave-done-action / human wave-signoff (merge only).
 disable-model-invocation: true
 paths: AGENTS.md, docs/specification/**, src/**, tests/**
 metadata:
   background_eligible: true
-  background_trigger: "Pass-2 closeout after learning-extract (post human live-verify)"
+  background_trigger: "Pass-2 closeout after learning-extract (post human wave-acceptance)"
 ---
 
 # Ground spec
@@ -45,12 +45,16 @@ Ids: `../../../references/id-conventions.md` (`GF-*` for findings).
    boundary, verify script output). Do **not** require coverage of REQs owned
    only by future waves. Use engineering terms: "entry point", "module
    boundary", "output shape" — not language-specific terms.
-4. Consume approved plan/manifest intent **plus** actual loop/live evidence
-   (`Wave-Execution-*`, `Live-Verify-*`, unit results). Cite layers separately.
+4. Consume approved plan/manifest intent **plus** actual loop/unit evidence
+   and human accept (`Wave-Execution-*`, unit results, `wave-accepted` /
+   wave-acceptance). Optional/legacy `Live-Verify-*` is not required. Cite
+   layers separately.
 5. Check cross-spec contracts: modules from this wave may only consume
    interfaces from prior waves as documented in those waves' Ground Reports.
 6. Check boundary rules per ADRs and domain-filtered MDC rules (G5/G6).
-7. **Do not** mark spec `human_approved` — that is a human gate only.
+7. **Do not** mark spec `human_approved` — already set at `wave-acceptance`
+   (only approval signal). This skill prepares the merge package for
+   `wave-signoff` (merge/publish only).
 8. **Populate the Contracts Produced section** — structured handoff for
    `/pre-implement` of the next wave. Without it, the chain is broken.
 9. **Cite learning ids** — when
@@ -59,8 +63,8 @@ Ids: `../../../references/id-conventions.md` (`GF-*` for findings).
 10. Discrepancy / blocker ids use stable **`GF-*`** — cite `REQ-*` in the row,
     not as the blocker primary key. Do **not** reuse feasibility `FF-*`.
 11. Write Ground Report and as-built updates **locally**; prepare the
-    exact-head human sign-off package; pin routes to `wave-done-action` then
-    `wave-signoff`. Never commit or
+    exact-head merge package for `wave-signoff`; pin routes to
+    `wave-done-action` then `wave-signoff` (merge only). Never commit or
     merge from this skill.
 
 ## Outcome selection
@@ -70,7 +74,7 @@ Ids: `../../../references/id-conventions.md` (`GF-*` for findings).
 | `pass` | G1–G10 satisfied (or SKIPPED with reason); no open Blocking `GF-*`; Contracts produced complete; exact-head sign-off package ready |
 | `findings` | One or more `GF-*` require code/spec fix before sign-off |
 | `needs-input` | Authoritative wave assignment, evidence, or prior Ground Report absent/unreadable |
-| `blocked` | Gate prevents grounding (e.g. Pass-1 incomplete, missing live evidence when required) |
+| `blocked` | Gate prevents grounding (e.g. Pass-1 incomplete, missing accept when required) |
 | `failed` | Execution error running ground command or writing the report |
 
 Happy path: `pass` → `wave-done-action` → `wave-signoff`.
@@ -91,8 +95,8 @@ Illustrative only — **transitions SSOT:** pinned root `workflow.yaml`
             └── GF-* findings (not FF-*)
     ↓
   wave-done-action (Forge update_board_status → Done)
-  human checkpoint wave-signoff (exact head; human merge)
-  → as-built W{N} = human_approved
+  human checkpoint wave-signoff (exact head; merge/publish only)
+  → human_approved already from wave-acceptance; record merge SHA
     ↓
 /pre-implement (next wave)
   reads: Ground-Report-W{N}.md §Contracts produced
@@ -104,7 +108,7 @@ Illustrative only — **transitions SSOT:** pinned root `workflow.yaml`
 2. Plan / WorkManifest wave section — **assigned REQ set** for W{N}
 3. Product spec: `docs/specification/product/` — only rows for assigned REQs
 4. `docs/specification/as-built/implementation-status.md`
-5. `Wave-Execution-{INIT}-W{N}.md` and `Live-Verify-{INIT}-W{N}.md` when present
+5. `Wave-Execution-{INIT}-W{N}.md`; accept signal (`wave-accepted` / wave-acceptance); optional/legacy `Live-Verify-*` when present
 6. Ground reports of prior waves (for cross-spec contract baseline)
 7. Relevant ADRs + domain-filtered MDC
 8. Ground check output (`{ground_command}`) + unit verification (`{test_command}`)
@@ -125,7 +129,7 @@ Save report to `{reports_dir}/Ground-Report-{SPEC}-W{N}.md` using
    `forge.action: update_board_status`, `authorization: automated`) →
    `human_checkpoint: false`, `external_action: true`. Fill `handoff.forge`
    `ticket` when bound so ForgeClient can apply Done. Then pin routes to
-   `wave-signoff` (human merge). Do **not** copy `human_checkpoint: true` into
+   `wave-signoff` (human merge/publish only). Do **not** copy `human_checkpoint: true` into
    earlier implement-lane skills on skill→skill edges.
 
 

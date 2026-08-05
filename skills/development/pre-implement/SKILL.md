@@ -30,7 +30,8 @@ Canonical artifact:
 1. Resolve paths from `.harness/profile.yaml` when present; else
    [references/layout-defaults.md](references/layout-defaults.md).
 2. **Gate check first** — before reading anything else, confirm the prior
-   wave's Ground Report exists and its as-built row is `human_approved`.
+   wave's Ground Report exists and its as-built row is `human_approved`
+   (set at prior `wave-acceptance`, not at signoff).
    If not: stop and state which gate is unsatisfied. Do not produce a
    checklist for a wave whose predecessor is not approved.
 3. Read `rules_glob` per the domain-filter approach in
@@ -52,7 +53,10 @@ Canonical artifact:
    unit-only (`make test` / `{test_command}`). Resolve `ground_command` when
    applicable. If the plan/profile/`AGENTS.md`/`tests_readme` cannot supply a
    required command, stop with MISSING command. The human runs
-   `{verify_command}` at checkpoint `live-verify`; this skill does not execute it.
+   `{verify_command}` at checkpoint `wave-acceptance`; this skill does not
+   execute it. Layer policy:
+   [references/live-smoke-policy.md](references/live-smoke-policy.md).
+   Human accept ingress is GitHub label `wave-accepted` (skills never apply it).
 10. **WorkManifest spend authority** — prefer the **board** wave/EPIC issues
     seeded from plan §9 as long-term intent (see
     [`../../../references/workmanifest-contract.md`](../../../references/workmanifest-contract.md)).
@@ -94,7 +98,7 @@ Map evidence to delivery outcomes only (pinned `workflow.yaml`):
 |---------|------|
 | `pass` | Gate verdict PASS; WorkManifest contract clean for this wave; preflight artifact written; commands resolved; board seeded; prior wave approved (or W0 plan PE sign-off); wave head bound in Forge/human context |
 | `needs-input` | Authoritative source absent/unreadable (plan, Ground Report, commands, profile, §9 YAML) so readiness cannot be determined |
-| `blocked` | Authoritative source exists and shows an unsatisfied gate (WorkManifest contract fail, TASK missing exit proof, missing/applicable live-verify contract when P15 applies, prior wave not `human_approved`, board seed missing/partial, open Draft spec branch) |
+| `blocked` | Authoritative source exists and shows an unsatisfied gate (WorkManifest contract fail, TASK missing exit proof, missing/applicable live-verification contract when P15 applies, prior wave missing Ground Report or not `human_approved` from `wave-acceptance`, board seed missing/partial, open Draft spec branch) |
 | `stale` | Product-spec H1–H3 / G2 / tip authority drift |
 | `failed` | Execution error while reading inputs, running the WorkManifest validator, or writing the preflight artifact |
 
@@ -115,10 +119,10 @@ Illustrative only — **transitions SSOT:** pinned root `workflow.yaml`
 ```
 spec merge (spec-lgtm on head) → board seed (Forge) → wave issue In Progress
     ↓
-/ground-spec (prior wave) → human_approved in as-built   [Wn>0 only]
+/ground-spec (prior wave) → human_approved from prior wave-acceptance   [Wn>0 only]
     ↓
 /pre-implement               ← YOU ARE HERE (gate-only)
-  gate: spec merged + board seeded + prior wave human_approved?
+  gate: spec merged + board seeded + prior Ground Report + human_approved?
   reads: Ground-Report-W{N-1}.md §Contracts produced
   produces: Pre-Implement-{INIT}-W{N}.md
     ↓
@@ -126,7 +130,9 @@ spec merge (spec-lgtm on head) → board seed (Forge) → wave issue In Progress
     ↓
   Forge commit_workspace (code) → wave-pr-action (open_draft_pr)
     ↓
-  live-verify (human on Draft PR) → closeout: /learning-extract → /ground-spec
+  wave-acceptance (human smoke / P15 N/A; label wave-accepted)
+    ↓
+  closeout: /learning-extract → /ground-spec → wave-signoff (merge only)
 ```
 
 **Do not run on an open Draft spec PR branch** (`chore/*-spec-*`). Coding

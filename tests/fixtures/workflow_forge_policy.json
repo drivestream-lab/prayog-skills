@@ -10,7 +10,6 @@
     "spec-implementation-plan": "required",
     "pre-implement": "required",
     "loop-spec": "required",
-    "verify": "optional",
     "learning-extract": "optional",
     "ground-spec": "required",
     "purge-initiative-artifacts-app": "required",

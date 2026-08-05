@@ -280,14 +280,6 @@ REQUIRED_TOKENS = {
         "dependency order",
         "Do **not** mutate",
     ],
-    "skills/development/verify/SKILL.md": [
-        "Live-Verify-",
-        "expected",
-        "observed",
-        "Integration / contract",
-        "Smoke",
-        "Sandbox",
-    ],
     "skills/forge/create-board-tickets/references/output-template.md": [
         "workmanifest-contract-pass",
         "Preserved task metadata",
@@ -321,8 +313,14 @@ REQUIRED_TOKENS = {
         "map_revision",
         "Pre-Implement-{INIT}-W{N}.md",
         "Wave-Execution-{INIT}-W{N}.md",
-        "Live-Verify-{INIT}-W{N}.md",
+        "wave-acceptance",
         "Ground-Report-{SPEC}-W{N}.md",
+    ],
+    "skills/development/pre-implement/references/live-smoke-policy.md": [
+        "wave-acceptance",
+        "wave-accepted",
+        "live_verify_dir",
+        "There is **no** `/verify` content skill",
     ],
 }
 

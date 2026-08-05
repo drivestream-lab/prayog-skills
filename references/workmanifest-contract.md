@@ -80,7 +80,9 @@ work:
 **Forbidden on the approved manifest:** `status`, `state`, board column ids,
 `observed`, `evidence_actual`, build SHA / runtime head bindings filled at
 checkpoint time, and any other mutable execution field. Those live in board
-systems and stage artifacts (`Wave-Execution-*`, `Live-Verify-*`, handoff).
+systems and stage artifacts (`Wave-Execution-*`, handoff, human
+`wave-acceptance` / `wave-accepted`). Optional/legacy `Live-Verify-*` prose is
+not required.
 
 ---
 
@@ -136,7 +138,9 @@ Do **not** put `parallel_safe` or `shared_files` on tasks in v1.
 
 Every wave declares agent-run layers plus a live-verification intent block.
 Actual build SHA and observed evidence are bound at human checkpoint
-`live-verify`, not during planning.
+`wave-acceptance`, not during planning. `evidence_expected` records where
+human prove will be attested (typically `wave-accepted on tip` / human
+wave-acceptance) — optional/legacy `Live-Verify-*` paths are not required.
 
 ```yaml
 verification:
@@ -155,7 +159,7 @@ verification:
       - "Run verify_foo.py against local stack"
     expected_observations:
       - "Script exits 0; prints PASS for /v1/foo"
-    evidence_expected: "Live-Verify-{INIT}-W0.md"
+    evidence_expected: "wave-accepted on tip"
     cleanup:
       - "Remove TENANT-SMOKE-01"
     stop_conditions:

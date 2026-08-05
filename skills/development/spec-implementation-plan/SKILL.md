@@ -95,7 +95,7 @@ Do not invent a meta path when empty.
 7. **`adr_dir`** — architecture decision records (REQUIRED). Run relevant-ADR pass per [references/governance.md](references/governance.md) before T2 Analyze.
 8. **Canonical handoff references** — product-spec H1–H3 (+ G1 when applicable)
    (REQUIRED; resolve under `meta_workspace` when bound)
-9. **Command contract** — canonical check, test, live-verify, and ground
+9. **Command contract** — canonical check, test, live verify (`verify_command`), and ground
    commands or explicit N/A rationale (REQUIRED)
 
 ## Prerequisite
