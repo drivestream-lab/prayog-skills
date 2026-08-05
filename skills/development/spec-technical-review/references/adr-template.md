@@ -24,15 +24,51 @@
 
 ## Product decisions excluded
 
-List product choices this ADR deliberately does **not** make (owned by
-approved `REQ-*` / PM):
+List, **by `REQ-*` id only**, the product choices this ADR deliberately does
+not make (owned by the approved requirement / PM). Do not restate what the
+REQ says — a reader who wants that opens the spec.
 
-- {e.g. “Whether one upload yields four outputs — see REQ-07”}
+- {e.g. "See REQ-07." — not "See REQ-07 (whether one upload yields four outputs)"}
+
+## Scope discipline (read before writing Context)
+
+- **One decision per ADR.** If you are resolving more than one independent
+  question, split the file — an ADR covering three decisions is a design doc
+  in disguise. The design doc is the TDD; this file is the terse record.
+- **Reference `REQ-*` by id only** (e.g. `REQ-07`). Never quote or paraphrase
+  a REQ's behavioral sentence in Context, Recommendation, or Consequences —
+  that is the feature restated, not the engineering decision.
+- **Smell test:** delete every `REQ-*` id from Context/Recommendation and
+  re-read what remains. If it still reads like something a PM would write
+  (a feature, a UX flow, an acceptance outcome), rewrite it in engineering
+  vocabulary (data flow, module boundary, protocol, storage, concurrency) or
+  delete it and link to the spec/TDD instead of inlining it.
+- **Keep it short — and don't hollow it out either.** The record body
+  (Product decisions excluded → Revisit triggers, excluding the metadata
+  table and the Lifecycle/Acceptance boilerplate) should read in well under
+  a minute — target roughly 150–400 words. If it needs a code example, a
+  restated acceptance criterion, or a "why the user needs this" paragraph to
+  make its point, that content belongs in the TDD or the spec, not here.
+  A body under ~60 words is mechanically rejected as too thin to show real
+  reasoning — trimming content to dodge phrase/overlap detection while still
+  satisfying T11's structural checklist is itself a T12 failure, not a way
+  to pass it.
+- **Run `python scripts/adr_boundary_lint.py {this file} --source-text ...
+  --approved-req-id ... --require-sources --finding-text-file ...`**
+  (vendored inside this skill, present in a standalone install) **before
+  marking T12 PASS** — see `checks.md` T12 for the full flag set. This is
+  required, not optional; `SKIPPED` only when no Python runtime is
+  available, with the reason stated. It is a mechanical check, independent
+  of the drafting agent's own judgment — and still only a heuristic floor,
+  not a semantic guarantee (see the lint's own module docstring for the two
+  gaps it cannot see).
 
 ## Context
 
-{Problem and constraints. Cite approved REQs and existing Accepted ADRs that
-bound the design space. Do not introduce new user-visible behavior.}
+{State the engineering problem and constraints in engineering vocabulary —
+not a restatement of product behavior. Reference `REQ-*` ids only; cite
+existing Accepted ADRs that bound the design space. Do not introduce new
+user-visible behavior.}
 
 ## Options considered
 
@@ -41,14 +77,25 @@ bound the design space. Do not introduce new user-visible behavior.}
 | A | | |
 | B | | |
 
+> **Product consequences do not get narrated here either.** If a technical
+> option would change something a user could notice, that is a PM
+> confirmation trigger (see `governance.md` "PE decision vs PM confirmation
+> pattern"), not commentary for this table. Record it as a routed question
+> in TDD §10 and reference the id (`PM-{n}`) in one clause — do not describe
+> the product impact in prose in this ADR. If describing it requires more
+> than an id reference, the ADR is not ready to recommend an option yet:
+> stop and route the PM question first.
+
 ## Recommendation
 
-{Selected option and rationale. Must satisfy `product_constraints` without
-amending product behavior.}
+{Selected option and the *technical* rationale — stated in engineering
+terms, not by restating acceptance criteria. Must satisfy `product_constraints`
+without amending product behavior.}
 
 ## Consequences
 
-- {Positive and negative consequences.}
+- {Positive and negative consequences — technical, not user-facing outcomes
+  already owned by the REQ.}
 
 ## Revisit triggers
 
@@ -77,7 +124,43 @@ Approved head: {full SHA to be approved}
 product_constraints: [REQ-…]
 changes_user_visible_behavior: false
 spec_amendment_required: false
+Lint evidence: adr_boundary_lint.py {sources_checked}/{N expected}, PASS,
+  sha256:{hex}
 ```
+
+`Lint evidence` must match this exact shape — `adr_boundary_lint.py N/M,
+PASS|FAIL, sha256:<hex>` — presence alone (`yes`, `TBD`, `-`) fails the
+shape check and is rejected. Generate the line with:
+
+```bash
+python scripts/adr_boundary_lint.py {this file} --strict \
+  --source-text <req_text_file> --source-text <feasibility_evidence_file> \
+  --approved-req-id <every approved REQ-* in the spec> \
+  --finding-text-file <feasibility_finding_file> \
+  --print-evidence
+```
+
+and paste the printed line verbatim — do not hand-write the hash.
+`--strict` bundles `--require-sources` with `--approved-req-id` and
+`--finding-text-file` so this is the one recommended production invocation,
+not four independently-optional flags.
+
+A **shape match is not a genuine-hash guarantee** — anyone could type a
+correctly-shaped but fabricated hex string. At any later point (PE review,
+P13 re-check), re-verify the recorded digest against the current file and
+sources with:
+
+```bash
+python scripts/adr_boundary_lint.py {this file} \
+  --source-text <same sources> --verify-lint-evidence
+```
+
+A mismatch means the file changed since the digest was recorded, or the
+digest was never genuinely computed — either way, the acceptance is not
+trustworthy as recorded and must be redone. Even a verified match only
+proves internal consistency with the sources supplied at verification time,
+not that those sources were the correct/complete ones — that judgment call
+remains PE's, not the script's.
 
 The formal PE GitHub Approve must be on the final commit containing this
 Accepted metadata. No file changes occur after that approval (publish via

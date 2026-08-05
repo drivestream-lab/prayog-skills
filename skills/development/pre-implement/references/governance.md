@@ -69,8 +69,25 @@ cross-service contracts, deployment, storage model, CLI shape):
   not covered by any existing Accepted ADR.
 - Flag spec wording that **contradicts** an Accepted ADR → finding (feasibility)
   or RISK row (plan). Severity: **Critical** if blocking.
-- Flag **NEW-ADR** when spec chooses between alternatives with no existing ADR →
-  PE question (feasibility; route to `/spec-technical-review`).
+- Flag **NEW-ADR** only when it clears the same bar `/spec-technical-review`
+  uses to accept the disposition (its "ADR qualification rubric"):
+  independent implementers could choose incompatibly, the answer is not
+  obvious from compliant code/rules, and a real trade-off exists. A locally
+  reversible implementation choice already bounded by rules is an ordinary
+  finding, not a `NEW-ADR` / PE question — do not over-flag.
+- **Phrase the `NEW-ADR` finding as the unresolved technical alternative**,
+  prefixed with the literal marker `ALTERNATIVE:` (e.g. `ALTERNATIVE: sync
+  vs. async processing for this ingestion path`), never as a restatement of
+  the product requirement. The prefix is machine-checkable — a `Finding`
+  cell without it is malformed output, not a stylistic choice. The
+  alternative text after the marker must itself be substantive (not a bare
+  word) and free of product-register phrasing — `validate_finding_marker`
+  in `scripts/adr_boundary_lint.py` checks both, not just prefix presence.
+- The spec quote in the evidence column is proof the ambiguity exists, not
+  the finding text. Capture it as a short, verbatim, quoted excerpt so
+  `/spec-technical-review` can pass it unmodified as a
+  `scripts/adr_boundary_lint.py --source-text` input (checking the ADR does
+  **not** contain it) — never as pre-written ADR Context.
 
 > **Accepted ADR SSOT** = files in `{adr_dir}`. `/spec-technical-review` creates
 > Draft ADR files for every `ADR_REQUIRED` disposition; TDD §4 is an index that

@@ -81,7 +81,14 @@ Do not invent a meta path when empty.
 
 1. **Initiative spec** — on spec branch (REQUIRED)
 2. **Feasibility report** — if exists (RECOMMENDED)
-3. **Technical review** — `Technical-Review-{initiative}.md` if produced (RECOMMENDED; required when feasibility had NEW-ADR findings)
+3. **Technical review** — `Technical-Review-{initiative}.md` (REQUIRED). The
+   pin always routes feasibility (`pass` or `findings`) into
+   `/spec-technical-review` before planning — a genuinely absent file is a
+   stale/skipped-stage condition (`needs-input`), not an optional input. A
+   clean feasibility run may still produce a **light-confirmation** TDD with
+   zero ADRs — that is a valid, present file, not the same thing as no file
+   existing. Do not treat "no `NEW-ADR` findings" as license to skip reading
+   this file.
 4. **As-built**, **tests_readme**, **live_verify_dir** layout (REQUIRED for test tasks)
 5. **Layout** — `.harness/profile.yaml` or [references/layout-defaults.md](references/layout-defaults.md)
 6. **`rules_glob`** — workspace MDC rules (REQUIRED). Read before T2 Analyze.

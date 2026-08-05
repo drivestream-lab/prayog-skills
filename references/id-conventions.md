@@ -46,6 +46,7 @@ REQ-07 ──cited by──▶ impact scope, spec row, plan TASK, ground-spec ro
 |------|-------|----------|---------|
 | Validation finding | `VF-{nn}` | `validate-requirements` | One finding instance |
 | Feasibility finding | `FF-{nn}` | `initiative-feasibility` | One feasibility finding |
+| Technical review finding | `TF-{nn}` | `spec-technical-review` | One technical-review-native finding (e.g. a T-check FAIL discovered while drafting/auditing the TDD/ADR, not carried over from feasibility) |
 | Ground finding | `GF-{nn}` | `ground-spec` | One grounding discrepancy |
 | Change to apply | `CHG-{nn}` | `review-findings` / `update-documents` | Approved edit unit |
 | Product question (PE) | `PQ-{nn}` | engg-reviews | PE question on Meta PR (optional pack) |
@@ -61,6 +62,14 @@ Rules:
   with check id `F12` and looks like an FR).
 - Grounding discrepancies use **`GF-*`**. Do **not** reuse feasibility-owned
   `FF-*` for new grounding findings.
+- Technical-review-native findings (a T-check FAIL found while drafting or
+  auditing the TDD/ADR, e.g. a T12 product-boundary violation) use **`TF-*`**.
+  Do **not** reuse feasibility-owned `FF-*` for these — `FF-*` names a
+  specific feasibility-stage finding instance; a T12 audit result is a new,
+  technical-review-stage finding even when it traces back to an `FF-*` that
+  originated the `NEW-ADR`. Cite the originating `FF-*` separately (e.g.
+  "TF-03, from FF-02") for lineage when applicable — do not conflate the two
+  ids into one.
 - Spec open engineering questions stay **`Q-{n}`** in the spec file; PRD open
   questions use **`OQ-*`**. Do not mix registries.
 

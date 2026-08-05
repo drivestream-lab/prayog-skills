@@ -72,15 +72,50 @@ class DevelopmentStageContractTest(unittest.TestCase):
         self.assertNotEqual(scenario["next"], "spec-implementation-plan")
 
     def test_product_leakage_cannot_pass(self) -> None:
-        scenario = next(
-            s for s in self.scenarios if s["name"] == "adr-product-leakage-findings"
+        for name in (
+            "adr-invents-unapproved-behavior-needs-input",
+            "adr-quality-leakage-findings",
+        ):
+            scenario = next(s for s in self.scenarios if s["name"] == name)
+            self.assertNotEqual(scenario["outcome"], "pass")
+            # Technical-review-native findings (T12 audit results) use TF-*,
+            # never feasibility-owned FF-* (see id-conventions.md).
+            self.assertTrue(any(b.startswith("TF-") for b in scenario["blockers"]))
+
+    def test_missing_product_approval_routes_needs_input_not_findings(self) -> None:
+        """A T12 FAIL because the ADR depends on behavior absent from any
+        approved REQ-* is a missing-product-input gap (spec amendment
+        required), matching the SKILL.md rubric row for `needs-input`
+        ("product behavior missing from approved REQs") — not `findings`,
+        which is reserved for engineering-quality gaps PE can resolve without
+        a spec amendment."""
+        invents_behavior = next(
+            s
+            for s in self.scenarios
+            if s["name"] == "adr-invents-unapproved-behavior-needs-input"
         )
-        self.assertNotEqual(scenario["outcome"], "pass")
-        self.assertTrue(any(b.startswith("FF-") for b in scenario["blockers"]))
+        self.assertEqual(invents_behavior["outcome"], "needs-input")
+
+        quality_gap = next(
+            s for s in self.scenarios if s["name"] == "adr-quality-leakage-findings"
+        )
+        self.assertEqual(quality_gap["outcome"], "findings")
 
     def test_ground_findings_use_gf_namespace(self) -> None:
         scenario = next(s for s in self.scenarios if s["name"] == "grounding-findings")
         self.assertTrue(all(b.startswith("GF-") for b in scenario["blockers"]))
+
+    def test_technical_review_findings_use_tf_namespace_not_ff(self) -> None:
+        """Technical-review-native findings (a T-check FAIL discovered while
+        drafting/auditing the TDD/ADR) must use TF-*, not the feasibility-owned
+        FF-* namespace — see id-conventions.md Process ids / Rules."""
+        for name in (
+            "adr-invents-unapproved-behavior-needs-input",
+            "adr-quality-leakage-findings",
+        ):
+            scenario = next(s for s in self.scenarios if s["name"] == name)
+            self.assertTrue(all(b.startswith("TF-") for b in scenario["blockers"]))
+            self.assertFalse(any(b.startswith("FF-") for b in scenario["blockers"]))
 
 
 if __name__ == "__main__":

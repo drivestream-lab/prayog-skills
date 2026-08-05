@@ -50,14 +50,24 @@
     "blockers": ["FF-02"]
   },
   {
-    "name": "adr-product-leakage-findings",
+    "name": "adr-invents-unapproved-behavior-needs-input",
     "stage": "spec-technical-review",
-    "evidence": "T12 fails — ADR invents user-visible behavior not in approved REQ-*",
+    "evidence": "T12 fails — ADR depends on user-visible behavior not in any approved REQ-*; spec amendment required",
+    "outcome": "needs-input",
+    "next": "spec-human-decision",
+    "human_checkpoint": true,
+    "external_action": false,
+    "blockers": ["TF-01"]
+  },
+  {
+    "name": "adr-quality-leakage-findings",
+    "stage": "spec-technical-review",
+    "evidence": "T12 fails — ADR restates approved REQ-07 prose verbatim in Context instead of citing the id (engineering-quality gap, not missing product approval)",
     "outcome": "findings",
     "next": "spec-human-decision",
     "human_checkpoint": true,
     "external_action": false,
-    "blockers": ["FF-12"]
+    "blockers": ["TF-02"]
   },
   {
     "name": "technical-review-blocked",

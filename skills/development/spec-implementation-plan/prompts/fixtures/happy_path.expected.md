@@ -18,9 +18,10 @@ Follow the full procedure in this skill's `SKILL.md` (and `references/` when pre
 ## Non-negotiables (summary)
 1. Never skip checks (P1–P16); every TASK has observable exit criteria, proof (command|review), expected, evidence_expected, Implements REQ-*, depends_on, files path/action, and toolchain commands.
 2. No shadow REQ-W* ids; wave ids W0, W1, … only. §9 WorkManifest is `prayog/v1` (Prayog-owned); validate with `scripts/workmanifest_contract.py` (P16).
-3. Persist plan locally and fill Forge readiness (`/commit-workspace`); never commit/push/open PRs/apply labels. Board seeding happens after merge via `/create-board-tickets`.
-4. Verify source freshness against canonical handoff before planning. Map outcomes: missing source → needs-input; Draft ADR / unaccepted TDD → blocked; digest mismatch → stale; P4/P15/P16 contract failure or render failure → failed; clean → pass.
-5. P15: new/material product surface ⇒ co-ship unit TEST + FILE under `live_verify_dir`; `verify_command` / live block is smoke|sandbox (not unit / N/A when P15 applies). Map every acceptance criterion to a verification layer.
+3. Technical review is REQUIRED input (pin always routes feasibility into `/spec-technical-review`) — a genuinely missing TDD file is `needs-input`, not "N/A". P13: re-verify every cited Accepted ADR's `changes_user_visible_behavior`/`spec_amendment_required` are false AND re-run `scripts/adr_boundary_lint.py` (vendored in this skill) against the ADR content at plan time — do not trust Accepted status or self-declared metadata alone.
+4. Persist plan locally and fill Forge readiness (`/commit-workspace`); never commit/push/open PRs/apply labels. Board seeding happens after merge via `/create-board-tickets`.
+5. Verify source freshness against canonical handoff before planning. Map outcomes: missing source → needs-input; Draft ADR / unaccepted TDD / failed ADR re-check → blocked; digest mismatch → stale; P4/P15/P16 contract failure or render failure → failed; clean → pass.
+6. P15: new/material product surface ⇒ co-ship unit TEST + FILE under `live_verify_dir`; `verify_command` / live block is smoke|sandbox (not unit / N/A when P15 applies). Map every acceptance criterion to a verification layer.
 
 ## Envelope navigation (required)
 After choosing `outcome`, derive `next_candidates` and `human_checkpoint` from

@@ -19,8 +19,10 @@ Follow the full procedure in this skill's `SKILL.md` (and `references/` when pre
 1. Never skip checks in references/checks.md (T1–T12).
 2. Every engineering decision resolved or explicitly deferred with risk + default.
 3. Route only product-scope questions to the meta PRD PR — do not ask PM for architecture choices. ADR acceptance requires approved REQ-* bindings; never invent user-visible behavior (T12).
-4. Persist TDD/ADRs locally and fill Forge readiness (`/commit-workspace`); never commit/push/open PRs/apply labels. Gate 2 stays spec-pending until plan exists.
-5. Select workflow outcome from the stage rubric (`pass` / `findings` / `needs-input` / `blocked` / `stale` / `failed`).
+4. Cite REQ-* by id only in ADR Context/Recommendation/Consequences — never quote or paraphrase REQ/feasibility-evidence prose. One decision per ADR, ~150-400 words. Run `scripts/adr_boundary_lint.py` (vendored in this skill) against every Draft ADR before claiming T12 PASS — required, not optional — then still do the manual re-read (checks.md "T12 — run as an independent re-read").
+5. T12 FAIL from unapproved product behavior → `needs-input` (spec amendment), never `findings`; T12 FAIL from citation/quality only → `findings`.
+6. Persist TDD/ADRs locally and fill Forge readiness (`/commit-workspace`); never commit/push/open PRs/apply labels. Gate 2 stays spec-pending until plan exists.
+7. Select workflow outcome from the stage rubric (`pass` / `findings` / `needs-input` / `blocked` / `stale` / `failed`).
 
 ## Envelope navigation (required)
 After choosing `outcome`, derive `next_candidates` and `human_checkpoint` from

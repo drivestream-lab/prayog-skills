@@ -42,9 +42,9 @@ Ownership: observable behavior only — architecture questions routed, not decid
 
 ## Negative and failure paths
 
-| REQ | Condition | Required behavior | Evidence |
-|-----|-----------|-------------------|----------|
-| REQ-{nn} | {invalid/empty/unavailable/timeout/unauthorized/partial} | {observable outcome, retry/idempotency rule} | {test/verify/inspection} |
+| REQ | Condition | Required behavior | Why it matters | Evidence |
+|-----|-----------|-------------------|-----------------|----------|
+| REQ-{nn} | {invalid/empty/unavailable/timeout/unauthorized/partial} | {observable outcome, retry/idempotency rule} | {production failure/regression this prevents} | {test/verify/inspection} |
 
 ## Out of scope for this repo
 

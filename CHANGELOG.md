@@ -14,6 +14,17 @@ _(empty — tip changes land under `[0.5.0-rc.2]`)_
 Consumable tip for programmes remounting `agent_skills.ref: v0.5.0-rc.2`
 (resolve to the retagged tip SHA).
 
+### Added — ADR product-boundary lint (spec lane)
+
+- `scripts/adr_boundary_lint.py` (+ byte-identical copies under
+  `spec-technical-review` / `spec-implementation-plan` scripts) rejects REQ /
+  feature prose in ADR Context/Decision/Consequences and TDD engineering
+  sections; supports `--strict`, evidence digest print/verify, and `--tdd`.
+- Spec lane: feasibility `ALTERNATIVE:` / F13, TDD T12 independent re-read +
+  required lint evidence, plan P13 re-check, `TF-*` finding ids, tighter ADR
+  template scope, and clearer `needs-input` vs `findings` outcome split.
+- Consistency sync for lint copies; unit + development-stage contract coverage.
+
 ### Breaking — Stack identity equality (retagged tip)
 
 - Rename `profiles/frontend.yaml` → `profiles/nextjs-frontend.yaml`

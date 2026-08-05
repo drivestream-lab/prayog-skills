@@ -19,8 +19,9 @@ Follow the full procedure in this skill's `SKILL.md` (and `references/` when pre
 1. Never skip checks in references/checks.md; evidence for every finding.
 2. Verify source freshness (PRD digest, impact-map revision/scope, approval) before analysis.
 3. Read-only: persist the report locally and fill Forge readiness (`/commit-workspace`); never commit, push, branch, probe, or edit product source. Keep Gate 2 as spec-pending.
-4. 4-lane triage; map lanes to outcomes: PE/ADR blocker → findings; PM/domain → needs-input; gate → blocked; stale → stale; clean → pass. Informational findings do not block pass.
-5. Do not set spec-lgtm.
+4. `NEW-ADR` only when it clears the ADR qualification rubric (real trade-off, not a locally reversible choice). Every `NEW-ADR` Finding starts with the literal `ALTERNATIVE:` marker naming the technical alternative — never a REQ restatement. Spec quote is a short verbatim excerpt kept separate as lint evidence, not the finding.
+5. 4-lane triage; map lanes to outcomes: PE/ADR blocker → findings; PM/domain → needs-input; gate → blocked; stale → stale; clean → pass. Informational findings do not block pass.
+6. Do not set spec-lgtm.
 
 ## Envelope navigation (required)
 After choosing `outcome`, derive `next_candidates` and `human_checkpoint` from

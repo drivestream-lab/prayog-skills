@@ -109,14 +109,27 @@ SINGLE_VALUE_INVARIANTS = [
     ),
 ]
 
-SYNC_COPY_INVARIANT = (
-    "governance.md files marked SYNC-COPY must be byte-identical",
-    [
-        "skills/development/pre-implement/references/governance.md",
-        "skills/development/initiative-feasibility/references/governance.md",
-        "skills/development/spec-implementation-plan/references/governance.md",
-    ],
-)
+SYNC_COPY_INVARIANTS = [
+    (
+        "governance.md files marked SYNC-COPY must be byte-identical",
+        [
+            "skills/development/pre-implement/references/governance.md",
+            "skills/development/initiative-feasibility/references/governance.md",
+            "skills/development/spec-implementation-plan/references/governance.md",
+        ],
+    ),
+    (
+        "adr_boundary_lint.py must be vendored byte-identical into every skill "
+        "that references it — each skill is installed standalone "
+        "(`npx skills add --skill <name>`), so a shared root scripts/ path is "
+        "not present in a standalone install",
+        [
+            "scripts/adr_boundary_lint.py",
+            "skills/development/spec-technical-review/scripts/adr_boundary_lint.py",
+            "skills/development/spec-implementation-plan/scripts/adr_boundary_lint.py",
+        ],
+    ),
+]
 
 SKILL_REGISTRY_INVARIANT = (
     "Every skill directory must be listed in README.md",
@@ -982,10 +995,10 @@ def main() -> int:
         if errors:
             all_errors.append((description, errors))
 
-    desc, paths = SYNC_COPY_INVARIANT
-    errors = check_sync_copy(desc, paths)
-    if errors:
-        all_errors.append((desc, errors))
+    for desc, paths in SYNC_COPY_INVARIANTS:
+        errors = check_sync_copy(desc, paths)
+        if errors:
+            all_errors.append((desc, errors))
 
     desc, _ = SKILL_REGISTRY_INVARIANT
     errors = check_skill_registry()

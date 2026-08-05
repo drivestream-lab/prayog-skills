@@ -67,15 +67,37 @@ blocking PE/ADR → `findings`; blocking PM/domain → `needs-input`.
 
 ## ADR traceability (F13)
 
+> **Finding must start with the literal prefix `ALTERNATIVE:`** followed by
+> the unresolved *technical alternative* (see `governance.md` F13/P12) —
+> e.g. `ALTERNATIVE: sync vs. async processing for this ingestion path`.
+> Never a restatement of the REQ. This prefix is a machine-checkable marker,
+> not decoration — run `validate_finding_marker` before handing this row
+> off. **A `Finding` cell lacking the marker must be corrected here, in this
+> report, before handoff.** `/spec-technical-review` must treat a malformed
+> `Finding` as blocking upstream input and route it back to a re-run of this
+> skill (outcome `blocked`) — it must **not** infer, guess, or re-derive the
+> alternative from the REQ itself; doing so reconstructs architecture from
+> product prose downstream of the very check meant to stop that.
+> The **Spec quote** captured in "Governance findings" below is evidence the
+> ambiguity exists — it is not the finding, and must be carried forward only
+> as a `--source-text` input to `scripts/adr_boundary_lint.py` (proving the
+> ADR does *not* contain it), never copied into ADR Context.
+
 | Spec REQ / wave | Relevant ADR(s) | Status | Finding |
 |-----------------|-----------------|--------|---------|
-| REQ-{nn} / W{n} | ADR-… / NEW-ADR / N/A | aligned / conflict / missing ADR | |
+| REQ-{nn} / W{n} | ADR-… / NEW-ADR / N/A | aligned / conflict / missing ADR | `ALTERNATIVE: {technical alternative, not a REQ restatement}` |
 
 ## Governance findings (F13–F14)
 
+> **Spec quote** is a bounded, literal excerpt (quote marks required) used
+> only as lint evidence — never prose that a downstream reader could mistake
+> for pre-written ADR Context. Keep it short (one sentence) and verbatim so
+> `/spec-technical-review` can pass it unmodified to `adr_boundary_lint.py
+> --source-text` as the exact string to check the ADR against.
+
 | ID | Check | Spec quote | Governing doc | Finding |
 |----|-------|------------|---------------|---------|
-| FF-{nn} | F13 / F14 | | ADR-… / rule file | |
+| FF-{nn} | F13 / F14 | "{verbatim one-sentence excerpt}" | ADR-… / rule file | `ALTERNATIVE: {…}` (F13) / {governance finding} (F14) |
 
 ## Findings by severity
 

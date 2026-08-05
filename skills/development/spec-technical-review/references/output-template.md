@@ -24,7 +24,12 @@
 
 ## 1. Problem statement
 
-{1–3 sentences from spec. What engineering problem must be solved.}
+{1–3 sentences stating the **engineering** problem in engineering vocabulary
+(data flow, module boundary, protocol, storage, concurrency) — reference
+`REQ-*` ids for traceability, but do not lift or paraphrase the spec's
+behavioral sentences. If you cannot state the problem without reusing the
+spec's own phrasing, you have not yet identified the technical problem —
+keep analyzing before writing this section.}
 
 ---
 
@@ -228,12 +233,21 @@ PE review checklist (PE works through this on the spec PR):
   [ ] T9 Zero unresolved PE items?
   [ ] T11 ADR artifact integrity — every required file/link/digest is valid
   [ ] T12 Product-boundary integrity — every user-visible statement cites approved REQ-*
+  [ ] T12 mechanical: `scripts/adr_boundary_lint.py` run on every ADR (with
+      --require-sources and --approved-req-id) AND on the TDD (--tdd) —
+      confirm `Lint evidence` on each Accepted ADR, don't just take PASS on faith
+  [ ] T12 manual (lint cannot see these — see checks.md "three gaps"):
+      loose paraphrase in unfamiliar vocabulary; invented behavior under a
+      real REQ with flags left false; multiple decisions narrated in one
+      un-duplicated Recommendation section
 
 PE action (artifact acceptance — mid-lane):
   Review/comment or Request changes → developer updates TDD/ADR files
   Explicitly state when decisions are ready for acceptance
   Developer/PE updates ADR metadata Draft → Accepted and TDD Status → Accepted
-    (only when changes_user_visible_behavior and spec_amendment_required are false)
+    (only when changes_user_visible_behavior and spec_amendment_required are false,
+    Approval evidence / Approved head are populated, and Lint evidence is recorded —
+    not a placeholder)
   Publish acceptance package via Forge to spec branch (label remains spec-pending)
 
 After artifact acceptance:

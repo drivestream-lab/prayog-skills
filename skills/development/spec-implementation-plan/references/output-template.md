@@ -7,8 +7,8 @@ source_spec: {SPEC_PATH}
 source_spec_digest: sha256:{hex}
 feasibility_report: {FEASIBILITY_PATH or N/A}
 feasibility_digest: sha256:{hex or N/A}
-technical_review: {TECHNICAL_REVIEW_PATH or N/A}
-technical_review_digest: sha256:{hex or N/A}
+technical_review: {TECHNICAL_REVIEW_PATH}
+technical_review_digest: sha256:{hex}
 prd_digest: sha256:{hex}
 impact_map: {IMPACT_MAP_PATH}
 impact_map_revision: {N}
@@ -27,7 +27,7 @@ deciders: PE — spec-lgtm + Approve on exact head after full package
 |------|-------|--------|
 | Spec / digest | `{SPEC_PATH}` / `sha256:{hex}` | CURRENT / STALE |
 | Feasibility / digest | `{FEASIBILITY_PATH}` / `sha256:{hex}` | CURRENT / STALE |
-| Technical review / digest | `{TECHNICAL_REVIEW_PATH or N/A}` / `sha256:{hex or N/A}` | CURRENT / STALE / N/A |
+| Technical review / digest | `{TECHNICAL_REVIEW_PATH}` / `sha256:{hex}` | CURRENT / STALE |
 | Impact map / revision | `{IMPACT_MAP_PATH}` / `{N}` | CURRENT / STALE |
 | Repo scope digest | `sha256:{hex}` | CURRENT / STALE |
 | Approved meta PR head | `{SHA}` | CURRENT / STALE |
@@ -40,14 +40,21 @@ deciders: PE — spec-lgtm + Approve on exact head after full package
 > `verify_command` is **live** verify (human-run at checkpoint `live-verify`),
 > not `{test_command}`. When P15 applies, N/A is invalid — co-ship a FILE under
 > `live_verify_dir` in the same wave.
+> **Technical review has no N/A path** — the pin always routes feasibility
+> (`pass` or `findings`) into `/spec-technical-review` first, so a TDD file
+> always exists (possibly a light-confirmation TDD with zero ADRs). A
+> genuinely missing file here is `needs-input`, not an optional input; only
+> the **ADR list** in §0 may legitimately read "none required".
 
 ## 0. Technical design reference
 
 | Item | Value |
 |------|-------|
-| Technical review | {path to Technical-Review-{initiative}.md or "N/A — no NEW-ADR findings"} |
+| Technical review | `{path to Technical-Review-{initiative}.md}` — always present; the pin routes every feasibility outcome through `/spec-technical-review` before planning. A missing file is a stale/skipped-stage condition (`needs-input`), never "N/A" |
+| Technical review status | {Draft / Accepted} |
 | PE sign-off | {[ ] required / [x] complete — date} |
-| Resolved ADRs | {adr_dir/adr-NNN-slug.md (link, Status: Accepted), … or N/A — canonical files created by `/spec-technical-review` and accepted before planning; TDD §4 index refs alone are not sufficient} |
+| Resolved ADRs | {adr_dir/adr-NNN-slug.md (link, Status: Accepted), … or "none required — light confirmation, zero NEW-ADR findings" — canonical files created by `/spec-technical-review` and accepted before planning; TDD §4 index refs alone are not sufficient} |
+| ADR product-boundary re-check | For every cited Accepted ADR: `changes_user_visible_behavior: false` / `spec_amendment_required: false` confirmed **and** `scripts/adr_boundary_lint.py --require-sources` re-run at plan time with sources reconstructed from the spec + feasibility report (not a bare structure-only pass) — not assumed from Accepted status or self-declared metadata alone (see P13 "lint invocation") |
 | Outstanding PM questions | {list or "none — all resolved"} |
 | Outstanding domain questions | {list or "none — all resolved"} |
 
@@ -229,7 +236,7 @@ Review deadline: {date from front matter}
 
 PE checklist (before spec-lgtm):
   [ ] Spec + feasibility + TDD + Accepted ADRs + this plan on current head
-  [ ] §0 PE sign-off on TDD marked complete (or N/A with reason)
+  [ ] §0 PE sign-off on TDD marked complete — required, no N/A path (technical review always exists)
   [ ] Wave order and dependencies make sense
   [ ] Done-when / exit criteria are observable and testable (P4)
   [ ] Verification Coverage maps every criterion to a layer (P5)

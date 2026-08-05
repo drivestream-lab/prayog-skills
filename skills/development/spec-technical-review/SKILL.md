@@ -56,7 +56,12 @@ gate, `agentic_development_workflow` multi-role review, GitHub Spec Kit
 9. **Product/architecture boundary.** PE may frame options and draft ADRs
    against approved `REQ-*` constraints. An ADR **must not** become `Accepted`
    when it depends on user-visible behavior not already represented by an
-   approved `REQ-*` — amend and re-approve the spec first. T12 enforces this.
+   approved `REQ-*` — amend and re-approve the spec first. Reference `REQ-*`
+   by id only in Context/Recommendation/Consequences — never quote or
+   paraphrase the REQ's behavioral sentence; that restates the feature
+   instead of stating the engineering decision. T12 enforces this as an
+   independent re-read pass, not a same-pass self-grade (see
+   `references/checks.md`).
 10. **No forge mutations.** Do not commit, push, branch, open PRs, apply labels,
     create issues, or merge. Fill `handoff.forge` / recommend `/commit-workspace`.
 
@@ -95,16 +100,46 @@ product-scope context. Do not invent a meta path when empty.
    references, ADRs, rules_glob, as-built; stop if durable authority or tip is
    stale (not solely on feas file digest)
 2. **T1 Understand** — list all NEW-ADR items, Critical/Should-fix engineering
-   findings, and open engineering questions from feasibility
+   findings, and open engineering questions from feasibility. Every `NEW-ADR`
+   `Finding` cell must start with the literal `ALTERNATIVE:` marker (see
+   `initiative-feasibility/references/output-template.md`); run
+   `validate_finding_marker` (in the vendored `scripts/adr_boundary_lint.py`)
+   against each `Finding` cell.
+   **On a malformed `Finding` (missing marker): do not infer, guess, or
+   re-derive the alternative yourself — that reconstructs architecture from
+   product prose, the exact failure this stage exists to prevent.** Stop
+   drafting that ADR, select outcome `blocked`, cite the malformed finding,
+   and route it back to a re-run of `/initiative-feasibility` to correct the
+   phrasing (via `spec-human-decision` → `pass` → `initiative-feasibility`,
+   the same existing edge `stale` uses). Only well-formed `Finding` cells may
+   proceed to T3 Design. For each well-formed finding, extract only the
+   **technical alternative it names** and the `REQ-*` id(s) it cites. Collect
+   the feasibility report's "Spec quote" evidence text for each finding into
+   a source-text file — it proves the ambiguity exists, it is not draftable
+   Context; do not carry that quote (verbatim or paraphrased) into any
+   TDD/ADR field.
 3. **T2 Analyze** — read relevant Accepted ADRs; read rules_glob; map each
    finding to an engineering decision, a PM question, or a domain clarification
    (routing rubric in [references/governance.md](references/governance.md))
 4. **T3 Design** — classify every NEW-ADR using the rubric below; for each
    `ADR_REQUIRED`, allocate a stable file path and render
-   [references/adr-template.md](references/adr-template.md); produce module
-   boundaries and public interface contracts
+   [references/adr-template.md](references/adr-template.md) using only the
+   REQ id(s) and the technical alternative from T1 — not the feasibility
+   evidence text; produce module boundaries and public interface contracts
 5. **T4 Execute** — write TDD + every Draft ADR file; make TDD §4 an ADR
-   index; run T1–T12 checks
+   index; run T1–T12 checks. Run **T12 as a separate re-read pass** after the
+   files are written, not while still drafting them (see
+   [references/checks.md](references/checks.md) "T12 — run as an independent
+   re-read"): run `scripts/adr_boundary_lint.py` (vendored in this skill)
+   against every Draft ADR **first** — it is required, not optional, `SKIPPED`
+   only when no Python runtime is available; then reopen each ADR/TDD file as
+   an independent reader, strip `REQ-*` references from
+   Context/Recommendation/Consequences, and confirm what remains reads as an
+   engineering decision, not a feature description; confirm one-decision-per-ADR
+   and the word-count discipline in
+   [references/adr-template.md](references/adr-template.md). Fix violations
+   in the artifact itself before proceeding to T5 — a lint PASS alone is not
+   sufficient, the manual re-read still applies.
 6. **T5 Verify** — all required ADR files exist and are linked; all engineering
    blockers are resolved/deferred; only genuine PM/domain questions remain;
    T12 product-boundary integrity passes; select workflow outcome; emit
@@ -118,9 +153,9 @@ pinned `workflow.yaml`:
 | Outcome | When | Next (from workflow) |
 |---------|------|----------------------|
 | `pass` | T1–T12 PASS; engineering decisions resolved/deferred; T12 clean; ready for PE review; no blocking PM/domain that prevents PE package readiness | `technical-review-approval` |
-| `findings` | Unresolved engineering quality gaps that need human clarification before PE can accept (not product input) | `spec-human-decision` |
-| `needs-input` | Blocking PM or domain input required; product behavior missing from approved REQs | `spec-human-decision` |
-| `blocked` | Explicit gate prevents progress | `spec-human-decision` |
+| `findings` | Unresolved engineering quality gaps that need human clarification before PE can accept (not product input) — includes a T12 FAIL caused by **citation/quality** leakage (REQ prose quoted instead of cited, multi-decision or oversized ADR) where the underlying behavior is already covered by an approved REQ | `spec-human-decision` |
+| `needs-input` | Blocking PM or domain input required; product behavior missing from approved REQs — includes a T12 FAIL caused by an ADR that **depends on user-visible behavior not represented by any approved REQ** (`changes_user_visible_behavior` / `spec_amendment_required` true). This is a missing product-input gap, not an engineering-quality gap — do not emit `findings` for it. Amend and re-approve the spec first | `spec-human-decision` |
+| `blocked` | Explicit gate prevents progress — includes a malformed `NEW-ADR` `Finding` (missing the `ALTERNATIVE:` marker). Cite the malformed finding; do not re-derive the alternative yourself | `spec-human-decision` |
 | `stale` | Product-spec H1–H3 / G1 / tip authority drift | `initiative-feasibility` |
 | `failed` | Execution/render failure on valid inputs | `workflow-stop` |
 
