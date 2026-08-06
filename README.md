@@ -38,7 +38,7 @@ not workflow graph nodes.
 |---|---|
 | **License** | [MIT](LICENSE) |
 | **Version** | see [`VERSION`](VERSION) (branch `features/rc-2` experimental **0.5.0-rc.2**; mainline **0.4.3**) |
-| **Install** | [skills CLI](https://skills.sh) or `launchpad sync-harness-*` |
+| **Install** | [skills CLI](https://skills.sh) or Launchpad `apply-harness` |
 | **Pairs with** | [launchpad](https://github.com/drivestream-lab/launchpad) · `*-rules` repos |
 
 ---
@@ -146,21 +146,19 @@ PR head.
 
 ### With Launchpad (recommended)
 
-**PM meta workspace:**
-
 ```bash
-launchpad sync-harness-meta --apply
-launchpad verify-harness-meta
+# PM meta workspace
+launchpad apply-harness --meta --apply
+launchpad status --meta
+
+# App repo
+launchpad apply-harness --repo <service> --apply
+launchpad status --repo <service>
 ```
 
-**App repo:**
+(`--dry-run` is default; pass `--apply` to execute.)
 
-```bash
-launchpad sync-harness-app --repo <service> --apply
-launchpad verify-harness-app --repo <service>
-```
-
-Harness writes `.harness-pin.yaml`, seeds `.agents/skills/`, and optionally commits `skills-lock.json`. Keep **`.agents/`** gitignored in consumers.
+Skill hubs under `.harness/skills/` / `.agents/skills/` are local (often gitignored); re-run `apply-harness` after clone. Pin / submodule gitlinks are committed; `status` checks readiness. See [Launchpad factory CLI](https://github.com/drivestream-lab/launchpad/blob/develop/docs/onboarding/factory-cli.md) and [`docs/for-launchpad.md`](docs/for-launchpad.md).
 
 ### Manual — PM workspace
 
@@ -258,7 +256,7 @@ python3 /tmp/install_engg_reviews.py --target /path/to/pe-workspace --ref pe-rc-
 2. Bump `VERSION` and tag (`v0.4.0`)
 3. PR → `develop` → `main`
 4. Update tenant `config/harness-<org>.yaml` approved pairs (`agent_skills.ref`)
-5. Consumers run `sync-harness-meta` / `sync-harness-app` or bump pin manually
+5. Consumers run `apply-harness --meta` / `apply-harness --repo …` (then `status` as needed) or bump pin manually
 
 ---
 

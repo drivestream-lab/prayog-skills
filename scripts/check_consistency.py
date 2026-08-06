@@ -439,7 +439,7 @@ def check_profile_registry() -> list[str]:
     This is the check that would have caught the original registry-drift
     bug (ground-spec/loop-spec/spec-technical-review missing from
     profiles/*.yaml) — README mentions alone do not cover it, because
-    launchpad sync-harness seeds consumer repos from profiles/*.yaml, not
+    launchpad apply-harness seeds consumer repos from profiles/*.yaml, not
     from README.md.
 
     Deliberately avoids a YAML-parsing dependency (keeps this script
