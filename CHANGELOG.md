@@ -14,6 +14,46 @@ _(empty — tip changes land under `[0.5.0-rc.2]`)_
 Consumable tip for programmes remounting `agent_skills.ref: v0.5.0-rc.2`
 (resolve to the retagged tip SHA).
 
+### Changed — Digest simplification (walk-time ceremony removed, forge null-artifact fix)
+
+- **`artifact.digest` is now optional except on identity-minting stages.**
+  Required only on `prd-impact-map` (H1/H2), `spec-implementation-plan` §10
+  (`plan_digest`), and `spec-technical-review` ADR Lint evidence. All other
+  stages (feasibility, TDD, plan, pre-implement, wave-execution, ground-spec,
+  learning-extract) may omit it — `artifact.path` existing at the canonical
+  path is sufficient walk-time proof-of-write. Nothing in this repo's
+  validators (`scripts/handoff_contract.py`) ever read the generic per-hop
+  digest; only H1/H2/`map_revision` were ever compared. See
+  `references/handoff-envelope.md` (Required fields, Durable identity vs
+  mid-lane digests) and `references/artifact-write-contract.md` (Durable
+  identity).
+- **Removed self-referential "freshness table" digests** that were never
+  attested by any human reviewer and were already disclaimed as non-SSOT in
+  each skill's own `SKILL.md`: `initiative-feasibility` "Spec digest",
+  `spec-technical-review` "Feasibility digest", and `spec-implementation-plan`
+  `source_spec_digest` / `feasibility_digest` / `technical_review_digest`.
+  `prd_digest`, `repo_scope_digest`, and Gate 2's `plan_digest` (§10 Approve
+  attestation) are unchanged.
+- **Fixed forge-skill contract gap:** `open-draft-pr` and `commit-workspace`
+  had no `references/output-template.md` and no documented null-artifact
+  case, unlike `create-board-tickets`. Vague "persist a durable note" prompt
+  wording invited an orphan workspace file with a fabricated digest on every
+  run. Both now ship an explicit template (`artifact.path: null`) matching
+  `create-board-tickets`'s already-correct pattern; `check_consistency.py`
+  enforces it.
+- No change to `H1`–`H4`, `G1`–`G3`, `plan_digest`, ADR Lint evidence, the
+  `outcome`/`next_candidates`/`human_checkpoint`/`external_action`/`forge`
+  navigation fields, or any workflow transition. No canonical report file is
+  removed or renamed; every stage still writes its full content — only the
+  self-reported/never-verified digest line is gone.
+- Prompt packages: `initiative-feasibility@1.3.1`,
+  `spec-technical-review@1.3.1`, `spec-implementation-plan@1.6.1`,
+  `ground-spec@1.3.1` (PATCH — wording only); `open-draft-pr@1.2.0`,
+  `commit-workspace@1.2.0` (MINOR — new output-template reference).
+- **Partner note (Gateflow):** if any consumer hard-validates a non-null
+  `artifact.digest` on every envelope, it must be relaxed to match this
+  contract before remounting this tip — see `docs/for-gateflow.md`.
+
 ### Breaking — Wave-acceptance replaces live-verify; remove `/verify`
 
 - Checkpoint `live-verify` → **`wave-acceptance`**. `pass` = **human approved**

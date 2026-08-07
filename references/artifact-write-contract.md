@@ -82,6 +82,24 @@ Hash / cite roots of meaning that survive purge. Do **not** use mid-lane
 | **G2** | Spec merge commit SHA(s) | after spec merge |
 | **G3** | Wave merge commit SHA(s) | after `wave-signoff` |
 
+Two more attested identities exist outside this lettered set — they are not
+mid-lane ceremony, they gate a real human GitHub Approve the same way H1/G1 do:
+
+- **`plan_digest`** — digest of `Implementation-Plan-{INIT}.md`, embedded in
+  the `spec-implementation-plan` §10 Approve attestation body PE pastes into
+  their GitHub review at `coding-readiness`. Pins Gate 2 sign-off to the exact
+  plan content; a later edit without re-review is tamper-evident.
+- **ADR Lint evidence digest** — per-ADR digest at `spec-technical-review`,
+  required before ADR/TDD status can move Draft → Accepted at
+  `technical-review-approval`, and the only digest in this contract that is
+  independently re-verified by code (`scripts/adr_boundary_lint.py
+  --verify-lint-evidence`), not merely self-reported.
+
+Everything else carrying the word "digest" in a feas/TDD/plan front-matter
+"source freshness" table (e.g. a report restating its own upstream spec's or
+sibling report's digest) is informational only — never attested, never
+recomputed by any script. Omit rather than fabricate.
+
 ### Digest recipes
 
 **H1 — PRD digest.** SHA-256 of the canonical PRD file bytes as read for the

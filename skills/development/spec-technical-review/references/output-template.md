@@ -6,7 +6,6 @@
 | Spec | {SPEC_PATH} |
 | Spec digest | `sha256:{hex}` |
 | Feasibility report | {FEASIBILITY_PATH} |
-| Feasibility digest | `sha256:{hex}` |
 | PRD digest | `sha256:{hex}` |
 | Impact map / revision | `{path}` / `{N}` |
 | Repo scope digest | `sha256:{hex}` |

@@ -4,11 +4,8 @@ initiative: {INITIATIVE}
 status: Planned
 date_created: {YYYY-MM-DD}
 source_spec: {SPEC_PATH}
-source_spec_digest: sha256:{hex}
 feasibility_report: {FEASIBILITY_PATH or N/A}
-feasibility_digest: sha256:{hex or N/A}
 technical_review: {TECHNICAL_REVIEW_PATH}
-technical_review_digest: sha256:{hex}
 prd_digest: sha256:{hex}
 impact_map: {IMPACT_MAP_PATH}
 impact_map_revision: {N}
@@ -25,9 +22,9 @@ deciders: PE — spec-lgtm + Approve on exact head after full package
 
 | Item | Value | Status |
 |------|-------|--------|
-| Spec / digest | `{SPEC_PATH}` / `sha256:{hex}` | CURRENT / STALE |
-| Feasibility / digest | `{FEASIBILITY_PATH}` / `sha256:{hex}` | CURRENT / STALE |
-| Technical review / digest | `{TECHNICAL_REVIEW_PATH}` / `sha256:{hex}` | CURRENT / STALE |
+| Spec | `{SPEC_PATH}` | CURRENT / STALE |
+| Feasibility report | `{FEASIBILITY_PATH}` | CURRENT / STALE |
+| Technical review | `{TECHNICAL_REVIEW_PATH}` | CURRENT / STALE |
 | Impact map / revision | `{IMPACT_MAP_PATH}` / `{N}` | CURRENT / STALE |
 | Repo scope digest | `sha256:{hex}` | CURRENT / STALE |
 | Approved meta PR head | `{SHA}` | CURRENT / STALE |

@@ -147,7 +147,7 @@ handoff:
   outcome: {pass | findings | needs-input | blocked | failed}
   artifact:
     path: {reports_dir}/Ground-Report-{SPEC}-W{N}.md
-    digest: sha256:{hex}
+    # digest omitted — walk-time PURGE report, not a durable identity
   blockers: []  # GF-* when findings
   signals:
     wave: W{N}

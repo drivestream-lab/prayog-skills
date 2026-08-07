@@ -27,6 +27,14 @@ Orientation for orchestrator / AgentRunner maintainers. Pin SSOT:
    `wave-pr-action`, `initiative-closure-pr-action-app`,
    `initiative-closure-pr-action-meta`, `wave-in-progress-action`, and
    `wave-done-action` are `automated`; others `explicit`.
+9. **`artifact.digest` is optional except on identity-minting stages**
+   (`prd-impact-map`, `spec-implementation-plan` §10 `plan_digest`,
+   `spec-technical-review` ADR Lint evidence). Do not hard-require a non-null
+   `artifact.digest` on every envelope — feasibility/TDD/plan/wave-execution/
+   ground-spec/learning-extract hops may send `artifact.path` only. `null`
+   `artifact.path` is also valid on forge-skill notes (`open-draft-pr`,
+   `commit-workspace`) that have no workspace artifact. See
+   `../references/handoff-envelope.md` (Required fields).
 
 ## Initiative closure lane
 

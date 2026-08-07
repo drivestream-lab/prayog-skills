@@ -31,8 +31,8 @@ the content-skill baton after mutation.
 Root: `/workspace/example-repo`.
 
 ## Handoff baton (required)
-1. Persist any durable note under `/workspace/example-repo` and append the `handoff:`
-   envelope when the skill defines one.
-2. Then **overwrite** the file at exactly `/tmp/handoff-baton.yaml` with the same
-   `handoff:` envelope (plain YAML or a single fenced yaml block).
+1. This skill has no workspace artifact — do not create a note file.
+   `artifact.path` is `null`; see `references/output-template.md`.
+2. **Overwrite** the file at exactly `/tmp/handoff-baton.yaml` with the `handoff:`
+   envelope (plain YAML or a single fenced yaml block).
 3. Do not leave `/tmp/handoff-baton.yaml` empty when bound.

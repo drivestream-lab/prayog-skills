@@ -38,14 +38,17 @@ Human-walker equivalent of Gateflow `ForgeClient` **commit workspace**
 1. Resolve prior stage + `commit_workspace` policy from the pin.
 2. Determine includable paths (respect `.gitignore` / harness norms).
 3. Publish to the bound head when policy allows.
-4. Emit a short durable note + `handoff:` for this forge step (stage
-   `commit-workspace`).
+4. Report the result and emit `handoff:` for this forge step using
+   [references/output-template.md](references/output-template.md) —
+   `artifact.path` is `null` (this skill has no workspace artifact, including
+   the justified no-op case); do not invent a note file to hold the result.
 
 ## Workflow handoff
 
-1. Append/emit the envelope from `../../../references/handoff-envelope.md`.
-   Stage id: `commit-workspace`. Prefer `outcome: pass` when publish or
-   justified no-op succeeded.
+1. Emit the envelope from [references/output-template.md](references/output-template.md)
+   in chat. Stage id: `commit-workspace`. Prefer `outcome: pass` when publish
+   or justified no-op succeeded. `artifact.path: null` — there is no
+   workspace file to persist for this stage.
 2. When `handoff_path` is bound, **overwrite** that baton with the same
    envelope.
 3. Forge skills are **not** workflow graph nodes — do not invent

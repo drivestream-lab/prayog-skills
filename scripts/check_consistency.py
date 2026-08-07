@@ -222,7 +222,7 @@ REQUIRED_TOKENS = {
     ],
     "skills/development/spec-technical-review/references/output-template.md": [
         "Source freshness",
-        "Feasibility digest",
+        "Repo scope digest",
         "All T1–T12 checks",
         "T12 Product-boundary",
         "FF-",
@@ -284,6 +284,16 @@ REQUIRED_TOKENS = {
         "workmanifest-contract-pass",
         "Preserved task metadata",
         "B1–B8",
+    ],
+    "skills/forge/open-draft-pr/references/output-template.md": [
+        "no workspace artifact",
+        "path: null",
+        "pr_url",
+    ],
+    "skills/forge/commit-workspace/references/output-template.md": [
+        "no workspace artifact",
+        "path: null",
+        "commit_sha",
     ],
     "skills/requirements/validate-requirements/output-templates.md": [
         "report_revision",

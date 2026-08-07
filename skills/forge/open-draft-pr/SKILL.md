@@ -47,13 +47,18 @@ Human-walker equivalent of Gateflow `ForgeClient` **open/update Draft PR**
 3. Create or update Draft PR (title, body from readiness).
 4. Apply `apply_labels`; remove `remove_labels` / obsolete projection labels
    per pin. Wave Draft PRs typically carry no auto labels from the pin.
-5. Report PR URL; emit forge-step handoff.
+5. Report PR URL; emit forge-step handoff using
+   [references/output-template.md](references/output-template.md) —
+   `artifact.path` is `null` (this skill has no workspace artifact); do not
+   invent a note file to hold the result.
 6. Never merge. Never apply `*-lgtm`. Wave merge stays human-only at
    `wave-signoff`.
 
 ## Workflow handoff
 
-1. Append/emit envelope; stage id: `open-draft-pr`.
+1. Emit the envelope from [references/output-template.md](references/output-template.md)
+   in chat; stage id: `open-draft-pr`. `artifact.path: null` — there is no
+   workspace file to persist for this stage.
 2. Dual-write `handoff_path` when bound.
 3. Not a graph node — resume programme from the content handoff’s
    `next_candidates` after successful PR action (human records auth).

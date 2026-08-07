@@ -10,7 +10,8 @@ handoff:
   outcome: findings
   artifact:
     path: docs/specification/reports/Initiative-Feasibility-Report-INIT-001.md
-    digest: sha256:{hex}
+    # digest omitted — this stage does not mint/cite a durable identity;
+    # artifact.path existing is the walk-time proof-of-write
   blockers:
     - FF-02
   signals:
@@ -35,8 +36,8 @@ Canonical artifact paths and revision rules:
 | `contract` | Delivery contract implemented by the producer |
 | `stage` | Node id from `workflow.yaml` |
 | `outcome` | One of the contract outcomes |
-| `artifact.path` | Stage output (canonical path while the file exists) |
-| `artifact.digest` | Digest of that output after save — **walk-time integrity only** |
+| `artifact.path` | Stage output (canonical path while the file exists); `null` when the stage has no workspace artifact (e.g. forge skills that only mutate GitHub) |
+| `artifact.digest` | **Required only** on stages that mint or cite a durable identity — `prd-impact-map` (H1/H2), `spec-implementation-plan` §10 (`plan_digest`), `spec-technical-review` ADR Lint evidence. **Optional/omit elsewhere** — `artifact.path` existing at the canonical location is sufficient walk-time proof-of-write; do not fabricate a digest to fill this field on stages where it isn't required |
 | `blockers` | Stable process/delivery ids that prevent progress |
 | `signals` | Stage-specific routing facts; never implicit prose |
 | `next_candidates` | Must match the pinned `workflow.yaml` transition for `(stage, outcome)`; never an authorization to execute |
@@ -49,14 +50,23 @@ records who ran a skill; it does not change navigation or eligibility.
 
 ### Durable identity vs mid-lane digests
 
-`artifact.digest` on feas / TDD / plan / wave reports proves **this hop’s file**
-was written. It is **not** long-term freshness SSOT after initiative-closure
-purge (those paths are PURGE — see
-[artifact-write-contract.md](artifact-write-contract.md)).
+On feas / TDD / plan / wave reports, `artifact.path` existing at the canonical
+location is the walk-time proof that **this hop's file** was written.
+`artifact.digest` is **optional** on these stages — omit it rather than
+fabricate one; nothing in this contract or its validators reads it back, and
+these paths are PURGE at initiative-closure anyway (see
+[artifact-write-contract.md](artifact-write-contract.md)). Front-matter fields
+that merely restate an upstream file's digest for a "source freshness" table
+(e.g. a feasibility report citing its own spec's digest) are the same kind of
+non-authoritative value — informational at best, never attested by a human
+reviewer, safe to omit.
 
 Long-term / mid-lane **`stale`** authority is **H1–H4 + G1–G3** (PRD digest,
-scope digest, map revision, product-spec citations, gate/merge SHAs) and board
-WorkManifest after seed — not recomputing or requiring purged-file digests.
+scope digest, map revision, product-spec citations, gate/merge SHAs) plus
+**`plan_digest`** (the Gate 2 `spec-implementation-plan` §10 attestation
+identity) and the ADR **Lint evidence** digest (`spec-technical-review`,
+independently re-verifiable via `scripts/adr_boundary_lint.py
+--verify-lint-evidence`) — not recomputing or requiring purged-file digests.
 
 Purge-stage handoffs list `deleted` / `refused` / `missing_ok` under `signals`
 (or the purge artifact body); they do not invent extra digest gates.
