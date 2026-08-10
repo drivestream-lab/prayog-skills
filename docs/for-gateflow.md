@@ -35,6 +35,8 @@ Orientation for orchestrator / AgentRunner maintainers. Pin SSOT:
    `artifact.path` is also valid on forge-skill notes (`open-draft-pr`,
    `commit-workspace`) that have no workspace artifact. See
    `../references/handoff-envelope.md` (Required fields).
+10. **Tools (optional, never a dependency)** — see `## Tools` section below
+    before wiring any codegraph capability into an orchestrated hop.
 
 ## Initiative closure lane
 
@@ -179,6 +181,40 @@ must honor `authorization` (automated Draft PR open on `spec-pr-action` /
 `initiative-closure-pr-action-meta` / `wave-in-progress-action` /
 `wave-done-action`) and must **not** merge at `wave-signoff`
 or `initiative-closure-signoff-app` / `initiative-closure-signoff-meta`.
+
+## Tools (optional codegraph capability — not a prayog-skills deliverable)
+
+Interface, freshness/confidence discipline: `../references/codegraph-tool-contract.md`.
+This section is a partner note, not a requirement — every packaged skill
+that references the contract already works with zero codegraph tool
+available, via direct `source_roots` reads. Nothing else in this pin depends
+on Gateflow ever building this.
+
+**If/when Gateflow's own team chooses to wire this in**, the natural
+integration point in Gateflow's *own* accepted architecture is the adapter
+registry pattern (ADR-003, ADR-006) — the same shape already proven for
+`RUNNER` (`cursor` implemented; `opencode`/`claude_code` honest stubs) and
+`NOTIFIER` adapters:
+
+1. Add a `TOOL_PROVIDER` kind to `AdapterSlotKindType` (today only `RUNNER`
+   and `NOTIFIER` exist) and register a `codegraph` adapter, following the
+   same `AdapterRegistry.register(id, slot_kind, implemented=bool)` pattern
+   `CursorAgentRunner` already uses.
+2. The actual connection point is `CursorAgentRunner` passing the codegraph
+   MCP server's connection details as a call argument to the Cursor SDK's
+   `Agent.create(...)` / `agent.send(...)` — the SDK already supports
+   inline MCP servers natively; this is a config/credential handoff, not a
+   Gateflow-side relay or proxy. The agent session then calls the tool
+   directly, iteratively, the same way a human walker already can today with
+   zero Gateflow involvement.
+3. **Never add the codegraph adapter to any stage's required-adapter-set in
+   `SlotValidator`.** `SlotValidator`'s whole job is to fail closed *before
+   accepting work* when a *required* adapter is unimplemented (ADR-006). If
+   the codegraph adapter is ever marked required, Gateflow's own
+   fail-closed-before-accept behavior turns an intentionally optional,
+   never-blocking Tool into an accidental hard gate — directly contradicting
+   this contract. It must stay permanently optional in Gateflow's own
+   selection policy.
 
 ## Out of scope (Initiative C2 — deferred)
 

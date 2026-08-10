@@ -67,6 +67,28 @@ FENCE_RE = re.compile(
     flags=re.DOTALL | re.IGNORECASE,
 )
 
+# Live-verify coverage marker — a plain literal substring, not a per-language
+# comment syntax. See references/live-verify-coverage-contract.md.
+COVERS_MARKER_RE = re.compile(r"prayog:covers:\s*([^\n\r]+)")
+
+
+def extract_declared_coverage(text: str) -> list[str] | None:
+    """Return the REQ-* ids self-declared by a ``prayog:covers:`` marker, or
+    None when the marker is absent (no evidence to check — not a mismatch).
+
+    Only keeps REQ-shaped tokens — the marker's trailing text often runs
+    into a comment closer (``-->``, ``*/``, ``#>``) depending on the host
+    file's native comment syntax; filtering by shape is more robust than
+    trying to enumerate every closer for every language."""
+    match = COVERS_MARKER_RE.search(text)
+    if not match:
+        return None
+    return [
+        item.strip()
+        for item in re.split(r"[,\s]+", match.group(1).strip())
+        if REQ_ID_RE.fullmatch(item.strip())
+    ]
+
 
 def _err(code: str, message: str, path: str = "") -> dict[str, str]:
     return {"code": code, "message": message, "path": path}
@@ -395,12 +417,52 @@ def _validate_task(
     return tid_out
 
 
+def _check_declared_coverage(
+    covers: list[str],
+    *,
+    wave_id: str,
+    wave_files: list[str],
+    base_path: Path | None,
+    path: str,
+    errors: list[dict[str, str]],
+) -> None:
+    """Cross-check ``live.covers`` against any wave file's self-declared
+    marker (resolved via files[], never by parsing ``command``). Only runs
+    when a workspace root is supplied — omit ``base_path`` and this is
+    skipped, not failed. A file with no marker is not evidence of anything
+    (best-effort backfill); only a *present but disjoint* marker fails."""
+    if base_path is None or not wave_files:
+        return
+    for rel_path in wave_files:
+        candidate = base_path / rel_path
+        if not candidate.is_file():
+            continue
+        try:
+            text = candidate.read_text(encoding="utf-8")
+        except OSError:
+            continue
+        declared = extract_declared_coverage(text)
+        if declared is None:
+            continue
+        if declared and covers and not (set(declared) & set(covers)):
+            errors.append(
+                _err(
+                    "live_coverage_mismatch",
+                    f"{rel_path} declares coverage {declared} disjoint from "
+                    f"manifest live.covers {covers} — plan and artifact have drifted",
+                    f"{path}.covers",
+                )
+            )
+
+
 def _validate_live(
     live: Any,
     *,
     wave_id: str,
     verify_command: Any,
     errors: list[dict[str, str]],
+    wave_files: list[str] | None = None,
+    base_path: Path | None = None,
 ) -> None:
     path = f"work[{wave_id}].verification.live"
     if not isinstance(live, dict):
@@ -474,6 +536,14 @@ def _validate_live(
         for j, req in enumerate(covers):
             if not isinstance(req, str) or not REQ_ID_RE.fullmatch(req) or SHADOW_REQ_RE.match(req):
                 errors.append(_err("live_covers", f"invalid REQ in covers: {req!r}", f"{path}.covers[{j}]"))
+        _check_declared_coverage(
+            [c for c in covers if isinstance(c, str)],
+            wave_id=wave_id,
+            wave_files=wave_files or [],
+            base_path=base_path,
+            path=path,
+            errors=errors,
+        )
 
     for field in ("prerequisites", "expected_observations", "cleanup", "stop_conditions"):
         value = live.get(field)
@@ -495,8 +565,20 @@ def _validate_live(
             )
 
 
-def validate_workmanifest(source: str | dict[str, Any]) -> list[dict[str, str]]:
-    """Validate WorkManifest text or mapping. Return structured errors (empty = ok)."""
+def validate_workmanifest(
+    source: str | dict[str, Any],
+    *,
+    base_path: str | Path | None = None,
+) -> list[dict[str, str]]:
+    """Validate WorkManifest text or mapping. Return structured errors (empty = ok).
+
+    ``base_path``, when supplied, enables the live-verify coverage
+    cross-check (resolves each wave's declared ``files[]`` under this root
+    and compares any self-declared marker against ``live.covers``). Omit it
+    and that check is skipped, not failed — every other check runs
+    regardless."""
+    if base_path is not None:
+        base_path = Path(base_path)
     data, errors = _load_mapping(source)
     if data is None:
         return errors
@@ -580,6 +662,7 @@ def validate_workmanifest(source: str | dict[str, Any]) -> list[dict[str, str]]:
 
         task_ids: set[str] = set()
         edges: dict[str, list[str]] = {}
+        wave_files: list[str] = []
         for j, task in enumerate(tasks):
             tid = _validate_task(task, wave_id=wid, wave_num=wnum, index=j, errors=errors)
             if tid:
@@ -593,6 +676,14 @@ def validate_workmanifest(source: str | dict[str, Any]) -> list[dict[str, str]]:
                 impl = task.get("implements") if isinstance(task, dict) else []
                 if isinstance(impl, list):
                     all_implements.update(str(x) for x in impl if isinstance(x, str))
+            if isinstance(task, dict):
+                for entry in task.get("files") or []:
+                    if (
+                        isinstance(entry, dict)
+                        and entry.get("action") in {"create", "modify"}
+                        and isinstance(entry.get("path"), str)
+                    ):
+                        wave_files.append(entry["path"])
 
         for tid, deps in edges.items():
             for dep in deps:
@@ -636,6 +727,8 @@ def validate_workmanifest(source: str | dict[str, Any]) -> list[dict[str, str]]:
                 wave_id=wid,
                 verify_command=wave.get("verify_command"),
                 errors=errors,
+                wave_files=wave_files,
+                base_path=base_path,
             )
 
     # Contiguous wave ordering W0..Wn
@@ -662,6 +755,14 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description="Validate prayog/v1 WorkManifest")
     parser.add_argument("path", type=Path, help="Plan markdown (§9) or standalone YAML")
     parser.add_argument("--json", action="store_true", help="Emit errors as JSON")
+    parser.add_argument(
+        "--base-path",
+        type=Path,
+        default=None,
+        help="Workspace root for the live-verify coverage cross-check "
+        "(resolves files[] and compares self-declared markers against "
+        "live.covers). Omit to skip that check only.",
+    )
     args = parser.parse_args(argv)
 
     if not args.path.is_file():
@@ -669,7 +770,7 @@ def main(argv: list[str] | None = None) -> int:
         return 2
 
     text = args.path.read_text(encoding="utf-8")
-    errors = validate_workmanifest(text)
+    errors = validate_workmanifest(text, base_path=args.base_path)
     if args.json:
         print(json.dumps({"ok": not errors, "errors": errors}, indent=2))
     elif errors:

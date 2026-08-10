@@ -65,7 +65,16 @@ Ids: `../../../references/id-conventions.md` (`GF-*` for findings).
 11. Write Ground Report and as-built updates **locally**; prepare the
     exact-head merge package for `wave-signoff`; pin routes to
     `wave-done-action` then `wave-signoff` (merge only). Never commit or
-    merge from this skill.
+    merge from this skill. As-built writes follow the split in
+    `../../../references/artifact-write-contract.md` —
+    `Implementation-Status-{INIT}.md` for detail, one index row in
+    `implementation-status.md` for the pointer; never append a new table to
+    the shared index.
+12. If a codegraph provider is available (MCP tool matching
+    `../../../references/codegraph-tool-contract.md`, or a local CLI), prefer
+    it for cross-spec contract / boundary questions. Always fall back to
+    direct `source_roots` reads when unavailable — never block or change
+    outcome selection on its absence.
 
 ## Outcome selection
 
@@ -110,6 +119,7 @@ Illustrative only — **transitions SSOT:** pinned root `workflow.yaml`
 4. `docs/specification/as-built/implementation-status.md`
 5. `Wave-Execution-{INIT}-W{N}.md`; accept signal (`wave-accepted` / wave-acceptance); optional/legacy `Live-Verify-*` when present
 6. Ground reports of prior waves (for cross-spec contract baseline)
+7. **Codegraph provider** — OPTIONAL — see `../../../references/codegraph-tool-contract.md`
 7. Relevant ADRs + domain-filtered MDC
 8. Ground check output (`{ground_command}`) + unit verification (`{test_command}`)
 9. `Learning-Extract-{INIT}-W{N}.md` when present

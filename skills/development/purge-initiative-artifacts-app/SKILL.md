@@ -45,7 +45,10 @@ Normative allowlist / refuse:
    - `{adr_dir}/adr-*-*.md` that are still **Draft** (not Accepted)
 4. **Refuse** (never delete): `{product_spec_dir}/INIT-*.md` for this
    initiative; **Accepted** ADRs; anything under `source_roots`,
-   `unit_tests_dir`, `live_verify_dir` **scripts**; `.harness/`; product source.
+   `unit_tests_dir`, `live_verify_dir` **scripts**; `.harness/`; product source;
+   `{as_built_dir}/implementation-status.md` (index) and
+   `{as_built_dir}/Implementation-Status-{INIT}.md` (this initiative's
+   detail) — both `KEEP`, never on the PURGE allowlist.
 5. Idempotent: missing allowlisted files → ok. Empty delete set → still `pass`
    with rationale in handoff signals.
 6. Work on the **initiative-closure** head cut from integration (`develop`)

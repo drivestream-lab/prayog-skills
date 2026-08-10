@@ -89,6 +89,11 @@ Canonical artifact:
     - board tickets seeded (wave issues exist per rule 11).
     If any check fails: stop — do not produce a pass checklist or write product
     code.
+13. If a codegraph provider is available (MCP tool matching
+    `../../../references/codegraph-tool-contract.md`, or a local CLI), prefer
+    it for impact/dependency questions when reading contracts consumed.
+    Always fall back to direct `source_roots` reads when unavailable — never
+    block or change outcome selection on its absence.
 
 ## Outcome selection
 
@@ -162,7 +167,9 @@ bound outside this skill.
    `depends_on`, file scope, **Implements `REQ-*`**, exit criteria/proof, and
    wave `verification` (check/unit/live). Cite the board wave issue URL and
    list every `TASK-*` for this wave in the checklist (projection only).
-8. `tests_readme` — when the slice adds or changes verification
+8. `tests_readme` — fixed pointer; use `scripts/verify_coverage_query.py`
+   for actual coverage lookups when the slice adds or changes verification
+9. **Codegraph provider** — OPTIONAL — see `../../../references/codegraph-tool-contract.md`
 
 **Gate for W0 (first wave):** no prior Ground Report exists. The gate is
 the implementation plan PE sign-off (§0 of the plan). Confirm it is marked

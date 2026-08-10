@@ -3,14 +3,30 @@
 Pin-declared **mutation** policy for GitHub (and related systems). Orthogonal to
 **tools** provisioned *during* a skill hop (for example code-graph / MCP).
 
-| | Tools (future / slots) | Forge |
-|--|------------------------|-------|
+| | Tools | Forge |
+|--|-------|-------|
 | When | During the skill hop | After the hop, or on a following `external-action` |
 | Who | Agent runtime may call | Platform ForgeClient (runner) or human forge skill |
 | What | Assist / read | Commit tree, Draft PR, projection labels, board tickets |
 
 Contract surface: `delivery-contract.yaml` → `forge:`. Narrative SSOT: this file.
 Handoff instance payload: [`handoff-envelope.md`](handoff-envelope.md) (`forge:`).
+
+## Tools (optional, never blocking)
+
+Interface + freshness/confidence discipline: [`codegraph-tool-contract.md`](codegraph-tool-contract.md).
+Any skill that uses one records it under `signals` with this shared shape —
+one convention across every skill that adopts it, not a per-skill format:
+
+```yaml
+signals:
+  codegraph_provider: local-graphify | mcp-<name> | degraded-none
+  grounding_depth: deep | light | none
+```
+
+Presence or absence of a Tool never changes `outcome`, `next_candidates`,
+`human_checkpoint`, or `external_action` — those are the only fields that
+drive navigation, and Tools are orthogonal to all of them.
 
 ## Pin fields
 

@@ -44,6 +44,11 @@ Pattern borrowed from awesome-copilot `create-github-issues-for-unmet-specificat
    probes, edit product source, or clean up environments. Gate 2 label stays
    **`spec-pending`** — do not set `spec-lgtm` during feasibility.
 9. **Do not implement** product code. Spec-only artifacts; publication is Forge.
+10. If a codegraph provider is available (MCP tool matching
+    `../../../references/codegraph-tool-contract.md`, or a local CLI), prefer
+    it for architecture/impact/coverage questions. Always fall back to direct
+    `source_roots` reads when unavailable — never block or change outcome
+    selection on its absence.
 
 ## Inputs
 
@@ -65,6 +70,7 @@ for PRD / impact-map freshness. Do not invent a meta path when empty.
 8. **Layout** — `.harness/profile.yaml` or [references/layout-defaults.md](references/layout-defaults.md)
 9. **`rules_glob`** — workspace MDC rules (REQUIRED). Read before T2 Analyze.
 10. **`adr_dir`** — architecture decision records (REQUIRED). Run relevant-ADR pass per [references/governance.md](references/governance.md) before T2 Analyze.
+11. **Codegraph provider** — OPTIONAL — see `../../../references/codegraph-tool-contract.md`
 
 ## When to use
 

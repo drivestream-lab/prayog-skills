@@ -32,6 +32,21 @@ product source / unit tests / live-verify **scripts** (not Live-Verify report
 prose). **Outside the tree:** programme board WorkManifest projection; Gate 1 /
 spec / wave / initiative-closure merge SHAs on PRs.
 
+**As-built (app) — KEEP, split by initiative, not one growing ledger:**
+
+| Artifact | Canonical path | Longevity |
+|----------|----------------|-----------|
+| As-built index | `{as_built_dir}/implementation-status.md` | **KEEP** — one row per capability, overwritten in place, never appended |
+| Per-initiative as-built detail | `{as_built_dir}/Implementation-Status-{INIT}.md` | **KEEP** — written once per initiative; stops growing once that initiative's waves close; never deleted, never merged back into the index |
+
+Same directory as the `as_built` layout key (path unchanged) — only what
+lives *at* that path changes shape. Skills that read `as_built` as an input
+need no wording change: they read the index for a fast pointer, and open the
+cited per-initiative file only when they need that initiative's detail. This
+mirrors the "supersede, never rewrite the past" discipline already used for
+`Ground-Report-*-W{N}.md` etc. — just applied to a `KEEP` artifact instead of
+a `PURGE` one, so nothing is ever destroyed and nothing ever needs pruning.
+
 Draft ADRs under `{adr_dir}` are **PURGE (app)** until Accepted — then KEEP.
 
 ## Durable roots and purge (initiative closure)
@@ -42,7 +57,7 @@ Working papers accumulate through all waves. **One mental model:** purge
 | Repo | KEEP (refuse delete) | PURGE allowlist |
 |------|----------------------|-----------------|
 | **meta** | `prd/INIT-*.md`, `Impact-Map-{INIT}.md` | `Validation-Report-{INIT}.md`, `Resolution-{INIT}.md` |
-| **app** | `product/INIT-*.md`, Accepted ADRs, source / unit / live-verify **scripts** | Feas, TDD, Implementation-Plan, Pre-Implement-W*, Wave-Execution-W*, optional/legacy Live-Verify-W*, Ground-Report-W*, Learning-Extract-W*, Draft ADRs |
+| **app** | `product/INIT-*.md`, Accepted ADRs, source / unit / live-verify **scripts**, as-built index, `Implementation-Status-{INIT}.md` | Feas, TDD, Implementation-Plan, Pre-Implement-W*, Wave-Execution-W*, optional/legacy Live-Verify-W*, Ground-Report-W*, Learning-Extract-W*, Draft ADRs |
 
 **Lane (pin):** eng loop then PM loop, each self-contained:
 
@@ -94,6 +109,12 @@ mid-lane ceremony, they gate a real human GitHub Approve the same way H1/G1 do:
   `technical-review-approval`, and the only digest in this contract that is
   independently re-verified by code (`scripts/adr_boundary_lint.py
   --verify-lint-evidence`), not merely self-reported.
+- **Live-verify coverage marker** — self-declared `REQ-*` coverage inside a
+  `live_verify_dir` artifact (script or runbook), the durable substitute for
+  `verification.live.covers` once the plan that declared it is purged. See
+  [live-verify-coverage-contract.md](live-verify-coverage-contract.md).
+  Cross-checked (not merely trusted) by `scripts/workmanifest_contract.py`
+  when a workspace root is supplied.
 
 Everything else carrying the word "digest" in a feas/TDD/plan front-matter
 "source freshness" table (e.g. a report restating its own upstream spec's or

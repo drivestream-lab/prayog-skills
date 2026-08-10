@@ -2,12 +2,14 @@
 
 from __future__ import annotations
 
+import tempfile
 import unittest
 from pathlib import Path
 
 import yaml
 
 from scripts.workmanifest_contract import (
+    extract_declared_coverage,
     extract_workmanifest_yaml,
     validate_workmanifest,
 )
@@ -109,6 +111,52 @@ class WorkManifestContractTest(unittest.TestCase):
             self.assertEqual(set(err), {"code", "message", "path"})
             self.assertTrue(err["code"])
             self.assertTrue(err["message"])
+
+    def test_extract_declared_coverage_parses_marker(self) -> None:
+        self.assertEqual(
+            extract_declared_coverage("# prayog:covers: REQ-01, REQ-02\n"),
+            ["REQ-01", "REQ-02"],
+        )
+
+    def test_extract_declared_coverage_none_when_absent(self) -> None:
+        self.assertIsNone(extract_declared_coverage("no marker here\n"))
+
+    def test_live_coverage_skipped_without_base_path(self) -> None:
+        # Same fixture that passes today — omitting base_path must never add
+        # a coverage-check error, even though the referenced file isn't
+        # actually opened.
+        text = (FIXTURES / "valid.yaml").read_text(encoding="utf-8")
+        self.assertEqual(validate_workmanifest(text), [])
+
+    def test_live_coverage_matches_when_marker_present(self) -> None:
+        text = (FIXTURES / "valid.yaml").read_text(encoding="utf-8")
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            script = base / "tests" / "verify" / "verify_health.py"
+            script.parent.mkdir(parents=True)
+            script.write_text("# prayog:covers: REQ-01\nprint('PASS')\n")
+            errors = validate_workmanifest(text, base_path=base)
+            self.assertEqual(errors, [])
+
+    def test_live_coverage_mismatch_when_marker_disjoint(self) -> None:
+        text = (FIXTURES / "valid.yaml").read_text(encoding="utf-8")
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            script = base / "tests" / "verify" / "verify_health.py"
+            script.parent.mkdir(parents=True)
+            script.write_text("# prayog:covers: REQ-99\nprint('PASS')\n")
+            errors = validate_workmanifest(text, base_path=base)
+            self.assertIn("live_coverage_mismatch", _codes(errors))
+
+    def test_live_coverage_no_marker_is_not_an_error(self) -> None:
+        text = (FIXTURES / "valid.yaml").read_text(encoding="utf-8")
+        with tempfile.TemporaryDirectory() as tmp:
+            base = Path(tmp)
+            script = base / "tests" / "verify" / "verify_health.py"
+            script.parent.mkdir(parents=True)
+            script.write_text("print('PASS')  # no marker — legacy artifact\n")
+            errors = validate_workmanifest(text, base_path=base)
+            self.assertNotIn("live_coverage_mismatch", _codes(errors))
 
 
 if __name__ == "__main__":

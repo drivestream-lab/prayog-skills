@@ -199,8 +199,9 @@ here.
 
 | Task | File | Action |
 |------|------|--------|
-| Update implementation-status.md | `docs/specification/as-built/implementation-status.md` | mark wave in_progress → complete |
-| Update tests/README.md | `tests/README.md` | add live smoke/sandbox commands for co-shipped scripts |
+| Create/update per-initiative as-built detail | `docs/specification/as-built/Implementation-Status-{INITIATIVE}.md` | Record this wave's capability/code/test/verify detail — **KEEP**, written once per initiative, never appended to across initiatives |
+| Update as-built index row | `docs/specification/as-built/implementation-status.md` | Overwrite this capability's one row in place (current status + pointer to the file above) — never append a new table |
+| Ensure live-verify coverage marker | the co-shipped/extended `live_verify_dir` artifact itself | Self-declare `REQ-*` coverage per `../../../references/live-verify-coverage-contract.md`. **Do not** edit `tests/README.md` for this — it is not the source of truth |
 
 > **ADR lifecycle** — Draft and Accepted ADR files are created and accepted during
 > `/spec-technical-review` and the `technical-review-approval` checkpoint.

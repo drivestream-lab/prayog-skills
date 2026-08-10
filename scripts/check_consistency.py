@@ -228,6 +228,15 @@ REQUIRED_TOKENS = {
         "FF-",
         "approved REQ-",
     ],
+    "skills/development/spec-implementation-plan/references/checks.md": [
+        "verify_coverage_query.py",
+        "Required overlap check",
+        "live-verify-coverage-contract.md",
+    ],
+    "skills/development/initiative-feasibility/references/checks.md": [
+        "verify_coverage_query.py",
+        "fixed pointer, not a source of per-capability truth",
+    ],
     "skills/development/spec-technical-review/references/adr-template.md": [
         "product_constraints",
         "supersedes",
@@ -254,6 +263,8 @@ REQUIRED_TOKENS = {
         "cleanup:",
         "workmanifest-contract.md",
         "P1–P16",
+        "Implementation-Status-{INITIATIVE}",
+        "live-verify-coverage-contract.md",
     ],
     "skills/development/pre-implement/references/output-template.md": [
         "Plan source freshness",
@@ -616,6 +627,25 @@ def check_required_tokens() -> list[str]:
         for token in tokens:
             if token not in text:
                 errors.append(f"  {relative_path}: missing required token {token!r}")
+    return errors
+
+
+def check_codegraph_provider_links() -> list[str]:
+    """Any SKILL.md mentioning 'codegraph provider' must link the shared
+    contract doc, directly or via engg-reviews' own codegraph-provider.md
+    (which itself points at the shared doc) — a safety net for future
+    additions, not just today's five."""
+    errors: list[str] = []
+    for path in sorted(SKILLS_DIR.glob("*/*/SKILL.md")):
+        text = path.read_text(encoding="utf-8")
+        if "codegraph provider" in text.lower() and not (
+            "codegraph-tool-contract.md" in text or "codegraph-provider.md" in text
+        ):
+            errors.append(
+                f"  {path.relative_to(ROOT)}: mentions 'codegraph provider' without "
+                f"linking references/codegraph-tool-contract.md (or engg-reviews' "
+                f"codegraph-provider.md, which points at it)"
+            )
     return errors
 
 
@@ -1034,6 +1064,10 @@ def main() -> int:
     errors = check_required_tokens()
     if errors:
         all_errors.append(("Workflow producer/consumer contracts must be complete", errors))
+
+    errors = check_codegraph_provider_links()
+    if errors:
+        all_errors.append(("Codegraph provider mentions must link the shared contract doc", errors))
 
     errors = check_forbidden_workflow_text()
     if errors:

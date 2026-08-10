@@ -14,6 +14,57 @@ _(empty — tip changes land under `[0.5.0-rc.2]`)_
 Consumable tip for programmes remounting `agent_skills.ref: v0.5.0-rc.2`
 (resolve to the retagged tip SHA).
 
+### Added — Live-verify coverage marker, as-built split, optional codegraph tool contract
+
+- **Live-verify coverage lives at the source, not in a growing `tests/README.md`.**
+  New `references/live-verify-coverage-contract.md`: a stack-agnostic, literal
+  text marker (`prayog:covers: REQ-*`) self-declared inside any
+  `live_verify_dir` artifact — code comment or markdown runbook alike —
+  resolved via the plan's own `files[]` paths, never by parsing `command`.
+  `spec-implementation-plan` P15 now requires an explicit overlap check
+  (`scripts/verify_coverage_query.py`) before declaring a new FILE, with a
+  third worked example showing the extend-not-duplicate path; P9 no longer
+  accepts a `tests/README.md` edit as satisfying live-verify coverage.
+  `scripts/workmanifest_contract.py` optionally cross-checks the manifest's
+  `verification.live.covers` against the artifact's self-declared marker
+  when a workspace root is supplied (`--base-path` / `base_path=`) — omitted
+  by default, so every existing invocation is unaffected.
+- **`implementation-status.md` splits by initiative — nothing deleted, growth
+  bounded.** New per-initiative `KEEP` file
+  `Implementation-Status-{INIT}.md` (written once, stops growing once that
+  initiative's waves close); the shared `implementation-status.md` shrinks to
+  one row per capability, overwritten in place, never appended — same
+  "supersede, never rewrite" discipline this repo already uses for
+  `Ground-Report-*-W{N}.md`, applied to a `KEEP` artifact. Both new file
+  kinds get explicit `KEEP` classification in `artifact-write-contract.md`
+  and an explicit refuse-list entry in `purge-initiative-artifacts-app` —
+  closing a pre-existing gap where neither `implementation-status.md` nor
+  `tests/README.md` was formally classified at all.
+- **Optional codegraph tool contract**, promoted out of the `engg-reviews`
+  adjunct pack to a shared `references/codegraph-tool-contract.md`: interface
+  (`ensure_graph`/`query`/`path`/`explain`/`freshness`), freshness/edge-confidence
+  discipline, and degraded-mode fallback — a `Tool`, never `Forge`, never a
+  dependency for any packaged skill to function. Five mainline skills
+  (`initiative-feasibility`, `spec-draft`, `spec-implementation-plan`,
+  `ground-spec`, `pre-implement`) gain one optional NON-NEGOTIABLE bullet +
+  Inputs row each: prefer the provider when available, always fall back,
+  never block or change outcome selection on its absence.
+  `references/forge-side-effects.md` formalizes the shared
+  `signals.codegraph_provider` / `signals.grounding_depth` shape.
+  `docs/for-gateflow.md` adds a partner-only note describing Gateflow's own
+  `AdapterSlotKindType`/`SlotValidator` (ADR-003/006) as the natural
+  integration point if Gateflow's team chooses to build this — explicitly
+  not a prayog-skills deliverable, and explicitly warns against ever marking
+  the adapter required in `SlotValidator`, which would turn an intentionally
+  optional Tool into an accidental hard gate.
+- New scripts: `scripts/verify_coverage_query.py` (read-only, stdout-only
+  query over self-declared coverage — no "current listing" file to keep in
+  sync, ever). New tests: `tests/test_verify_coverage_query.py`, coverage
+  cases in `tests/test_workmanifest_contract.py`.
+- Prompt packages: `spec-implementation-plan@1.7.0`, `initiative-feasibility@1.4.0`,
+  `spec-draft@1.4.0`, `ground-spec@1.4.0`, `pre-implement@1.8.0` (MINOR —
+  additive optional guidance); `purge-initiative-artifacts-app@1.1.1` (PATCH).
+
 ### Changed — Digest simplification (walk-time ceremony removed, forge null-artifact fix)
 
 - **`artifact.digest` is now optional except on identity-minting stages.**

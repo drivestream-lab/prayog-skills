@@ -65,6 +65,11 @@ This skill bridges the gap — it reads the PRD and drafts structured spec
 11. **Outcome vocabulary.** Emit only `pass`, `needs-input`, `blocked`,
     `stale`, or `failed` (this stage has no `findings` edge). Map evidence to
     the outcome rubric below; do not invent lane-specific outcomes.
+12. If a codegraph provider is available (MCP tool matching
+    `../../../references/codegraph-tool-contract.md`, or a local CLI), prefer
+    it for architecture/impact questions. Always fall back to direct
+    `source_roots` reads when unavailable — never block or change outcome
+    selection on its absence.
 
 ## Prerequisites
 
@@ -103,6 +108,7 @@ procedure explicitly says so.
    it exists — understand the repo's existing domain.
 7. **`adr_dir`** — existing ADRs constrain what this spec can propose.
 8. **Layout** — `.harness/profile.yaml` or [references/layout-defaults.md](references/layout-defaults.md)
+9. **Codegraph provider** — OPTIONAL — see `../../../references/codegraph-tool-contract.md`
 
 ## Process
 

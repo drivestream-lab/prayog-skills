@@ -1,5 +1,13 @@
 # Codegraph provider interface
 
+**Abstract interface, freshness/confidence discipline, and degraded-mode
+rules now live at the shared, walker-neutral
+[`../../../references/codegraph-tool-contract.md`](../../../references/codegraph-tool-contract.md)**
+— promoted out of this pack so the mainline dev lane can reference the same
+contract without depending on `engg-reviews`. This file keeps the
+Graphify-specific Phase 1 CLI mapping and fleet-layout detail below;
+everything else defers to the shared file.
+
 engg-reviews skills talk to a **codegraph provider**, not to Graphify by name
 in protocol steps. Phase 1 default implementation is local Graphify CLI.
 Phase 2 may swap in MCP + FalkorDB without rewriting skill outcomes.

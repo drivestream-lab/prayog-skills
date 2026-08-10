@@ -70,6 +70,18 @@ it does not own, parse, or execute WorkManifest.
     (spec ↔ plan REQ ids, plan ↔ §9 WorkManifest, Accepted ADR citations).
     Corrections belong in the **owning** artifact — do not invent a parallel
     truth in chat.
+13. Live-verify coverage lives in the artifact's own marker, not in
+    `tests/README.md` or as a growing table in `implementation-status.md` —
+    see `../../../references/live-verify-coverage-contract.md`. Run the
+    required overlap check (P15) before declaring a new `live_verify_dir`
+    FILE. As-built writes go to `Implementation-Status-{INIT}.md` (detail) +
+    one index row in `implementation-status.md` (pointer) — never a new
+    table appended to the shared index.
+14. If a codegraph provider is available (MCP tool matching
+    `../../../references/codegraph-tool-contract.md`, or a local CLI), prefer
+    it for architecture/impact/coverage questions. Always fall back to direct
+    `source_roots` reads when unavailable — never block or change outcome
+    selection on its absence.
 
 ## Inputs
 
@@ -97,6 +109,7 @@ Do not invent a meta path when empty.
    (REQUIRED; resolve under `meta_workspace` when bound)
 9. **Command contract** — canonical check, test, live verify (`verify_command`), and ground
    commands or explicit N/A rationale (REQUIRED)
+10. **Codegraph provider** — OPTIONAL — see `../../../references/codegraph-tool-contract.md`
 
 ## Prerequisite
 
