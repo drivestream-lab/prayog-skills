@@ -23,7 +23,7 @@ Governance detail: [governance.md](governance.md).
 | F10 | **Assumptions** | Spec asserts facts not evidenced in repo |
 | F11 | **Effort drivers** | Per wave: complexity drivers (not hour estimates) |
 | F12 | **PM questions** | All blocking gaps have a numbered question |
-| F13 | **ADR conformance** | Relevant Accepted ADRs cited; spec does not contradict ADR; `NEW-ADR` flagged when initiative needs an undocumented decision |
+| F13 | **ADR conformance** | Relevant Accepted ADRs cited; spec does not contradict ADR; `NEW-ADR` flagged when initiative needs an undocumented decision; the row's **Code evidence** column names the specific module/file this F1/F2 pass actually found relevant — not blank when something was found |
 | F14 | **MDC conformance** | Spec wording does not conflict with `rules_glob` patterns; discrepancies listed in findings |
 
 Severity: **Critical** (blocks progress — unresolved → blocking finding),

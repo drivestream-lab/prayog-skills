@@ -7,9 +7,9 @@ Governance and routing detail: [governance.md](governance.md).
 
 | ID | Check | Evidence required |
 |----|-------|-------------------|
-| T1 | **Module / package boundaries** | Each affected module named; inputs and outputs of each boundary stated; no ambiguity about which layer owns what |
+| T1 | **Module / package boundaries** | Each affected module named; inputs and outputs of each boundary stated; no ambiguity about which layer owns what. **Codebase grounding evidence** (codegraph query or `source_roots` read, per SKILL.md NON-NEGOTIABLE 11) confirms these modules actually exist, their declared relationships are real, and no unexpected existing module is relevant |
 | T2 | **Public interface contracts** | For each module boundary, the method names, argument shapes (types described in engineering terms, not language syntax), return shapes, and invariants are specified |
-| T3 | **NEW-ADR dispositions** | Every `NEW-ADR` maps to exactly one `ADR_REQUIRED` Draft file, `TDD_ONLY` rationale, or `DEFERRED_WITH_DEFAULT` risk/default/revisit trigger |
+| T3 | **NEW-ADR dispositions** | Every `NEW-ADR` maps to exactly one `ADR_REQUIRED` Draft file, `TDD_ONLY` rationale, or `DEFERRED_WITH_DEFAULT` risk/default/revisit trigger. **Codebase grounding evidence** supports the qualification (a named, real behavioral difference between options — see the ADR qualification rubric in `SKILL.md`), not just the feasibility finding's prose |
 | T4 | **Test policy** | Unit / integration / live-verify (smoke/sandbox) boundary documented per module; golden test strategy named (exact match vs fuzzy vs snapshot); AI-output determinism policy stated where applicable |
 | T5 | **Error handling strategy** | Failure modes named for each module; propagation path to caller stated; which failures are recoverable vs terminal; how errors surface at the CLI/API boundary |
 | T6 | **Observability contract** | What is logged at which level for each module; which fields appear in structured output (correlation IDs, domain IDs); no silent swallowing of errors |
@@ -18,7 +18,7 @@ Governance and routing detail: [governance.md](governance.md).
 | T9 | **Engineering questions — zero PE-lane items unresolved** | All items routed to PE lane are resolved or deferred with defaults; PM/domain items explicitly listed as out-of-scope for this review |
 | T10 | **PE review readiness** | Package explicitly requires PE review, lists the exact TDD + ADR files to review, reports `ready_for_pe_review`, and does not claim approval or planning readiness |
 | T11 | **ADR artifact integrity** | Every `ADR_REQUIRED` file exists under `{adr_dir}`, is Draft, links the feasibility finding/TDD, contains context/options/recommendation/consequences/revisit triggers, product constraint fields, and is linked with digest from TDD/handoff |
-| T12 | **Product-boundary integrity** | Every user-visible normative statement in the TDD or ADR cites an approved `REQ-*`. ADRs/TDD may constrain implementation but must **not** create scope, UX, acceptance criteria, priority, or business rules absent from approved REQs. FAIL when an ADR would invent or amend product behavior (`changes_user_visible_behavior` / `spec_amendment_required` true without an approved amended REQ), when an ADR quotes/paraphrases REQ prose instead of citing the id, or when an ADR resolves more than one decision or exceeds the record-body length discipline (see [adr-template.md](adr-template.md) Scope discipline) |
+| T12 | **Product-boundary integrity** | Every user-visible normative statement in the TDD or ADR cites an approved `REQ-*`. ADRs/TDD may constrain implementation but must **not** create scope, UX, acceptance criteria, priority, or business rules absent from approved REQs. **FAIL** when an ADR would invent or amend product behavior (`changes_user_visible_behavior` / `spec_amendment_required` true without an approved amended REQ), when an ADR quotes/paraphrases REQ prose instead of citing the id, when an ADR resolves more than one decision or exceeds the record-body length discipline (see [adr-template.md](adr-template.md) Scope discipline), or **when the independent re-read below (a genuinely separate pass — fresh subagent/task where the runtime supports it, a deliberate context-reset otherwise) flags product leakage or invented behavior the mechanical lint did not catch** |
 
 ## T4 vocabulary — do not leave "integration" undefined
 
@@ -118,8 +118,11 @@ PASS as proof none of these occurred — and do not treat a shape-valid
 narrows that gap but cannot force anyone to actually run it (see the
 script's own module docstring on this boundary).
 
-After T4 Execute writes all ADR/TDD files, re-open each one as a separate
-step and audit it as if it were someone else's submission:
+After T4 Execute writes all ADR/TDD files, re-open each one as a **genuinely
+separate pass** — a fresh sub-task/subagent with no visibility into this
+session's drafting turns where the runtime supports it, or a deliberate
+context-reset (read the file cold, as someone else's submission) when it
+does not — and audit it:
 
 1. For every Context / Recommendation / Consequences paragraph, mentally (or
    literally) strike every `REQ-*` id reference and re-read what remains. If

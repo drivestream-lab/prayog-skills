@@ -72,6 +72,16 @@ user-visible behavior.}
 
 ## Options considered
 
+**Before listing an Option here, independently ground it in the codebase**
+(codegraph query when available, `source_roots` read otherwise, per
+`SKILL.md` NON-NEGOTIABLE 11) to verify it is a real, technically viable
+alternative — not one already foreclosed by existing code (e.g. a dormant
+mechanism already does this) or by spec exclusions (e.g. REQ-14). Remove a
+foreclosed option, or explicitly annotate why it is listed despite the
+exclusion. If grounding shows every remaining option produces identical
+system behavior, this finding does not qualify as `ADR_REQUIRED` — see the
+qualification rubric in `SKILL.md`.
+
 | Option | Benefits | Costs / risks |
 |--------|----------|---------------|
 | A | | |

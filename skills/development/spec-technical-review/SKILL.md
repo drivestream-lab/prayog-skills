@@ -64,6 +64,21 @@ gate, `agentic_development_workflow` multi-role review, GitHub Spec Kit
    `references/checks.md`).
 10. **No forge mutations.** Do not commit, push, branch, open PRs, apply labels,
     create issues, or merge. Fill `handoff.forge` / recommend `/commit-workspace`.
+11. **Ground every `NEW-ADR` finding in the actual codebase before classifying
+    or drafting it — never draft from feasibility's `ALTERNATIVE:` text
+    alone.** Feasibility's F1/F2 baseline already inspected the repo once;
+    this stage re-verifies and extends that evidence, because a finding's
+    prose can itself encode a wrong question (see the ADR qualification
+    rubric below). Use a codegraph provider when available
+    (`../../../references/codegraph-tool-contract.md`), otherwise read
+    `source_roots` directly — **the tool is optional, the grounding activity
+    is not.** Record what was found (or "none found — new capability") in
+    the row's **Code evidence** — extend feasibility's column, don't just
+    trust it blank or stale.
+12. If a codegraph provider is available, prefer it for the grounding pass in
+    NON-NEGOTIABLE 11 and for other architecture/impact questions. Always
+    fall back to direct `source_roots` reads when unavailable — never block
+    or change outcome selection on its absence.
 
 ## Inputs
 
@@ -85,6 +100,7 @@ product-scope context. Do not invent a meta path when empty.
    meta PR head / tech-lead review when Gate 1 still applies (REQUIRED; resolve
    under `meta_workspace` when bound). Feasibility report is an input artifact,
    not long-term digest SSOT.
+8. **Codegraph provider** — OPTIONAL — see `../../../references/codegraph-tool-contract.md`
 
 ## When to use
 
@@ -118,28 +134,47 @@ product-scope context. Do not invent a meta path when empty.
    a source-text file — it proves the ambiguity exists, it is not draftable
    Context; do not carry that quote (verbatim or paraphrased) into any
    TDD/ADR field.
-3. **T2 Analyze** — read relevant Accepted ADRs; read rules_glob; map each
-   finding to an engineering decision, a PM question, or a domain clarification
-   (routing rubric in [references/governance.md](references/governance.md))
-4. **T3 Design** — classify every NEW-ADR using the rubric below; for each
-   `ADR_REQUIRED`, allocate a stable file path and render
-   [references/adr-template.md](references/adr-template.md) using only the
-   REQ id(s) and the technical alternative from T1 — not the feasibility
-   evidence text; produce module boundaries and public interface contracts
+3. **T2 Analyze** — read relevant Accepted ADRs; read rules_glob; **ground
+   every well-formed finding in the actual codebase** (NON-NEGOTIABLE 11):
+   verify and extend the row's Code evidence via codegraph query or
+   `source_roots` read before mapping anything — a dormant/existing
+   mechanism found here can change what the real engineering question is,
+   not just how it's answered (this is what separates a genuine trade-off
+   from a bookkeeping question — see the qualification rubric). Then map
+   each grounded finding to an engineering decision, a PM question, or a
+   domain clarification (routing rubric in
+   [references/governance.md](references/governance.md))
+4. **T3 Design** — classify every NEW-ADR using the rubric below, now that it
+   is grounded in code, not just in the finding's prose; for each
+   `ADR_REQUIRED`, allocate a stable file path. Before listing any Option in
+   the ADR, check it against the grounding evidence *and* the spec's scope/
+   exclusions — drop or explicitly annotate an option the code or the
+   approved spec already forecloses (never present a foreclosed option as a
+   live peer choice). Render
+   [references/adr-template.md](references/adr-template.md) using the REQ
+   id(s), the technical alternative from T1, and the T2 grounding evidence —
+   not the feasibility evidence text; produce module boundaries and public
+   interface contracts
 5. **T4 Execute** — write TDD + every Draft ADR file; make TDD §4 an ADR
    index; run T1–T12 checks. Run **T12 as a separate re-read pass** after the
    files are written, not while still drafting them (see
    [references/checks.md](references/checks.md) "T12 — run as an independent
    re-read"): run `scripts/adr_boundary_lint.py` (vendored in this skill)
    against every Draft ADR **first** — it is required, not optional, `SKIPPED`
-   only when no Python runtime is available; then reopen each ADR/TDD file as
-   an independent reader, strip `REQ-*` references from
-   Context/Recommendation/Consequences, and confirm what remains reads as an
-   engineering decision, not a feature description; confirm one-decision-per-ADR
-   and the word-count discipline in
+   only when no Python runtime is available. Then perform the manual re-read
+   as a **fresh, independent pass, not a same-session self-grade**: when the
+   runtime supports spawning a sub-task/subagent with no access to this
+   session's drafting turns, do the re-read there; otherwise, the honest
+   fallback is a deliberate context-reset — re-open each file as if it were
+   someone else's submission, not "the file I just wrote a moment ago." Strip
+   `REQ-*` references from Context/Recommendation/Consequences and confirm
+   what remains reads as an engineering decision grounded in the T2 code
+   evidence, not a feature description; confirm one-decision-per-ADR and the
+   word-count discipline in
    [references/adr-template.md](references/adr-template.md). Fix violations
    in the artifact itself before proceeding to T5 — a lint PASS alone is not
-   sufficient, the manual re-read still applies.
+   sufficient, the manual re-read still applies, and it is a weaker check
+   when it is not genuinely independent of the drafting reasoning.
 6. **T5 Verify** — all required ADR files exist and are linked; all engineering
    blockers are resolved/deferred; only genuine PM/domain questions remain;
    T12 product-boundary integrity passes; select workflow outcome; emit
@@ -209,6 +244,16 @@ rules, and (3) a real trade-off exists — **and** the decision is cross-module/
 service, security/privacy relevant, chooses data/storage authority or deployment
 architecture, is hard to reverse, constrains later initiatives, or deliberately
 departs from the constitution.
+
+**Criterion (3) requires naming the system-behavior difference between
+options, grounded in the T2 codebase inspection — not a checkbox.** "We could
+write this as one ADR or three" is not a trade-off; neither is any choice
+where every option produces identical runtime behavior. If grounding reveals
+no behavioral difference can be named, the finding is not `ADR_REQUIRED` —
+either reclassify as `TDD_ONLY`, or the grounding has surfaced a *different*,
+real question underneath the one feasibility posed (e.g. "does this need new
+verification machinery, or does an existing dormant mechanism already cover
+it") — draft against that question instead, don't force the original one.
 
 Use `TDD_ONLY` for a local, easily reversible implementation choice already
 bounded by rules. Use `DEFERRED_WITH_DEFAULT` only with a named risk, safe

@@ -81,10 +81,14 @@ blocking PE/ADR → `findings`; blocking PM/domain → `needs-input`.
 > ambiguity exists — it is not the finding, and must be carried forward only
 > as a `--source-text` input to `scripts/adr_boundary_lint.py` (proving the
 > ADR does *not* contain it), never copied into ADR Context.
+> **Code evidence** is the specific module/file path(s) from this row's F1/F2
+> baseline inspection that the alternative actually concerns — not prose, a
+> path. `/spec-technical-review` re-verifies and extends this before
+> drafting; it must never be blank when F1/F2 found something relevant.
 
-| Spec REQ / wave | Relevant ADR(s) | Status | Finding |
-|-----------------|-----------------|--------|---------|
-| REQ-{nn} / W{n} | ADR-… / NEW-ADR / N/A | aligned / conflict / missing ADR | `ALTERNATIVE: {technical alternative, not a REQ restatement}` |
+| Spec REQ / wave | Relevant ADR(s) | Status | Code evidence | Finding |
+|-----------------|-----------------|--------|----------------|---------|
+| REQ-{nn} / W{n} | ADR-… / NEW-ADR / N/A | aligned / conflict / missing ADR | `src/…` (module found during F1/F2, or "none found — new capability") | `ALTERNATIVE: {technical alternative, not a REQ restatement}` |
 
 ## Governance findings (F13–F14)
 

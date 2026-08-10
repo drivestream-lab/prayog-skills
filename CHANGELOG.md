@@ -65,6 +65,42 @@ Consumable tip for programmes remounting `agent_skills.ref: v0.5.0-rc.2`
   `spec-draft@1.4.0`, `ground-spec@1.4.0`, `pre-implement@1.8.0` (MINOR —
   additive optional guidance); `purge-initiative-artifacts-app@1.1.1` (PATCH).
 
+### Added — Required codebase grounding for ADR drafting (product-feature-leakage fix)
+
+- **`spec-technical-review` must ground every `NEW-ADR` finding in the actual
+  codebase before classifying or drafting it — not just trust feasibility's
+  `ALTERNATIVE:` text.** New NON-NEGOTIABLE 11/12: verify and extend the
+  finding's Code evidence via a codegraph query (when available, per
+  `references/codegraph-tool-contract.md`) or a direct `source_roots` read
+  otherwise — the tool is optional, the grounding activity is not. T2
+  Analyze and T3 Design (`SKILL.md`) and checks T1/T3 (`references/checks.md`)
+  now require this evidence explicitly, and the ADR qualification rubric
+  gains a concrete test: criterion (3) ("a real trade-off exists") requires
+  naming the actual system-behavior difference between options, grounded in
+  code — a choice where every option produces identical runtime behavior is
+  not `ADR_REQUIRED`. `references/adr-template.md`'s "Options considered"
+  section now instructs dropping/annotating any option the grounding or the
+  spec's own exclusions already foreclose, so a technically-dead option never
+  reads as a live peer choice.
+- **`initiative-feasibility`'s ADR traceability row (F13) gains a required
+  Code evidence column** — the specific module/file path this stage's own
+  F1/F2 baseline found relevant to the alternative, not blank when something
+  was found. `spec-technical-review` re-verifies and extends this column
+  rather than trusting it as-is, closing the gap where an `ALTERNATIVE:`
+  finding could be drafted from prose alone with no code ever inspected a
+  second time.
+- **T12's independent re-read is now a genuinely separate pass, not a
+  same-session self-grade.** `SKILL.md` T4 Execute and `references/checks.md`
+  both now call for a fresh sub-task/subagent with no visibility into the
+  drafting turns where the runtime supports spawning one, falling back to a
+  deliberate context-reset (read the file cold, as someone else's
+  submission) otherwise. The T12 check row's FAIL condition explicitly
+  includes "the independent re-read flags product leakage the mechanical
+  lint did not catch."
+- Prompt packages: `spec-technical-review@1.4.0` (MINOR — new mandatory
+  grounding step, no input/output schema change), `initiative-feasibility@1.4.1`
+  (PATCH — template column addition).
+
 ### Changed — Digest simplification (walk-time ceremony removed, forge null-artifact fix)
 
 - **`artifact.digest` is now optional except on identity-minting stages.**
