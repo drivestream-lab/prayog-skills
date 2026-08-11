@@ -11,22 +11,29 @@
 ## 0.1 — Parse the prior report
 
 Read the prior validation report. Extract:
-- **Validated on** date
-- **All findings** (every row from Critical, Should Fix, Verify, and Gaps tables) — capture the finding's location, check number, problematic text, and recommendation
+- **Validated on** date and **report_revision** (when present)
+- **All findings** (every row from Critical, Should Fix, Verify, and Gaps) —
+  capture `VF-*` id (or legacy `#`), location, target (`REQ-*`/`CAP-*`), check
+  number, problematic text, and recommendation. Carried-forward findings **keep
+  the same `VF-*`**.
 - **Clean checks** (checks that passed with 0 findings)
 - **Check summary table** (which checks were PASS / FAIL / SKIPPED)
+
+Prior report path must be the canonical
+`Validation-Report-{INIT}.md` when available (see
+`../../../references/artifact-write-contract.md`).
 
 ## 0.2 — Detect document changes
 
 Compare the current requirements document against what the prior report validated:
 
-1. **Change History section** — read the document's Change History table. Any version entries dated after the prior report's `Validated on` date represent changes made since the last validation. Record which sections, FRs, and tables were affected.
-2. **Prior finding spot-checks** — for each prior finding, check whether the problematic text (quoted in the finding) still exists at or near the reported location. This detects edits that weren't logged in Change History.
-3. **Section-level diff** — walk through the document's major sections (Executive Summary, Business Context, FRs, User Flows, Visual States, Error Handling, Assumptions, Dependencies, Risks, Open Questions) and flag any section whose content differs from what the prior findings reference.
+1. **Change History section** — read the document's Change History table. Any version entries dated after the prior report's `Validated on` date represent changes made since the last validation. Record which sections, `REQ-*`/`CAP-*` (or legacy FRs), and tables were affected.
+2. **Prior finding spot-checks** — for each prior finding (`VF-*`), check whether the problematic text (quoted in the finding) still exists at or near the reported location. This detects edits that weren't logged in Change History.
+3. **Section-level diff** — walk through the document's major sections (Executive Summary, Business Context, requirements/`REQ-*`, User Flows, Visual States, Error Handling, Assumptions, Dependencies, Risks, Open Questions/`OQ-*`) and flag any section whose content differs from what the prior findings reference.
 
 Produce a **change manifest**:
 
-| Change | What changed | Sections affected | FRs affected |
+| Change | What changed | Sections affected | REQ/CAP affected |
 |---|---|---|---|
 | [From Change History or spot-check] | [Description] | [Section list] | [FR list or "none"] |
 

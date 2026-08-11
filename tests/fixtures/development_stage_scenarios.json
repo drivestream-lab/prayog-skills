@@ -1,0 +1,282 @@
+[
+  {
+    "name": "clean-spec-pass",
+    "stage": "spec-draft",
+    "evidence": "D1–D12 pass; material questions resolved into REQs; clarification loop complete",
+    "outcome": "pass",
+    "next": "spec-pr-action",
+    "human_checkpoint": false,
+    "external_action": true,
+    "blockers": []
+  },
+  {
+    "name": "unresolved-clarification-needs-input",
+    "stage": "spec-draft",
+    "evidence": "Material ambiguity remains in Spec questions; D11 fails",
+    "outcome": "needs-input",
+    "next": "spec-human-decision",
+    "human_checkpoint": true,
+    "external_action": false,
+    "blockers": ["Q-1"]
+  },
+  {
+    "name": "feasibility-clean-pass",
+    "stage": "initiative-feasibility",
+    "evidence": "Zero unresolved blocking findings; informational observations only",
+    "outcome": "pass",
+    "next": "spec-technical-review",
+    "human_checkpoint": false,
+    "external_action": false,
+    "blockers": []
+  },
+  {
+    "name": "feasibility-pm-blocker-needs-input",
+    "stage": "initiative-feasibility",
+    "evidence": "Blocking PM/domain question unresolved; no PE/ADR finding",
+    "outcome": "needs-input",
+    "next": "spec-human-decision",
+    "human_checkpoint": true,
+    "external_action": false,
+    "blockers": ["FF-03"]
+  },
+  {
+    "name": "feasibility-pe-finding",
+    "stage": "initiative-feasibility",
+    "evidence": "PE/ADR blocker present (NEW-ADR or engineering decision)",
+    "outcome": "findings",
+    "next": "spec-technical-review",
+    "human_checkpoint": false,
+    "external_action": false,
+    "blockers": ["FF-02"]
+  },
+  {
+    "name": "adr-invents-unapproved-behavior-needs-input",
+    "stage": "spec-technical-review",
+    "evidence": "T12 fails — ADR depends on user-visible behavior not in any approved REQ-*; spec amendment required",
+    "outcome": "needs-input",
+    "next": "spec-human-decision",
+    "human_checkpoint": true,
+    "external_action": false,
+    "blockers": ["TF-01"]
+  },
+  {
+    "name": "adr-quality-leakage-findings",
+    "stage": "spec-technical-review",
+    "evidence": "T12 fails — ADR restates approved REQ-07 prose verbatim in Context instead of citing the id (engineering-quality gap, not missing product approval)",
+    "outcome": "findings",
+    "next": "spec-human-decision",
+    "human_checkpoint": true,
+    "external_action": false,
+    "blockers": ["TF-02"]
+  },
+  {
+    "name": "technical-review-blocked",
+    "stage": "spec-technical-review",
+    "evidence": "Explicit gate prevents progress (e.g. missing PE owner / closed review window)",
+    "outcome": "blocked",
+    "next": "spec-human-decision",
+    "human_checkpoint": true,
+    "external_action": false,
+    "blockers": ["FF-01"]
+  },
+  {
+    "name": "technical-review-stale",
+    "stage": "spec-technical-review",
+    "evidence": "Spec or feasibility digest mismatch vs canonical sources",
+    "outcome": "stale",
+    "next": "initiative-feasibility",
+    "human_checkpoint": false,
+    "external_action": false,
+    "blockers": []
+  },
+  {
+    "name": "draft-adr-at-planning-blocked",
+    "stage": "spec-implementation-plan",
+    "evidence": "Authoritative ADR exists but Status is Draft (P12 → blocked)",
+    "outcome": "blocked",
+    "next": "spec-human-decision",
+    "human_checkpoint": true,
+    "external_action": false,
+    "blockers": ["FF-02"]
+  },
+  {
+    "name": "plan-needs-input",
+    "stage": "spec-implementation-plan",
+    "evidence": "Authoritative source absent/unreadable; requirement cannot be determined",
+    "outcome": "needs-input",
+    "next": "spec-human-decision",
+    "human_checkpoint": true,
+    "external_action": false,
+    "blockers": []
+  },
+  {
+    "name": "plan-stale-sources",
+    "stage": "spec-implementation-plan",
+    "evidence": "Digest/head/revision mismatch vs feasibility/spec/ADR package",
+    "outcome": "stale",
+    "next": "initiative-feasibility",
+    "human_checkpoint": false,
+    "external_action": false,
+    "blockers": []
+  },
+  {
+    "name": "preflight-pass-to-loop",
+    "stage": "pre-implement",
+    "evidence": "WorkManifest contract pass; exit proof present; board/head readiness read-only OK; Pre-Implement artifact ready for commit_workspace",
+    "outcome": "pass",
+    "next": "loop-spec",
+    "human_checkpoint": false,
+    "external_action": false,
+    "blockers": []
+  },
+  {
+    "name": "preflight-failed",
+    "stage": "pre-implement",
+    "evidence": "Valid inputs present but preflight validation/execution failure",
+    "outcome": "failed",
+    "next": "workflow-stop",
+    "human_checkpoint": false,
+    "external_action": false,
+    "blockers": []
+  },
+  {
+    "name": "preflight-workmanifest-contract-blocked",
+    "stage": "pre-implement",
+    "evidence": "§9 WorkManifest fails scripts/workmanifest_contract.py (workmanifest-contract-pass false)",
+    "outcome": "blocked",
+    "next": "wave-signoff",
+    "human_checkpoint": true,
+    "external_action": false,
+    "blockers": ["TASK-W0-01"]
+  },
+  {
+    "name": "preflight-missing-exit-proof-blocked",
+    "stage": "pre-implement",
+    "evidence": "Wave TASK lacks exit.criteria or exit.proof (kind/expected/evidence_expected)",
+    "outcome": "blocked",
+    "next": "wave-signoff",
+    "human_checkpoint": true,
+    "external_action": false,
+    "blockers": ["TASK-W0-01"]
+  },
+  {
+    "name": "preflight-missing-live-verification-blocked",
+    "stage": "pre-implement",
+    "evidence": "P15 applies but wave lacks live-verification contract/script (or unit-as-live)",
+    "outcome": "blocked",
+    "next": "wave-signoff",
+    "human_checkpoint": true,
+    "external_action": false,
+    "blockers": ["TASK-W0-01"]
+  },
+  {
+    "name": "loop-task-evidence-pass",
+    "stage": "loop-spec",
+    "evidence": "All wave TASKs green with local proof; Wave-Execution written; commit_workspace readiness filled; handoff.forge ready for wave-pr-action",
+    "outcome": "pass",
+    "next": "wave-pr-action",
+    "human_checkpoint": false,
+    "external_action": true,
+    "blockers": []
+  },
+  {
+    "name": "loop-file-scope-blocked",
+    "stage": "loop-spec",
+    "evidence": "Prerequisites fail: WorkManifest file scope/dependency order cannot be honored (unbound head or invalid preflight)",
+    "outcome": "blocked",
+    "next": "wave-signoff",
+    "human_checkpoint": true,
+    "external_action": false,
+    "blockers": ["TASK-W0-01"]
+  },
+  {
+    "name": "wave-acceptance-findings",
+    "stage": "wave-acceptance",
+    "evidence": "Expected-versus-observed mismatch on smoke/sandbox at wave-acceptance",
+    "outcome": "findings",
+    "next": "loop-spec",
+    "human_checkpoint": false,
+    "external_action": false,
+    "blockers": []
+  },
+  {
+    "name": "wave-acceptance-pass-parks",
+    "stage": "wave-acceptance",
+    "evidence": "Human approved tip (smoke or P15 N/A); wave-accepted on tip",
+    "outcome": "pass",
+    "next": "wave-awaiting-closeout",
+    "human_checkpoint": false,
+    "external_action": false,
+    "blockers": []
+  },
+  {
+    "name": "grounding-findings",
+    "stage": "ground-spec",
+    "evidence": "Wave-assigned REQ missing acceptance evidence; GF-* opened",
+    "outcome": "findings",
+    "next": "loop-spec",
+    "human_checkpoint": false,
+    "external_action": false,
+    "blockers": ["GF-01"]
+  },
+  {
+    "name": "plan-vague-exit-failed",
+    "stage": "spec-implementation-plan",
+    "evidence": "TASK exit criterion is vague/non-observable (P4/P16 → failed)",
+    "outcome": "failed",
+    "next": "workflow-stop",
+    "human_checkpoint": false,
+    "external_action": false,
+    "blockers": ["TASK-W0-01"]
+  },
+  {
+    "name": "plan-dependency-cycle-failed",
+    "stage": "spec-implementation-plan",
+    "evidence": "Same-wave TASK depends_on cycle detected by WorkManifest validator (P16 → failed)",
+    "outcome": "failed",
+    "next": "workflow-stop",
+    "human_checkpoint": false,
+    "external_action": false,
+    "blockers": ["TASK-W0-01"]
+  },
+  {
+    "name": "plan-missing-file-scope-proof-failed",
+    "stage": "spec-implementation-plan",
+    "evidence": "TASK missing files path/action scope or exit.proof fields (P4/P16 → failed)",
+    "outcome": "failed",
+    "next": "workflow-stop",
+    "human_checkpoint": false,
+    "external_action": false,
+    "blockers": ["TASK-W0-01"]
+  },
+  {
+    "name": "plan-missing-live-manifest-failed",
+    "stage": "spec-implementation-plan",
+    "evidence": "P15 applies (new product surface) but wave lacks live verification block/script (P15/P16 → failed)",
+    "outcome": "failed",
+    "next": "workflow-stop",
+    "human_checkpoint": false,
+    "external_action": false,
+    "blockers": ["TASK-W0-01"]
+  },
+  {
+    "name": "plan-unit-as-live-failed",
+    "stage": "spec-implementation-plan",
+    "evidence": "verify_command / live.command is unit-only (make test / pytest) when P15 applies (P15/P16 → failed)",
+    "outcome": "failed",
+    "next": "workflow-stop",
+    "human_checkpoint": false,
+    "external_action": false,
+    "blockers": ["TASK-W0-01"]
+  },
+  {
+    "name": "plan-correct-na-layer-pass",
+    "stage": "spec-implementation-plan",
+    "evidence": "Docs-only wave; live applicable=false with reason; P1–P16 PASS including P15 N/A",
+    "outcome": "pass",
+    "next": "coding-readiness",
+    "human_checkpoint": true,
+    "external_action": false,
+    "blockers": []
+  }
+]

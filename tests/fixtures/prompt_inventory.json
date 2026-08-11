@@ -1,0 +1,23 @@
+{
+  "coverage_areas": ["requirements", "development", "forge"],
+  "note": "Prompt package coverage is directory inventory under these areas. Independent of workflow dispatch. engg-reviews is out of scope. Forge skills are human ForgeClient parity — not workflow graph nodes.",
+  "skills": [
+    {"area": "requirements", "skill_id": "validate-requirements"},
+    {"area": "requirements", "skill_id": "review-findings"},
+    {"area": "requirements", "skill_id": "update-documents"},
+    {"area": "requirements", "skill_id": "prd-impact-map"},
+    {"area": "requirements", "skill_id": "purge-initiative-artifacts-meta"},
+    {"area": "development", "skill_id": "spec-draft"},
+    {"area": "development", "skill_id": "initiative-feasibility"},
+    {"area": "development", "skill_id": "spec-technical-review"},
+    {"area": "development", "skill_id": "spec-implementation-plan"},
+    {"area": "development", "skill_id": "pre-implement"},
+    {"area": "development", "skill_id": "loop-spec"},
+    {"area": "development", "skill_id": "learning-extract"},
+    {"area": "development", "skill_id": "ground-spec"},
+    {"area": "development", "skill_id": "purge-initiative-artifacts-app"},
+    {"area": "forge", "skill_id": "commit-workspace"},
+    {"area": "forge", "skill_id": "open-draft-pr"},
+    {"area": "forge", "skill_id": "create-board-tickets"}
+  ]
+}

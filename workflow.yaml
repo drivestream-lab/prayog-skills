@@ -12,6 +12,9 @@ nodes:
   validate-requirements:
     type: skill
     profile: meta-pm
+    dispatch: manual
+    forge:
+      commit_workspace: optional
     outcomes:
       pass: prd-impact-map
       findings: review-findings
@@ -21,6 +24,9 @@ nodes:
   review-findings:
     type: skill
     profile: meta-pm
+    dispatch: manual
+    forge:
+      commit_workspace: optional
     outcomes:
       pass: update-documents
       needs-input: requirements-human-decision
@@ -29,6 +35,9 @@ nodes:
   update-documents:
     type: skill
     profile: meta-pm
+    dispatch: manual
+    forge:
+      commit_workspace: optional
     outcomes:
       pass: validate-requirements
       findings: review-findings
@@ -38,6 +47,9 @@ nodes:
   prd-impact-map:
     type: skill
     profile: meta-pm
+    dispatch: manual
+    forge:
+      commit_workspace: required
     outcomes:
       pass: prd-pr-action
       findings: requirements-human-decision
@@ -48,6 +60,7 @@ nodes:
 
   requirements-human-decision:
     type: human-checkpoint
+    purpose: requirements-clarification
     outcomes:
       pass: validate-requirements
       skipped: workflow-stop
@@ -57,13 +70,23 @@ nodes:
     owner: product
     provider: github
     authorization: explicit
+    forge:
+      action: open_draft_pr
+      draft: true
+      apply_labels:
+        - impact-map-pending
+      remove_labels: []
+      requires:
+        - title
+        - body_path
     outcomes:
-      pass: gate-1
+      pass: prd-impact-acceptance
       blocked: requirements-human-decision
       failed: workflow-stop
 
-  gate-1:
+  prd-impact-acceptance:
     type: human-checkpoint
+    purpose: prd-impact-acceptance
     owner: engineering-gate
     outcomes:
       pass: prd-merge
@@ -83,18 +106,46 @@ nodes:
   spec-draft:
     type: skill
     profile: development
+    dispatch: orchestrated
+    forge:
+      commit_workspace: required
     outcomes:
-      pass: initiative-feasibility
+      pass: spec-pr-action
       needs-input: spec-human-decision
       blocked: spec-human-decision
       stale: prd-impact-map
       failed: workflow-stop
 
+  spec-pr-action:
+    type: external-action
+    owner: engineering
+    provider: github
+    # Automated: ForgeClient open_draft_pr without interactive STOP when
+    # handoff.forge requires are complete.
+    authorization: automated
+    forge:
+      action: open_draft_pr
+      draft: true
+      apply_labels:
+        - spec-pending
+      remove_labels: []
+      requires:
+        - title
+        - body_path
+    outcomes:
+      pass: initiative-feasibility
+      blocked: spec-human-decision
+      failed: workflow-stop
+
   initiative-feasibility:
     type: skill
     profile: development
+    dispatch: orchestrated
+    forge:
+      commit_workspace: required
     outcomes:
-      pass: spec-implementation-plan
+      # Always enter PE technical review before plan (pass and findings).
+      pass: spec-technical-review
       findings: spec-technical-review
       needs-input: spec-human-decision
       blocked: spec-human-decision
@@ -104,6 +155,9 @@ nodes:
   spec-technical-review:
     type: skill
     profile: development
+    dispatch: orchestrated
+    forge:
+      commit_workspace: required
     outcomes:
       pass: technical-review-approval
       findings: spec-human-decision
@@ -114,6 +168,7 @@ nodes:
 
   technical-review-approval:
     type: human-checkpoint
+    purpose: tdd-adr-acceptance
     owner: engineering-gate
     outcomes:
       pass: spec-implementation-plan
@@ -123,6 +178,7 @@ nodes:
 
   spec-human-decision:
     type: human-checkpoint
+    purpose: spec-clarification
     outcomes:
       pass: initiative-feasibility
       stale: prd-impact-map
@@ -131,15 +187,19 @@ nodes:
   spec-implementation-plan:
     type: skill
     profile: development
+    dispatch: manual
+    forge:
+      commit_workspace: required
     outcomes:
-      pass: gate-2
+      pass: coding-readiness
       needs-input: spec-human-decision
       blocked: spec-human-decision
       stale: initiative-feasibility
       failed: workflow-stop
 
-  gate-2:
+  coding-readiness:
     type: human-checkpoint
+    purpose: coding-readiness
     owner: engineering-gate
     outcomes:
       pass: spec-merge
@@ -153,62 +213,165 @@ nodes:
     provider: github
     authorization: explicit
     outcomes:
-      pass: board-seed
+      pass: board-tickets-action
       failed: workflow-stop
 
-  board-seed:
-    type: skill
-    profile: development
+  board-tickets-action:
+    type: external-action
+    owner: engineering
+    provider: github
+    authorization: explicit
+    forge:
+      action: create_board_tickets
+      requires:
+        - initiative
+        - plan_path
     requires:
       - spec-pr-merged
       - implementation-plan-current
-      - workmanifest-p14-pass
+      # Documented predicate: §9 WorkManifest passes
+      # scripts/workmanifest_contract.py (prayog/v1 identity, task DAG,
+      # file scope, exit proof, live-verification completeness). Plan P16.
+      - workmanifest-contract-pass
+    outcomes:
+      pass: wave-in-progress-action
+      blocked: board-tickets-action
+      failed: workflow-stop
+
+  # Orch process hop (pin SSOT): move wave ticket → In Progress before coding.
+  # No human forge skill — ForgeClient only. Humans may move the card by habit.
+  wave-in-progress-action:
+    type: external-action
+    owner: engineering
+    provider: github
+    authorization: automated
+    forge:
+      action: update_board_status
+      status: in_progress
+      requires:
+        - ticket
     outcomes:
       pass: pre-implement
-      blocked: board-seed
+      blocked: board-tickets-action
       failed: workflow-stop
 
   pre-implement:
     type: skill
     profile: development
+    dispatch: orchestrated
+    forge:
+      # Checklist artifact must land on head_ref before coding (no PR STOP here).
+      commit_workspace: required
     outcomes:
       pass: loop-spec
-      needs-input: wave-human-decision
-      blocked: wave-human-decision
+      needs-input: wave-signoff
+      blocked: wave-signoff
       stale: spec-implementation-plan
       failed: workflow-stop
 
   loop-spec:
     type: skill
     profile: development
+    dispatch: orchestrated
+    forge:
+      commit_workspace: required
     outcomes:
-      pass: verify
+      # Code published via commit_workspace after this hop; then open Draft PR.
+      pass: wave-pr-action
       findings: loop-spec
-      blocked: wave-human-decision
+      blocked: wave-signoff
       failed: loop-spec
 
-  verify:
+  # Wave Draft-PR after checklist + code are on head_ref (reuse open_draft_pr).
+  # Placement after loop-spec avoids a mid-Pass-1 STOP before coding.
+  # authorization: automated — ForgeClient opens PR without interactive STOP.
+  # Not a merge action — human merge stays at wave-signoff (publish only).
+  wave-pr-action:
+    type: external-action
+    owner: engineering
+    provider: github
+    authorization: automated
+    forge:
+      action: open_draft_pr
+      draft: true
+      apply_labels: []
+      remove_labels: []
+      requires:
+        - title
+        - body_path
+        - head_ref
+        - base_ref
+    outcomes:
+      pass: wave-acceptance
+      blocked: wave-signoff
+      failed: workflow-stop
+
+  # Human prove on Draft PR tip (smoke under live_verify_dir, or P15 N/A).
+  # pass = human approved for this wave tip — only approval signal.
+  # Ingress: GitHub label wave-accepted (phase-1) or Gateflow Accept (later).
+  # Not a content skill; skills must not apply the label or mutate GitHub.
+  # pass parks; Pass-2 Enter-at learning-extract closes the wave.
+  wave-acceptance:
+    type: human-checkpoint
+    purpose: wave-acceptance
+    outcomes:
+      pass: wave-awaiting-closeout
+      findings: loop-spec
+      blocked: workflow-stop
+
+  wave-awaiting-closeout:
+    type: terminal
+
+  learning-extract:
     type: skill
     profile: development
+    dispatch: orchestrated
+    forge:
+      commit_workspace: optional
     outcomes:
       pass: ground-spec
-      skipped: ground-spec
-      findings: loop-spec
-      blocked: wave-human-decision
-      failed: loop-spec
+      findings: learning-extract
+      needs-input: wave-signoff
+      blocked: wave-signoff
+      failed: learning-extract
 
   ground-spec:
     type: skill
     profile: development
+    dispatch: orchestrated
+    forge:
+      commit_workspace: required
     outcomes:
-      pass: wave-human-decision
+      pass: wave-done-action
       findings: loop-spec
-      needs-input: wave-human-decision
-      blocked: wave-human-decision
+      needs-input: wave-signoff
+      blocked: wave-signoff
       failed: loop-spec
 
-  wave-human-decision:
+  # Orch process hop (pin SSOT): move wave ticket → Done, then human merges.
+  # No human forge skill — ForgeClient only. Merge stays at wave-signoff.
+  wave-done-action:
+    type: external-action
+    owner: engineering
+    provider: github
+    authorization: automated
+    forge:
+      action: update_board_status
+      status: done
+      requires:
+        - ticket
+    outcomes:
+      pass: wave-signoff
+      blocked: wave-signoff
+      failed: workflow-stop
+
+  # Human merge/publish only — not a second approval.
+  # Human approved was wave-acceptance; closeout already closed the wave.
+  # Gateflow/Forge must not merge. pass records merge commit SHA on the
+  # accepted tip (not via handoff.forge or approval labels).
+  wave-signoff:
     type: human-checkpoint
+    purpose: wave-signoff
     outcomes:
       pass: wave-complete
       findings: loop-spec
@@ -222,9 +385,89 @@ nodes:
 
   initiative-closure:
     type: human-checkpoint
+    purpose: initiative-closure
+    outcomes:
+      pass: purge-initiative-artifacts-app
+      findings: wave-signoff
+
+  # Eng closure loop (independent): purge → commit → automated Draft PR → human merge.
+  # Then PM closure loop (independent): same shape on meta. Skills do not couple.
+  # Handoff-only success (no Purge-*.md). No authorize-before-delete. No merge Forge.
+  purge-initiative-artifacts-app:
+    type: skill
+    profile: development
+    dispatch: orchestrated
+    forge:
+      commit_workspace: required
+    outcomes:
+      pass: initiative-closure-pr-action-app
+      needs-input: initiative-closure
+      blocked: initiative-closure
+      failed: initiative-closure
+
+  initiative-closure-pr-action-app:
+    type: external-action
+    owner: product
+    provider: github
+    authorization: automated
+    forge:
+      action: open_draft_pr
+      draft: true
+      apply_labels: []
+      remove_labels: []
+      requires:
+        - title
+        - body_path
+    outcomes:
+      pass: initiative-closure-signoff-app
+      blocked: initiative-closure
+      failed: workflow-stop
+
+  initiative-closure-signoff-app:
+    type: human-checkpoint
+    purpose: initiative-closure-signoff-app
+    outcomes:
+      pass: purge-initiative-artifacts-meta
+      findings: initiative-closure
+      blocked: workflow-stop
+
+  purge-initiative-artifacts-meta:
+    type: skill
+    profile: meta-pm
+    dispatch: orchestrated
+    forge:
+      commit_workspace: required
+    outcomes:
+      pass: initiative-closure-pr-action-meta
+      needs-input: initiative-closure
+      blocked: initiative-closure
+      failed: initiative-closure
+
+  initiative-closure-pr-action-meta:
+    type: external-action
+    owner: product
+    provider: github
+    authorization: automated
+    forge:
+      action: open_draft_pr
+      draft: true
+      apply_labels: []
+      remove_labels: []
+      requires:
+        - title
+        - body_path
+    outcomes:
+      pass: initiative-closure-signoff-meta
+      blocked: initiative-closure
+      failed: workflow-stop
+
+  initiative-closure-signoff-meta:
+    type: human-checkpoint
+    purpose: initiative-closure-signoff-meta
     outcomes:
       pass: workflow-complete
-      findings: wave-human-decision
+      findings: initiative-closure
+      blocked: workflow-stop
 
   workflow-complete:
     type: terminal

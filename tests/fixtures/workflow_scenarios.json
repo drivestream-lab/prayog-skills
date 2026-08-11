@@ -12,10 +12,46 @@
     "next": "prd-impact-map"
   },
   {
+    "name": "spec draft routes to spec PR action",
+    "stage": "spec-draft",
+    "outcome": "pass",
+    "next": "spec-pr-action"
+  },
+  {
+    "name": "spec PR action routes to feasibility",
+    "stage": "spec-pr-action",
+    "outcome": "pass",
+    "next": "initiative-feasibility"
+  },
+  {
+    "name": "impact map routes to PRD PR action",
+    "stage": "prd-impact-map",
+    "outcome": "pass",
+    "next": "prd-pr-action"
+  },
+  {
+    "name": "PRD PR action routes to impact acceptance",
+    "stage": "prd-pr-action",
+    "outcome": "pass",
+    "next": "prd-impact-acceptance"
+  },
+  {
+    "name": "feasibility pass routes to technical review",
+    "stage": "initiative-feasibility",
+    "outcome": "pass",
+    "next": "spec-technical-review"
+  },
+  {
     "name": "feasibility engineering findings route to PE",
     "stage": "initiative-feasibility",
     "outcome": "findings",
     "next": "spec-technical-review"
+  },
+  {
+    "name": "feasibility PM or domain needs-input routes to human decision",
+    "stage": "initiative-feasibility",
+    "outcome": "needs-input",
+    "next": "spec-human-decision"
   },
   {
     "name": "technical review routes to PE approval gate",
@@ -24,39 +60,153 @@
     "next": "technical-review-approval"
   },
   {
+    "name": "technical review blocked routes to human decision",
+    "stage": "spec-technical-review",
+    "outcome": "blocked",
+    "next": "spec-human-decision"
+  },
+  {
+    "name": "technical review stale routes back to feasibility",
+    "stage": "spec-technical-review",
+    "outcome": "stale",
+    "next": "initiative-feasibility"
+  },
+  {
     "name": "PE approval enables implementation plan",
     "stage": "technical-review-approval",
     "outcome": "pass",
     "next": "spec-implementation-plan"
   },
   {
-    "name": "plan passes through Gate 2",
+    "name": "plan passes through coding-readiness",
     "stage": "spec-implementation-plan",
     "outcome": "pass",
-    "next": "gate-2"
+    "next": "coding-readiness"
   },
   {
-    "name": "spec merge routes to board seed",
+    "name": "plan needs-input routes to human decision",
+    "stage": "spec-implementation-plan",
+    "outcome": "needs-input",
+    "next": "spec-human-decision"
+  },
+  {
+    "name": "plan blocked routes to human decision",
+    "stage": "spec-implementation-plan",
+    "outcome": "blocked",
+    "next": "spec-human-decision"
+  },
+  {
+    "name": "plan stale routes back to feasibility",
+    "stage": "spec-implementation-plan",
+    "outcome": "stale",
+    "next": "initiative-feasibility"
+  },
+  {
+    "name": "spec merge routes to board tickets action",
     "stage": "spec-merge",
     "outcome": "pass",
-    "next": "board-seed"
+    "next": "board-tickets-action"
   },
   {
-    "name": "board seed must pass before pre-implement",
-    "stage": "board-seed",
+    "name": "board tickets action routes to in-progress status",
+    "stage": "board-tickets-action",
+    "outcome": "pass",
+    "next": "wave-in-progress-action"
+  },
+  {
+    "name": "in-progress status routes to pre-implement",
+    "stage": "wave-in-progress-action",
     "outcome": "pass",
     "next": "pre-implement"
   },
   {
-    "name": "verify findings return to implementation",
-    "stage": "verify",
-    "outcome": "findings",
+    "name": "pre-implement pass routes to loop-spec",
+    "stage": "pre-implement",
+    "outcome": "pass",
     "next": "loop-spec"
   },
   {
-    "name": "ground pass stops at human gate",
+    "name": "Pass-1 loop-spec routes to wave PR action",
+    "stage": "loop-spec",
+    "outcome": "pass",
+    "next": "wave-pr-action"
+  },
+  {
+    "name": "wave PR action routes to wave-acceptance",
+    "stage": "wave-pr-action",
+    "outcome": "pass",
+    "next": "wave-acceptance"
+  },
+  {
+    "name": "wave-acceptance pass parks awaiting closeout",
+    "stage": "wave-acceptance",
+    "outcome": "pass",
+    "next": "wave-awaiting-closeout"
+  },
+  {
+    "name": "closeout learning-extract routes to ground-spec",
+    "stage": "learning-extract",
+    "outcome": "pass",
+    "next": "ground-spec"
+  },
+  {
+    "name": "ground pass routes to done status then signoff",
     "stage": "ground-spec",
     "outcome": "pass",
-    "next": "wave-human-decision"
+    "next": "wave-done-action"
+  },
+  {
+    "name": "done status routes to wave-signoff",
+    "stage": "wave-done-action",
+    "outcome": "pass",
+    "next": "wave-signoff"
+  },
+  {
+    "name": "learning-extract findings stay on learning-extract",
+    "stage": "learning-extract",
+    "outcome": "findings",
+    "next": "learning-extract"
+  },
+  {
+    "name": "initiative-closure starts app purge",
+    "stage": "initiative-closure",
+    "outcome": "pass",
+    "next": "purge-initiative-artifacts-app"
+  },
+  {
+    "name": "app purge opens app closure PR",
+    "stage": "purge-initiative-artifacts-app",
+    "outcome": "pass",
+    "next": "initiative-closure-pr-action-app"
+  },
+  {
+    "name": "app closure PR routes to app signoff",
+    "stage": "initiative-closure-pr-action-app",
+    "outcome": "pass",
+    "next": "initiative-closure-signoff-app"
+  },
+  {
+    "name": "app signoff starts meta purge",
+    "stage": "initiative-closure-signoff-app",
+    "outcome": "pass",
+    "next": "purge-initiative-artifacts-meta"
+  },
+  {
+    "name": "meta purge opens meta closure PR",
+    "stage": "purge-initiative-artifacts-meta",
+    "outcome": "pass",
+    "next": "initiative-closure-pr-action-meta"
+  },
+  {
+    "name": "meta closure PR routes to meta signoff",
+    "stage": "initiative-closure-pr-action-meta",
+    "outcome": "pass",
+    "next": "initiative-closure-signoff-meta"
+  },
+  {
+    "name": "meta signoff completes workflow",
+    "stage": "initiative-closure-signoff-meta",
+    "outcome": "pass",
+    "next": "workflow-complete"
   }
 ]

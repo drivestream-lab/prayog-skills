@@ -11,6 +11,14 @@ description: "Validates requirements documents using 15 checks across 2 dimensio
 3. Don't fix — flag. This skill identifies issues, never modifies the document.
 4. Dual output is mandatory: chat summary + saved report file + next steps.
 5. Incremental mode: when in doubt, RE-RUN. Stale carry-forward is worse than a redundant re-run.
+6. **Canonical report path** — overwrite
+   `{reports_dir}/Validation-Report-{INIT}.md` only. Never create `*-revN`,
+   `*-v2`, or dated siblings. See
+   `../../../references/artifact-write-contract.md`.
+7. **Stable finding ids** — every finding row uses `VF-{nn}` per
+   `../../../references/id-conventions.md`. Carry forward keeps the same id.
+8. Prefer targeting product ids (`REQ-*`, `CAP-*`, `OQ-*`) in Location when
+   present; legacy `FR-*` maps to `REQ-*` (same number).
 
 ## Purpose
 
@@ -21,7 +29,7 @@ This skill replaces the need to run `validate-requirements` and `document-audit`
 ## Critical Rules
 
 1. **Never skip a check.** If inputs are missing for a check, mark it SKIPPED with an explanation — do not silently omit it. In incremental mode, CARRY FORWARD is not "skipped" — the check ran in the prior report and its results are being reused because inputs haven't changed.
-2. **Show evidence, not just verdicts.** For every finding, show the problematic text and (for source checks) what the source actually says.
+2. **Show evidence, not just verdicts.** For every finding, show the problematic text and (for source checks) what the source actually says. Critical rows must include enough evidence for a review decision brief (Source Says / Doc Claims or concrete example).
 3. **Severity matters.** Group findings by severity in the report, not by check number. A single finding may fail multiple checks — list it once under its highest severity with all applicable check numbers.
 4. **Dual output + next steps are mandatory.** Always produce the chat summary, the full report file, and prioritized next steps. The chat summary is for quick triage; the report file is for persistent reference; the next steps tell the user exactly what to do next and in what order.
 5. **Be conservative with PASS.** A check PASSes only if zero findings — including carried-forward findings. A carried-forward finding still counts.
@@ -31,8 +39,10 @@ This skill replaces the need to run `validate-requirements` and `document-audit`
 9. **Never invent answers.** If a `[PENDING]` marker exists and the answer is NOT in the document or conversation, leave it as-is. Report it as "unresolved — still needs input."
 10. **Incremental mode: when in doubt, re-run.** If it is unclear whether a change affects a check, classify it as RE-RUN. The cost of re-running an unnecessary check is low; the cost of carrying forward a stale finding is high.
 11. **Incremental mode: Check 11 and S1–S4 always re-run.** These are the consistency safety net. Any edit — even one that fixes a finding — can introduce new contradictions, stale references, or consistency gaps in other sections. Never carry these checks forward.
-12. **Incremental mode: tag carried-forward findings.** Every finding reused from a prior report must include `(carried from [date])` in its Finding cell. The user must be able to distinguish new discoveries from surviving prior findings at a glance.
+12. **Incremental mode: tag carried-forward findings.** Every finding reused from a prior report must include `(carried from [date])` in its Finding cell and **keep the same `VF-*` id**.
 13. **Checklist is mandatory.** Every run must maintain the six-item control loop (`T0 Gather`, `T1 Understand`, `T2 Analyze`, `T3 Plan`, `T4 Execute`, `T5 Verify`) with explicit status transitions. Do not skip directly from analysis to output.
+14. **Product ids.** When the PRD lacks `CAP-*` / `REQ-*`, Gaps may suggest assigning them (do not invent requirement text). Prefer citing existing ids in Location.
+15. **No revision siblings.** If a non-canonical `Validation-Report-*-revN.md` exists, migrate into the canonical path, bump `report_revision`, and stop writing the sibling (do not delete without authorization).
 
 ## When to Use
 
@@ -50,7 +60,7 @@ Gather these before starting:
 2. **Source documents folder** — meeting summaries, client docs, design descriptions, transcripts (REQUIRED for Checks 1, 2, 4, 10)
 3. **Sibling requirements docs** — other feature requirement docs in the same folder (OPTIONAL — needed for Check 5: Scope Boundary)
 4. **Stage User Flows artifact** — `Stage6_User_Flows.md` or equivalent stage artifact (OPTIONAL — needed for Check 11 cross-check). If not provided, scan for it in the project's Artifacts or stage folders. If found, use it. If not found, note it as unavailable and skip that sub-check only.
-5. **Prior validation report** — a previous `Validation-Report-*.md` or `Stage9-Validation-Report.md` file (OPTIONAL). When provided, the skill enters **incremental mode** — only re-running checks whose inputs have changed since the prior report. When absent or when the user says "run full", the skill runs all 15 checks from scratch (full mode).
+5. **Prior validation report** — canonical `{reports_dir}/Validation-Report-{INIT}.md` (OPTIONAL). When provided, the skill enters **incremental mode**. When absent or when the user says "run full", run all 15 checks (full mode). Prefer the canonical path over any legacy `*-revN` sibling.
 
 If source documents are not available, Checks 1 (Source Accuracy) and 4 (Over-Generalization) will be marked SKIPPED with a note explaining why.
 
@@ -188,12 +198,19 @@ Follow that file's instructions to produce both the chat summary and the full re
 
 ## Workflow handoff
 
-Append the envelope from `../../../references/handoff-envelope.md` to the saved
-validation report. Use stage `validate-requirements`.
+1. Append/emit the envelope from `../../../references/handoff-envelope.md` to the saved validation report. Use stage `validate-requirements`.
+2. When the invocation binds `handoff_path` (orchestrator / AgentRunner baton), also **overwrite** that path with the same `handoff:` envelope before exit. Leaving the baton empty is a failed stage for automated consumers. `artifact.path` remains the workspace skill output, not the baton path. See `../../../references/handoff-envelope.md` (Orchestrator baton).
+3. Derive `next_candidates` and `human_checkpoint` from pinned root `workflow.yaml` for `(stage: validate-requirements, outcome)` per `../../../references/handoff-envelope.md` (**Derive from pinned workflow**). Set `human_checkpoint: true` only when the resolved next node's `type` is `human-checkpoint` — never because the artifact "should be reviewed."
 
-- `pass` → `prd-impact-map`
-- `findings` → `review-findings`
-- `needs-input` / `failed` → human checkpoint
 
-Populate the artifact path/digest and stable finding ids. `next_candidates` are
-navigation hints only; do not invoke the next skill automatically.
+4. Follow `../../../references/forge-side-effects.md#content-producers` when this stage's pin has `forge.commit_workspace` other than `disabled` or next is an `external-action` with `forge.requires` — fill `handoff.forge` / recommend the matching `/forge` skill; do not treat local CLI as skill success.
+
+
+**Transitions:** pinned root `workflow.yaml` for this stage (SSOT). Do not
+hardcode divergent next nodes. Human or agent may run this skill; legality and
+orchestrator auto-dispatch follow `dispatch` + delivery contract + latest
+handoff (`invocation-mode-is-not-an-exemption`).
+
+Populate the artifact path/digest and stable finding ids (`VF-*`) under
+`blockers` when outcome is `findings`. `next_candidates` are hints only — they
+never authorize invoke.

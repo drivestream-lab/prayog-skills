@@ -1,52 +1,111 @@
 ---
 name: ground-spec
 description: >-
-  Validate a completed wave implementation against its product spec FRs, repo
-  artifacts, and cross-spec contracts. Produces a Ground Report including a
-  Contracts Produced section that is the required input for pre-implement of
-  the next wave. Use when a wave claims complete, before human checkpoint, or
-  when asked to ground a spec.
+  Validate a completed wave against REQs assigned to that wave by the plan /
+  WorkManifest, plus repo artifacts and cross-spec contracts. Produces a Ground
+  Report (GF-* findings) including Contracts Produced for next-wave
+  pre-implement. Writes locally and emits Forge readiness — never commits or
+  merges. Use after Pass-2 learning-extract (closes the wave), before
+  wave-done-action / human wave-signoff (merge only).
 disable-model-invocation: true
-paths: AGENTS.md, docs/specification/**, src/**
+paths: AGENTS.md, docs/specification/**, src/**, tests/**
 metadata:
   background_eligible: true
-  background_trigger: "all wave tasks complete (loop-spec exits green)"
+  background_trigger: "Pass-2 closeout after learning-extract (post human wave-acceptance)"
 ---
 
 # Ground spec
 
-Validate implementation against the **product spec** and **actual repo
-artifacts** — not PRD text alone. Produce a Ground Report that the **next
-wave's `/pre-implement` consumes as a contract baseline**.
+Validate implementation against the **product spec REQs assigned to this
+completed wave** (plan / WorkManifest TASK `implements` lists) and **actual
+repo artifacts** — not every future REQ in the full product spec, and not PRD
+text alone. Produce a Ground Report that the **next wave's `/pre-implement`
+consumes as a contract baseline**.
+
+Content skills write locally and emit Forge readiness; they do not commit,
+push, branch, open PRs, label, create issues, or merge.
+
+Canonical artifact:
+`{reports_dir}/Ground-Report-{SPEC}-W{N}.md`
+([`../../../references/artifact-write-contract.md`](../../../references/artifact-write-contract.md)).
+Checks: [references/checks.md](references/checks.md) (G1–G10).
+Ids: `../../../references/id-conventions.md` (`GF-*` for findings).
 
 ## NON-NEGOTIABLE
 
-1. Run the repo's automated ground check when `{ground_command}` is defined
-   in the harness profile. Include full output in the report. If `{ground_command}`
-   is not defined, perform manual FR validation by reading `source_roots` directly.
-2. Check every **FR** in the product spec — map each to a verifiable artifact
-   (test result, entry point, module boundary, verify script output).
-   Use engineering terms: "entry point", "module boundary", "output shape" —
-   not language-specific terms.
-3. Check cross-spec contracts: modules from this wave may only consume
+1. Resolve paths from `.harness/profile.yaml` or
+   [references/layout-defaults.md](references/layout-defaults.md). Include
+   `tests/**` in scope when mapping evidence.
+2. Run the repo's automated ground check when `{ground_command}` is defined
+   in the harness profile. Include full output in the report. If
+   `{ground_command}` is not defined, perform manual REQ validation by reading
+   `source_roots` and `tests/**` directly.
+3. Check every **`REQ-*` assigned to this wave** via plan / WorkManifest TASK
+   rows — map each to a verifiable artifact (test result, entry point, module
+   boundary, verify script output). Do **not** require coverage of REQs owned
+   only by future waves. Use engineering terms: "entry point", "module
+   boundary", "output shape" — not language-specific terms.
+4. Consume approved plan/manifest intent **plus** actual loop/unit evidence
+   and human accept (`Wave-Execution-*`, unit results, `wave-accepted` /
+   wave-acceptance). Optional/legacy `Live-Verify-*` is not required. Cite
+   layers separately.
+5. Check cross-spec contracts: modules from this wave may only consume
    interfaces from prior waves as documented in those waves' Ground Reports.
-4. Check boundary rules per ADRs and domain-filtered MDC rules.
-5. **Do not** mark spec `human_approved` — that is a human gate only.
-6. **Populate the Contracts Produced section** — this is the structured
-   handoff that enables `/pre-implement` for the next wave. Without it,
-   the chain is broken.
+6. Check boundary rules per ADRs and domain-filtered MDC rules (G5/G6).
+7. **Do not** mark spec `human_approved` — already set at `wave-acceptance`
+   (only approval signal). This skill prepares the merge package for
+   `wave-signoff` (merge/publish only).
+8. **Populate the Contracts Produced section** — structured handoff for
+   `/pre-implement` of the next wave. Without it, the chain is broken.
+9. **Cite learning ids** — when
+   `{reports_dir}/Learning-Extract-{initiative}-W{N}.md` exists, add a
+   **Learning cited** table of `L-*` ids (do not re-author learning SSOT).
+10. Discrepancy / blocker ids use stable **`GF-*`** — cite `REQ-*` in the row,
+    not as the blocker primary key. Do **not** reuse feasibility `FF-*`.
+11. Write Ground Report and as-built updates **locally**; prepare the
+    exact-head merge package for `wave-signoff`; pin routes to
+    `wave-done-action` then `wave-signoff` (merge only). Never commit or
+    merge from this skill. As-built writes follow the split in
+    `../../../references/artifact-write-contract.md` —
+    `Implementation-Status-{INIT}.md` for detail, one index row in
+    `implementation-status.md` for the pointer; never append a new table to
+    the shared index.
+12. If a codegraph provider is available (MCP tool matching
+    `../../../references/codegraph-tool-contract.md`, or a local CLI), prefer
+    it for cross-spec contract / boundary questions. Always fall back to
+    direct `source_roots` reads when unavailable — never block or change
+    outcome selection on its absence.
+
+## Outcome selection
+
+| Outcome | When |
+|---------|------|
+| `pass` | G1–G10 satisfied (or SKIPPED with reason); no open Blocking `GF-*`; Contracts produced complete; exact-head sign-off package ready |
+| `findings` | One or more `GF-*` require code/spec fix before sign-off |
+| `needs-input` | Authoritative wave assignment, evidence, or prior Ground Report absent/unreadable |
+| `blocked` | Gate prevents grounding (e.g. Pass-1 incomplete, missing accept when required) |
+| `failed` | Execution error running ground command or writing the report |
+
+Happy path: `pass` → `wave-done-action` → `wave-signoff`.
 
 ## Chain position
 
+Illustrative only — **transitions SSOT:** pinned root `workflow.yaml`
+(`dispatch: orchestrated` on this node). Closeout path: `learning-extract`
+→ this skill → `wave-done-action` → `wave-signoff`. Pass-1 does **not** route here from `loop-spec`.
+
 ```
-/loop-spec (all iterations green)
+/learning-extract (Pass-2 / Enter-at)
     ↓
 /ground-spec                          ← YOU ARE HERE
   produces: Ground-Report-W{N}.md
             └── §Contracts produced   ← pre-implement for WN+1 reads this
+            └── cites L-* from Learning-Extract when present
+            └── GF-* findings (not FF-*)
     ↓
-  human checkpoint
-  → as-built W{N} = human_approved
+  wave-done-action (Forge update_board_status → Done)
+  human checkpoint wave-signoff (exact head; merge/publish only)
+  → human_approved already from wave-acceptance; record merge SHA
     ↓
 /pre-implement (next wave)
   reads: Ground-Report-W{N}.md §Contracts produced
@@ -55,105 +114,65 @@ wave's `/pre-implement` consumes as a contract baseline**.
 ## Read order
 
 1. `AGENTS.md`
-2. Product spec: `docs/specification/product/` — relevant spec for this wave
-3. `docs/specification/as-built/implementation-status.md`
-4. Ground reports of prior waves (for cross-spec contract baseline)
-5. Relevant ADRs
-6. Ground check output (`{ground_command}`) + unit verification result (`{test_command}`)
+2. Plan / WorkManifest wave section — **assigned REQ set** for W{N}
+3. Product spec: `docs/specification/product/` — only rows for assigned REQs
+4. `docs/specification/as-built/implementation-status.md`
+5. `Wave-Execution-{INIT}-W{N}.md`; accept signal (`wave-accepted` / wave-acceptance); optional/legacy `Live-Verify-*` when present
+6. Ground reports of prior waves (for cross-spec contract baseline)
+7. **Codegraph provider** — OPTIONAL — see `../../../references/codegraph-tool-contract.md`
+7. Relevant ADRs + domain-filtered MDC
+8. Ground check output (`{ground_command}`) + unit verification (`{test_command}`)
+9. `Learning-Extract-{INIT}-W{N}.md` when present
 
 ## Output format
 
-Save report to `{reports_dir}/Ground-Report-{SPEC}-W{N}.md` (from profile or layout-defaults).
-
-```markdown
-# Ground report — {SPEC} W{N}
-
-| Field | Value |
-|-------|-------|
-| Wave | W{N} — {wave title} |
-| Spec | {SPEC_PATH} |
-| Date | {YYYY-MM-DD} |
-| Branch | `feature/INIT-{COMPONENT}-{NUMBER}-w{N}-{slug}` — same branch as wave code |
-| Status | Draft |
-| Review deadline | {YYYY-MM-DD + 2 business days} |
-| Deciders | Tech lead / reviewer: {name} — explicit LGTM required |
-
-## Automated check output
-(paste full output of {ground_command} / {verify_command})
-
-## FR checklist
-| FR | Spec claim | Verified artifact | Status |
-|----|-----------|-------------------|--------|
-| FR-N.N | {claim} | {entry point / test / verify script} | pass / fail / partial |
-
-## Boundary checks
-(Derived from domain-filtered ADRs and MDC rules for this repo.)
-| Rule | Source | Status |
-|------|--------|--------|
-
-## Cross-spec contracts consumed
-(What this wave assumed from prior waves — confirm each still matches.)
-| Assumed contract | Source | Match? |
-|-----------------|--------|--------|
-| {entry point / schema / command} | Ground-Report-W{N-1} | yes / NO — drift |
-
-## Discrepancies (must fix before human checkpoint)
-| ID | FR | Finding | Severity |
-|----|----|---------|---------|
-
-## Contracts produced by this wave
-(REQUIRED — this section is the input for /pre-implement of the next wave.
-Describe in engineering terms: module, entry point name, input shape,
-output shape, invariants. Do NOT use language-specific syntax.)
-
-| Contract | Module / component | Entry point | Input shape | Output shape | Invariants | Next wave |
-|----------|--------------------|-------------|-------------|--------------|------------|-----------|
-| {name} | {module} | {callable/command/endpoint} | {accepts} | {returns/emits} | {guarantees} | W{N+1} |
-
-## PR instructions
-
-> Commit this report + updated as-built row to the wave branch (last commit
-> before PR is marked ready). Ground report and code are reviewed together
-> on the same PR — do not open a separate PR for the ground report.
-
-Branch:   feature/INIT-{COMPONENT}-{NUMBER}-w{N}-{slug}  ← same branch as wave code
-PR title: "[INIT-{COMPONENT}-{NUMBER} W{N}] {slug} — implementation + ground report"
-PR body:  paste FR checklist summary + §Contracts produced table
-
-Required reviewer: per CODEOWNERS in this repo
-Review deadline: {date from header}
-
-After reviewer approves:
-  Update as-built: W{N} → human_approved
-  Merge PR
-  → /pre-implement for W{N+1} gate check will pass
-
-## Ready for human checkpoint?
-yes / no — reason
-
-Human must:
-- [ ] Review FR checklist — all pass or explicitly deferred
-- [ ] Review §Contracts produced — accurate and complete for next wave
-- [ ] Mark as-built: {SPEC} W{N} = human_approved
+Save report to `{reports_dir}/Ground-Report-{SPEC}-W{N}.md` using
+[references/output-template.md](references/output-template.md). Run
+[references/checks.md](references/checks.md).
 
 ## Workflow handoff
 
+1. Append/emit the envelope from `../../../references/handoff-envelope.md` to the saved Ground Report. Use stage `ground-spec`.
+2. When the invocation binds `handoff_path` (orchestrator / AgentRunner baton), also **overwrite** that path with the same `handoff:` envelope before exit. Leaving the baton empty is a failed stage for automated consumers. `artifact.path` remains the workspace skill output, not the baton path. See `../../../references/handoff-envelope.md` (Orchestrator baton).
+3. Derive `next_candidates` and `human_checkpoint` from pinned root `workflow.yaml` for `(stage: ground-spec, outcome)` per `../../../references/handoff-envelope.md` (**Derive from pinned workflow**). Set `human_checkpoint: true` only when the resolved next node's `type` is `human-checkpoint` — never because the artifact "should be reviewed."
+4. Happy path: `outcome: pass` → next `wave-done-action` (`type: external-action`,
+   `forge.action: update_board_status`, `authorization: automated`) →
+   `human_checkpoint: false`, `external_action: true`. Fill `handoff.forge`
+   `ticket` when bound so ForgeClient can apply Done. Then pin routes to
+   `wave-signoff` (human merge/publish only). Do **not** copy `human_checkpoint: true` into
+   earlier implement-lane skills on skill→skill edges.
+
+
+4. Follow `../../../references/forge-side-effects.md#content-producers` when this stage's pin has `forge.commit_workspace` other than `disabled` or next is an `external-action` with `forge.requires` — fill `handoff.forge` / recommend the matching `/forge` skill; do not treat local CLI as skill success.
+
+
+**Transitions:** pinned root `workflow.yaml` for this stage (SSOT). Human or
+agent may run this skill; orchestrators may auto-dispatch when authorized.
+Same legality for both invoke paths.
+
+```yaml
 handoff:
   contract: sdd-delivery/v2
   stage: ground-spec
   outcome: {pass | findings | needs-input | blocked | failed}
   artifact:
     path: {reports_dir}/Ground-Report-{SPEC}-W{N}.md
-    digest: sha256:{hex}
-  blockers: []
+    # digest omitted — walk-time PURGE report, not a durable identity
+  blockers: []  # GF-* when findings
   signals:
     wave: W{N}
     contracts_produced: {count}
+    assigned_reqs: [...]
   next_candidates:
-    - wave-human-decision
-  human_checkpoint: true
-  external_action: false
+    # Must match workflow.yaml for outcome — typically wave-done-action
+    - wave-done-action
+  human_checkpoint: false
+  external_action: true
+  forge:
+    action: update_board_status
+    ticket: {bound_wave_ticket}
 ```
 
-The Ground Report is not complete without this handoff. Findings/failure route
-back to `loop-spec`; pass always stops at the human wave checkpoint.
+The Ground Report is not complete without this handoff. Outcome routes follow
+`workflow.yaml` (not hardcoded elsewhere). `next_candidates` never authorize
+invoke.

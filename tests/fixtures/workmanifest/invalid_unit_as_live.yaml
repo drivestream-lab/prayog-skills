@@ -1,0 +1,51 @@
+# Invalid: unit command used as live verification
+apiVersion: prayog/v1
+kind: WorkManifest
+initiative: INIT-DEMO-001
+epic:
+  id: EPIC
+  repo: example-service
+  title: demo
+  codebase: example-service
+  spec_path: docs/specification/product/INIT-DEMO-001.md
+  verify_command: make test
+work:
+  - id: W0
+    kind: issue
+    repo: example-service
+    title: W0
+    depends_on: []
+    codebase: example-service
+    spec_path: docs/specification/product/INIT-DEMO-001.md
+    verify_command: make test
+    tasks:
+      - id: TASK-W0-01
+        implements: [REQ-01]
+        depends_on: []
+        files:
+          - path: src/api/route.py
+            action: create
+        exit:
+          criteria:
+            - "POST /v1/items returns 201 with created item id"
+          proof:
+            kind: command
+            command: "pytest tests/unit/test_route.py -q"
+            expected: "exit 0"
+            evidence_expected: "Wave-Execution-INIT-DEMO-001-W0.md § TASK-W0-01"
+    verification:
+      check: "make check"
+      unit: "make test"
+      live:
+        applicable: true
+        mode: smoke
+        command: make test
+        covers: [REQ-01]
+        prerequisites:
+          - "Stack up"
+        expected_observations:
+          - "make test exits 0"
+        cleanup:
+          - "none"
+        stop_conditions:
+          - "fail → stop"

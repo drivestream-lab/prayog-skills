@@ -12,12 +12,28 @@ CI:  add to .github/workflows/ci.yml as a step.
 
 from __future__ import annotations
 
+import json
 import re
 import sys
 from pathlib import Path
 
+try:
+    import yaml
+except ImportError:  # pragma: no cover — CI installs PyYAML
+    yaml = None  # type: ignore[assignment]
+
 ROOT = Path(__file__).parent.parent
 SKILLS_DIR = ROOT / "skills"
+DISPATCH_ENUM = frozenset({"manual", "orchestrated"})
+COMMIT_WORKSPACE_ENUM = frozenset({"disabled", "optional", "required"})
+FORGE_ACTION_ENUM = frozenset(
+    {
+        "commit_workspace",
+        "open_draft_pr",
+        "create_board_tickets",
+        "update_board_status",
+    }
+)
 
 # ── Invariants ────────────────────────────────────────────────────────────────
 # Each entry: (description, pattern, allowed_values, file_glob)
@@ -73,16 +89,47 @@ SINGLE_VALUE_INVARIANTS = [
         set(),  # must not appear
         "**/*.md",
     ),
+    (
+        "Skills must not instruct creating *-revN / *-v2 report siblings as outputs",
+        r"(?:save|write|create)\s+(?:as\s+)?`?(?:Validation-Report|Resolution|Impact-Map)[^`\n]*-(?:rev\d+|v\d+)\.md",
+        set(),
+        "**/*.md",
+    ),
+    (
+        "Plans must not use shadow REQ-W{digit} product ids",
+        r"\| REQ-W\d",
+        set(),
+        "**/spec-implementation-plan/**/*.md",
+    ),
+    (
+        "Prompt templates must not treat handoff_path as read-only preference",
+        r"Prefer the latest handoff artifact at `\{\{handoff_path\}\}`",
+        set(),  # must not appear
+        "**/prompts/template.md",
+    ),
 ]
 
-SYNC_COPY_INVARIANT = (
-    "governance.md files marked SYNC-COPY must be byte-identical",
-    [
-        "skills/development/pre-implement/references/governance.md",
-        "skills/development/initiative-feasibility/references/governance.md",
-        "skills/development/spec-implementation-plan/references/governance.md",
-    ],
-)
+SYNC_COPY_INVARIANTS = [
+    (
+        "governance.md files marked SYNC-COPY must be byte-identical",
+        [
+            "skills/development/pre-implement/references/governance.md",
+            "skills/development/initiative-feasibility/references/governance.md",
+            "skills/development/spec-implementation-plan/references/governance.md",
+        ],
+    ),
+    (
+        "adr_boundary_lint.py must be vendored byte-identical into every skill "
+        "that references it — each skill is installed standalone "
+        "(`npx skills add --skill <name>`), so a shared root scripts/ path is "
+        "not present in a standalone install",
+        [
+            "scripts/adr_boundary_lint.py",
+            "skills/development/spec-technical-review/scripts/adr_boundary_lint.py",
+            "skills/development/spec-implementation-plan/scripts/adr_boundary_lint.py",
+        ],
+    ),
+]
 
 SKILL_REGISTRY_INVARIANT = (
     "Every skill directory must be listed in README.md",
@@ -112,7 +159,7 @@ CHECK_REGISTRIES = [
     (
         "skills/development/spec-technical-review/references/checks.md",
         "T",
-        11,
+        12,
         [
             "skills/development/spec-technical-review/SKILL.md",
             "skills/development/spec-technical-review/references/output-template.md",
@@ -121,10 +168,28 @@ CHECK_REGISTRIES = [
     (
         "skills/development/spec-implementation-plan/references/checks.md",
         "P",
-        14,
+        16,
         [
             "skills/development/spec-implementation-plan/SKILL.md",
             "skills/development/spec-implementation-plan/references/output-template.md",
+        ],
+    ),
+    (
+        "skills/development/ground-spec/references/checks.md",
+        "G",
+        10,
+        [
+            "skills/development/ground-spec/SKILL.md",
+            "skills/development/ground-spec/references/output-template.md",
+        ],
+    ),
+    (
+        "skills/forge/create-board-tickets/references/checks.md",
+        "B",
+        8,
+        [
+            "skills/forge/create-board-tickets/SKILL.md",
+            "skills/forge/create-board-tickets/references/output-template.md",
         ],
     ),
 ]
@@ -157,31 +222,163 @@ REQUIRED_TOKENS = {
     ],
     "skills/development/spec-technical-review/references/output-template.md": [
         "Source freshness",
-        "Feasibility digest",
-        "All T1–T11 checks",
+        "Repo scope digest",
+        "All T1–T12 checks",
+        "T12 Product-boundary",
+        "FF-",
+        "approved REQ-",
+    ],
+    "skills/development/spec-implementation-plan/references/checks.md": [
+        "verify_coverage_query.py",
+        "Required overlap check",
+        "live-verify-coverage-contract.md",
+    ],
+    "skills/development/initiative-feasibility/references/checks.md": [
+        "verify_coverage_query.py",
+        "fixed pointer, not a source of per-capability truth",
+    ],
+    "skills/development/spec-technical-review/references/adr-template.md": [
+        "product_constraints",
+        "supersedes",
+        "superseded_by",
+        "changes_user_visible_behavior",
+        "Product decisions excluded",
     ],
     "skills/development/spec-implementation-plan/references/output-template.md": [
         "## Source freshness and command contract",
         "Spec path",
         "## 9. WorkManifest seed",
+        "Implements",
+        "tasks:",
+        "TASK-W0-01",
+        "Workflow outcome",
+        "apiVersion: prayog/v1",
+        "depends_on:",
+        "exit:",
+        "criteria:",
+        "evidence_expected:",
+        "Verification Coverage",
+        "Live-verification intent",
+        "stop_conditions:",
+        "cleanup:",
+        "workmanifest-contract.md",
+        "P1–P16",
+        "Implementation-Status-{INITIATIVE}",
+        "live-verify-coverage-contract.md",
     ],
     "skills/development/pre-implement/references/output-template.md": [
         "Plan source freshness",
         "`check_command`",
         "`ground_command`",
+        "TASK-W{N}-01",
+        "Pre-Implement-",
+        "Bound by Forge/human context",
+        "WorkManifest contract",
+        "TASK exit proof",
+        "Live-verification contract",
+    ],
+    "skills/development/ground-spec/references/output-template.md": [
+        "GF-",
+        "wave-signoff",
+        "reviewed head",
+        "G1–G10",
+    ],
+    "skills/development/loop-spec/SKILL.md": [
+        "Wave-Execution-",
+        "commit_workspace",
+        "Never commit",
+        "WorkManifest",
+        "dependency order",
+        "Do **not** mutate",
+    ],
+    "skills/forge/create-board-tickets/references/output-template.md": [
+        "workmanifest-contract-pass",
+        "Preserved task metadata",
+        "B1–B8",
+    ],
+    "skills/forge/open-draft-pr/references/output-template.md": [
+        "no workspace artifact",
+        "path: null",
+        "pr_url",
+    ],
+    "skills/forge/commit-workspace/references/output-template.md": [
+        "no workspace artifact",
+        "path: null",
+        "commit_sha",
+    ],
+    "skills/requirements/validate-requirements/output-templates.md": [
+        "report_revision",
+        "Validation-Report-{INIT}.md",
+        "VF-01",
+    ],
+    "skills/requirements/review-findings/SKILL.md": [
+        "Resolution-{INIT}.md",
+        "Decision brief",
+        "CHG-",
+        "VF-",
+    ],
+    "references/id-conventions.md": [
+        "REQ-{nn}",
+        "VF-{nn}",
+        "TASK-W{n}-{nn}",
+        "GF-",
+        "P1",
+        "P16",
+        "T12",
+        "G1",
+        "G10",
+    ],
+    "references/artifact-write-contract.md": [
+        "Validation-Report-{INIT}.md",
+        "Never create",
+        "map_revision",
+        "Pre-Implement-{INIT}-W{N}.md",
+        "Wave-Execution-{INIT}-W{N}.md",
+        "wave-acceptance",
+        "Ground-Report-{SPEC}-W{N}.md",
+    ],
+    "skills/development/pre-implement/references/live-smoke-policy.md": [
+        "wave-acceptance",
+        "wave-accepted",
+        "live_verify_dir",
+        "There is **no** `/verify` content skill",
     ],
 }
 
 FORBIDDEN_WORKFLOW_TEXT = {
-    "skills/development/spec-technical-review": ["T1–T10", "T1-T10"],
-    "skills/development/spec-implementation-plan": ["P14 | **WorkManifest seed** — §8"],
-    "skills/development/loop-spec/SKILL.md": ["Human explicitly approves → `/ground-spec`"],
+    "skills/development/spec-technical-review": [
+        "T1–T10",
+        "T1-T10",
+        "T1–T11",
+        "T1-T11",
+        "All T1–T11",
+    ],
+    "skills/development/spec-implementation-plan": [
+        "P14 | **WorkManifest seed** — §8",
+        "apiVersion: launchpad/v1",
+        "launchpad WorkManifest",
+    ],
+    "skills/development/loop-spec/SKILL.md": [
+        "Human explicitly approves → `/ground-spec`",
+        "When TASK is green: commit",
+    ],
+    "skills/development/ground-spec": [
+        "check every REQ in product spec",
+        "Commit this report",
+    ],
+    "skills/development/pre-implement": [
+        "unless the user asks",
+        "unless user asks",
+    ],
 }
 
 DELIVERY_CONTRACT_FILES = [
     "delivery-contract.yaml",
     "workflow.yaml",
     "references/handoff-envelope.md",
+    "references/prompt-package-contract.md",
+    "references/forge-side-effects.md",
+    "references/workmanifest-contract.md",
 ]
 
 
@@ -263,7 +460,7 @@ def check_profile_registry() -> list[str]:
     This is the check that would have caught the original registry-drift
     bug (ground-spec/loop-spec/spec-technical-review missing from
     profiles/*.yaml) — README mentions alone do not cover it, because
-    launchpad sync-harness seeds consumer repos from profiles/*.yaml, not
+    launchpad apply-harness seeds consumer repos from profiles/*.yaml, not
     from README.md.
 
     Deliberately avoids a YAML-parsing dependency (keeps this script
@@ -345,6 +542,41 @@ def check_requirements_profile_registry() -> list[str]:
     return errors
 
 
+def check_forge_profile_registry() -> list[str]:
+    """Every skills/forge/*/SKILL.md must appear in every profile forge_skills."""
+    errors: list[str] = []
+    forge_dir = SKILLS_DIR / "forge"
+    if not forge_dir.exists():
+        return errors
+    actual_skills = {p.parent.name for p in forge_dir.glob("*/SKILL.md")}
+    profile_files = list((ROOT / "profiles").glob("*.yaml"))
+    block_re = re.compile(r"forge_skills:\s*\n((?:[ \t]*-[ \t]*\S+[ \t]*\n?)+)")
+    item_re = re.compile(r"-\s*(\S+)")
+
+    if not profile_files:
+        return ["  no profiles/*.yaml found"]
+
+    for pf in profile_files:
+        text = pf.read_text(encoding="utf-8")
+        m = block_re.search(text)
+        if not m:
+            errors.append(
+                f"  {pf.relative_to(ROOT)}: missing forge_skills: "
+                f"(required for launchpad materialize)"
+            )
+            continue
+        listed = set(item_re.findall(m.group(1)))
+        for skill in sorted(actual_skills - listed):
+            errors.append(
+                f"  {pf.relative_to(ROOT)}: missing {skill!r} in forge_skills:"
+            )
+        for skill in sorted(listed - actual_skills):
+            errors.append(
+                f"  {pf.relative_to(ROOT)}: stale forge_skills entry {skill!r}"
+            )
+    return errors
+
+
 def check_check_registries() -> list[str]:
     """Check registry IDs and their advertised ranges in consumers."""
     errors: list[str] = []
@@ -395,6 +627,25 @@ def check_required_tokens() -> list[str]:
         for token in tokens:
             if token not in text:
                 errors.append(f"  {relative_path}: missing required token {token!r}")
+    return errors
+
+
+def check_codegraph_provider_links() -> list[str]:
+    """Any SKILL.md mentioning 'codegraph provider' must link the shared
+    contract doc, directly or via engg-reviews' own codegraph-provider.md
+    (which itself points at the shared doc) — a safety net for future
+    additions, not just today's five."""
+    errors: list[str] = []
+    for path in sorted(SKILLS_DIR.glob("*/*/SKILL.md")):
+        text = path.read_text(encoding="utf-8")
+        if "codegraph provider" in text.lower() and not (
+            "codegraph-tool-contract.md" in text or "codegraph-provider.md" in text
+        ):
+            errors.append(
+                f"  {path.relative_to(ROOT)}: mentions 'codegraph provider' without "
+                f"linking references/codegraph-tool-contract.md (or engg-reviews' "
+                f"codegraph-provider.md, which points at it)"
+            )
     return errors
 
 
@@ -480,12 +731,295 @@ def check_delivery_contract_surface() -> list[str]:
         if not (ROOT / relative_path).is_file():
             errors.append(f"  MISSING: {relative_path}")
 
+    contract_path = ROOT / "delivery-contract.yaml"
+    if contract_path.is_file():
+        contract_text = contract_path.read_text(encoding="utf-8")
+        for token in (
+            "workmanifest_spec: references/workmanifest-contract.md",
+            "apiVersion: prayog/v1",
+            "kind: WorkManifest",
+            "immutable-approved-execution-intent",
+        ):
+            if token not in contract_text:
+                errors.append(
+                    f"  delivery-contract.yaml: missing WorkManifest registration token {token!r}"
+                )
+
+    workflow_path = ROOT / "workflow.yaml"
+    if workflow_path.is_file():
+        workflow_text = workflow_path.read_text(encoding="utf-8")
+        if "workmanifest-p14-pass" in workflow_text:
+            errors.append(
+                "  workflow.yaml: stale predicate workmanifest-p14-pass "
+                "(use workmanifest-contract-pass)"
+            )
+        if "workmanifest-contract-pass" not in workflow_text:
+            errors.append(
+                "  workflow.yaml: missing documented predicate workmanifest-contract-pass"
+            )
+
     for skill_file in SKILLS_DIR.glob("*/*/SKILL.md"):
+        # engg-reviews is an adjunct pack — not on sdd-delivery workflow.
+        if "engg-reviews" in skill_file.parts:
+            continue
         text = skill_file.read_text(encoding="utf-8")
         if "## Workflow handoff" not in text:
             errors.append(
                 f"  {skill_file.relative_to(ROOT)}: missing Workflow handoff section"
             )
+            continue
+        # Prompt-packaged lanes must dual-write orchestrator baton when bound.
+        if "requirements" in skill_file.parts or "development" in skill_file.parts:
+            handoff_idx = text.find("## Workflow handoff")
+            handoff_chunk = text[handoff_idx : handoff_idx + 2000]
+            if "handoff_path" not in handoff_chunk:
+                errors.append(
+                    f"  {skill_file.relative_to(ROOT)}: Workflow handoff must "
+                    "require write to handoff_path baton"
+                )
+            if "overwrite" not in handoff_chunk.lower():
+                errors.append(
+                    f"  {skill_file.relative_to(ROOT)}: Workflow handoff must "
+                    "require overwrite of handoff_path baton"
+                )
+            if "Derive `next_candidates`" not in handoff_chunk:
+                errors.append(
+                    f"  {skill_file.relative_to(ROOT)}: Workflow handoff must "
+                    "require deriving next_candidates/human_checkpoint from workflow.yaml"
+                )
+            if "human-checkpoint" not in handoff_chunk:
+                errors.append(
+                    f"  {skill_file.relative_to(ROOT)}: Workflow handoff must "
+                    "tie human_checkpoint to next node type human-checkpoint"
+                )
+    return errors
+
+
+def check_workflow_dispatch_and_purpose() -> list[str]:
+    """Assert dispatch on skills and purpose on human-checkpoints (YAML SSOT)."""
+    errors: list[str] = []
+    if yaml is None:
+        return ["  MISSING dependency: PyYAML (required for workflow dispatch checks)"]
+
+    workflow_path = ROOT / "workflow.yaml"
+    policy_path = ROOT / "tests" / "fixtures" / "workflow_dispatch_policy.json"
+    if not workflow_path.is_file():
+        return ["  MISSING: workflow.yaml"]
+    if not policy_path.is_file():
+        return ["  MISSING: tests/fixtures/workflow_dispatch_policy.json"]
+
+    workflow = yaml.safe_load(workflow_path.read_text(encoding="utf-8"))
+    policy = json.loads(policy_path.read_text(encoding="utf-8"))
+    nodes = workflow.get("nodes") or {}
+    orchestrated = set(policy.get("orchestrated") or [])
+    manual = set(policy.get("manual") or [])
+    purposes = policy.get("human_checkpoint_purposes") or {}
+
+    skill_nodes = {s for s, n in nodes.items() if n.get("type") == "skill"}
+    if skill_nodes != orchestrated | manual:
+        errors.append(
+            f"  policy fixture skill set mismatch: workflow={sorted(skill_nodes)} "
+            f"policy={sorted(orchestrated | manual)}"
+        )
+    if orchestrated & manual:
+        errors.append(f"  policy fixture overlap: {sorted(orchestrated & manual)}")
+
+    for stage, node in nodes.items():
+        ntype = node.get("type")
+        if ntype == "gate":
+            errors.append(f"  {stage}: forbidden type: gate (use human-checkpoint)")
+        if ntype == "skill":
+            dispatch = node.get("dispatch")
+            if dispatch not in DISPATCH_ENUM:
+                errors.append(
+                    f"  {stage}: skill requires dispatch in {sorted(DISPATCH_ENUM)}"
+                )
+            elif stage in orchestrated and dispatch != "orchestrated":
+                errors.append(f"  {stage}: expected dispatch: orchestrated")
+            elif stage in manual and dispatch != "manual":
+                errors.append(f"  {stage}: expected dispatch: manual")
+            if "purpose" in node:
+                errors.append(f"  {stage}: purpose is only for human-checkpoint nodes")
+        elif ntype == "human-checkpoint":
+            purpose = node.get("purpose")
+            if not isinstance(purpose, str) or not purpose.strip():
+                errors.append(f"  {stage}: human-checkpoint requires purpose")
+            elif stage in purposes and purpose != purposes[stage]:
+                errors.append(
+                    f"  {stage}: purpose {purpose!r} != policy {purposes[stage]!r}"
+                )
+            if "dispatch" in node:
+                errors.append(f"  {stage}: dispatch is only for skill nodes")
+        else:
+            if "dispatch" in node:
+                errors.append(f"  {stage}: dispatch is only for skill nodes")
+            if "purpose" in node:
+                errors.append(f"  {stage}: purpose is only for human-checkpoint nodes")
+
+    checkpoint_ids = {
+        s for s, n in nodes.items() if n.get("type") == "human-checkpoint"
+    }
+    if set(purposes) != checkpoint_ids:
+        errors.append(
+            f"  human_checkpoint_purposes keys mismatch: "
+            f"workflow={sorted(checkpoint_ids)} policy={sorted(purposes)}"
+        )
+    return errors
+
+
+def check_workflow_forge() -> list[str]:
+    """Assert forge.commit_workspace on skills and forge on PR external-actions."""
+    errors: list[str] = []
+    if yaml is None:
+        return ["  MISSING dependency: PyYAML (required for workflow forge checks)"]
+
+    workflow_path = ROOT / "workflow.yaml"
+    policy_path = ROOT / "tests" / "fixtures" / "workflow_forge_policy.json"
+    if not workflow_path.is_file():
+        return ["  MISSING: workflow.yaml"]
+    if not policy_path.is_file():
+        return ["  MISSING: tests/fixtures/workflow_forge_policy.json"]
+
+    workflow = yaml.safe_load(workflow_path.read_text(encoding="utf-8"))
+    policy = json.loads(policy_path.read_text(encoding="utf-8"))
+    nodes = workflow.get("nodes") or {}
+    commit_policy = policy.get("commit_workspace") or {}
+    ea_policy = policy.get("external_action_forge") or {}
+    auth_policy = policy.get("external_action_authorization") or {}
+    skill_map = policy.get("human_forge_skills") or {}
+    forbid_suffix = policy.get("forbid_auto_label_suffix") or "-lgtm"
+    auth_enum = frozenset({"explicit", "automated"})
+
+    skill_nodes = {s for s, n in nodes.items() if n.get("type") == "skill"}
+    if set(commit_policy) != skill_nodes:
+        errors.append(
+            f"  forge commit_workspace keys mismatch: "
+            f"workflow={sorted(skill_nodes)} policy={sorted(commit_policy)}"
+        )
+
+    ea_nodes = {s for s, n in nodes.items() if n.get("type") == "external-action"}
+    if set(auth_policy) != ea_nodes:
+        errors.append(
+            f"  external_action_authorization keys mismatch: "
+            f"workflow={sorted(ea_nodes)} policy={sorted(auth_policy)}"
+        )
+
+    for stage, node in nodes.items():
+        ntype = node.get("type")
+        forge = node.get("forge") or {}
+        if ntype == "skill":
+            cw = forge.get("commit_workspace")
+            if cw not in COMMIT_WORKSPACE_ENUM:
+                errors.append(
+                    f"  {stage}: skill requires forge.commit_workspace in "
+                    f"{sorted(COMMIT_WORKSPACE_ENUM)}"
+                )
+            elif stage in commit_policy and cw != commit_policy[stage]:
+                errors.append(
+                    f"  {stage}: commit_workspace {cw!r} != policy "
+                    f"{commit_policy[stage]!r}"
+                )
+            if "action" in forge:
+                errors.append(
+                    f"  {stage}: forge.action belongs on external-action nodes"
+                )
+        elif ntype == "external-action":
+            auth = node.get("authorization")
+            if auth not in auth_enum:
+                errors.append(
+                    f"  {stage}: external-action requires authorization in "
+                    f"{sorted(auth_enum)} (got {auth!r})"
+                )
+            elif stage in auth_policy and auth != auth_policy[stage]:
+                errors.append(
+                    f"  {stage}: authorization {auth!r} != policy "
+                    f"{auth_policy[stage]!r}"
+                )
+            if stage in ea_policy:
+                expected = ea_policy[stage]
+                action = forge.get("action")
+                if action != expected.get("action"):
+                    errors.append(
+                        f"  {stage}: forge.action {action!r} != "
+                        f"{expected.get('action')!r}"
+                    )
+                if action is not None and action not in FORGE_ACTION_ENUM:
+                    errors.append(
+                        f"  {stage}: forge.action must be in "
+                        f"{sorted(FORGE_ACTION_ENUM)}"
+                    )
+                if "draft" in expected and forge.get("draft") != expected.get("draft"):
+                    errors.append(f"  {stage}: forge.draft mismatch policy")
+                if "apply_labels" in expected and list(forge.get("apply_labels") or []) != list(
+                    expected.get("apply_labels") or []
+                ):
+                    errors.append(f"  {stage}: forge.apply_labels mismatch policy")
+                if list(forge.get("requires") or []) != list(
+                    expected.get("requires") or []
+                ):
+                    errors.append(f"  {stage}: forge.requires mismatch policy")
+                if "status" in expected and forge.get("status") != expected.get("status"):
+                    errors.append(f"  {stage}: forge.status mismatch policy")
+            for label in forge.get("apply_labels") or []:
+                if str(label).endswith(forbid_suffix):
+                    errors.append(
+                        f"  {stage}: forbid auto-apply label {label!r} "
+                        f"(suffix {forbid_suffix})"
+                    )
+        elif "forge" in node and ntype not in {"skill", "external-action"}:
+            errors.append(f"  {stage}: forge only on skill or external-action")
+
+    for action, skill_id in skill_map.items():
+        expected_id = action.replace("_", "-")
+        if skill_id != expected_id:
+            errors.append(
+                f"  human_forge_skills: {action} → {skill_id!r} "
+                f"(expected {expected_id!r})"
+            )
+        skill_file = ROOT / "skills" / "forge" / skill_id / "SKILL.md"
+        if not skill_file.is_file():
+            errors.append(f"  MISSING forge skill: skills/forge/{skill_id}/SKILL.md")
+    return errors
+
+
+def check_prompt_package_surface() -> list[str]:
+    """Assert prompt packages for requirements + development inventory (not dispatch)."""
+    if str(ROOT) not in sys.path:
+        sys.path.insert(0, str(ROOT))
+    from scripts.prompt_contract import (  # noqa: WPS433 — runtime path bootstrap
+        iter_prompt_skill_dirs,
+        validate_prompt_package,
+    )
+
+    errors: list[str] = []
+    inventory_path = ROOT / "tests" / "fixtures" / "prompt_inventory.json"
+    if not inventory_path.is_file():
+        return ["  MISSING: tests/fixtures/prompt_inventory.json"]
+
+    inventory = json.loads(inventory_path.read_text(encoding="utf-8"))
+    expected = {
+        (entry["area"], entry["skill_id"]) for entry in inventory.get("skills") or []
+    }
+    found = {(area, skill_id) for area, skill_id, _ in iter_prompt_skill_dirs(ROOT)}
+
+    if expected != found:
+        missing = sorted(expected - found)
+        extra = sorted(found - expected)
+        if missing:
+            errors.append(f"  inventory lists missing skill dirs: {missing}")
+        if extra:
+            errors.append(f"  skill dirs not in prompt inventory: {extra}")
+
+    for area, skill_id, skill_root in iter_prompt_skill_dirs(ROOT):
+        if (area, skill_id) not in expected:
+            continue
+        for line in validate_prompt_package(skill_root, skill_id=skill_id):
+            errors.append(f"  {area}/{skill_id}: {line}")
+
+    # Fail closed if engg-reviews accidentally gains prompt packages in inventory.
+    for entry in inventory.get("skills") or []:
+        if entry.get("area") == "engg-reviews":
+            errors.append("  engg-reviews must not appear in prompt inventory")
     return errors
 
 
@@ -499,10 +1033,10 @@ def main() -> int:
         if errors:
             all_errors.append((description, errors))
 
-    desc, paths = SYNC_COPY_INVARIANT
-    errors = check_sync_copy(desc, paths)
-    if errors:
-        all_errors.append((desc, errors))
+    for desc, paths in SYNC_COPY_INVARIANTS:
+        errors = check_sync_copy(desc, paths)
+        if errors:
+            all_errors.append((desc, errors))
 
     desc, _ = SKILL_REGISTRY_INVARIANT
     errors = check_skill_registry()
@@ -517,6 +1051,12 @@ def main() -> int:
     if errors:
         all_errors.append(("Every skills/requirements/*/ must be listed in profiles requirements_skills:", errors))
 
+    errors = check_forge_profile_registry()
+    if errors:
+        all_errors.append(
+            ("Every skills/forge/*/ must be listed in every profiles/*.yaml forge_skills:", errors)
+        )
+
     errors = check_check_registries()
     if errors:
         all_errors.append(("Check registries and advertised ranges must agree", errors))
@@ -524,6 +1064,10 @@ def main() -> int:
     errors = check_required_tokens()
     if errors:
         all_errors.append(("Workflow producer/consumer contracts must be complete", errors))
+
+    errors = check_codegraph_provider_links()
+    if errors:
+        all_errors.append(("Codegraph provider mentions must link the shared contract doc", errors))
 
     errors = check_forbidden_workflow_text()
     if errors:
@@ -540,6 +1084,28 @@ def main() -> int:
     errors = check_delivery_contract_surface()
     if errors:
         all_errors.append(("Delivery contract and skill handoffs must be complete", errors))
+
+    errors = check_workflow_dispatch_and_purpose()
+    if errors:
+        all_errors.append(
+            ("Workflow dispatch/purpose must match policy fixture", errors)
+        )
+
+    errors = check_workflow_forge()
+    if errors:
+        all_errors.append(
+            ("Workflow forge policy must match fixture and forbid *-lgtm", errors)
+        )
+
+    errors = check_prompt_package_surface()
+    if errors:
+        all_errors.append(
+            (
+                "Prompt packages required for skills/requirements/*, "
+                "skills/development/*, and skills/forge/* (independent of dispatch)",
+                errors,
+            )
+        )
 
     if all_errors:
         print("prayog-skills consistency check FAILED\n")
