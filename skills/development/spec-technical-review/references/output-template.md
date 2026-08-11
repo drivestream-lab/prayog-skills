@@ -6,7 +6,6 @@
 | Spec | {SPEC_PATH} |
 | Spec digest | `sha256:{hex}` |
 | Feasibility report | {FEASIBILITY_PATH} |
-| Feasibility digest | `sha256:{hex}` |
 | PRD digest | `sha256:{hex}` |
 | Impact map / revision | `{path}` / `{N}` |
 | Repo scope digest | `sha256:{hex}` |
@@ -14,7 +13,7 @@
 | Source freshness | CURRENT / STALE — reason |
 | Repo | {REPO} |
 | Date | {YYYY-MM-DD} |
-| Branch | `chore/INIT-{COMPONENT}-{NUMBER}-spec-{repo}` (spec PR — TDD committed here) |
+| Branch | `chore/INIT-{COMPONENT}-{NUMBER}-spec-{repo}` (spec PR — TDD published via Forge) |
 | Initiative segment | `INIT-{COMPONENT}-{NUMBER}` — COMPONENT is service branch_code from service-catalog.yaml |
 | Status | Draft |
 | Review deadline | {YYYY-MM-DD + 5 business days} |
@@ -24,7 +23,12 @@
 
 ## 1. Problem statement
 
-{1–3 sentences from spec. What engineering problem must be solved.}
+{1–3 sentences stating the **engineering** problem in engineering vocabulary
+(data flow, module boundary, protocol, storage, concurrency) — reference
+`REQ-*` ids for traceability, but do not lift or paraphrase the spec's
+behavioral sentences. If you cannot state the problem without reusing the
+spec's own phrasing, you have not yet identified the technical problem —
+keep analyzing before writing this section.}
 
 ---
 
@@ -74,11 +78,11 @@ rendered from [adr-template.md](adr-template.md). **Do not embed ADR body conten
 in the TDD** — the canonical Draft lives in `{adr_dir}`; this section is an index
 only.
 
-| Finding | Classification | ADR file / TDD section | Recommendation / default | Status | Digest |
-|---------|----------------|------------------------|--------------------------|--------|--------|
-| {F13-NN} | ADR_REQUIRED | `{adr_dir}/adr-{NNN}-{slug}.md` | {choice} | Draft | `sha256:{hex}` |
-| {F13-NN} | TDD_ONLY | §9 row {id} | {choice + rationale} | Resolved | N/A |
-| {F13-NN} | DEFERRED_WITH_DEFAULT | §9 row {id} | {default + revisit trigger} | Deferred | N/A |
+| Finding | Classification | ADR file / TDD section | product_constraints | Product exclusions | Recommendation / default | Status | Digest |
+|---------|----------------|------------------------|---------------------|--------------------|--------------------------|--------|--------|
+| FF-{nn} | ADR_REQUIRED | `{adr_dir}/adr-{NNN}-{slug}.md` | `[REQ-…]` | {short list / none} | {choice} | Draft | `sha256:{hex}` |
+| FF-{nn} | TDD_ONLY | §9 row {id} | `[REQ-…]` | {short list / none} | {choice + rationale} | Resolved | N/A |
+| FF-{nn} | DEFERRED_WITH_DEFAULT | §9 row {id} | `[REQ-…]` | {short list / none} | {default + revisit trigger} | Deferred | N/A |
 
 **Derived counts:**
 
@@ -171,11 +175,13 @@ use `planned-auto-fix` or `suggested-fix`.
 
 | Gate | Status |
 |------|--------|
-| All T1–T11 checks | {PASS / FAIL — list blocking items} |
+| All T1–T12 checks | {PASS / FAIL — list blocking items} |
 | Engineering decisions resolved | {N resolved, N deferred with defaults} |
 | Draft ADR files written | {N files / N required} |
+| Product-boundary integrity (T12) | {PASS / FAIL} |
 | PM questions outstanding | {derived row count — list} |
 | Domain questions outstanding | {derived row count — list} |
+| Selected workflow outcome | `{outcome}` — {reason} |
 | Ready for PE review | YES / NO |
 | **Ready for /spec-implementation-plan** | **NO — final exact-head PE approval required** |
 
@@ -196,14 +202,17 @@ use `planned-auto-fix` or `suggested-fix`.
 | T9 Engineering questions zero | | |
 | T10 PE review readiness | | |
 | T11 ADR artifact integrity | | |
+| T12 Product-boundary integrity | | |
 
 ---
 
-## PR instructions
+## Forge / PR instructions
 
-> Commit this TDD to the **Draft spec PR** branch. PE reviews on the **same PR**.
+> Persist this TDD locally and publish via `/commit-workspace` (or Gateflow
+> ForgeClient) to the **Draft spec PR** branch. Do **not** commit, push, open
+> PRs, or apply labels inside this skill. PE reviews on the **same PR**.
 > Gate 2 label stays **`spec-pending`** until the implementation plan exists.
-> PE accepts architecture by committing **Accepted** TDD/ADR files — not by
+> PE accepts architecture by publishing **Accepted** TDD/ADR files — not by
 > setting `spec-lgtm` yet. CODEOWNERS may request PE review on `Technical-Review-*`.
 
 ```
@@ -222,15 +231,26 @@ PE review checklist (PE works through this on the spec PR):
   [ ] T4 Test policy — is determinism policy acceptable?
   [ ] T9 Zero unresolved PE items?
   [ ] T11 ADR artifact integrity — every required file/link/digest is valid
+  [ ] T12 Product-boundary integrity — every user-visible statement cites approved REQ-*
+  [ ] T12 mechanical: `scripts/adr_boundary_lint.py` run on every ADR (with
+      --require-sources and --approved-req-id) AND on the TDD (--tdd) —
+      confirm `Lint evidence` on each Accepted ADR, don't just take PASS on faith
+  [ ] T12 manual (lint cannot see these — see checks.md "three gaps"):
+      loose paraphrase in unfamiliar vocabulary; invented behavior under a
+      real REQ with flags left false; multiple decisions narrated in one
+      un-duplicated Recommendation section
 
 PE action (artifact acceptance — mid-lane):
   Review/comment or Request changes → developer updates TDD/ADR files
   Explicitly state when decisions are ready for acceptance
   Developer/PE updates ADR metadata Draft → Accepted and TDD Status → Accepted
-  Commit acceptance package to spec branch (label remains spec-pending)
+    (only when changes_user_visible_behavior and spec_amendment_required are false,
+    Approval evidence / Approved head are populated, and Lint evidence is recorded —
+    not a placeholder)
+  Publish acceptance package via Forge to spec branch (label remains spec-pending)
 
 After artifact acceptance:
   → /spec-implementation-plan may run on the same branch
   → after plan on head: PE sets spec-lgtm + Approve + attestation
-  → Ready for review → merge → board-seed from merged plan §9
+  → Ready for review → merge → `/create-board-tickets` from merged plan §9
 ```

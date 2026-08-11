@@ -64,24 +64,44 @@ Derive examples from the actual initiative-feasibility report findings for
 this repo. Apply the routing table above to classify each finding.
 Do not use examples from other repos or stacks.
 
+## Ownership rule
+
+- **PRD / product spec** owns: user-visible behavior, scope, acceptance
+  criteria, business rules, and priority. Approved `REQ-*` are the product
+  authority.
+- **ADR / TDD** owns: technical choices, alternatives, trade-offs, and
+  consequences needed to satisfy already-approved requirements.
+- ADRs may cite `REQ-*`; they must **never** create or amend them.
+- PE may propose technical options (and explain product consequences) before
+  PM confirmation, but an ADR **cannot become Accepted** while it depends on
+  an unapproved product-behavior change. Amend and re-approve the spec first.
+
 ## PE decision vs PM confirmation pattern
 
 Many items have both a PE component and a PM component. The pattern:
 
-1. **PE resolves the engineering question first** — proposes the technical
-   option, documents trade-offs, recommends a default.
-2. **PM confirms the product consequence** — does the recommended option match
-   what users expect? Does it affect scope or release?
+1. **PE frames technical options first** — documents trade-offs against
+   already-approved `REQ-*` constraints, recommends a default for the
+   **internal** architecture.
+2. **PM confirms only when product consequences change** — if the selected
+   option would alter user-visible behavior not covered by an approved
+   `REQ-*`, stop, amend the spec, and obtain approval before accepting the ADR.
 
-Example (multi-schema):
-- PE: "One invocation should emit all four schema outputs; the extraction
-  boundary signature is `extract(file) -> dict[SchemaType, list[Row]]`."
-  → Draft ADR written.
-- PM: "Confirmed — users upload one file and expect all outputs. One command
-  is correct." → PM question closed.
+Example (multi-schema) — correct ownership:
+
+- Approved `REQ-07`: “One upload produces all four required outputs.”
+  → Product behavior lives in the spec; not invented by the ADR.
+- PE proposes internal options for satisfying `REQ-07` (e.g. single extraction
+  pass vs four independent parsers) and drafts an ADR that selects
+  `extract(file) → map<schema, rows>` as the **internal extraction boundary**.
+- ADR fields: `product_constraints: [REQ-07]`,
+  `changes_user_visible_behavior: false`, `spec_amendment_required: false`.
+- PM is consulted **only if** a proposed option would change the approved
+  product behavior (e.g. requiring four uploads). Until the spec is amended,
+  that ADR must remain Draft / non-Accepted.
 
 Never ask PM to choose between two engineering options without PE first
-recommending one.
+recommending one. Never accept an ADR that is the first source of product truth.
 
 ## Feasibility report PM questions — re-triage guide
 

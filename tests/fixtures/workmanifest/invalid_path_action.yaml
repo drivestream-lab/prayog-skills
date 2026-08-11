@@ -1,0 +1,41 @@
+# Invalid: absolute path + bad action
+apiVersion: prayog/v1
+kind: WorkManifest
+initiative: INIT-DEMO-001
+epic:
+  id: EPIC
+  repo: example-service
+  title: demo
+  codebase: example-service
+  spec_path: docs/specification/product/INIT-DEMO-001.md
+  verify_command: "N/A — fixture"
+work:
+  - id: W0
+    kind: issue
+    repo: example-service
+    title: W0
+    depends_on: []
+    codebase: example-service
+    spec_path: docs/specification/product/INIT-DEMO-001.md
+    verify_command: "N/A — docs-only fixture"
+    tasks:
+      - id: TASK-W0-01
+        implements: [REQ-01]
+        depends_on: []
+        files:
+          - path: /etc/passwd
+            action: touch
+        exit:
+          criteria:
+            - "Module exports parse() and unit test covers happy path"
+          proof:
+            kind: command
+            command: "pytest tests/unit/test_a.py -q"
+            expected: "exit 0"
+            evidence_expected: "Wave-Execution-INIT-DEMO-001-W0.md § TASK-W0-01"
+    verification:
+      check: "make check"
+      unit: "pytest -q"
+      live:
+        applicable: false
+        reason: "Fixture docs-only"

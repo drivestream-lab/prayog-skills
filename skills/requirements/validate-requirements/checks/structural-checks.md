@@ -49,8 +49,9 @@ Verify all internal references resolve correctly:
 | **Section references** | "See Section 5.3" — does Section 5.3 exist? Was it renumbered? |
 | **Assumption references** | "Assumption H11" in the body — does H11 exist in the Assumptions table? Does it say what the body claims? |
 | **Dependency references** | "Dependency D4" — does it exist in the Dependencies table? |
-| **FR references** | "FR-3" in user flows or error handling — does FR-3 exist? Does it describe what the reference claims? |
-| **Open Question references** | "OQ-2" — does it exist in the Open Questions table? |
+| **FR / REQ references** | `REQ-3` or legacy `FR-3` in user flows or error handling — does that requirement exist? Does it describe what the reference claims? Treat `FR-n` ≡ `REQ-n`. |
+| **Open Question references** | `OQ-2` — does it exist in the Open Questions table? |
+| **Capability references** | `CAP-2` — does it exist when the PRD uses capability ids? |
 | **Document references** | References to other documents — are the filenames/paths still correct? |
 
 ---
@@ -64,5 +65,6 @@ Verify all internal references resolve correctly:
 | **Unresolved owner fields** | Dependencies or open questions with no owner assigned |
 | **Missing dates** | Target dates that say "TBD" for items that were discussed and given a timeline |
 | **Dangling "Phase 2" items** | Items deferred to a future phase that aren't captured in "Out of Scope" or "Future Enhancements" |
-| **Unreferenced FRs** | FRs that appear in the FR list but are never mentioned in User Flows, Visual States, or Error Handling |
-| **Orphaned error handling rows** | Error handling entries that reference FRs or flows that no longer exist |
+| **Unreferenced requirements** | `REQ-*` (or legacy `FR-*`) that appear in the requirement list but are never mentioned in User Flows, Visual States, or Error Handling |
+| **Orphaned error handling rows** | Error handling entries that reference REQs/FRs or flows that no longer exist |
+| **Missing product ids** | In-scope capabilities/requirements without `CAP-*` / `REQ-*` when the rest of the document uses id conventions — Gap suggesting assignment |

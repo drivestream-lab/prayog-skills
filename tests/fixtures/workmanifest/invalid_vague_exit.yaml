@@ -1,0 +1,40 @@
+# Invalid: vague exit criterion + missing proof fields
+apiVersion: prayog/v1
+kind: WorkManifest
+initiative: INIT-DEMO-001
+epic:
+  id: EPIC
+  repo: example-service
+  title: demo
+  codebase: example-service
+  spec_path: docs/specification/product/INIT-DEMO-001.md
+  verify_command: "N/A — fixture"
+work:
+  - id: W0
+    kind: issue
+    repo: example-service
+    title: W0
+    depends_on: []
+    codebase: example-service
+    spec_path: docs/specification/product/INIT-DEMO-001.md
+    verify_command: "N/A — docs-only fixture"
+    tasks:
+      - id: TASK-W0-01
+        implements: [REQ-01]
+        depends_on: []
+        files:
+          - path: src/a.py
+            action: create
+        exit:
+          criteria:
+            - "done"
+          proof:
+            kind: command
+            expected: ""
+            evidence_expected: ""
+    verification:
+      check: "make check"
+      unit: "pytest -q"
+      live:
+        applicable: false
+        reason: "Fixture docs-only"

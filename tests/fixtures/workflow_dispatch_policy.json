@@ -1,0 +1,32 @@
+{
+  "orchestrated": [
+    "pre-implement",
+    "loop-spec",
+    "learning-extract",
+    "ground-spec",
+    "spec-draft",
+    "initiative-feasibility",
+    "spec-technical-review",
+    "purge-initiative-artifacts-app",
+    "purge-initiative-artifacts-meta"
+  ],
+  "manual": [
+    "validate-requirements",
+    "review-findings",
+    "update-documents",
+    "prd-impact-map",
+    "spec-implementation-plan"
+  ],
+  "human_checkpoint_purposes": {
+    "requirements-human-decision": "requirements-clarification",
+    "prd-impact-acceptance": "prd-impact-acceptance",
+    "technical-review-approval": "tdd-adr-acceptance",
+    "spec-human-decision": "spec-clarification",
+    "coding-readiness": "coding-readiness",
+    "wave-acceptance": "wave-acceptance",
+    "wave-signoff": "wave-signoff",
+    "initiative-closure": "initiative-closure",
+    "initiative-closure-signoff-app": "initiative-closure-signoff-app",
+    "initiative-closure-signoff-meta": "initiative-closure-signoff-meta"
+  }
+}

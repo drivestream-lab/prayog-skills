@@ -33,8 +33,13 @@ development_skills:
   - initiative-feasibility
   - spec-technical-review
   - spec-implementation-plan
-  - board-seed
   - pre-implement
   - loop-spec
+  - learning-extract
   - ground-spec
-  - verify
+  - purge-initiative-artifacts-app
+
+forge_skills:
+  - commit-workspace
+  - open-draft-pr
+  - create-board-tickets
