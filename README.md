@@ -37,7 +37,7 @@ not workflow graph nodes.
 | | |
 |---|---|
 | **License** | [MIT](LICENSE) |
-| **Version** | see [`VERSION`](VERSION) (branch `features/rc-2` experimental **0.5.0-rc.2**; mainline **0.4.3**) |
+| **Version** | see [`VERSION`](VERSION) — **0.5.0** |
 | **Install** | [skills CLI](https://skills.sh) or Launchpad `apply-harness` |
 | **Pairs with** | [launchpad](https://github.com/drivestream-lab/launchpad) · `*-rules` repos |
 
@@ -224,7 +224,7 @@ skills/<area>/<skill-id>/prompts/
 
 ## Experimental — engg-reviews (Phase 1 MVP)
 
-Gate-independent PE advisory pack on branch `features/rc-2` / version `0.5.0-rc.2`.
+Gate-independent PE advisory pack, adjunct to the mainline release.
 **Not** part of `sdd-delivery/v2`. **Not** listed in `profiles/*.yaml` — does not
 unlock `prd-impact-acceptance` or `/spec-draft`. PE posts product questions on the Meta PR; PM
 updates the PRD via requirements skills.

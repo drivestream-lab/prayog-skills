@@ -5,14 +5,19 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ---
 
-## [Unreleased] — features/rc-2
+## [Unreleased]
 
-_(empty — tip changes land under `[0.5.0-rc.2]`)_
+_(empty)_
 
-## [0.5.0-rc.2] — 2026-08-03 (tip family)
+## [0.5.0] — 2026-08-11
 
-Consumable tip for programmes remounting `agent_skills.ref: v0.5.0-rc.2`
-(resolve to the retagged tip SHA).
+Promoted to stable from the `0.5.0-rc.2` tip family (`features/rc-2`) after
+dogfooding a full initiative end-to-end (feasibility → Accepted TDD/ADRs →
+implementation plan → wave execution → ground reports → learning-extract) on
+wave-acceptance semantics across three consuming repos. All changes below
+previously shipped incrementally under `v0.5.0-rc.2` retags; this tag is the
+same content, promoted rather than re-authored. Programmes pinned at
+`v0.5.0-rc.2` should retarget `agent_skills.ref: v0.5.0`.
 
 ### Added — Live-verify coverage marker, as-built split, optional codegraph tool contract
 
@@ -466,9 +471,9 @@ Consumable tip for programmes remounting `agent_skills.ref: v0.5.0-rc.2`
 
 - v0.4.3 pins without `dispatch` → treat as `manual` (fail closed for
   orchestration). Upgrade pin after release tag for wave auto-dispatch.
-- Prompt packages ship on the **`v0.5.0-rc.2` family** (`features/rc-2`).
-  Automated consumers resolve briefs from the pin; missing/invalid package →
-  **fail closed**. Humans may freeform.
+- Prompt packages ship on the **`v0.5.0` family**. Automated consumers
+  resolve briefs from the pin; missing/invalid package → **fail closed**.
+  Humans may freeform.
 - Before pin/tag promote of prompt revisions: fixtures green, checklist, and
   CHANGELOG `prompt_id@revision` entries.
 - engg-reviews PE pack remains adjunct (`engg-reviews/v1`) — not part of
