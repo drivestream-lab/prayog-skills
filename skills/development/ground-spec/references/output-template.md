@@ -1,7 +1,7 @@
 # Output template — ground report
 
 Save to `{reports_dir}/Ground-Report-{SPEC}-W{N}.md`
-([`../../../../references/artifact-write-contract.md`](../../../../references/artifact-write-contract.md)).
+([`prayog-skills/references/artifact-write-contract.md`](prayog-skills/references/artifact-write-contract.md)).
 
 Run checks G1–G10 per [checks.md](checks.md). Findings use **`GF-*`**.
 
@@ -99,4 +99,4 @@ yes / no — reason
 ```
 
 Append handoff envelope (stage `ground-spec`) per
-`../../../../references/handoff-envelope.md`.
+`prayog-skills/references/handoff-envelope.md`.

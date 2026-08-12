@@ -33,18 +33,18 @@ opens those after tech lead confirms the map.
 5. Save the canonical map at `reports_dir/Impact-Map-{INIT-id}.md`. A PR
    comment or label is never the source of truth. **Never** write
    `Impact-Map-*-revN.md` / `*-v2` siblings — overwrite the canonical path and
-   bump `map_revision` (see `../../../references/artifact-write-contract.md`).
+   bump `map_revision` (see `prayog-skills/references/artifact-write-contract.md`).
 6. Increment `map_revision` for every changed map and record the prior
    revision plus change reason. Do not edit history to make a revision appear
    unchanged. If a legacy `*-revN` sibling exists, migrate into the canonical
    path and stop writing the sibling (purge siblings only via
    `/purge-initiative-artifacts-meta` allowlist — Impact-Map is KEEP).
 7. **Mint durable identities H1–H3** per
-   `../../../references/artifact-write-contract.md`: **H1** `source_prd_digest`
+   `prayog-skills/references/artifact-write-contract.md`: **H1** `source_prd_digest`
    (PRD bytes), **H2** one `scope_digest` per affected repo (canonical payload
    recipe), **H3** `map_revision`. Prefer `CAP-*` / `REQ-*` in capability lists
    (legacy free-text or `FR-*` acceptable until next PRD edit — see
-   `../../../references/id-conventions.md`). A tech-lead approval (**G1**) is
+   `prayog-skills/references/id-conventions.md`). A tech-lead approval (**G1**) is
    valid only for the exact meta PR head SHA carrying those values. Impact-Map
    is KEEP through initiative-closure purge; do not treat mid-lane app report
    digests as map identity.
@@ -55,7 +55,7 @@ opens those after tech lead confirms the map.
 10. **No forge mutations in this skill.** Do not create a branch, commit, push,
     PR, comment, review request, or label here. Fill `handoff.forge` for
     `open_draft_pr` and recommend `/open-draft-pr` (or orchestrator ForgeClient
-    on `prd-pr-action`). See `../../../references/forge-side-effects.md#content-producers`.
+    on `prd-pr-action`). See `prayog-skills/references/forge-side-effects.md#content-producers`.
 11. Gate labels are a visible workflow projection, not authority. Exactly one
     PE gate label may be active: `impact-map-pending`, `impact-map-lgtm`, or
     `impact-map-blocked`. `impact-map-revised` and `impact-map-stale` are
@@ -153,7 +153,7 @@ next is `prd-pr-action` (`open_draft_pr`). Fill `handoff.forge` with pin
 `draft: true`, `apply_labels: [impact-map-pending]`). Recommend
 `/open-draft-pr`. Do not run forge mutations inside `/prd-impact-map`.
 
-See `../../../references/forge-side-effects.md`.
+See `prayog-skills/references/forge-side-effects.md`.
 
 ## Output and approval contract
 
@@ -244,10 +244,10 @@ the current meta PR head SHA or any attested value differs from the artifact.
 
 ## Workflow handoff
 
-1. Append/emit the envelope from `../../../references/handoff-envelope.md` to the impact-map artifact. Use stage `prd-impact-map`.
-2. When the invocation binds `handoff_path` (orchestrator / AgentRunner baton), also **overwrite** that path with the same `handoff:` envelope before exit. Leaving the baton empty is a failed stage for automated consumers. `artifact.path` remains the workspace skill output, not the baton path. See `../../../references/handoff-envelope.md` (Orchestrator baton).
-3. Derive `next_candidates`, `human_checkpoint`, and `external_action` from pinned root `workflow.yaml` for `(stage: prd-impact-map, outcome)` per `../../../references/handoff-envelope.md` (**Derive from pinned workflow**). Set `human_checkpoint: true` only when the resolved next node's `type` is `human-checkpoint`. Set `external_action: true` when next is `external-action` (e.g. `prd-pr-action` on `pass`).
-4. On `pass`, fill complete `handoff.forge` for `open_draft_pr` per pin `requires`. Recommend `/open-draft-pr`. Follow `../../../references/forge-side-effects.md#content-producers`.
+1. Append/emit the envelope from `prayog-skills/references/handoff-envelope.md` to the impact-map artifact. Use stage `prd-impact-map`.
+2. When the invocation binds `handoff_path` (orchestrator / AgentRunner baton), also **overwrite** that path with the same `handoff:` envelope before exit. Leaving the baton empty is a failed stage for automated consumers. `artifact.path` remains the workspace skill output, not the baton path. See `prayog-skills/references/handoff-envelope.md` (Orchestrator baton).
+3. Derive `next_candidates`, `human_checkpoint`, and `external_action` from pinned root `workflow.yaml` for `(stage: prd-impact-map, outcome)` per `prayog-skills/references/handoff-envelope.md` (**Derive from pinned workflow**). Set `human_checkpoint: true` only when the resolved next node's `type` is `human-checkpoint`. Set `external_action: true` when next is `external-action` (e.g. `prd-pr-action` on `pass`).
+4. On `pass`, fill complete `handoff.forge` for `open_draft_pr` per pin `requires`. Recommend `/open-draft-pr`. Follow `prayog-skills/references/forge-side-effects.md#content-producers`.
 
 
 **Transitions:** pinned root `workflow.yaml` for this stage (SSOT). Human or

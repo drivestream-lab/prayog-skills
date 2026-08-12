@@ -20,8 +20,8 @@ There is no separate `/board-seed` content skill. At seed time WorkManifest
 lives in the implementation plan §9 (**walk-time carrier**). After successful
 seed, **board issues are the long-term WorkManifest home** — the plan file may
 be purged at initiative closure
-([`../../../references/artifact-write-contract.md`](../../../references/artifact-write-contract.md),
-[`../../../references/workmanifest-contract.md`](../../../references/workmanifest-contract.md)).
+([`prayog-skills/references/artifact-write-contract.md`](prayog-skills/references/artifact-write-contract.md),
+[`prayog-skills/references/workmanifest-contract.md`](prayog-skills/references/workmanifest-contract.md)).
 
 **Do not run before spec merge.** **Do not write product code.**
 
@@ -44,7 +44,7 @@ be purged at initiative closure
    Require `epic`, `work[]` with wave ids `W0`…`Wn`, and each wave's
    `tasks[]` with stable `TASK-*`, `implements`, `depends_on`, exit proof,
    and verification as defined in
-   [`../../../references/workmanifest-contract.md`](../../../references/workmanifest-contract.md).
+   [`prayog-skills/references/workmanifest-contract.md`](prayog-skills/references/workmanifest-contract.md).
 5. **Projection only** — project epic/wave/task **summaries** from the
    canonical WorkManifest into board issue titles/bodies. After seed, board
    holds long-term identity; do not invent TASK ids, REQ mappings,
@@ -65,8 +65,8 @@ be purged at initiative closure
 10. If tooling unavailable, print exact commands from
     [references/output-template.md](references/output-template.md) and stop —
     do not claim `seeded`.
-11. Ids: `../../../references/id-conventions.md`. Paths:
-    `../../../references/artifact-write-contract.md`. Checks: **B1–B8**.
+11. Ids: `prayog-skills/references/id-conventions.md`. Paths:
+    `prayog-skills/references/artifact-write-contract.md`. Checks: **B1–B8**.
 
 ## Inputs
 
@@ -104,7 +104,7 @@ Use [references/output-template.md](references/output-template.md) and
 
 ## Workflow handoff
 
-1. Append/emit envelope from `../../../references/handoff-envelope.md`. Stage id
+1. Append/emit envelope from `prayog-skills/references/handoff-envelope.md`. Stage id
    for this forge skill note: `create-board-tickets` (not a graph node).
 2. Dual-write `handoff_path` when bound.
 3. After successful seed, programme continues per pin

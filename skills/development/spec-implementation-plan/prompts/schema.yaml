@@ -1,5 +1,5 @@
 prompt_id: spec-implementation-plan
-revision: 1.7.0
+revision: 1.8.0
 variables:
   ticket:
     required: true

@@ -32,7 +32,7 @@ context. Ask taxonomy chips only when classification is ambiguous.
 3. Emit learning items with closed taxonomy: **`SPEC`**, **`SKILL`**,
    **`HARNESS`**, optional **`ENV`**. One primary class per item. Prefer **SPEC**
    over **SKILL** when both fit.
-4. Assign stable ids `L-01`, `L-02`, … (see `../../../references/id-conventions.md`).
+4. Assign stable ids `L-01`, `L-02`, … (see `prayog-skills/references/id-conventions.md`).
 5. Each item includes: summary, evidence (paths/commits), **codify hint**
    (suggested skill / spec area / harness home), status `open` | `codified`.
    Do **not** open auto-merge codify PRs.
@@ -46,10 +46,10 @@ context. Ask taxonomy chips only when classification is ambiguous.
 8. **Do not** author the full Ground Report REQ matrix or §Contracts produced —
    that remains `/ground-spec`.
 9. Do **not** call Gateflow HTTP / DB as skill success. Worker ingest is the
-   consumer (H6). Follow `../../../references/forge-side-effects.md#content-producers`
+   consumer (H6). Follow `prayog-skills/references/forge-side-effects.md#content-producers`
    for optional workspace publish.
-10. Ids / paths: `../../../references/id-conventions.md`,
-    `../../../references/artifact-write-contract.md`.
+10. Ids / paths: `prayog-skills/references/id-conventions.md`,
+    `prayog-skills/references/artifact-write-contract.md`.
 
 ## Taxonomy
 
@@ -98,7 +98,7 @@ Pass-2 closeout (`learning-extract` → `ground-spec`) closes the wave;
 
 ## Workflow handoff
 
-1. Append/emit envelope from `../../../references/handoff-envelope.md`. Stage
+1. Append/emit envelope from `prayog-skills/references/handoff-envelope.md`. Stage
    `learning-extract`.
 2. When `handoff_path` is bound, **overwrite** that path with the same
    `handoff:` envelope before exit.
@@ -106,5 +106,5 @@ Pass-2 closeout (`learning-extract` → `ground-spec`) closes the wave;
    for `(stage: learning-extract, outcome)`. Set `human_checkpoint: true` only
    when the resolved next node's `type` is `human-checkpoint`.
 4. Happy path: `outcome: pass` → next `ground-spec` → `human_checkpoint: false`.
-5. Follow `../../../references/forge-side-effects.md#content-producers` when pin
+5. Follow `prayog-skills/references/forge-side-effects.md#content-producers` when pin
    `forge.commit_workspace` is not `disabled`.

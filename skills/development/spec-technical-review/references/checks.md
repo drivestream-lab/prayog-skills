@@ -172,6 +172,6 @@ ADR violating the one-decision/length discipline.
 
 Findings discovered natively in this stage (e.g. a T12 audit result) use the
 **`TF-*`** namespace, never the feasibility-owned `FF-*` (see
-`../../../references/id-conventions.md`) — cite the originating `FF-*`
+`prayog-skills/references/id-conventions.md`) — cite the originating `FF-*`
 separately for lineage when the finding traces back to a `NEW-ADR` (e.g.
 "`TF-01`, from `FF-02`"), do not conflate the two ids.
