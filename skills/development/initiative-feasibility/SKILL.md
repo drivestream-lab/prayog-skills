@@ -33,7 +33,7 @@ Pattern borrowed from awesome-copilot `create-github-issues-for-unmet-specificat
 6. Verify **light source freshness** before F1: product-spec header citations
    (**H1** PRD digest, **H2** scope digest, **H3** map revision) and tip
    continuity; **G1** meta head + approval while Gate 1 still applies. See
-   `../../../references/artifact-write-contract.md`. Stop on authority drift.
+   `prayog-skills/references/artifact-write-contract.md`. Stop on authority drift.
    Do **not** require mid-lane report digests as staleness SSOT.
 7. Every open item must record lane, blocking, owner, status, required-by
    stage, default-if-deferred, evidence, and resolution reference.
@@ -45,7 +45,7 @@ Pattern borrowed from awesome-copilot `create-github-issues-for-unmet-specificat
    **`spec-pending`** — do not set `spec-lgtm` during feasibility.
 9. **Do not implement** product code. Spec-only artifacts; publication is Forge.
 10. If a codegraph provider is available (MCP tool matching
-    `../../../references/codegraph-tool-contract.md`, or a local CLI), prefer
+    `prayog-skills/references/codegraph-tool-contract.md`, or a local CLI), prefer
     it for architecture/impact/coverage questions. Always fall back to direct
     `source_roots` reads when unavailable — never block or change outcome
     selection on its absence.
@@ -70,7 +70,7 @@ for PRD / impact-map freshness. Do not invent a meta path when empty.
 8. **Layout** — `.harness/profile.yaml` or [references/layout-defaults.md](references/layout-defaults.md)
 9. **`rules_glob`** — workspace MDC rules (REQUIRED). Read before T2 Analyze.
 10. **`adr_dir`** — architecture decision records (REQUIRED). Run relevant-ADR pass per [references/governance.md](references/governance.md) before T2 Analyze.
-11. **Codegraph provider** — OPTIONAL — see `../../../references/codegraph-tool-contract.md`
+11. **Codegraph provider** — OPTIONAL — see `prayog-skills/references/codegraph-tool-contract.md`
 
 ## When to use
 
@@ -145,10 +145,10 @@ the `spec-technical-review` skill's `references/governance.md`.
 
 ## Workflow handoff
 
-1. Append/emit the envelope from `../../../references/handoff-envelope.md` to the saved report. Use stage `initiative-feasibility`.
-2. When the invocation binds `handoff_path` (orchestrator / AgentRunner baton), also **overwrite** that path with the same `handoff:` envelope before exit. Leaving the baton empty is a failed stage for automated consumers. `artifact.path` remains the workspace skill output, not the baton path. See `../../../references/handoff-envelope.md` (Orchestrator baton).
-3. Derive `next_candidates` and `human_checkpoint` from pinned root `workflow.yaml` for `(stage: initiative-feasibility, outcome)` per `../../../references/handoff-envelope.md` (**Derive from pinned workflow**). Set `human_checkpoint: true` only when the resolved next node's `type` is `human-checkpoint` — never because the artifact "should be reviewed."
-4. Follow `../../../references/forge-side-effects.md#content-producers` when this stage's pin has `forge.commit_workspace` other than `disabled` or next is an `external-action` with `forge.requires` — fill `handoff.forge` / recommend `/commit-workspace`; do not treat local CLI as skill success. Content skill success ≠ report published.
+1. Append/emit the envelope from `prayog-skills/references/handoff-envelope.md` to the saved report. Use stage `initiative-feasibility`.
+2. When the invocation binds `handoff_path` (orchestrator / AgentRunner baton), also **overwrite** that path with the same `handoff:` envelope before exit. Leaving the baton empty is a failed stage for automated consumers. `artifact.path` remains the workspace skill output, not the baton path. See `prayog-skills/references/handoff-envelope.md` (Orchestrator baton).
+3. Derive `next_candidates` and `human_checkpoint` from pinned root `workflow.yaml` for `(stage: initiative-feasibility, outcome)` per `prayog-skills/references/handoff-envelope.md` (**Derive from pinned workflow**). Set `human_checkpoint: true` only when the resolved next node's `type` is `human-checkpoint` — never because the artifact "should be reviewed."
+4. Follow `prayog-skills/references/forge-side-effects.md#content-producers` when this stage's pin has `forge.commit_workspace` other than `disabled` or next is an `external-action` with `forge.requires` — fill `handoff.forge` / recommend `/commit-workspace`; do not treat local CLI as skill success. Content skill success ≠ report published.
 
 
 **Transitions:** pinned root `workflow.yaml` for this stage (SSOT) — including

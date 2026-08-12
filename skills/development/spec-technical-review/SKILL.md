@@ -70,7 +70,7 @@ gate, `agentic_development_workflow` multi-role review, GitHub Spec Kit
     this stage re-verifies and extends that evidence, because a finding's
     prose can itself encode a wrong question (see the ADR qualification
     rubric below). Use a codegraph provider when available
-    (`../../../references/codegraph-tool-contract.md`), otherwise read
+    (`prayog-skills/references/codegraph-tool-contract.md`), otherwise read
     `source_roots` directly — **the tool is optional, the grounding activity
     is not.** Record what was found (or "none found — new capability") in
     the row's **Code evidence** — extend feasibility's column, don't just
@@ -100,7 +100,7 @@ product-scope context. Do not invent a meta path when empty.
    meta PR head / tech-lead review when Gate 1 still applies (REQUIRED; resolve
    under `meta_workspace` when bound). Feasibility report is an input artifact,
    not long-term digest SSOT.
-8. **Codegraph provider** — OPTIONAL — see `../../../references/codegraph-tool-contract.md`
+8. **Codegraph provider** — OPTIONAL — see `prayog-skills/references/codegraph-tool-contract.md`
 
 ## When to use
 
@@ -265,10 +265,10 @@ behavior in an ADR (T12).
 
 ## Workflow handoff
 
-1. Append/emit the envelope from `../../../references/handoff-envelope.md` to the TDD. Use stage `spec-technical-review`.
-2. When the invocation binds `handoff_path` (orchestrator / AgentRunner baton), also **overwrite** that path with the same `handoff:` envelope before exit. Leaving the baton empty is a failed stage for automated consumers. `artifact.path` remains the workspace skill output, not the baton path. See `../../../references/handoff-envelope.md` (Orchestrator baton).
-3. Derive `next_candidates` and `human_checkpoint` from pinned root `workflow.yaml` for `(stage: spec-technical-review, outcome)` per `../../../references/handoff-envelope.md` (**Derive from pinned workflow**). Set `human_checkpoint: true` only when the resolved next node's `type` is `human-checkpoint` — never because the artifact "should be reviewed."
-4. Follow `../../../references/forge-side-effects.md#content-producers` when this stage's pin has `forge.commit_workspace` other than `disabled` or next is an `external-action` with `forge.requires` — fill `handoff.forge` / recommend `/commit-workspace`; do not treat local CLI as skill success.
+1. Append/emit the envelope from `prayog-skills/references/handoff-envelope.md` to the TDD. Use stage `spec-technical-review`.
+2. When the invocation binds `handoff_path` (orchestrator / AgentRunner baton), also **overwrite** that path with the same `handoff:` envelope before exit. Leaving the baton empty is a failed stage for automated consumers. `artifact.path` remains the workspace skill output, not the baton path. See `prayog-skills/references/handoff-envelope.md` (Orchestrator baton).
+3. Derive `next_candidates` and `human_checkpoint` from pinned root `workflow.yaml` for `(stage: spec-technical-review, outcome)` per `prayog-skills/references/handoff-envelope.md` (**Derive from pinned workflow**). Set `human_checkpoint: true` only when the resolved next node's `type` is `human-checkpoint` — never because the artifact "should be reviewed."
+4. Follow `prayog-skills/references/forge-side-effects.md#content-producers` when this stage's pin has `forge.commit_workspace` other than `disabled` or next is an `external-action` with `forge.requires` — fill `handoff.forge` / recommend `/commit-workspace`; do not treat local CLI as skill success.
 
 
 **Transitions:** pinned root `workflow.yaml` for this stage (SSOT). Human or

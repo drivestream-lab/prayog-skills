@@ -12,4 +12,4 @@ When `.harness/profile.yaml` is absent, use:
 | `live_verify_dir` | `tests/verify` |
 
 No purge report path — handoff only.
-Allowlist SSOT: `../../../references/artifact-write-contract.md`.
+Allowlist SSOT: `prayog-skills/references/artifact-write-contract.md`.

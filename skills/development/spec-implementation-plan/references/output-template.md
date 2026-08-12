@@ -201,7 +201,7 @@ here.
 |------|------|--------|
 | Create/update per-initiative as-built detail | `docs/specification/as-built/Implementation-Status-{INITIATIVE}.md` | Record this wave's capability/code/test/verify detail — **KEEP**, written once per initiative, never appended to across initiatives |
 | Update as-built index row | `docs/specification/as-built/implementation-status.md` | Overwrite this capability's one row in place (current status + pointer to the file above) — never append a new table |
-| Ensure live-verify coverage marker | the co-shipped/extended `live_verify_dir` artifact itself | Self-declare `REQ-*` coverage per `../../../references/live-verify-coverage-contract.md`. **Do not** edit `tests/README.md` for this — it is not the source of truth |
+| Ensure live-verify coverage marker | the co-shipped/extended `live_verify_dir` artifact itself | Self-declare `REQ-*` coverage per `prayog-skills/references/live-verify-coverage-contract.md`. **Do not** edit `tests/README.md` for this — it is not the source of truth |
 
 > **ADR lifecycle** — Draft and Accepted ADR files are created and accepted during
 > `/spec-technical-review` and the `technical-review-approval` checkpoint.
@@ -322,8 +322,8 @@ digests must match the same head SHA.
 >
 > Wave `id` must be exactly `W0`, `W1`, … — one issue per wave, not per TASK row.
 > Each TASK **implements** one or more product `REQ-*` (never invent `REQ-W*`).
-> Contract: `../../../references/workmanifest-contract.md` (`prayog/v1`).
-> Ids: `../../../references/id-conventions.md`.
+> Contract: `prayog-skills/references/workmanifest-contract.md` (`prayog/v1`).
+> Ids: `prayog-skills/references/id-conventions.md`.
 > Validate: `python scripts/workmanifest_contract.py` on this plan (P16 /
 > `workmanifest-contract-pass`).
 > Set `target.org` from governance and `target.project` from

@@ -9,6 +9,24 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 _(empty)_
 
+## [0.5.1] — 2026-08-12
+
+### Fixed — Pin-root `references/` path contract for remounted skills
+
+- Skill packages no longer cite pin-root contracts via `../../../references/…`
+  (pin-layout-only; breaks under Launchpad `.harness/skills/<skill>/` and other
+  runtimes) or bare `references/<pin-file>.md` (ambiguous with skill-local
+  `references/`).
+- **SSOT stays** pin-tip `references/`. From skill packages (source or hub),
+  cite `prayog-skills/references/<file>.md` (Launchpad mounts the pin at
+  `prayog-skills/`). Skill-local helpers remain `references/<local-file>`.
+- Documented in `docs/overview.md`, `docs/for-launchpad.md`,
+  `docs/for-gateflow.md`. `scripts/check_consistency.py` fails closed on the
+  old relative/bare forms and resolves remount-path markdown links to pin
+  `references/` when checking inside this repo.
+- Do **not** copy pin `references/` to consumer-repo root.
+- Prompt package revisions bumped for packages whose templates/fixtures changed.
+
 ## [0.5.0] — 2026-08-11
 
 Promoted to stable from the `0.5.0-rc.2` tip family (`features/rc-2`) after

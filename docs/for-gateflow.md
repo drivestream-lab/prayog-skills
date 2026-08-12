@@ -19,7 +19,10 @@ Orientation for orchestrator / AgentRunner maintainers. Pin SSOT:
    via **ForgeClient** — never auto-run `skills/forge/*`.
 7. **WorkManifest contract** — before remounting a pin that expects
    `prayog/v1`, consume the **exact pinned** Prayog contract
-   (`references/workmanifest-contract.md` + `scripts/workmanifest_contract.py`).
+   (`prayog-skills/references/workmanifest-contract.md` +
+   `prayog-skills/scripts/workmanifest_contract.py` when the pin is mounted at
+   `prayog-skills/`; in-pin checkout: `references/workmanifest-contract.md` +
+   `scripts/workmanifest_contract.py`).
    Reject unsupported `apiVersion` / `kind` pairs fail-closed. Do not invent a
    Gateflow-local manifest schema.
 8. **`authorization` on every external-action** — required `explicit` |
@@ -172,7 +175,10 @@ WorkManifest versions and consume the exact pinned contract before BoardService
 equal** the consumed prayog-skills submodule SHA (or immutable tag tip). Do
 **not** laptop-overlay `workflow.yaml`. After remount, Gateflow
 `require_orchestrated_skill("spec-draft")` must succeed and
-`POST /waves/spec/start` is legal for Spec Pass-1.
+`POST /waves/spec/start` is legal for Spec Pass-1. Agent workspaces must see
+the pin at `prayog-skills/` so skill packages can resolve
+`prayog-skills/references/<file>.md` (see
+[overview.md](overview.md#pin-root-vs-skill-local-references)).
 
 Content skills still fill `handoff.forge` only — they never commit, push,
 branch, open PRs, apply labels, or create board issues. On remount, Gateflow

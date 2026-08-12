@@ -35,6 +35,34 @@ FORGE_ACTION_ENUM = frozenset(
     }
 )
 
+# Pin-root contracts live at references/*.md in this repo. Remounted consumers
+# (Launchpad hub/runtime) mount the pin at prayog-skills/, so skill packages
+# must cite pin-root contracts as prayog-skills/references/<file>.md — not via
+# ../../../references/ (pin-layout-only) or bare references/<file>.md (ambiguous
+# with skill-local references/).
+PIN_MOUNT_REFERENCES_PREFIX = "prayog-skills/references/"
+PIN_ROOT_REFERENCE_BASENAMES = frozenset(
+    {
+        "handoff-envelope.md",
+        "forge-side-effects.md",
+        "artifact-write-contract.md",
+        "workmanifest-contract.md",
+        "id-conventions.md",
+        "prompt-package-contract.md",
+        "codegraph-tool-contract.md",
+        "live-verify-coverage-contract.md",
+    }
+)
+_PIN_BASENAME_ALT = "|".join(
+    re.escape(name[: -len(".md")]) for name in sorted(PIN_ROOT_REFERENCE_BASENAMES)
+)
+RELATIVE_PIN_REFERENCES_RE = re.compile(
+    rf"(?:\.\./)+references/(?:{_PIN_BASENAME_ALT})\.md"
+)
+BARE_PIN_REFERENCES_RE = re.compile(
+    rf"(?<!prayog-skills/)(?<!\./)references/(?:{_PIN_BASENAME_ALT})\.md"
+)
+
 # ── Invariants ────────────────────────────────────────────────────────────────
 # Each entry: (description, pattern, allowed_values, file_glob)
 # pattern = regex to extract the value; must match in files matching file_glob
@@ -685,11 +713,44 @@ def check_local_markdown_links() -> list[str]:
                 or "}" in target
             ):
                 continue
-            resolved = (source.parent / target).resolve()
+            # Remount path form: prayog-skills/references/<file> → pin references/
+            if target.startswith(PIN_MOUNT_REFERENCES_PREFIX):
+                rest = target[len(PIN_MOUNT_REFERENCES_PREFIX) :]
+                resolved = (ROOT / "references" / rest).resolve()
+            else:
+                resolved = (source.parent / target).resolve()
             if not resolved.exists():
                 errors.append(
                     f"  {source.relative_to(ROOT)}: broken local link {raw_target!r}"
                 )
+    return errors
+
+
+def check_pin_references_path_contract() -> list[str]:
+    """Skill packages must cite pin-root contracts via the remount path form.
+
+    Launchpad materializes skills into ``.harness/skills/<skill>/`` (and other
+    runtimes). Relative ``../../../references/`` then resolves to the consumer
+    repo root, not the pin. Bare ``references/<pin-file>`` is ambiguous with
+    skill-local ``references/``. SSOT remains pin ``references/``; cite as
+    ``prayog-skills/references/<file>.md``.
+    """
+    errors: list[str] = []
+    for path in sorted(SKILLS_DIR.rglob("*.md")):
+        text = path.read_text(encoding="utf-8")
+        rel = path.relative_to(ROOT)
+        for match in RELATIVE_PIN_REFERENCES_RE.finditer(text):
+            errors.append(
+                f"  {rel}: pin-root contract cited via relative path "
+                f"{match.group(0)!r} — use "
+                f"{PIN_MOUNT_REFERENCES_PREFIX}{Path(match.group(0)).name}"
+            )
+        for match in BARE_PIN_REFERENCES_RE.finditer(text):
+            errors.append(
+                f"  {rel}: pin-root contract cited as bare "
+                f"{match.group(0)!r} — use "
+                f"{PIN_MOUNT_REFERENCES_PREFIX}{Path(match.group(0)).name}"
+            )
     return errors
 
 
@@ -1076,6 +1137,16 @@ def main() -> int:
     errors = check_local_markdown_links()
     if errors:
         all_errors.append(("Repository-local Markdown links must resolve", errors))
+
+    errors = check_pin_references_path_contract()
+    if errors:
+        all_errors.append(
+            (
+                "Skill packages must cite pin-root contracts as "
+                f"{PIN_MOUNT_REFERENCES_PREFIX}<file>.md",
+                errors,
+            )
+        )
 
     errors = check_profile_contracts()
     if errors:

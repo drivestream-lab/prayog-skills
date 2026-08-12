@@ -27,9 +27,9 @@ push, branch, open PRs, label, create issues, or merge.
 
 Canonical artifact:
 `{reports_dir}/Ground-Report-{SPEC}-W{N}.md`
-([`../../../references/artifact-write-contract.md`](../../../references/artifact-write-contract.md)).
+([`prayog-skills/references/artifact-write-contract.md`](prayog-skills/references/artifact-write-contract.md)).
 Checks: [references/checks.md](references/checks.md) (G1–G10).
-Ids: `../../../references/id-conventions.md` (`GF-*` for findings).
+Ids: `prayog-skills/references/id-conventions.md` (`GF-*` for findings).
 
 ## NON-NEGOTIABLE
 
@@ -66,12 +66,12 @@ Ids: `../../../references/id-conventions.md` (`GF-*` for findings).
     exact-head merge package for `wave-signoff`; pin routes to
     `wave-done-action` then `wave-signoff` (merge only). Never commit or
     merge from this skill. As-built writes follow the split in
-    `../../../references/artifact-write-contract.md` —
+    `prayog-skills/references/artifact-write-contract.md` —
     `Implementation-Status-{INIT}.md` for detail, one index row in
     `implementation-status.md` for the pointer; never append a new table to
     the shared index.
 12. If a codegraph provider is available (MCP tool matching
-    `../../../references/codegraph-tool-contract.md`, or a local CLI), prefer
+    `prayog-skills/references/codegraph-tool-contract.md`, or a local CLI), prefer
     it for cross-spec contract / boundary questions. Always fall back to
     direct `source_roots` reads when unavailable — never block or change
     outcome selection on its absence.
@@ -119,7 +119,7 @@ Illustrative only — **transitions SSOT:** pinned root `workflow.yaml`
 4. `docs/specification/as-built/implementation-status.md`
 5. `Wave-Execution-{INIT}-W{N}.md`; accept signal (`wave-accepted` / wave-acceptance); optional/legacy `Live-Verify-*` when present
 6. Ground reports of prior waves (for cross-spec contract baseline)
-7. **Codegraph provider** — OPTIONAL — see `../../../references/codegraph-tool-contract.md`
+7. **Codegraph provider** — OPTIONAL — see `prayog-skills/references/codegraph-tool-contract.md`
 7. Relevant ADRs + domain-filtered MDC
 8. Ground check output (`{ground_command}`) + unit verification (`{test_command}`)
 9. `Learning-Extract-{INIT}-W{N}.md` when present
@@ -132,9 +132,9 @@ Save report to `{reports_dir}/Ground-Report-{SPEC}-W{N}.md` using
 
 ## Workflow handoff
 
-1. Append/emit the envelope from `../../../references/handoff-envelope.md` to the saved Ground Report. Use stage `ground-spec`.
-2. When the invocation binds `handoff_path` (orchestrator / AgentRunner baton), also **overwrite** that path with the same `handoff:` envelope before exit. Leaving the baton empty is a failed stage for automated consumers. `artifact.path` remains the workspace skill output, not the baton path. See `../../../references/handoff-envelope.md` (Orchestrator baton).
-3. Derive `next_candidates` and `human_checkpoint` from pinned root `workflow.yaml` for `(stage: ground-spec, outcome)` per `../../../references/handoff-envelope.md` (**Derive from pinned workflow**). Set `human_checkpoint: true` only when the resolved next node's `type` is `human-checkpoint` — never because the artifact "should be reviewed."
+1. Append/emit the envelope from `prayog-skills/references/handoff-envelope.md` to the saved Ground Report. Use stage `ground-spec`.
+2. When the invocation binds `handoff_path` (orchestrator / AgentRunner baton), also **overwrite** that path with the same `handoff:` envelope before exit. Leaving the baton empty is a failed stage for automated consumers. `artifact.path` remains the workspace skill output, not the baton path. See `prayog-skills/references/handoff-envelope.md` (Orchestrator baton).
+3. Derive `next_candidates` and `human_checkpoint` from pinned root `workflow.yaml` for `(stage: ground-spec, outcome)` per `prayog-skills/references/handoff-envelope.md` (**Derive from pinned workflow**). Set `human_checkpoint: true` only when the resolved next node's `type` is `human-checkpoint` — never because the artifact "should be reviewed."
 4. Happy path: `outcome: pass` → next `wave-done-action` (`type: external-action`,
    `forge.action: update_board_status`, `authorization: automated`) →
    `human_checkpoint: false`, `external_action: true`. Fill `handoff.forge`
@@ -143,7 +143,7 @@ Save report to `{reports_dir}/Ground-Report-{SPEC}-W{N}.md` using
    earlier implement-lane skills on skill→skill edges.
 
 
-4. Follow `../../../references/forge-side-effects.md#content-producers` when this stage's pin has `forge.commit_workspace` other than `disabled` or next is an `external-action` with `forge.requires` — fill `handoff.forge` / recommend the matching `/forge` skill; do not treat local CLI as skill success.
+4. Follow `prayog-skills/references/forge-side-effects.md#content-producers` when this stage's pin has `forge.commit_workspace` other than `disabled` or next is an `external-action` with `forge.requires` — fill `handoff.forge` / recommend the matching `/forge` skill; do not treat local CLI as skill success.
 
 
 **Transitions:** pinned root `workflow.yaml` for this stage (SSOT). Human or

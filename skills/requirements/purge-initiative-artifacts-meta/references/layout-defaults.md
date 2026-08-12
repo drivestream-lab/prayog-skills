@@ -8,4 +8,4 @@ When `.harness/profile.yaml` is absent, use:
 | `reports_dir` | `prd/reports/` |
 
 No purge report path — handoff only.
-Allowlist SSOT: `../../../references/artifact-write-contract.md`.
+Allowlist SSOT: `prayog-skills/references/artifact-write-contract.md`.

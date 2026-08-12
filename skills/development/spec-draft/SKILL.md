@@ -34,7 +34,7 @@ This skill bridges the gap — it reads the PRD and drafts structured spec
    committing. Do not present it as authoritative without dev review.
 2. Language in the spec must be **engineering terms** — `REQ-*`, acceptance
    criteria, module scope — not copied PRD user-story language. Ids follow
-   `../../../references/id-conventions.md` (`REQ-*` canonical; legacy `FR-*`
+   `prayog-skills/references/id-conventions.md` (`REQ-*` canonical; legacy `FR-*`
    ≡ same number).
 3. Scope must be **bounded to this repo** only. Do not write REQs for other repos.
 4. Every `REQ-*` must trace to a named PRD `CAP-*` / `REQ-*` or section/bullet.
@@ -52,7 +52,7 @@ This skill bridges the gap — it reads the PRD and drafts structured spec
    Persist the spec locally and fill `handoff.forge` readiness for
    `open_draft_pr`; recommend `/open-draft-pr` or `/commit-workspace` (or wait
    for the orchestrator ForgeClient on `spec-pr-action`). See
-   `../../../references/forge-side-effects.md#content-producers`.
+   `prayog-skills/references/forge-side-effects.md#content-producers`.
 9. Treat `spec-*` labels as projections. If artifact, review, and label
    disagree, the gate is closed. Exactly one PE gate label may be active:
    `spec-pending`, `spec-lgtm`, or `spec-blocked`. `spec-revised` and
@@ -66,7 +66,7 @@ This skill bridges the gap — it reads the PRD and drafts structured spec
     `stale`, or `failed` (this stage has no `findings` edge). Map evidence to
     the outcome rubric below; do not invent lane-specific outcomes.
 12. If a codegraph provider is available (MCP tool matching
-    `../../../references/codegraph-tool-contract.md`, or a local CLI), prefer
+    `prayog-skills/references/codegraph-tool-contract.md`, or a local CLI), prefer
     it for architecture/impact questions. Always fall back to direct
     `source_roots` reads when unavailable — never block or change outcome
     selection on its absence.
@@ -108,7 +108,7 @@ procedure explicitly says so.
    it exists — understand the repo's existing domain.
 7. **`adr_dir`** — existing ADRs constrain what this spec can propose.
 8. **Layout** — `.harness/profile.yaml` or [references/layout-defaults.md](references/layout-defaults.md)
-9. **Codegraph provider** — OPTIONAL — see `../../../references/codegraph-tool-contract.md`
+9. **Codegraph provider** — OPTIONAL — see `prayog-skills/references/codegraph-tool-contract.md`
 
 ## Process
 
@@ -191,7 +191,7 @@ mutations inside `/spec-draft`. If Forge tooling is unavailable, readiness in
 the handoff is still the durable package for a later forge skill or Gateflow
 ForgeClient.
 
-See `../../../references/forge-side-effects.md`.
+See `prayog-skills/references/forge-side-effects.md`.
 
 ## Output
 
@@ -233,11 +233,11 @@ lane.
 
 ## Workflow handoff
 
-1. Append/emit the envelope from `../../../references/handoff-envelope.md` to the saved spec. Use stage `spec-draft`.
-2. When the invocation binds `handoff_path` (orchestrator / AgentRunner baton), also **overwrite** that path with the same `handoff:` envelope before exit. Leaving the baton empty is a failed stage for automated consumers. `artifact.path` remains the workspace skill output, not the baton path. See `../../../references/handoff-envelope.md` (Orchestrator baton).
-3. Derive `next_candidates`, `human_checkpoint`, and `external_action` from pinned root `workflow.yaml` for `(stage: spec-draft, outcome)` per `../../../references/handoff-envelope.md` (**Derive from pinned workflow**). Set `human_checkpoint: true` only when the resolved next node's `type` is `human-checkpoint`. Set `external_action: true` when next is `external-action` (e.g. `spec-pr-action` on `pass`).
-4. On `pass`, fill complete `handoff.forge` for `open_draft_pr` per pin `requires` (`../../../references/forge-side-effects.md#content-producers`). Orchestrator: `spec-pr-action` is `authorization: automated`. Human walker: recommend `/open-draft-pr` after confirm.
-5. Follow `../../../references/forge-side-effects.md#content-producers` — content skill success ≠ PR opened.
+1. Append/emit the envelope from `prayog-skills/references/handoff-envelope.md` to the saved spec. Use stage `spec-draft`.
+2. When the invocation binds `handoff_path` (orchestrator / AgentRunner baton), also **overwrite** that path with the same `handoff:` envelope before exit. Leaving the baton empty is a failed stage for automated consumers. `artifact.path` remains the workspace skill output, not the baton path. See `prayog-skills/references/handoff-envelope.md` (Orchestrator baton).
+3. Derive `next_candidates`, `human_checkpoint`, and `external_action` from pinned root `workflow.yaml` for `(stage: spec-draft, outcome)` per `prayog-skills/references/handoff-envelope.md` (**Derive from pinned workflow**). Set `human_checkpoint: true` only when the resolved next node's `type` is `human-checkpoint`. Set `external_action: true` when next is `external-action` (e.g. `spec-pr-action` on `pass`).
+4. On `pass`, fill complete `handoff.forge` for `open_draft_pr` per pin `requires` (`prayog-skills/references/forge-side-effects.md#content-producers`). Orchestrator: `spec-pr-action` is `authorization: automated`. Human walker: recommend `/open-draft-pr` after confirm.
+5. Follow `prayog-skills/references/forge-side-effects.md#content-producers` — content skill success ≠ PR opened.
 
 **Transitions:** pinned root `workflow.yaml` for this stage (SSOT). Human or
 agent may run this skill; legality and auto-dispatch follow `dispatch` +

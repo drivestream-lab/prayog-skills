@@ -71,7 +71,7 @@ handoff:
 
 For every affected repository, calculate `scope_digest` (**H2**) from the
 canonical UTF-8/LF payload in
-`../../../references/artifact-write-contract.md` (Durable identity), with
+`prayog-skills/references/artifact-write-contract.md` (Durable identity), with
 sorted list values and exactly one final newline. Record **H1**
 `source_prd_digest` and **H3** `map_revision` in front matter — these survive
 initiative-closure purge; Validation/Resolution reports do not.

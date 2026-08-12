@@ -29,8 +29,8 @@ human wave-acceptance — not this skill's job.
 Content skills write locally and emit Forge readiness; they do not commit,
 push, branch, open PRs, label, create issues, or merge.
 
-Conventions: `../../../references/id-conventions.md`,
-`../../../references/artifact-write-contract.md`.
+Conventions: `prayog-skills/references/id-conventions.md`,
+`prayog-skills/references/artifact-write-contract.md`.
 
 Canonical artifact after the wave is green:
 `{reports_dir}/Wave-Execution-{INIT}-W{N}.md`.
@@ -198,13 +198,13 @@ do not commit), fix failures before moving on, stop when all TASKs green.
 
 ## Workflow handoff
 
-1. Emit the envelope from `../../../references/handoff-envelope.md` in the final task summary and persist state in `Wave-Execution-*`. Use stage `loop-spec`.
-2. When the invocation binds `handoff_path` (orchestrator / AgentRunner baton), also **overwrite** that path with the same `handoff:` envelope before exit. Leaving the baton empty is a failed stage for automated consumers. `artifact.path` remains the workspace skill output, not the baton path. See `../../../references/handoff-envelope.md` (Orchestrator baton).
-3. Derive `next_candidates`, `human_checkpoint`, and `external_action` from pinned root `workflow.yaml` for `(stage: loop-spec, outcome)` per `../../../references/handoff-envelope.md` (**Derive from pinned workflow**). Set `human_checkpoint: true` only when the resolved next node's `type` is `human-checkpoint` — never because the artifact "should be reviewed." Set `external_action: true` when next is `external-action`.
+1. Emit the envelope from `prayog-skills/references/handoff-envelope.md` in the final task summary and persist state in `Wave-Execution-*`. Use stage `loop-spec`.
+2. When the invocation binds `handoff_path` (orchestrator / AgentRunner baton), also **overwrite** that path with the same `handoff:` envelope before exit. Leaving the baton empty is a failed stage for automated consumers. `artifact.path` remains the workspace skill output, not the baton path. See `prayog-skills/references/handoff-envelope.md` (Orchestrator baton).
+3. Derive `next_candidates`, `human_checkpoint`, and `external_action` from pinned root `workflow.yaml` for `(stage: loop-spec, outcome)` per `prayog-skills/references/handoff-envelope.md` (**Derive from pinned workflow**). Set `human_checkpoint: true` only when the resolved next node's `type` is `human-checkpoint` — never because the artifact "should be reviewed." Set `external_action: true` when next is `external-action`.
 4. Happy path: `outcome: pass` → next `wave-pr-action` (`type: external-action`, `forge.action: open_draft_pr`, `authorization: automated`) → `human_checkpoint: false`, `external_action: true`. After this hop Forge applies `commit_workspace: required` (code on same `head_ref`), then ForgeClient opens the Draft PR without interactive STOP when `handoff.forge` requires are complete. Fill complete `handoff.forge` for `open_draft_pr` with pin `requires`: `title`, `body_path`, `head_ref`, `base_ref`. First Draft PR view should already include checklist (from pre-implement publish) + code.
 
 
-5. Follow `../../../references/forge-side-effects.md#content-producers` when this stage's pin has `forge.commit_workspace` other than `disabled` or next is an `external-action` with `forge.requires` — fill `handoff.forge` / recommend the matching `/forge` skill; do not treat local CLI as skill success.
+5. Follow `prayog-skills/references/forge-side-effects.md#content-producers` when this stage's pin has `forge.commit_workspace` other than `disabled` or next is an `external-action` with `forge.requires` — fill `handoff.forge` / recommend the matching `/forge` skill; do not treat local CLI as skill success.
 
 
 **Transitions:** pinned root `workflow.yaml` for this stage (SSOT). Human or

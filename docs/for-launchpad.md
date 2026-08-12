@@ -15,6 +15,11 @@ them.
 5. Seed AGENTS slash list from the same combined name list.
 6. Bind `review_roles` by **checkpoint node id** from the pinned delivery
    contract (ids ≡ purpose where renamed).
+7. **Pin-root `references/` resolution** — keep the pin mounted at consumer-repo
+   `prayog-skills/` (submodule / checkout). Skill packages cite contracts as
+   `prayog-skills/references/<file>.md`. Materialize **skills + profiles only**;
+   do **not** copy pin `references/` to consumer-repo root (dual SSOT,
+   stale-after-retag). Docs: [overview.md](overview.md#pin-root-vs-skill-local-references).
 
 ## Current pin expectations (rc-2 family)
 
@@ -28,8 +33,9 @@ them.
 | Labels | Unchanged: `impact-map-*`, `spec-*` |
 | WorkManifest | Launchpad **materializes** the pin only — it does **not** own, parse, or execute WorkManifest. Prayog owns the contract; Gateflow/humans validate and project it. Board is long-term WM home after seed; plan §9 is walk-time. |
 | External-action auth | Pin may set `authorization: automated` on `spec-pr-action` / `wave-pr-action` / `initiative-closure-pr-action-app` / `initiative-closure-pr-action-meta` / `wave-in-progress-action` / `wave-done-action`. Playbooks should not require a human `/open-draft-pr` click for those nodes when remounted on this tip. |
-| KEEP/PURGE | Declared in `references/artifact-write-contract.md` — Launchpad does not implement purge logic |
+| KEEP/PURGE | Declared in [`../references/artifact-write-contract.md`](../references/artifact-write-contract.md) (remounted agents: `prayog-skills/references/artifact-write-contract.md`) — Launchpad does not implement purge logic |
 | Board status | Pin nodes `wave-in-progress-action` / `wave-done-action` (`update_board_status`). **Do not** materialize a human `/update-board-status` skill — orch ForgeClient only. |
+| Pin-root refs | Agents follow `prayog-skills/references/…` from hub/runtime skills; no consumer-root `references/` mirror |
 
 ## Pass-1 / Pass-2 / closure (copy for playbooks)
 

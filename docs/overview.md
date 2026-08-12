@@ -17,7 +17,7 @@ skills/{requirements,development,forge}/
         │  procedures + prompt packages
         ▼
 references/
-        │  handoff, forge, prompts, ids, artifacts
+        │  handoff, forge, prompts, ids, artifacts (pin-root SSOT)
 ```
 
 | Surface | Owns |
@@ -25,6 +25,30 @@ references/
 | **Pin** | Navigation, `dispatch` (`manual` \| `orchestrated`), `forge` policy, human-checkpoint `purpose` |
 | **Skills** | How to produce artifacts; fill `handoff` / `handoff.forge`; never invent next hops |
 | **References** | Field schemas and producer rules |
+
+### Pin-root vs skill-local `references/`
+
+There are **two** trees named `references/`:
+
+| Tree | Location | Role |
+|------|----------|------|
+| **Pin-root** | `references/*.md` at the pin tip | Shared normative contracts (handoff, forge, artifacts, ids, …) |
+| **Skill-local** | `skills/…/<skill>/references/` | Per-skill helpers (checks, output-template, layout-defaults, …) |
+
+Launchpad materializes skill packages into `.harness/skills/<skill>/` (and other
+runtimes), not under `skills/<lane>/<skill>/`. Relative links like
+`../../../references/…` therefore resolve to the **consumer repo root**, not
+the pin. Skill packages must cite pin-root contracts with the remount path:
+
+```text
+prayog-skills/references/<file>.md
+```
+
+Skill-local files stay `references/<local-file>` (or `./references/…`) only when
+the file lives under that skill’s own `references/`. Do **not** copy pin
+`references/` to the consumer repo root (dual SSOT). Standalone
+`npx skills add --skill <name>` without the pin checkout still cannot see
+pin-root contracts — same class of limitation as pre-vendored shared scripts.
 
 ## Two walkers, one pin
 
@@ -153,7 +177,7 @@ human or explicit. Packaged prompts bind optional `meta_workspace`. See
 - **Technical review** may frame PE options, but an ADR cannot become Accepted
   while it invents user-visible behavior (T12).
 - Outcomes map to pinned edges only (`pass` / `findings` / `needs-input` /
-  `blocked` / `stale` / `failed`). See `references/handoff-envelope.md`.
+  `blocked` / `stale` / `failed`). See `../references/handoff-envelope.md`.
 
 ## Explicitly deferred (not in this pin)
 

@@ -25,7 +25,7 @@ alongside spec, feasibility, and TDD. Table shape borrowed from awesome-copilot
 generated here; **dev seeds the board after spec PR merge**.
 
 **Prayog owns the WorkManifest contract** (`apiVersion: prayog/v1`,
-`references/workmanifest-contract.md`). Launchpad only materializes the pin —
+`prayog-skills/references/workmanifest-contract.md`). Launchpad only materializes the pin —
 it does not own, parse, or execute WorkManifest.
 
 ## NON-NEGOTIABLE
@@ -35,7 +35,7 @@ it does not own, parse, or execute WorkManifest.
    command or review, expected result, and evidence location — plus an
    **Implements** list of product `REQ-*` ids and toolchain commands where
    applicable. Do not invent shadow `REQ-W*` ids — see
-   `../../../references/id-conventions.md`.
+   `prayog-skills/references/id-conventions.md`.
 3. Every acceptance criterion maps to a verification layer (unit,
    integration/contract, smoke, or sandbox) in the wave Verification Coverage
    table. Plan scope must not exceed the initiative spec.
@@ -72,13 +72,13 @@ it does not own, parse, or execute WorkManifest.
     truth in chat.
 13. Live-verify coverage lives in the artifact's own marker, not in
     `tests/README.md` or as a growing table in `implementation-status.md` —
-    see `../../../references/live-verify-coverage-contract.md`. Run the
+    see `prayog-skills/references/live-verify-coverage-contract.md`. Run the
     required overlap check (P15) before declaring a new `live_verify_dir`
     FILE. As-built writes go to `Implementation-Status-{INIT}.md` (detail) +
     one index row in `implementation-status.md` (pointer) — never a new
     table appended to the shared index.
 14. If a codegraph provider is available (MCP tool matching
-    `../../../references/codegraph-tool-contract.md`, or a local CLI), prefer
+    `prayog-skills/references/codegraph-tool-contract.md`, or a local CLI), prefer
     it for architecture/impact/coverage questions. Always fall back to direct
     `source_roots` reads when unavailable — never block or change outcome
     selection on its absence.
@@ -109,7 +109,7 @@ Do not invent a meta path when empty.
    (REQUIRED; resolve under `meta_workspace` when bound)
 9. **Command contract** — canonical check, test, live verify (`verify_command`), and ground
    commands or explicit N/A rationale (REQUIRED)
-10. **Codegraph provider** — OPTIONAL — see `../../../references/codegraph-tool-contract.md`
+10. **Codegraph provider** — OPTIONAL — see `prayog-skills/references/codegraph-tool-contract.md`
 
 ## Prerequisite
 
@@ -173,7 +173,7 @@ Use [references/output-template.md](references/output-template.md).
 ## WorkManifest integration
 
 The plan's final section (§9) emits a ready-to-use WorkManifest YAML stub under
-the Prayog contract (`../../../references/workmanifest-contract.md`). Validate
+the Prayog contract (`prayog-skills/references/workmanifest-contract.md`). Validate
 with `scripts/workmanifest_contract.py` before claiming P16 PASS.
 
 **After spec PR merge** — not before — run **`/create-board-tickets`** (forge skill,
@@ -187,12 +187,12 @@ board names. Do not put mutable board `status` or runtime evidence in §9.
 
 ## Workflow handoff
 
-1. Append/emit the envelope from `../../../references/handoff-envelope.md` to the plan. Use stage `spec-implementation-plan`.
-2. When the invocation binds `handoff_path` (orchestrator / AgentRunner baton), also **overwrite** that path with the same `handoff:` envelope before exit. Leaving the baton empty is a failed stage for automated consumers. `artifact.path` remains the workspace skill output, not the baton path. See `../../../references/handoff-envelope.md` (Orchestrator baton).
-3. Derive `next_candidates` and `human_checkpoint` from pinned root `workflow.yaml` for `(stage: spec-implementation-plan, outcome)` per `../../../references/handoff-envelope.md` (**Derive from pinned workflow**). Set `human_checkpoint: true` only when the resolved next node's `type` is `human-checkpoint` — never because the artifact "should be reviewed."
+1. Append/emit the envelope from `prayog-skills/references/handoff-envelope.md` to the plan. Use stage `spec-implementation-plan`.
+2. When the invocation binds `handoff_path` (orchestrator / AgentRunner baton), also **overwrite** that path with the same `handoff:` envelope before exit. Leaving the baton empty is a failed stage for automated consumers. `artifact.path` remains the workspace skill output, not the baton path. See `prayog-skills/references/handoff-envelope.md` (Orchestrator baton).
+3. Derive `next_candidates` and `human_checkpoint` from pinned root `workflow.yaml` for `(stage: spec-implementation-plan, outcome)` per `prayog-skills/references/handoff-envelope.md` (**Derive from pinned workflow**). Set `human_checkpoint: true` only when the resolved next node's `type` is `human-checkpoint` — never because the artifact "should be reviewed."
 
 
-4. Follow `../../../references/forge-side-effects.md#content-producers` when this stage's pin has `forge.commit_workspace` other than `disabled` or next is an `external-action` with `forge.requires` — fill `handoff.forge` / recommend the matching `/forge` skill; do not treat local CLI as skill success.
+4. Follow `prayog-skills/references/forge-side-effects.md#content-producers` when this stage's pin has `forge.commit_workspace` other than `disabled` or next is an `external-action` with `forge.requires` — fill `handoff.forge` / recommend the matching `/forge` skill; do not treat local CLI as skill success.
 
 
 **Transitions:** pinned root `workflow.yaml` for this stage (SSOT). Human or

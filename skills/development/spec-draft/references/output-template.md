@@ -18,7 +18,7 @@
 > **H4 citations:** The H1–H3 (and G1) rows above are the durable authority
 > carrier for mid-lane freshness. Feas / TDD / plan digests are walk-time only
 > and may be purged at initiative closure — see
-> `../../../references/artifact-write-contract.md`.
+> `prayog-skills/references/artifact-write-contract.md`.
 
 ## Overview
 
@@ -32,7 +32,7 @@ Ownership: observable behavior only — architecture questions routed, not decid
 |----|-------------|-----------|-------------------|-------------------|----------------|
 | REQ-{nn} | {engineering statement of WHAT, not HOW — not a user story} | PRD `CAP-*` / `REQ-*` or §{section} | {Given/When or trigger that makes the REQ applicable} | {externally observable done condition} | unit / integration / live verify / inspection |
 
-> **Id convention:** `REQ-*` is canonical (`../../../references/id-conventions.md`).
+> **Id convention:** `REQ-*` is canonical (`prayog-skills/references/id-conventions.md`).
 > Legacy display alias `FR-{nn}` ≡ `REQ-{nn}` (same number) — prefer `REQ-*` in
 > new rows. Do not invent wave-scoped `REQ-W*` ids.
 >
