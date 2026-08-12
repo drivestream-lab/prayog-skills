@@ -53,6 +53,16 @@ REQ_ID_RE = re.compile(r"^REQ-[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$")
 SHADOW_REQ_RE = re.compile(r"^REQ-W\d")
 ABS_PATH_RE = re.compile(r"^(?:[A-Za-z]:[\\/]|/)")
 GLOB_CHARS_RE = re.compile(r"[*?\[\]]")
+# Recognised Next.js filesystem dynamic-route segment forms.
+# Only these bracketed forms are permitted; everything else with brackets
+# is treated as a glob / character-class and rejected.
+NEXT_DYNAMIC_SEGMENT_RE = re.compile(
+    r"^(?:"
+    r"\[[A-Za-z_][A-Za-z0-9_-]*\]"           # [commandId]
+    r"|\[\.{3}[A-Za-z_][A-Za-z0-9_-]*\]"     # [...slug]
+    r"|\[\[\.{3}[A-Za-z_][A-Za-z0-9_-]*\]\]" # [[...slug]]
+    r")$"
+)
 UNIT_AS_LIVE_RE = re.compile(
     r"(?i)^\s*(make\s+test|npm\s+test|yarn\s+test|pytest(\s|$)|go\s+test|"
     r"cargo\s+test|mvn\s+test|\{test_command\}|\$\{?test_command\}?)\b"
@@ -152,6 +162,13 @@ def _is_vague_criterion(text: str) -> bool:
 
 
 def _valid_repo_path(path: str) -> bool:
+    """Validate a repo-relative file path.
+
+    Rejects absolute paths, ``~``, parent traversal (``../``), and any
+    glob-like patterns.  Bracket characters are only tolerated when an
+    entire *segment* matches a recognised Next.js dynamic-route form
+    (``[id]``, ``[...slug]``, ``[[...slug]]``).
+    """
     if not path or not isinstance(path, str):
         return False
     p = path.strip()
@@ -159,8 +176,15 @@ def _valid_repo_path(path: str) -> bool:
         return False
     if p.startswith("../") or "/../" in p or p == "..":
         return False
-    if GLOB_CHARS_RE.search(p):
+    # Reject actual glob characters * and ? anywhere.
+    if re.search(r"[*?]", p):
         return False
+    # Segments containing brackets must be valid Next.js dynamic-route
+    # segments; malformed bracket expressions are rejected.
+    for segment in p.split("/"):
+        if "[" in segment or "]" in segment:
+            if not NEXT_DYNAMIC_SEGMENT_RE.match(segment):
+                return False
     return True
 
 

@@ -12,6 +12,7 @@ from scripts.workmanifest_contract import (
     extract_declared_coverage,
     extract_workmanifest_yaml,
     validate_workmanifest,
+    _valid_repo_path,
 )
 
 
@@ -157,6 +158,172 @@ class WorkManifestContractTest(unittest.TestCase):
             script.write_text("print('PASS')  # no marker — legacy artifact\n")
             errors = validate_workmanifest(text, base_path=base)
             self.assertNotIn("live_coverage_mismatch", _codes(errors))
+
+    # ------------------------------------------------------------------
+    # _valid_repo_path  –  Next.js dynamic-route segment support
+    # ------------------------------------------------------------------
+
+    def test_valid_path_plain(self) -> None:
+        self.assertTrue(_valid_repo_path("src/api/health.py"))
+        self.assertTrue(_valid_repo_path("app/api/pravah/remote-operations/commands/[commandId]/route.ts"))
+        self.assertTrue(_valid_repo_path("app/api/pravah/remote-operations/batches/[batchId]/route.ts"))
+        self.assertTrue(_valid_repo_path("app/api/pravah/remote-operations/controls/[commandType]/route.ts"))
+
+    def test_valid_nextjs_dynamic_segments(self) -> None:
+        """[id], [...slug], and [[...slug]] are accepted."""
+        self.assertTrue(_valid_repo_path("app/api/[commandId]/route.ts"))
+        self.assertTrue(_valid_repo_path("app/pages/[...slug]/page.tsx"))
+        self.assertTrue(_valid_repo_path("app/pages/[[...slug]]/page.tsx"))
+        self.assertTrue(_valid_repo_path("src/[resource]/[action]/handler.ts"))
+
+    def test_rejects_glob_wildcards(self) -> None:
+        """Actual glob patterns must still fail."""
+        self.assertFalse(_valid_repo_path("src/*.ts"))
+        self.assertFalse(_valid_repo_path("src/file?.ts"))
+        self.assertFalse(_valid_repo_path("src/[a-z].ts"))
+
+    def test_rejects_malformed_bracket_segments(self) -> None:
+        """Non-Next.js bracket forms are rejected."""
+        self.assertFalse(_valid_repo_path("src/[.txt].py"))
+        self.assertFalse(_valid_repo_path("src/[].ts"))
+        self.assertFalse(_valid_repo_path("src/[123].ts"))  # starts with digit
+        self.assertFalse(_valid_repo_path("src/[missing-close.ts"))
+
+    def test_rejects_existing_security_violations(self) -> None:
+        """Absolute paths, ~, and parent traversal remain rejected."""
+        self.assertFalse(_valid_repo_path("/etc/passwd"))
+        self.assertFalse(_valid_repo_path("~/secret/file"))
+        self.assertFalse(_valid_repo_path("../etc/passwd"))
+        self.assertFalse(_valid_repo_path("src/../etc/passwd"))
+
+    def test_nextjs_paths_in_full_manifest(self) -> None:
+        """A complete valid WorkManifest with Next.js dynamic-route paths passes."""
+        text = (
+            "apiVersion: prayog/v1\n"
+            "kind: WorkManifest\n"
+            "initiative: INIT-RO-001\n"
+            "epic:\n"
+            "  id: EPIC\n"
+            "  repo: example-service\n"
+            "  title: demo\n"
+            "  codebase: example-service\n"
+            "  spec_path: docs/specification/product/INIT-DEMO-001.md\n"
+            "  verify_command: python tests/verify/verify_health.py\n"
+            "work:\n"
+            "  - id: W0\n"
+            "    kind: issue\n"
+            "    repo: example-service\n"
+            "    title: W0\n"
+            "    depends_on: []\n"
+            "    codebase: example-service\n"
+            "    spec_path: docs/specification/product/INIT-DEMO-001.md\n"
+            "    verify_command: python tests/verify/verify_health.py\n"
+            "    tasks:\n"
+            "      - id: TASK-W0-01\n"
+            "        implements: [REQ-01]\n"
+            "        depends_on: []\n"
+            "        files:\n"
+            "          - path: app/api/pravah/remote-operations/commands/[commandId]/route.ts\n"
+            "            action: create\n"
+            "          - path: app/api/pravah/remote-operations/batches/[batchId]/route.ts\n"
+            "            action: create\n"
+            "          - path: app/api/pravah/remote-operations/controls/[commandType]/route.ts\n"
+            "            action: modify\n"
+            "        exit:\n"
+            "          criteria:\n"
+            "            - 'API endpoints return expected responses'\n"
+            "          proof:\n"
+            "            kind: command\n"
+            '            command: "pytest tests/unit/test_routes.py -q"\n'
+            '            expected: "exit 0"\n'
+            '            evidence_expected: "Wave-Execution-INIT-DEMO-001-W0.md § TASK-W0-01"\n'
+            "    verification:\n"
+            '      check: "make check"\n'
+            '      unit: "pytest tests/unit -q"\n'
+            "      live:\n"
+            "        applicable: true\n"
+            "        mode: smoke\n"
+            "        command: python tests/verify/verify_health.py\n"
+            "        covers: [REQ-01]\n"
+            "        prerequisites:\n"
+            '          - "Local stack up"\n'
+            "        safe_test_data:\n"
+            '          - "no durable tenant mutation"\n'
+            "        steps:\n"
+            '          - "Run verify"\n'
+            "        expected_observations:\n"
+            '          - "Script exits 0"\n'
+            '        evidence_expected: "wave-accepted on tip"\n'
+            "        cleanup:\n"
+            '          - "No durable resources"\n'
+            "        stop_conditions:\n"
+            '          - "Non-zero exit → stop"\n'
+        )
+        errors = validate_workmanifest(text)
+        self.assertEqual(errors, [])
+
+    def test_invalid_glob_paths_still_fail(self) -> None:
+        """Globs in a manifest must still produce file_path errors."""
+        text = (
+            "apiVersion: prayog/v1\n"
+            "kind: WorkManifest\n"
+            "initiative: INIT-DEMO-001\n"
+            "epic:\n"
+            "  id: EPIC\n"
+            "  repo: example-service\n"
+            "  title: demo\n"
+            "  codebase: example-service\n"
+            "  spec_path: docs/specification/product/INIT-DEMO-001.md\n"
+            "  verify_command: python tests/verify/verify_health.py\n"
+            "work:\n"
+            "  - id: W0\n"
+            "    kind: issue\n"
+            "    repo: example-service\n"
+            "    title: W0\n"
+            "    depends_on: []\n"
+            "    codebase: example-service\n"
+            "    spec_path: docs/specification/product/INIT-DEMO-001.md\n"
+            "    verify_command: python tests/verify/verify_health.py\n"
+            "    tasks:\n"
+            "      - id: TASK-W0-01\n"
+            "        implements: [REQ-01]\n"
+            "        depends_on: []\n"
+            "        files:\n"
+            "          - path: src/*.ts\n"
+            "            action: create\n"
+            "        exit:\n"
+            "          criteria:\n"
+            "            - 'Test passes'\n"
+            "          proof:\n"
+            "            kind: command\n"
+            '            command: "pytest -q"\n'
+            '            expected: "exit 0"\n'
+            '            evidence_expected: "Wave-Execution-INIT-DEMO-001-W0.md § TASK-W0-01"\n'
+            "    verification:\n"
+            '      check: "make check"\n'
+            '      unit: "pytest -q"\n'
+            "      live:\n"
+            "        applicable: true\n"
+            "        mode: smoke\n"
+            "        command: python tests/verify/verify_health.py\n"
+            "        covers: [REQ-01]\n"
+            "        prerequisites:\n"
+            '          - "Local stack up"\n'
+            "        safe_test_data:\n"
+            '          - "no durable tenant mutation"\n'
+            "        steps:\n"
+            '          - "Run verify"\n'
+            "        expected_observations:\n"
+            '          - "Script exits 0"\n'
+            '        evidence_expected: "wave-accepted on tip"\n'
+            "        cleanup:\n"
+            '          - "No durable resources"\n'
+            "        stop_conditions:\n"
+            '          - "Non-zero exit → stop"\n'
+        )
+        errors = validate_workmanifest(text)
+        codes = _codes(errors)
+        self.assertIn("file_path", codes)
 
 
 if __name__ == "__main__":
