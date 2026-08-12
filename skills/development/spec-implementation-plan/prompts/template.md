@@ -26,7 +26,7 @@ Follow the full procedure in this skill's `SKILL.md` (and `references/` when pre
 ## Envelope navigation (required)
 After choosing `outcome`, derive `next_candidates` and `human_checkpoint` from
 pinned `workflow.yaml` for `(stage: {{skill_id}}, outcome)` per
-`references/handoff-envelope.md` (**Derive from pinned workflow**).
+`prayog-skills/references/handoff-envelope.md` (**Derive from pinned workflow**).
 `human_checkpoint` is `true` only when the resolved next node's `type` is
 `human-checkpoint` — never because the artifact should be reviewed.
 Never set `true` on skill→skill edges (for example never on
@@ -38,7 +38,7 @@ Content skills write local artifacts and fill `handoff.forge` when the pin
 expects it; they do **not** execute forge mutations. Human forge skills
 (`/commit-workspace`, `/open-draft-pr`, `/create-board-tickets`) or Gateflow
 ForgeClient apply pin ⋉ handoff. Never apply `*-lgtm`. See
-`references/forge-side-effects.md#content-producers`.
+`prayog-skills/references/forge-side-effects.md#content-producers`.
 
 ## Workspace
 - **App coding root** (`workspace`): `{{workspace}}` — write the implementation

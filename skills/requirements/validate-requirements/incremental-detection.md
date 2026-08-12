@@ -21,7 +21,7 @@ Read the prior validation report. Extract:
 
 Prior report path must be the canonical
 `Validation-Report-{INIT}.md` when available (see
-`../../../references/artifact-write-contract.md`).
+`prayog-skills/references/artifact-write-contract.md`).
 
 ## 0.2 — Detect document changes
 

@@ -23,7 +23,7 @@ not commit, push, branch, open PRs, label, create issues, or merge.
 
 Canonical artifact:
 `{reports_dir}/Pre-Implement-{INIT}-W{N}.md`
-([`../../../references/artifact-write-contract.md`](../../../references/artifact-write-contract.md)).
+([`prayog-skills/references/artifact-write-contract.md`](prayog-skills/references/artifact-write-contract.md)).
 
 ## NON-NEGOTIABLE
 
@@ -59,7 +59,7 @@ Canonical artifact:
    Human accept ingress is GitHub label `wave-accepted` (skills never apply it).
 10. **WorkManifest spend authority** — prefer the **board** wave/EPIC issues
     seeded from plan §9 as long-term intent (see
-    [`../../../references/workmanifest-contract.md`](../../../references/workmanifest-contract.md)).
+    [`prayog-skills/references/workmanifest-contract.md`](prayog-skills/references/workmanifest-contract.md)).
     When `Implementation-Plan-{initiative}.md` is still on the tree, validate
     §9 with `scripts/workmanifest_contract.py` / `validate_workmanifest` and
     fail closed on contract / incomplete TASK exit / P15 live gaps as today.
@@ -90,7 +90,7 @@ Canonical artifact:
     If any check fails: stop — do not produce a pass checklist or write product
     code.
 13. If a codegraph provider is available (MCP tool matching
-    `../../../references/codegraph-tool-contract.md`, or a local CLI), prefer
+    `prayog-skills/references/codegraph-tool-contract.md`, or a local CLI), prefer
     it for impact/dependency questions when reading contracts consumed.
     Always fall back to direct `source_roots` reads when unavailable — never
     block or change outcome selection on its absence.
@@ -169,7 +169,7 @@ bound outside this skill.
    list every `TASK-*` for this wave in the checklist (projection only).
 8. `tests_readme` — fixed pointer; use `scripts/verify_coverage_query.py`
    for actual coverage lookups when the slice adds or changes verification
-9. **Codegraph provider** — OPTIONAL — see `../../../references/codegraph-tool-contract.md`
+9. **Codegraph provider** — OPTIONAL — see `prayog-skills/references/codegraph-tool-contract.md`
 
 **Gate for W0 (first wave):** no prior Ground Report exists. The gate is
 the implementation plan PE sign-off (§0 of the plan). Confirm it is marked
@@ -188,13 +188,13 @@ concrete paths for this repo and slice.
 
 ## Workflow handoff
 
-1. Append/emit the envelope from `../../../references/handoff-envelope.md` to the checklist output. Use stage `pre-implement`.
-2. When the invocation binds `handoff_path` (orchestrator / AgentRunner baton), also **overwrite** that path with the same `handoff:` envelope before exit. Leaving the baton empty is a failed stage for automated consumers. `artifact.path` remains the workspace skill output, not the baton path. See `../../../references/handoff-envelope.md` (Orchestrator baton).
-3. Derive `next_candidates`, `human_checkpoint`, and `external_action` from pinned root `workflow.yaml` for `(stage: pre-implement, outcome)` per `../../../references/handoff-envelope.md` (**Derive from pinned workflow**). Set `human_checkpoint: true` only when the resolved next node's `type` is `human-checkpoint` — never because the artifact "should be reviewed." Set `external_action: true` only when next is `external-action`.
+1. Append/emit the envelope from `prayog-skills/references/handoff-envelope.md` to the checklist output. Use stage `pre-implement`.
+2. When the invocation binds `handoff_path` (orchestrator / AgentRunner baton), also **overwrite** that path with the same `handoff:` envelope before exit. Leaving the baton empty is a failed stage for automated consumers. `artifact.path` remains the workspace skill output, not the baton path. See `prayog-skills/references/handoff-envelope.md` (Orchestrator baton).
+3. Derive `next_candidates`, `human_checkpoint`, and `external_action` from pinned root `workflow.yaml` for `(stage: pre-implement, outcome)` per `prayog-skills/references/handoff-envelope.md` (**Derive from pinned workflow**). Set `human_checkpoint: true` only when the resolved next node's `type` is `human-checkpoint` — never because the artifact "should be reviewed." Set `external_action: true` only when next is `external-action`.
 4. Happy path: `outcome: pass` → next `loop-spec` (`type: skill`) → `human_checkpoint: false`, `external_action: false`. Pin has `forge.commit_workspace: required` — fill `handoff.forge` for `commit_workspace` so Forge publishes the Pre-Implement artifact onto the bound wave head before `/loop-spec`. Do **not** open the Draft PR here.
 
 
-5. Follow `../../../references/forge-side-effects.md#content-producers` when this stage's pin has `forge.commit_workspace` other than `disabled` or next is an `external-action` with `forge.requires` — fill `handoff.forge` / recommend the matching `/forge` skill; do not treat local CLI as skill success.
+5. Follow `prayog-skills/references/forge-side-effects.md#content-producers` when this stage's pin has `forge.commit_workspace` other than `disabled` or next is an `external-action` with `forge.requires` — fill `handoff.forge` / recommend the matching `/forge` skill; do not treat local CLI as skill success.
 
 
 **Transitions:** pinned root `workflow.yaml` for this stage (SSOT). Human or

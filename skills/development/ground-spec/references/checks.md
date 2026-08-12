@@ -4,7 +4,7 @@ Run every check. PASS = zero open grounding findings that block sign-off.
 SKIPPED = missing optional input (state reason). Fail closed when a required
 check cannot run.
 
-Ids: `../../../references/id-conventions.md`. Findings use **`GF-*`**, never
+Ids: `prayog-skills/references/id-conventions.md`. Findings use **`GF-*`**, never
 feasibility-owned `FF-*`.
 
 | ID | Check | Evidence required |

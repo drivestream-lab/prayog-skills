@@ -13,4 +13,4 @@ Typical input: `prd/reports/Resolution-INIT-PRAYOG-001.md`.
 After PRD edits, re-run `/validate-requirements` incremental against
 `prd/reports/Validation-Report-{INIT}.md` (same path).
 
-See `references/id-conventions.md` and `references/artifact-write-contract.md`.
+See `prayog-skills/references/id-conventions.md` and `prayog-skills/references/artifact-write-contract.md`.

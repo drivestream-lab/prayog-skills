@@ -52,4 +52,4 @@ Include exactly one fenced `yaml` block:
           status: open
 
 Append handoff envelope (stage `learning-extract`) per
-`../../../references/handoff-envelope.md`.
+`prayog-skills/references/handoff-envelope.md`.

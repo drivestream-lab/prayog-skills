@@ -26,7 +26,7 @@ document `/purge-initiative-artifacts-meta` as a prerequisite or next step —
 orchestration order lives only in pinned `workflow.yaml`.
 
 Normative allowlist / refuse:
-[`../../../references/artifact-write-contract.md`](../../../references/artifact-write-contract.md).
+[`prayog-skills/references/artifact-write-contract.md`](prayog-skills/references/artifact-write-contract.md).
 
 ## NON-NEGOTIABLE
 
@@ -101,7 +101,7 @@ only). Checks: [references/checks.md](references/checks.md).
 
 ## Workflow handoff
 
-1. Emit envelope from `../../../references/handoff-envelope.md`. Stage
+1. Emit envelope from `prayog-skills/references/handoff-envelope.md`. Stage
    `purge-initiative-artifacts-app`. Set `artifact.path: null` (no durable
    report). Put path lists under `signals` (`deleted`, `missing_ok`, `refused`,
    counts). Optionally set `signals.pr_body` to a short markdown summary for
@@ -116,5 +116,5 @@ only). Checks: [references/checks.md](references/checks.md).
    per pin `requires`. Prefer synthesizing PR body from `signals` / `pr_body`
    (runner may materialize an ephemeral body file **outside** `{reports_dir}`).
    Never create `Purge-*.md` under reports.
-5. Follow `../../../references/forge-side-effects.md#content-producers` when pin
+5. Follow `prayog-skills/references/forge-side-effects.md#content-producers` when pin
    `forge.commit_workspace` is not `disabled` or next is an external-action.

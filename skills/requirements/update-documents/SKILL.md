@@ -30,8 +30,8 @@ resolution asks for product-id updates.
 
 **Spec PR (app repo):** When drafting `docs/specification/product/INIT-*.md`, engineering uses `/spec-draft` on branch `chore/INIT-*-spec-{repo}`. Wave IDs must match PRD §4.0 / §4.5. Product ids use `REQ-*` (legacy `FR-*` ≡ same number). Gate: launchpad `playbook/delivery-workflow.md` + `playbook/spec-layout.md`.
 
-Conventions: `../../../references/id-conventions.md`,
-`../../../references/artifact-write-contract.md`.
+Conventions: `prayog-skills/references/id-conventions.md`,
+`prayog-skills/references/artifact-write-contract.md`.
 
 ---
 
@@ -324,12 +324,12 @@ Present a final summary:
 
 ## Workflow handoff
 
-1. Append/emit the envelope from `../../../references/handoff-envelope.md` to the Update Summary. Use stage `update-documents`.
-2. When the invocation binds `handoff_path` (orchestrator / AgentRunner baton), also **overwrite** that path with the same `handoff:` envelope before exit. Leaving the baton empty is a failed stage for automated consumers. `artifact.path` remains the workspace skill output, not the baton path. See `../../../references/handoff-envelope.md` (Orchestrator baton).
-3. Derive `next_candidates` and `human_checkpoint` from pinned root `workflow.yaml` for `(stage: update-documents, outcome)` per `../../../references/handoff-envelope.md` (**Derive from pinned workflow**). Set `human_checkpoint: true` only when the resolved next node's `type` is `human-checkpoint` — never because the artifact "should be reviewed."
+1. Append/emit the envelope from `prayog-skills/references/handoff-envelope.md` to the Update Summary. Use stage `update-documents`.
+2. When the invocation binds `handoff_path` (orchestrator / AgentRunner baton), also **overwrite** that path with the same `handoff:` envelope before exit. Leaving the baton empty is a failed stage for automated consumers. `artifact.path` remains the workspace skill output, not the baton path. See `prayog-skills/references/handoff-envelope.md` (Orchestrator baton).
+3. Derive `next_candidates` and `human_checkpoint` from pinned root `workflow.yaml` for `(stage: update-documents, outcome)` per `prayog-skills/references/handoff-envelope.md` (**Derive from pinned workflow**). Set `human_checkpoint: true` only when the resolved next node's `type` is `human-checkpoint` — never because the artifact "should be reviewed."
 
 
-4. Follow `../../../references/forge-side-effects.md#content-producers` when this stage's pin has `forge.commit_workspace` other than `disabled` or next is an `external-action` with `forge.requires` — fill `handoff.forge` / recommend the matching `/forge` skill; do not treat local CLI as skill success.
+4. Follow `prayog-skills/references/forge-side-effects.md#content-producers` when this stage's pin has `forge.commit_workspace` other than `disabled` or next is an `external-action` with `forge.requires` — fill `handoff.forge` / recommend the matching `/forge` skill; do not treat local CLI as skill success.
 
 
 **Transitions:** pinned root `workflow.yaml` for this stage (SSOT). On `pass`,

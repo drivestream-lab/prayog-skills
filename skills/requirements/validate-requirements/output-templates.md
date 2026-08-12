@@ -3,8 +3,8 @@
 **Called from:** `SKILL.md` (Phase 3: Generate Output)
 **Produces:** Chat summary (displayed to user) + Full report file (saved to disk)
 
-Conventions: `../../../references/id-conventions.md`,
-`../../../references/artifact-write-contract.md`.
+Conventions: `prayog-skills/references/id-conventions.md`,
+`prayog-skills/references/artifact-write-contract.md`.
 
 ---
 

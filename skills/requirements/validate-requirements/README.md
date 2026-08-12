@@ -7,7 +7,7 @@ Writes the **canonical** report
 `prd/reports/Validation-Report-{INIT}.md` (overwrite; bump `report_revision`;
 no `*-revN` siblings). Findings use stable **`VF-*`** ids.
 
-See `references/id-conventions.md` and `references/artifact-write-contract.md`.
+See `prayog-skills/references/id-conventions.md` and `prayog-skills/references/artifact-write-contract.md`.
 
 ## Invoke
 

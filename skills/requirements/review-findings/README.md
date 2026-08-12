@@ -5,7 +5,7 @@ Interactive workshop for validation / audit reports. **Collect decisions only**
 `prd/reports/Resolution-{INIT}.md` (overwrite; no `*-revN` siblings).
 
 Findings use stable `VF-*` ids; decisions become `CHG-*` linked to those ids.
-See `references/id-conventions.md` and `references/artifact-write-contract.md`.
+See `prayog-skills/references/id-conventions.md` and `prayog-skills/references/artifact-write-contract.md`.
 
 **Original author:** rushikeshpol02 (ai-skills). **Maintainer:** drivestream-lab.
 

@@ -14,9 +14,9 @@ description: "Validates requirements documents using 15 checks across 2 dimensio
 6. **Canonical report path** — overwrite
    `{reports_dir}/Validation-Report-{INIT}.md` only. Never create `*-revN`,
    `*-v2`, or dated siblings. See
-   `../../../references/artifact-write-contract.md`.
+   `prayog-skills/references/artifact-write-contract.md`.
 7. **Stable finding ids** — every finding row uses `VF-{nn}` per
-   `../../../references/id-conventions.md`. Carry forward keeps the same id.
+   `prayog-skills/references/id-conventions.md`. Carry forward keeps the same id.
 8. Prefer targeting product ids (`REQ-*`, `CAP-*`, `OQ-*`) in Location when
    present; legacy `FR-*` maps to `REQ-*` (same number).
 
@@ -198,12 +198,12 @@ Follow that file's instructions to produce both the chat summary and the full re
 
 ## Workflow handoff
 
-1. Append/emit the envelope from `../../../references/handoff-envelope.md` to the saved validation report. Use stage `validate-requirements`.
-2. When the invocation binds `handoff_path` (orchestrator / AgentRunner baton), also **overwrite** that path with the same `handoff:` envelope before exit. Leaving the baton empty is a failed stage for automated consumers. `artifact.path` remains the workspace skill output, not the baton path. See `../../../references/handoff-envelope.md` (Orchestrator baton).
-3. Derive `next_candidates` and `human_checkpoint` from pinned root `workflow.yaml` for `(stage: validate-requirements, outcome)` per `../../../references/handoff-envelope.md` (**Derive from pinned workflow**). Set `human_checkpoint: true` only when the resolved next node's `type` is `human-checkpoint` — never because the artifact "should be reviewed."
+1. Append/emit the envelope from `prayog-skills/references/handoff-envelope.md` to the saved validation report. Use stage `validate-requirements`.
+2. When the invocation binds `handoff_path` (orchestrator / AgentRunner baton), also **overwrite** that path with the same `handoff:` envelope before exit. Leaving the baton empty is a failed stage for automated consumers. `artifact.path` remains the workspace skill output, not the baton path. See `prayog-skills/references/handoff-envelope.md` (Orchestrator baton).
+3. Derive `next_candidates` and `human_checkpoint` from pinned root `workflow.yaml` for `(stage: validate-requirements, outcome)` per `prayog-skills/references/handoff-envelope.md` (**Derive from pinned workflow**). Set `human_checkpoint: true` only when the resolved next node's `type` is `human-checkpoint` — never because the artifact "should be reviewed."
 
 
-4. Follow `../../../references/forge-side-effects.md#content-producers` when this stage's pin has `forge.commit_workspace` other than `disabled` or next is an `external-action` with `forge.requires` — fill `handoff.forge` / recommend the matching `/forge` skill; do not treat local CLI as skill success.
+4. Follow `prayog-skills/references/forge-side-effects.md#content-producers` when this stage's pin has `forge.commit_workspace` other than `disabled` or next is an `external-action` with `forge.requires` — fill `handoff.forge` / recommend the matching `/forge` skill; do not treat local CLI as skill success.
 
 
 **Transitions:** pinned root `workflow.yaml` for this stage (SSOT). Do not

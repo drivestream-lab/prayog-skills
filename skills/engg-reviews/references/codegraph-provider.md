@@ -2,7 +2,7 @@
 
 **Abstract interface, freshness/confidence discipline, and degraded-mode
 rules now live at the shared, walker-neutral
-[`../../../references/codegraph-tool-contract.md`](../../../references/codegraph-tool-contract.md)**
+[`prayog-skills/references/codegraph-tool-contract.md`](prayog-skills/references/codegraph-tool-contract.md)**
 — promoted out of this pack so the mainline dev lane can reference the same
 contract without depending on `engg-reviews`. This file keeps the
 Graphify-specific Phase 1 CLI mapping and fleet-layout detail below;
