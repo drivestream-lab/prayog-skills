@@ -9,6 +9,26 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 _(empty)_
 
+## [0.5.2] — 2026-08-13
+
+### Fixed — WorkManifest `files[].path` is an exact literal
+
+- `scripts/workmanifest_contract.py` no longer treats `[` / `]` as glob
+  characters. Bracketed path segments are ordinary filename characters
+  (consumed via direct path APIs, never glob-expanded). Glob wildcards `*`
+  and `?` are still rejected, as are absolute paths, `~`, and `../`.
+- Plan check P16 PASS requires `scripts/workmanifest_contract.py` to exit 0
+  on §9 — a checklist tick without that run is not P16.
+
+### Fixed — Meta service catalog is org-suffixed without tenant hardcoding
+
+- `/prd-impact-map` (and sister readers) resolve **one** catalog under
+  `<client>-meta/config/`: prefer `service-catalog-<org>.yaml` when org is
+  known (unique `governance-<org>.yaml` suffix); otherwise exactly one of
+  `service-catalog.yaml` or `service-catalog-*.yaml`. Fail closed on zero or
+  multiple matches. Never hardcode a tenant org.
+- Prompt package `prd-impact-map` bumped `1.3.0` → `1.4.0`.
+
 ## [0.5.1] — 2026-08-12
 
 ### Fixed — Pin-root `references/` path contract for remounted skills

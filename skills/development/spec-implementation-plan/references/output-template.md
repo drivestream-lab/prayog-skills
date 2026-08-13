@@ -342,7 +342,7 @@ kind: WorkManifest
 
 initiative: {INITIATIVE}
 # Branch naming: feature/INIT-{COMPONENT}-{NUMBER}-w{N}-{slug}
-#   COMPONENT = service branch_code from service-catalog.yaml (2-7 uppercase chars)
+#   COMPONENT = service branch_code from the resolved service catalog (2-7 uppercase chars)
 #   NUMBER    = initiative sequence number (1-7 digits, e.g. 001, 0012)
 #   N         = wave number (0, 1, 2, …) — expected by convention; advisory in CI regex
 #   slug      = lowercase kebab description (e.g. ingestion-pipeline, jwt-login)
