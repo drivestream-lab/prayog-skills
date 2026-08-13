@@ -107,7 +107,7 @@ ids **within the same wave only**.
   implements: [REQ-01, REQ-02]
   depends_on: []                 # same-wave TASK-* only
   files:
-    - path: src/service/foo.py   # repo-relative, exact (no globs, no abs paths)
+    - path: src/service/foo.py   # repo-relative exact literal (no expansion)
       action: create             # create | modify | delete | inspect
   exit:
     criteria:
@@ -124,13 +124,19 @@ ids **within the same wave only**.
 |-------|------|
 | `implements` | Non-empty list of product `REQ-*`. Every in-scope REQ maps to ≥1 TASK. |
 | `depends_on` | Same-wave `TASK-*` only. No missing targets, no self-reference, no cycles. |
-| `files` | Non-empty unless the TASK is explicitly docs-only with `files: []` **and** exit criteria state docs-only. Each `path` is repo-relative and exact; `action ∈ {create, modify, delete, inspect}`. |
+| `files` | Non-empty unless the TASK is explicitly docs-only with `files: []` **and** exit criteria state docs-only. Each `path` is a repo-relative exact literal; `action ∈ {create, modify, delete, inspect}`. |
 | `exit.criteria` | Non-empty list of **observable engineering results** (not “done”, “works”, or “implemented”). |
 | `exit.proof.kind` | `command` (requires `command`) or `review` (requires `review`). |
 | `exit.proof.expected` | Non-empty expected result of the proving step. |
 | `exit.proof.evidence_expected` | Where proof will be recorded (artifact path / section). Not the observed result. |
 
 Do **not** put `parallel_safe` or `shared_files` on tasks in v1.
+
+Consumers MUST pass `files[].path` to direct path APIs as a literal and MUST
+NOT apply shell, glob, or wildcard expansion. `*` and `?` are forbidden.
+Bracketed segments are accepted only below Next.js App Router roots `app/` and
+`src/app/`, and only as complete `[name]`, `[...name]`, or `[[...name]]`
+directory segments; elsewhere brackets remain forbidden as glob-like syntax.
 
 ---
 

@@ -52,11 +52,10 @@ TASK_ID_RE = re.compile(r"^TASK-W(\d+)-(\d+)$")
 REQ_ID_RE = re.compile(r"^REQ-[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$")
 SHADOW_REQ_RE = re.compile(r"^REQ-W\d")
 ABS_PATH_RE = re.compile(r"^(?:[A-Za-z]:[\\/]|/)")
-GLOB_CHARS_RE = re.compile(r"[*?\[\]]")
-# Recognised Next.js filesystem dynamic-route segment forms.
-# Only these bracketed forms are permitted; everything else with brackets
-# is treated as a glob / character-class and rejected.
-NEXT_DYNAMIC_SEGMENT_RE = re.compile(
+# Recognised Next.js App Router dynamic-directory forms. Only these bracketed
+# forms are permitted, and only below app/ or src/app/; every other bracketed
+# segment remains glob-like and is rejected.
+NEXT_APP_DYNAMIC_SEGMENT_RE = re.compile(
     r"^(?:"
     r"\[[A-Za-z_][A-Za-z0-9_-]*\]"           # [commandId]
     r"|\[\.{3}[A-Za-z_][A-Za-z0-9_-]*\]"     # [...slug]
@@ -165,9 +164,9 @@ def _valid_repo_path(path: str) -> bool:
     """Validate a repo-relative file path.
 
     Rejects absolute paths, ``~``, parent traversal (``../``), and any
-    glob-like patterns.  Bracket characters are only tolerated when an
-    entire *segment* matches a recognised Next.js dynamic-route form
-    (``[id]``, ``[...slug]``, ``[[...slug]]``).
+    glob-like patterns. Bracket characters are only tolerated below a
+    recognised Next.js App Router root when an entire segment matches a
+    dynamic-directory form (``[id]``, ``[...slug]``, ``[[...slug]]``).
     """
     if not path or not isinstance(path, str):
         return False
@@ -176,14 +175,16 @@ def _valid_repo_path(path: str) -> bool:
         return False
     if p.startswith("../") or "/../" in p or p == "..":
         return False
-    # Reject actual glob characters * and ? anywhere.
+    # Reject unambiguous glob characters * and ? anywhere.
     if re.search(r"[*?]", p):
         return False
-    # Segments containing brackets must be valid Next.js dynamic-route
-    # segments; malformed bracket expressions are rejected.
-    for segment in p.split("/"):
+    segments = p.split("/")
+    is_next_app_route = segments[:1] == ["app"] or segments[:2] == ["src", "app"]
+    # Brackets outside known App Router roots remain glob-like. Within those
+    # roots, only complete dynamic-directory segments are accepted.
+    for segment in segments:
         if "[" in segment or "]" in segment:
-            if not NEXT_DYNAMIC_SEGMENT_RE.match(segment):
+            if not is_next_app_route or not NEXT_APP_DYNAMIC_SEGMENT_RE.fullmatch(segment):
                 return False
     return True
 

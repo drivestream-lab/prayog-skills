@@ -170,11 +170,17 @@ class WorkManifestContractTest(unittest.TestCase):
         self.assertTrue(_valid_repo_path("app/api/pravah/remote-operations/controls/[commandType]/route.ts"))
 
     def test_valid_nextjs_dynamic_segments(self) -> None:
-        """[id], [...slug], and [[...slug]] are accepted."""
+        """App Router [id], [...slug], and [[...slug]] directories are accepted."""
         self.assertTrue(_valid_repo_path("app/api/[commandId]/route.ts"))
         self.assertTrue(_valid_repo_path("app/pages/[...slug]/page.tsx"))
         self.assertTrue(_valid_repo_path("app/pages/[[...slug]]/page.tsx"))
-        self.assertTrue(_valid_repo_path("src/[resource]/[action]/handler.ts"))
+        self.assertTrue(_valid_repo_path("src/app/[resource]/[action]/route.ts"))
+
+    def test_rejects_bracket_segments_outside_next_app_roots(self) -> None:
+        """Bracket segments outside app/ and src/app/ remain glob-like."""
+        self.assertFalse(_valid_repo_path("src/[a-z]/file.ts"))
+        self.assertFalse(_valid_repo_path("src/[resource]/handler.ts"))
+        self.assertFalse(_valid_repo_path("packages/web/app/[resource]/route.ts"))
 
     def test_rejects_glob_wildcards(self) -> None:
         """Actual glob patterns must still fail."""
