@@ -2,14 +2,14 @@
 name: prd-impact-map
 description: >-
   Map a PRD to affected repos using the service catalog. Reads the PRD and
-  config/service-catalog.yaml from <client>-meta, matches PRD capabilities
+  the resolved config/service-catalog*.yaml from <client>-meta, matches PRD capabilities
   to service descriptions, generates a versioned impact-map artifact locally,
   and produces a PR-readiness handoff (handoff.forge for open_draft_pr).
   Publish via /open-draft-pr or orchestrator ForgeClient after authorization —
   not inside this skill. Run in <client>-meta after PRD validation and before
   app spec PRs.
 disable-model-invocation: true
-paths: prd/**, config/service-catalog.yaml
+paths: prd/**, config/service-catalog*.yaml
 background_eligible: true
 background_trigger: "validated PRD is ready for impact mapping"
 ---
@@ -22,8 +22,12 @@ opens those after tech lead confirms the map.
 
 ## NON-NEGOTIABLE
 
-1. Read `config/service-catalog.yaml` before reading the PRD. Understand what
-   each service owns before matching.
+1. Resolve **one** service catalog under `<client>-meta/config/` before reading
+   the PRD. Prefer `service-catalog-<org>.yaml` when org is known (unique
+   `governance-<org>.yaml` suffix). Otherwise accept exactly one of
+   `service-catalog.yaml` or `service-catalog-*.yaml`. Fail closed on zero or
+   multiple matches. Do not merge catalogs. Never hardcode a tenant org.
+   Understand what each service owns before matching.
 2. Match PRD capabilities to service `description` and `owns` fields
    semantically — do not rely on keyword matching alone.
 3. Include transitively affected repos via `depends_on` chains. If repo B
@@ -64,7 +68,9 @@ opens those after tech lead confirms the map.
 ## Inputs
 
 1. **PRD** — (REQUIRED) `prd/INIT-{id}.md` in `<client>-meta`
-2. **Service catalog** — (REQUIRED) `config/service-catalog.yaml` in `<client>-meta`
+2. **Service catalog** — (REQUIRED) resolved file under `<client>-meta/config/`
+   (`service-catalog-<org>.yaml` preferred; else exactly one
+   `service-catalog.yaml` or `service-catalog-*.yaml`)
 3. **Git state** — (REQUIRED) current branch/base, changed files, and whether a
    meta PR already exists; an existing PR is not required for the initial map
 4. **Meta PR state** — (OPTIONAL) URL/head/reviews/labels when revising an open PR
