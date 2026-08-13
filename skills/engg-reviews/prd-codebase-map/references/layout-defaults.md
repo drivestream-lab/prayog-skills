@@ -40,7 +40,7 @@ Resolve paths from `fleet.yaml` when present; else these defaults.
 |-----|---------------------------|
 | `prd_root` | `{meta_path}/prd/` |
 | `meta_reports_dir` | `{meta_path}/prd/reports/` |
-| `service_catalog` | `{meta_path}/config/service-catalog.yaml` |
+| `service_catalog` | Resolve one file under `{meta_path}/config/`: prefer `service-catalog-<org>.yaml` when org is known (unique `governance-<org>.yaml` suffix); else exactly one of `service-catalog.yaml` or `service-catalog-*.yaml`. Fail closed on zero or multiple matches. Never hardcode a tenant org. |
 
 Phase 1 default: write maps under **pe-workspace `out/reports/`**. Promote into
 meta `prd/reports/` only when PE explicitly chooses (still no gate labels).

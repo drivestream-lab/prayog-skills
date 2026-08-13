@@ -7,7 +7,7 @@ description: >-
   and records develop_sha + graph_digest. Gate-independent — never sets
   impact-map-* or spec-* labels. Run before /prd-codebase-map.
 disable-model-invocation: true
-paths: prd/reports/**, config/service-catalog.yaml
+paths: prd/reports/**, config/service-catalog*.yaml
 metadata:
   background_eligible: false
   experimental: true
@@ -46,7 +46,8 @@ Handoff: [../references/handoff-adjunct.md](../references/handoff-adjunct.md).
 2. **Candidate repos** — (REQUIRED) from one of:
    - `prd/reports/Impact-Map-{INIT}.md` affected (+ optional transitive) list
    - PE-supplied list
-   - `config/service-catalog.yaml` hint (only if PE confirms)
+   - resolved `config/service-catalog*.yaml` hint (only if PE confirms; same
+     one-file resolver as `/prd-impact-map` — never hardcode a tenant org)
 3. Workspace layout — **preferred:** `{fleet}/pe-workspace/` with
    `fleet.yaml` + `graphs/{repo}/`; app code at `../{repo}`; meta at
    `../drivestream-meta` (or `{client}-meta`). Legacy: cwd = meta with

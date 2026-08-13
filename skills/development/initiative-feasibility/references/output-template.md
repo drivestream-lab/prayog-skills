@@ -13,7 +13,7 @@
 | Repo | {REPO} |
 | Date | {YYYY-MM-DD} |
 | Branch | `chore/INIT-{COMPONENT}-{NUMBER}-spec-{repo}` — spec PR (single review surface) |
-| Initiative segment | `INIT-{COMPONENT}-{NUMBER}` — COMPONENT is service branch_code from service-catalog.yaml |
+| Initiative segment | `INIT-{COMPONENT}-{NUMBER}` — COMPONENT is service branch_code from the resolved service catalog |
 | Status | Draft |
 | Review deadline | {YYYY-MM-DD + 3 business days} |
 | Deciders | PM: {name} · Domain SME: {name or team} |

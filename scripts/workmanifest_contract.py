@@ -52,7 +52,6 @@ TASK_ID_RE = re.compile(r"^TASK-W(\d+)-(\d+)$")
 REQ_ID_RE = re.compile(r"^REQ-[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$")
 SHADOW_REQ_RE = re.compile(r"^REQ-W\d")
 ABS_PATH_RE = re.compile(r"^(?:[A-Za-z]:[\\/]|/)")
-GLOB_CHARS_RE = re.compile(r"[*?\[\]]")
 UNIT_AS_LIVE_RE = re.compile(
     r"(?i)^\s*(make\s+test|npm\s+test|yarn\s+test|pytest(\s|$)|go\s+test|"
     r"cargo\s+test|mvn\s+test|\{test_command\}|\$\{?test_command\}?)\b"
@@ -152,6 +151,13 @@ def _is_vague_criterion(text: str) -> bool:
 
 
 def _valid_repo_path(path: str) -> bool:
+    """Return True when ``path`` is a repo-relative exact literal file.
+
+    Rejects empty values, absolute paths, ``~``, parent traversal (``../``),
+    and glob wildcards ``*`` / ``?``. Bracket characters are ordinary path
+    characters, not globs — consumers MUST pass the string to direct path
+    APIs and MUST NOT apply shell or glob expansion.
+    """
     if not path or not isinstance(path, str):
         return False
     p = path.strip()
@@ -159,7 +165,7 @@ def _valid_repo_path(path: str) -> bool:
         return False
     if p.startswith("../") or "/../" in p or p == "..":
         return False
-    if GLOB_CHARS_RE.search(p):
+    if "*" in p or "?" in p:
         return False
     return True
 
@@ -307,7 +313,7 @@ def _validate_task(
             errors.append(
                 _err(
                     "file_path",
-                    f"path must be repo-relative exact path; got {file_path!r}",
+                    f"path must be repo-relative exact literal; got {file_path!r}",
                     f"{fpath}.path",
                 )
             )

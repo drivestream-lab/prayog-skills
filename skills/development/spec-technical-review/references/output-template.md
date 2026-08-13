@@ -14,7 +14,7 @@
 | Repo | {REPO} |
 | Date | {YYYY-MM-DD} |
 | Branch | `chore/INIT-{COMPONENT}-{NUMBER}-spec-{repo}` (spec PR — TDD published via Forge) |
-| Initiative segment | `INIT-{COMPONENT}-{NUMBER}` — COMPONENT is service branch_code from service-catalog.yaml |
+| Initiative segment | `INIT-{COMPONENT}-{NUMBER}` — COMPONENT is service branch_code from the resolved service catalog |
 | Status | Draft |
 | Review deadline | {YYYY-MM-DD + 5 business days} |
 | Deciders | PE: {name} — explicit LGTM required, not approval by silence |

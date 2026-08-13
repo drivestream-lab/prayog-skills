@@ -12,6 +12,7 @@ from scripts.workmanifest_contract import (
     extract_declared_coverage,
     extract_workmanifest_yaml,
     validate_workmanifest,
+    _valid_repo_path,
 )
 
 
@@ -157,6 +158,60 @@ class WorkManifestContractTest(unittest.TestCase):
             script.write_text("print('PASS')  # no marker — legacy artifact\n")
             errors = validate_workmanifest(text, base_path=base)
             self.assertNotIn("live_coverage_mismatch", _codes(errors))
+
+    def test_valid_repo_path_accepts_bracket_literals(self) -> None:
+        self.assertTrue(_valid_repo_path("src/api/health.py"))
+        self.assertTrue(
+            _valid_repo_path(
+                "app/api/pravah/remote-operations/commands/[commandId]/route.ts"
+            )
+        )
+        self.assertTrue(
+            _valid_repo_path(
+                "app/api/pravah/remote-operations/batches/[batchId]/route.ts"
+            )
+        )
+        self.assertTrue(
+            _valid_repo_path(
+                "app/api/pravah/remote-operations/controls/[commandType]/route.ts"
+            )
+        )
+        self.assertTrue(_valid_repo_path("src/app/[id]/route.ts"))
+        self.assertTrue(_valid_repo_path("packages/web/app/api/[id]/route.ts"))
+        self.assertTrue(_valid_repo_path("pages/api/[id].ts"))
+        self.assertTrue(_valid_repo_path("app/blog/[slug].tsx"))
+
+    def test_valid_repo_path_rejects_globs_and_unsafe(self) -> None:
+        self.assertFalse(_valid_repo_path("src/*.ts"))
+        self.assertFalse(_valid_repo_path("src/file?.ts"))
+        self.assertFalse(_valid_repo_path("app/api/**/route.ts"))
+        self.assertFalse(_valid_repo_path("/etc/passwd"))
+        self.assertFalse(_valid_repo_path("~/x"))
+        self.assertFalse(_valid_repo_path("../x"))
+        self.assertFalse(_valid_repo_path("src/../etc/passwd"))
+
+    def test_bracket_literals_in_full_manifest(self) -> None:
+        data = yaml.safe_load((FIXTURES / "valid.yaml").read_text(encoding="utf-8"))
+        data["work"][0]["tasks"][0]["files"] = [
+            {
+                "path": "app/api/pravah/remote-operations/commands/[commandId]/route.ts",
+                "action": "create",
+            },
+            {
+                "path": "app/api/pravah/remote-operations/batches/[batchId]/route.ts",
+                "action": "create",
+            },
+            {
+                "path": "app/api/pravah/remote-operations/controls/[commandType]/route.ts",
+                "action": "modify",
+            },
+        ]
+        self.assertEqual(validate_workmanifest(data), [])
+
+    def test_glob_wildcard_in_manifest_is_file_path(self) -> None:
+        data = yaml.safe_load((FIXTURES / "valid.yaml").read_text(encoding="utf-8"))
+        data["work"][0]["tasks"][0]["files"] = [{"path": "src/*.ts", "action": "create"}]
+        self.assertIn("file_path", _codes(validate_workmanifest(data)))
 
 
 if __name__ == "__main__":

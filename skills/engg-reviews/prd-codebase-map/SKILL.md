@@ -8,7 +8,7 @@ description: >-
   impact-map-lgtm and never unlocks Gate 1 or /spec-draft. Run after
   /ensure-repo-graph.
 disable-model-invocation: true
-paths: prd/**, config/service-catalog.yaml
+paths: prd/**, config/service-catalog*.yaml
 metadata:
   background_eligible: false
   experimental: true
