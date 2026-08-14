@@ -65,6 +65,7 @@ PM skills validate and refine PRDs. Dev skills implement spec slices in service 
 | **review-findings** | PM decides on findings |
 | **update-documents** | PM refines PRD after findings |
 | **prd-impact-map** | Generates a versioned PRD → repo map and Draft-PR readiness handoff |
+| **resolve-pr-review** | Closes Gate 1 PE comment loops in one pass (PRD fix + map regen + consistency gate) |
 | **purge-initiative-artifacts-meta** | After initiative-closure: delete meta PURGE allowlist (Validation/Resolution) |
 
 ### Development (app repos — harness seeded)

@@ -7,7 +7,13 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
-_(empty)_
+### Added — `resolve-pr-review` (meta PM)
+
+- New manual requirements skill closes Gate 1 PE/tech-lead comment loops in one
+  pass: parse every finding, fix PRD (SSOT), sync satellite docs, re-validate,
+  regenerate impact map from scratch (never patch inline), run digest/consistency
+  gates, and prepare a reply comment (post only with user approval).
+- Registered in `profiles/meta-pm.yaml`, prompt inventory, and skill catalog.
 
 ## [0.5.2] — 2026-08-13
 

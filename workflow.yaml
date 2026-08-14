@@ -58,6 +58,19 @@ nodes:
       stale: prd-impact-map
       failed: workflow-stop
 
+  resolve-pr-review:
+    type: skill
+    profile: meta-pm
+    dispatch: manual
+    forge:
+      commit_workspace: optional
+    outcomes:
+      pass: prd-impact-acceptance
+      findings: resolve-pr-review
+      needs-input: requirements-human-decision
+      blocked: requirements-human-decision
+      failed: workflow-stop
+
   requirements-human-decision:
     type: human-checkpoint
     purpose: requirements-clarification
