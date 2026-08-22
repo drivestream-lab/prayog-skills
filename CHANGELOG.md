@@ -9,6 +9,16 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 _(empty)_
 
+## [0.5.3] — 2026-08-22
+
+### Added — Harness profiles for new lab stacks
+
+- `profiles/edge-inference-engine.yaml`
+- `profiles/android-kotlin.yaml` (Gradle `app/src/` source roots)
+- `profiles/ios-swift.yaml` (Tuist `Sources/` source roots)
+
+Same-wave with launchpad **v0.5.36** config-scalable stacks.
+
 ## [0.5.2] — 2026-08-13
 
 ### Fixed — WorkManifest `files[].path` is an exact literal
