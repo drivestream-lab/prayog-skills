@@ -86,7 +86,7 @@ class PromptPackageInventoryTest(unittest.TestCase):
         }
 
     def test_inventory_count_and_areas(self) -> None:
-        self.assertEqual(len(self.expected), 17)
+        self.assertEqual(len(self.expected), 18)
         areas = {area for area, _ in self.expected}
         self.assertEqual(areas, {"requirements", "development", "forge"})
         self.assertFalse(any(a == "engg-reviews" for a, _ in self.expected))

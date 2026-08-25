@@ -15,6 +15,7 @@
     "review-findings",
     "update-documents",
     "prd-impact-map",
+    "resolve-pr-review",
     "spec-implementation-plan"
   ],
   "human_checkpoint_purposes": {

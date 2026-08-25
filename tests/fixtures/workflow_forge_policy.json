@@ -4,6 +4,7 @@
     "review-findings": "optional",
     "update-documents": "optional",
     "prd-impact-map": "required",
+    "resolve-pr-review": "optional",
     "spec-draft": "required",
     "initiative-feasibility": "required",
     "spec-technical-review": "required",

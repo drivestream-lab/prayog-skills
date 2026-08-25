@@ -6,6 +6,7 @@
     {"area": "requirements", "skill_id": "review-findings"},
     {"area": "requirements", "skill_id": "update-documents"},
     {"area": "requirements", "skill_id": "prd-impact-map"},
+    {"area": "requirements", "skill_id": "resolve-pr-review"},
     {"area": "requirements", "skill_id": "purge-initiative-artifacts-meta"},
     {"area": "development", "skill_id": "spec-draft"},
     {"area": "development", "skill_id": "initiative-feasibility"},
