@@ -9,6 +9,28 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 _(empty)_
 
+## [0.5.4] — 2026-09-02
+
+### Added — Think-first PM lane (authoring + scoring)
+
+- **`/prd-think`** — grill brief → domain model → red-team → candidate PRD
+  under `{reports_dir}/{INIT}-prd-think(-N).md`. Authors only; never scores.
+- **`/prd-quality`** — blind score ≥2 PRD files against the delivery bar;
+  Handover (`yes` = zero material FAILs) is the promote signal.
+- Prompt packages + references for both skills under `skills/requirements/`.
+- Operator guide: [`docs/pm-lane-think-first.md`](docs/pm-lane-think-first.md).
+
+### Changed — meta-pm profile
+
+- `profiles/meta-pm.yaml` lists `prd-think` and `prd-quality` as
+  **authoring/scoring** skills (not workflow nodes).
+
+### Deprecated
+
+- Community **awesome-copilot `/prd`** outline-fill path — superseded by
+  think-first. Remove `community_skills: prd` from meta harness pins when
+  bumping to this release.
+
 ## [0.5.3] — 2026-08-22
 
 ### Added — Harness profiles for new lab stacks

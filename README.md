@@ -163,9 +163,16 @@ Skill hubs under `.harness/skills/` / `.agents/skills/` are local (often gitigno
 ### Manual — PM workspace
 
 ```bash
-npx skills add github/awesome-copilot --skill prd -a cursor -y
 npx skills add drivestream-lab/prayog-skills --skill '*' -a cursor -y
 ```
+
+PM authoring chain (human-invoked, not workflow nodes):
+
+```text
+outline/brief → /prd-think → /prd-quality → promote → /validate-requirements
+```
+
+See [`docs/pm-lane-think-first.md`](docs/pm-lane-think-first.md).
 
 ### Manual — dev bundle (python-backend example)
 
@@ -264,6 +271,7 @@ python3 /tmp/install_engg_reviews.py --target /path/to/pe-workspace --ref pe-rc-
 
 | Skill area | Origin |
 |------------|--------|
+| prd-think, prd-quality | Platform SDD design (think-first PM lane) |
 | validate-requirements, review-findings, update-documents | Vendored from rushikeshpol02/ai-skills |
 | pre-implement | Adapted from early platform skills work |
 | initiative-feasibility, spec-implementation-plan | Patterns from awesome-copilot |

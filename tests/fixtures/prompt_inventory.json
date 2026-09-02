@@ -2,6 +2,8 @@
   "coverage_areas": ["requirements", "development", "forge"],
   "note": "Prompt package coverage is directory inventory under these areas. Independent of workflow dispatch. engg-reviews is out of scope. Forge skills are human ForgeClient parity — not workflow graph nodes.",
   "skills": [
+    {"area": "requirements", "skill_id": "prd-think"},
+    {"area": "requirements", "skill_id": "prd-quality"},
     {"area": "requirements", "skill_id": "validate-requirements"},
     {"area": "requirements", "skill_id": "review-findings"},
     {"area": "requirements", "skill_id": "update-documents"},
