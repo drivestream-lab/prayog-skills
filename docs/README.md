@@ -19,6 +19,7 @@ and always links to pin SSOTs — it does **not** fork them.
 | Launchpad / harness | [for-launchpad.md](for-launchpad.md) |
 | Gateflow / orchestrator | [for-gateflow.md](for-gateflow.md) |
 | Tracing ids across artifacts | [id-map.md](id-map.md) |
+| PM lane — think-first authoring | [pm-lane-think-first.md](pm-lane-think-first.md) |
 
 ## Experimental packs
 
