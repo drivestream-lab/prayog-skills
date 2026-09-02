@@ -17,6 +17,10 @@
     "prd-impact-map",
     "spec-implementation-plan"
   ],
+  "prompt_packages_off_graph": [
+    "prd-think",
+    "prd-quality"
+  ],
   "human_checkpoint_purposes": {
     "requirements-human-decision": "requirements-clarification",
     "prd-impact-acceptance": "prd-impact-acceptance",

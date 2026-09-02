@@ -86,7 +86,7 @@ class PromptPackageInventoryTest(unittest.TestCase):
         }
 
     def test_inventory_count_and_areas(self) -> None:
-        self.assertEqual(len(self.expected), 17)
+        self.assertEqual(len(self.expected), 19)
         areas = {area for area, _ in self.expected}
         self.assertEqual(areas, {"requirements", "development", "forge"})
         self.assertFalse(any(a == "engg-reviews" for a, _ in self.expected))
@@ -106,13 +106,15 @@ class PromptPackageInventoryTest(unittest.TestCase):
             )
         )
         dispatch_skills = set(policy["manual"]) | set(policy["orchestrated"])
+        off_graph = set(policy.get("prompt_packages_off_graph") or [])
         inventory_skills = {skill_id for _, skill_id in self.expected}
         content_inventory = {
             skill_id
             for area, skill_id in self.expected
             if area in {"requirements", "development"}
         }
-        self.assertEqual(content_inventory, dispatch_skills)
+        self.assertEqual(content_inventory, dispatch_skills | off_graph)
+        self.assertTrue(off_graph.isdisjoint(dispatch_skills))
         forge_skills = {
             skill_id for area, skill_id in self.expected if area == "forge"
         }

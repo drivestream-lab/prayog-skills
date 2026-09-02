@@ -1,6 +1,6 @@
 {
   "coverage_areas": ["requirements", "development", "forge"],
-  "note": "Prompt package coverage is directory inventory under these areas. Independent of workflow dispatch. engg-reviews is out of scope. Forge skills are human ForgeClient parity — not workflow graph nodes.",
+  "note": "Prompt package coverage is directory inventory under these areas. Independent of workflow dispatch; off-graph human-invoked skills (prd-think, prd-quality) are listed in workflow_dispatch_policy.json prompt_packages_off_graph. engg-reviews is out of scope. Forge skills are human ForgeClient parity — not workflow graph nodes.",
   "skills": [
     {"area": "requirements", "skill_id": "prd-think"},
     {"area": "requirements", "skill_id": "prd-quality"},
