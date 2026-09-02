@@ -37,7 +37,7 @@ not workflow graph nodes.
 | | |
 |---|---|
 | **License** | [MIT](LICENSE) |
-| **Version** | see [`VERSION`](VERSION) — **0.5.3** |
+| **Version** | see [`VERSION`](VERSION) — **0.5.4** |
 | **Install** | [skills CLI](https://skills.sh) or Launchpad `apply-harness` |
 | **Pairs with** | [launchpad](https://github.com/drivestream-lab/launchpad) · `*-rules` repos |
 
