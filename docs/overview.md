@@ -26,6 +26,12 @@ references/
 | **Skills** | How to produce artifacts; fill `handoff` / `handoff.forge`; never invent next hops |
 | **References** | Field schemas and producer rules |
 
+**Quality confidence ladder:** unit → **capability** (`CAP-*`) → **journey**
+(`J-{nn}`) with real infra, fixtures, and optional `human_observations`.
+Human ack is `wave-accepted` — there is **no** `/verify` content skill that
+auto-passes. See `references/quality-confidence-ladder.md` and
+`docs/id-map.md` (mint-only-if-consumed; `OQ` / `IM` / `PQ` / `Q` distinct).
+
 ### Pin-root vs skill-local `references/`
 
 There are **two** trees named `references/`:
@@ -113,11 +119,13 @@ PASS 2 (Enter-at learning-extract, or human /learning-extract)
 - `wave-signoff` is **merge/publish only** — not a second human approve.
   `wave-signoff.pass` records reviewed head SHA + merge commit SHA after the
   human merges manually. Forge/Gateflow must not merge.
-- **Co-ship live verify:** when a wave adds/changes a product surface, the same
-  wave ships the live script under `live_verify_dir` (plan P15). `/loop-spec`
-  runs check+unit only; the human executes the script at `wave-acceptance`
-  before Pass-2 closeout. Pass-2 (`learning-extract` → `ground-spec`) closes
-  the wave.
+- **Co-ship live prove:** when a wave adds/changes a product surface, the same
+  wave ships the driver under `live_verify_dir` **and** fixture packs under
+  `fixtures_dir` for `CAP-*` and/or `J-*` (plan P15). `/loop-spec` runs
+  check+unit only; the human executes prove + look-ats at `wave-acceptance`
+  (`wave-accepted` = ack) before Pass-2 closeout. Pass-2 (`learning-extract` →
+  `ground-spec`) closes the wave. See
+  [`../references/quality-confidence-ladder.md`](../references/quality-confidence-ladder.md).
 - **WorkManifest authority (Initiative B):** Prayog owns `prayog/v1`. **Board**
   issues after seed are the long-term WorkManifest home; plan §9 is the
   walk-time carrier (may be purged at initiative closure). Stage artifacts

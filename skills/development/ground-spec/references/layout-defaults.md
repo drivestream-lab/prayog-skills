@@ -14,6 +14,7 @@ When `.harness/profile.yaml` is absent, use:
 | `source_roots` | `src/` |
 | `unit_tests_dir` | `tests/unit` |
 | `live_verify_dir` | `tests/verify` |
+| `fixtures_dir` | `tests/fixtures` |
 | `debug_tests_dir` | `tests/debug` |
 
 Reports filename: `Ground-Report-{SPEC}-W{N}.md` under `reports_dir`.

@@ -35,7 +35,7 @@ them.
 | External-action auth | Pin may set `authorization: automated` on `spec-pr-action` / `wave-pr-action` / `initiative-closure-pr-action-app` / `initiative-closure-pr-action-meta` / `wave-in-progress-action` / `wave-done-action`. Playbooks should not require a human `/open-draft-pr` click for those nodes when remounted on this tip. |
 | KEEP/PURGE | Declared in [`../references/artifact-write-contract.md`](../references/artifact-write-contract.md) (remounted agents: `prayog-skills/references/artifact-write-contract.md`) — Launchpad does not implement purge logic |
 | Board status | Pin nodes `wave-in-progress-action` / `wave-done-action` (`update_board_status`). **Do not** materialize a human `/update-board-status` skill — orch ForgeClient only. |
-| Pin-root refs | Agents follow `prayog-skills/references/…` from hub/runtime skills; no consumer-root `references/` mirror |
+| Layout keys | Product profiles include `live_verify_dir` and **`fixtures_dir: tests/fixtures`** (copied into `.harness/profile.yaml`). Meta-pm has no product live/fixtures layout. |
 
 ## Pass-1 / Pass-2 / closure (copy for playbooks)
 

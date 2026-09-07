@@ -31,9 +31,9 @@ authority: pe_proposal
 
 | ID | Title | pe_action | Refined PE recommendation |
 |----|-------|-----------|---------------------------|
-| Q-01 | | keep-recommendation / choose-alternative / custom-stance / drop-question / needs-pm-only | |
+| PQ-01 | | keep-recommendation / choose-alternative / custom-stance / drop-question / needs-pm-only | |
 
-### Q-01 — detail
+### PQ-01 — detail
 
 - **PRD ref:** …
 - **Delta:** …

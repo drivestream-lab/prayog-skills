@@ -118,6 +118,10 @@ class WorkManifestContractTest(unittest.TestCase):
             extract_declared_coverage("# prayog:covers: REQ-01, REQ-02\n"),
             ["REQ-01", "REQ-02"],
         )
+        self.assertEqual(
+            extract_declared_coverage("# prayog:covers: CAP-01, J-01, REQ-01\n"),
+            ["CAP-01", "J-01", "REQ-01"],
+        )
 
     def test_extract_declared_coverage_none_when_absent(self) -> None:
         self.assertIsNone(extract_declared_coverage("no marker here\n"))
@@ -212,6 +216,51 @@ class WorkManifestContractTest(unittest.TestCase):
         data = yaml.safe_load((FIXTURES / "valid.yaml").read_text(encoding="utf-8"))
         data["work"][0]["tasks"][0]["files"] = [{"path": "src/*.ts", "action": "create"}]
         self.assertIn("file_path", _codes(validate_workmanifest(data)))
+
+    def test_valid_with_journeys_and_cap_covers(self) -> None:
+        text = (FIXTURES / "valid_with_journeys.yaml").read_text(encoding="utf-8")
+        self.assertEqual(validate_workmanifest(text), [])
+
+    def test_valid_with_human_observations(self) -> None:
+        text = (FIXTURES / "valid_with_human_observations.yaml").read_text(encoding="utf-8")
+        self.assertEqual(validate_workmanifest(text), [])
+
+    def test_invalid_log_only_evidence(self) -> None:
+        text = (FIXTURES / "invalid_log_only_evidence.yaml").read_text(encoding="utf-8")
+        self.assertIn("live_log_only_evidence", _codes(validate_workmanifest(text)))
+
+    def test_invalid_journey_shape_j1(self) -> None:
+        text = (FIXTURES / "invalid_live_missing_journey_shape.yaml").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("live_covers", _codes(validate_workmanifest(text)))
+
+    def test_invalid_journey_one_digit(self) -> None:
+        text = (FIXTURES / "invalid_live_journey_one_digit.yaml").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("live_covers", _codes(validate_workmanifest(text)))
+
+    def test_invalid_live_req_only_covers(self) -> None:
+        text = (FIXTURES / "invalid_live_req_only_covers.yaml").read_text(encoding="utf-8")
+        self.assertIn("live_covers_prove_rung", _codes(validate_workmanifest(text)))
+
+    def test_invalid_live_missing_fixtures(self) -> None:
+        text = (FIXTURES / "invalid_live_missing_fixtures.yaml").read_text(
+            encoding="utf-8"
+        )
+        self.assertIn("live_fixtures", _codes(validate_workmanifest(text)))
+
+    def test_cover_id_shape_rejects_short_and_long(self) -> None:
+        from scripts.workmanifest_contract import _valid_cover_id
+
+        self.assertTrue(_valid_cover_id("J-01"))
+        self.assertTrue(_valid_cover_id("CAP-01"))
+        self.assertFalse(_valid_cover_id("J-1"))
+        self.assertFalse(_valid_cover_id("J-001"))
+        self.assertFalse(_valid_cover_id("J1"))
+        self.assertFalse(_valid_cover_id("CAP-1"))
+        self.assertFalse(_valid_cover_id("CAP-001"))
 
 
 if __name__ == "__main__":

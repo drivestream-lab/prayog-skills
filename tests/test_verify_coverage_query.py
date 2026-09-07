@@ -58,6 +58,13 @@ class VerifyCoverageQueryTest(unittest.TestCase):
             after = sorted(p.name for p in root.iterdir())
             self.assertEqual(before, after)
 
+    def test_scan_parses_cap_and_journey_covers(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            (root / "cap.py").write_text("# prayog:covers: CAP-02, J-02, REQ-07\n")
+            entries = {e.path: e.covers for e in scan_coverage(root)}
+            self.assertEqual(entries["cap.py"], ["CAP-02", "J-02", "REQ-07"])
+
 
 if __name__ == "__main__":
     unittest.main()

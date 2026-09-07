@@ -154,7 +154,12 @@ verification:
     applicable: true
     mode: smoke                 # smoke | sandbox when applicable
     command: "python tests/verify/verify_foo.py"
-    covers: [REQ-01]
+    covers: [CAP-01, J-01, REQ-01]   # ≥1 CAP-{nn} and/or J-{nn} required when applicable
+    dependencies:                    # optional; when present must be non-empty
+      - postgres
+      - redis
+    fixtures:                        # required when live.applicable: true
+      - tests/fixtures/cap-01-health/stimulus.json
     prerequisites:
       - "Stack up via docker compose"
     safe_test_data:
@@ -163,6 +168,10 @@ verification:
       - "Run verify_foo.py against local stack"
     expected_observations:
       - "Script exits 0; prints PASS for /v1/foo"
+    human_observations:              # when opaque sinks; empty/omit if fully scriptable
+      - locus: "Cloud console → tenant TENANT-SMOKE-01 → deployments"
+        expect: "Revision visible"
+        covers: [CAP-01]
     evidence_expected: "wave-accepted on tip"
     cleanup:
       - "Remove TENANT-SMOKE-01"
@@ -185,11 +194,23 @@ verification:
 |------|------------------|
 | Unit-as-live | `live.applicable: true` but `command` is unit-only (`make test`, bare `pytest`, `{test_command}`, etc.) |
 | Missing live | P15 applies (new/material product surface) and live is bare N/A / missing / `applicable: false` without valid reason |
-| Incomplete live | `applicable: true` and any of `mode`, `command`, `covers`, `prerequisites`, `expected_observations`, `cleanup`, `stop_conditions` is missing or empty |
+| Incomplete live | `applicable: true` and any of `mode`, `command`, `covers`, `prerequisites`, `expected_observations`, `cleanup`, `stop_conditions`, **`fixtures`** is missing or empty |
+| Covers ids | Any `covers` entry not matching `CAP-{nn}`, `J-{nn}`, or `REQ-*` (exactly two digits for CAP/J; no shadow `REQ-W*`; reject `J1` / `J-1` / `CAP-1`) |
+| Prove rung | `applicable: true` and `covers` has **no** `CAP-{nn}` and **no** `J-{nn}` (REQ-only covers fail) |
 | Mode | `mode` not in `smoke` \| `sandbox` when applicable |
+| Optional lists | `dependencies` present but empty or non-string; `human_observations` present but missing `locus`/`expect`/`covers` |
+| Log-only sole evidence | Every `expected_observations` entry is log/stdout/grep-shaped **and** `human_observations` absent/empty **and** `fixtures` absent/empty |
+
+`dependencies` and `human_observations` remain optional. **`fixtures` is required**
+whenever `live.applicable: true`. Populate per
+[live-fixture-contract.md](live-fixture-contract.md) and
+[quality-confidence-ladder.md](quality-confidence-ladder.md) — plan P15 and this
+validator both enforce the prove floor.
 
 Wave-level `verify_command` MUST equal `verification.live.command` when
 applicable, or an explicit `N/A — {reason}` matching `live.reason` when not.
+
+See also: [live-fixture-contract.md](live-fixture-contract.md).
 
 ---
 
@@ -229,7 +250,7 @@ errors = validate_workmanifest(text_or_mapping)
 
 | Change | Action |
 |--------|--------|
-| Additive optional field, backward compatible | Document in CHANGELOG; keep `prayog/v1` |
+| Additive field that **raises** the prove floor (`fixtures` required; CAP/J in covers) | Document in CHANGELOG as a **breaking** pin bump for re-validation of old live waves; keep `apiVersion: prayog/v1` |
 | Breaking field rename/removal or semantic change | Bump `apiVersion` (e.g. `prayog/v2`) and reject older pins fail-closed |
 
 Unsupported `apiVersion` / `kind` pairs MUST be rejected by Gateflow and by the

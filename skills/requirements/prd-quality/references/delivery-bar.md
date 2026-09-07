@@ -20,7 +20,8 @@ to fill a spec row, that is FAIL.
 | B11 | WHAT not HOW | Yes | Zero solution-prescriptive REQs |
 | B12 | Whole-product, not brief-shaped | Yes | At least one journey/actor/negative/adjacent **not in the brief** was considered. TOC == brief TOC → FAIL. Brief not supplied → `N/A — brief not supplied` |
 | B13 | Impact-map ready | No | Capabilities matchable to service catalog `owns` / `description` |
-| B14 | Live-verify shaped | No | New/changed surfaces named so a wave can attach a live script |
+| B14 | CAP ↔ journey binding | Yes | Every CAP lists ≥1 `J-{nn}` **or** explicit defer; every `J-*` cites Caps exercised |
+| B15 | Live-prove shaped | Yes | Any REQ Evidence containing `live` cites ≥1 `CAP-*` and/or `J-*`; capability and journey remain **separate** rungs (see quality-confidence-ladder) |
 
 ## Handover (the validate signal)
 
@@ -36,7 +37,7 @@ qualify; the human names which file to promote.
 
 ## Rank (secondary)
 
-`Ci` wins only if fewer material FAILs on B3/B4/B6/B9/B11, B12 PASS
+`Ci` wins only if fewer material FAILs on B3/B4/B6/B9/B11/B14/B15, B12 PASS
 (or both N/A for the same reason), and B2 equal or better.
 
 Page count, tone, `/prd-critic` Build Readiness, and `Ci-wins` are not

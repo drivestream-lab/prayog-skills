@@ -19,6 +19,7 @@ layout:
     - shared-schemas/
   unit_tests_dir: tests/unit
   live_verify_dir: tests/verify
+  fixtures_dir: tests/fixtures
   debug_tests_dir: tests/debug
 
 reports:

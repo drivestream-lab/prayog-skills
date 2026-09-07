@@ -21,9 +21,11 @@ package only.
 ## Non-negotiables (summary)
 1. Brief is not baseline — grill before filling.
 2. WHAT not HOW — no routes, payloads, or module names in REQs.
-3. Product ids only from `prayog-skills/references/id-conventions.md`.
-4. Never overwrite earlier think candidates or `prd/{INIT}.md` without promote.
-5. Do not invoke `/prd-quality`, `/validate-requirements`, or forge from here.
+3. Product ids only from `prayog-skills/references/id-conventions.md`
+   (`CAP-*`, `J-{nn}`, `REQ-*`, `CTR-*`, `OQ-*`).
+4. CAP↔J binding; live Evidence cites CAP and/or J (separate prove rungs).
+5. Never overwrite earlier think candidates or `prd/{INIT}.md` without promote.
+6. Do not invoke `/prd-quality`, `/validate-requirements`, or forge from here.
 
 ## Envelope navigation (required)
 After choosing `outcome`, derive `next_candidates` and `human_checkpoint` from

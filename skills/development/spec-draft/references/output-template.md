@@ -30,7 +30,7 @@ Ownership: observable behavior only — architecture questions routed, not decid
 
 | ID | Requirement | PRD source | Condition / event | Observable result | Evidence layer |
 |----|-------------|-----------|-------------------|-------------------|----------------|
-| REQ-{nn} | {engineering statement of WHAT, not HOW — not a user story} | PRD `CAP-*` / `REQ-*` or §{section} | {Given/When or trigger that makes the REQ applicable} | {externally observable done condition} | unit / integration / live verify / inspection |
+| REQ-{nn} | {engineering statement of WHAT, not HOW — not a user story} | PRD `CAP-*` / `REQ-*` or §{section} | {Given/When or trigger that makes the REQ applicable} | {externally observable done condition} | unit / integration / live (cite `CAP-*` and/or `J-*`) / inspection |
 
 > **Id convention:** `REQ-*` is canonical (`prayog-skills/references/id-conventions.md`).
 > Legacy display alias `FR-{nn}` ≡ `REQ-{nn}` (same number) — prefer `REQ-*` in
@@ -38,7 +38,25 @@ Ownership: observable behavior only — architecture questions routed, not decid
 >
 > **Behavioral acceptance vs evidence:** Condition/event + observable result are
 > the product acceptance statement (implementation-neutral). Evidence layer
-> names how it will be proved later — not the implementation design.
+> names how it will be proved later — not the implementation design. Live
+> evidence must cite capability and/or journey ids when the PRD defines them.
+
+## Capabilities (carried from PRD)
+
+| ID | Capability | Journeys | Notes |
+|----|------------|----------|-------|
+| CAP-{nn} | {from PRD; in-scope for this repo} | J-{nn}, … or defer | |
+
+## Journeys (carried from PRD)
+
+| ID | Actor | Trigger | Main flow | Primary edge | Abandon | Caps |
+|----|-------|---------|-----------|--------------|---------|------|
+| J-{nn} | | | | | | CAP-{nn} |
+
+> **Do not drop** in-scope PRD `CAP-*` / `J-{nn}`. If a journey is out of repo
+> scope, list it under Out of scope with the owning repo — do not omit silently.
+> Capability and journey are **separate prove rungs**
+> (`prayog-skills/references/quality-confidence-ladder.md`).
 
 ## Negative and failure paths
 

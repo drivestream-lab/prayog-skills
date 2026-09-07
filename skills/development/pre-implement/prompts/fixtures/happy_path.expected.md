@@ -20,7 +20,7 @@ Follow the full procedure in this skill's `SKILL.md` (and `references/` when pre
 1. Gate check first — prior wave Ground Report exists and as-built row is human_approved (from wave-acceptance). Board/branch/PR state is read-only.
 2. Consume canonical §9 WorkManifest (`prayog/v1`); fail closed when `workmanifest_contract` fails, a TASK lacks exit proof, or an applicable wave lacks live-verification contract/script.
 3. Read domain-filtered rules and relevant ADRs; cite concrete paths for this slice.
-4. Resolve check/test/verify/ground commands; stop on MISSING command. When P15 applies, live `verify_command` under `live_verify_dir` is required (not unit / N/A). See live-smoke-policy.md.
+4. Resolve check/test/verify/ground commands; stop on MISSING command. When P15 applies, live `verify_command` under `live_verify_dir` is required (not unit / N/A), plus fixture packs / CAP|J covers per live-smoke-policy.md.
 5. Stop if product-spec H1–H3 citations (or G2 merge attestation) show authority
    drift; do not require plan-file digest as long-term SSOT.
 6. When board/wave-head readiness is absent: emit Forge/external-action readiness — do not invoke mutation.

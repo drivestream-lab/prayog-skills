@@ -85,7 +85,7 @@ Tell the user the output path.
 For each `Ci`, in order, with **only that file + the rubric + optional brief**
 in mind:
 
-1. Fill B1–B14.
+1. Fill B1–B15.
 2. Count material FAILs.
 3. List spec-lane guesses (rows `/spec-draft` could not fill).
 

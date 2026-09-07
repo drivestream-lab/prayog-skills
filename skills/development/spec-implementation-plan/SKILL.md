@@ -57,8 +57,10 @@ it does not own, parse, or execute WorkManifest.
    block the plan. `verify_command` is the **live** script entry under
    `live_verify_dir` — never `{test_command}` / unit-only. Use N/A with reason
    only when a layer is not applicable. When P15 applies (new/material product
-   surface), bare N/A or unit-as-live is invalid — co-ship the verify FILE in
-   the same wave (see [references/checks.md](references/checks.md) P15).
+   surface), bare N/A or unit-as-live is invalid — co-ship the verify FILE **and**
+   fixture pack path(s) under `fixtures_dir` for the capability (`CAP-*`) and/or
+   journey (`J-*`) rung being shipped (see [references/checks.md](references/checks.md)
+   P15; `prayog-skills/references/live-fixture-contract.md`).
 10. Persist the plan locally and fill `handoff.forge` for `/commit-workspace`
     onto the **same Draft spec PR**. Do **not** commit, push, branch, open PRs,
     apply labels, create issues, or merge inside this skill. Coding-readiness
@@ -73,11 +75,17 @@ it does not own, parse, or execute WorkManifest.
 13. Live-verify coverage lives in the artifact's own marker, not in
     `tests/README.md` or as a growing table in `implementation-status.md` —
     see `prayog-skills/references/live-verify-coverage-contract.md`. Run the
-    required overlap check (P15) before declaring a new `live_verify_dir`
-    FILE. As-built writes go to `Implementation-Status-{INIT}.md` (detail) +
-    one index row in `implementation-status.md` (pointer) — never a new
-    table appended to the shared index.
-14. If a codegraph provider is available (MCP tool matching
+    required overlap check (P15) via `--capability` / `--journey` / `--req`
+    before declaring a new `live_verify_dir` or fixture FILE. `covers` must
+    include relevant `CAP-*` and/or `J-*` (plus `REQ-*`). As-built writes go to
+    `Implementation-Status-{INIT}.md` (detail) + one index row in
+    `implementation-status.md` (pointer) — never a new table appended to the
+    shared index.
+14. **Capability ≠ journey.** Plan separate prove artifacts/`covers` when both
+    rungs ship; do not collapse journey proof into “all CAP journeys passed”.
+    Populate `dependencies`, `fixtures`, and `human_observations` when opaque
+    (logs alone are not pass evidence).
+15. If a codegraph provider is available (MCP tool matching
     `prayog-skills/references/codegraph-tool-contract.md`, or a local CLI), prefer
     it for architecture/impact/coverage questions. Always fall back to direct
     `source_roots` reads when unavailable — never block or change outcome

@@ -88,7 +88,7 @@ PASS 2 — separate walk (API Enter-at learning-extract)
 | First Draft PR view has checklist + code already on tip | PR-at-start before skills / duplicate open |
 | Stop after authorize at `wave-acceptance` | Auto-run `ground-spec` / `learning-extract` on Pass-1 |
 | Treat unit/`make test` green as agent bar only | Treat unit green as live bar or skip human script run |
-| Expect human to run co-shipped `live_verify_dir` script at `wave-acceptance` | Invent a `/verify` content skill or auto-dispatch smoke |
+| Expect human to run co-shipped `live_verify_dir` script + `fixtures_dir` packs (CAP/J) and look-ats at `wave-acceptance`; ack = `wave-accepted` | Invent a `/verify` content skill or auto-dispatch smoke / treat logs as sole opaque pass |
 | Treat `wave-acceptance.pass` as **human approved** (label `wave-accepted`) | Treat `wave-signoff` as a second approve; let content skills apply labels |
 | Validate §9 via pinned WorkManifest contract before board seed / coding | Accept unsupported manifest versions or mutate approved intent at runtime |
 | Apply pin `wave-in-progress-action` / `wave-done-action` via ForgeClient (`update_board_status`) | Invent off-graph board status; add `/update-board-status` human skill |
@@ -97,7 +97,10 @@ PASS 2 — separate walk (API Enter-at learning-extract)
 | Ingest Learning-Extract artifact / baton into DB (INIT-007) | Require the skill to HTTP POST as success |
 
 There is **no** `/verify` content skill. Unit green ≠ live prove; human runs the
-planned live script at `wave-acceptance`. Content skills never apply labels,
+planned capability/journey prove (fixtures + driver on real infra, plus look-ats
+when declared) at `wave-acceptance`. Content skills never apply labels,
+and `wave-accepted` is enough acknowledgment for look-ats.
+Confidence ladder: `prayog-skills/references/quality-confidence-ladder.md`.
 commit, or merge (Forge boundary).
 BoardService / ForgeClient **project** epic/wave/task summaries onto the board;
 board text is not a second WorkManifest authority. Orch board **status** moves

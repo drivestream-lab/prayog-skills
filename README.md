@@ -37,7 +37,7 @@ not workflow graph nodes.
 | | |
 |---|---|
 | **License** | [MIT](LICENSE) |
-| **Version** | see [`VERSION`](VERSION) — **0.5.4** |
+| **Version** | see [`VERSION`](VERSION) — **0.5.5** |
 | **Install** | [skills CLI](https://skills.sh) or Launchpad `apply-harness` |
 | **Pairs with** | [launchpad](https://github.com/drivestream-lab/launchpad) · `*-rules` repos |
 
@@ -126,10 +126,13 @@ All waves done (eng then PM):
   → /purge-initiative-artifacts-meta → meta Draft PR → merge → complete
 ```
 
-New/material product surfaces **co-ship** a live script under `live_verify_dir`
-in the same wave (plan P15). Agent bar is check+unit; human executes the script
-at `wave-acceptance` (only approval signal). There is **no** `/verify` content
-skill. Content skills never apply labels / commit / merge (Forge boundary).
+New/material product surfaces **co-ship** a live driver under `live_verify_dir`
+**and** fixture packs under `fixtures_dir` for capability (`CAP-*`) and/or
+journey (`J-*`) prove (plan P15). Agent bar is check+unit; human executes the
+prove + look-ats at `wave-acceptance` (`wave-accepted` = ack). There is **no**
+`/verify` content skill. Ladder:
+[`references/quality-confidence-ladder.md`](references/quality-confidence-ladder.md).
+Content skills never apply labels / commit / merge (Forge boundary).
 `wave-signoff` is merge/publish only.
 Full process: [launchpad delivery workflow](https://github.com/drivestream-lab/launchpad/blob/main/playbook/delivery-workflow.md).
 

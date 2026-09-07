@@ -50,13 +50,17 @@ Canonical artifact:
 9. Resolve `check_command` and `test_command`. Resolve `verify_command` as the
    **live** script under `live_verify_dir` when the wave plan triggers P15
    (new/material product surface) — **FAIL** the gate on bare N/A or
-   unit-only (`make test` / `{test_command}`). Resolve `ground_command` when
+   unit-only (`make test` / `{test_command}`). When live is applicable, require
+   journey/capability-shaped intent: `covers` include `CAP-{nn}` and/or `J-{nn}`,
+   non-empty `fixtures` under `fixtures_dir`, and
+   `human_observations` when opaque. Resolve `ground_command` when
    applicable. If the plan/profile/`AGENTS.md`/`tests_readme` cannot supply a
    required command, stop with MISSING command. The human runs
-   `{verify_command}` at checkpoint `wave-acceptance`; this skill does not
-   execute it. Layer policy:
+   `{verify_command}` (+ look-ats) at checkpoint `wave-acceptance`; this skill
+   does not execute it. Layer policy:
    [references/live-smoke-policy.md](references/live-smoke-policy.md).
-   Human accept ingress is GitHub label `wave-accepted` (skills never apply it).
+   Human accept ingress is GitHub label `wave-accepted` (skills never apply it;
+   ack includes look-ats when declared).
 10. **WorkManifest spend authority** — prefer the **board** wave/EPIC issues
     seeded from plan §9 as long-term intent (see
     [`prayog-skills/references/workmanifest-contract.md`](prayog-skills/references/workmanifest-contract.md)).
