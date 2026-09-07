@@ -174,7 +174,7 @@ PM later: read PR → update PRD/outline → requirements skills.
 ### 5.5 Product question template (minimum fields)
 
 ```markdown
-### Q-{NN} — {short title}
+### PQ-{nn} — {short title}
 - **PRD ref:** …
 - **Delta:** partial | conflict | unknown
 - **Scenario:** When {actor} does {action}…

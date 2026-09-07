@@ -16,6 +16,7 @@ layout:
     - Sources/
   unit_tests_dir: Tests/
   live_verify_dir: tests/verify
+  fixtures_dir: tests/fixtures
   debug_tests_dir: tests/debug
 
 reports:

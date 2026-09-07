@@ -50,11 +50,17 @@ FORBIDDEN_MUTABLE = frozenset(
 WAVE_ID_RE = re.compile(r"^W(\d+)$")
 TASK_ID_RE = re.compile(r"^TASK-W(\d+)-(\d+)$")
 REQ_ID_RE = re.compile(r"^REQ-[A-Za-z0-9]+(?:-[A-Za-z0-9]+)*$")
+CAP_ID_RE = re.compile(r"^CAP-\d{2}$")
+JOURNEY_ID_RE = re.compile(r"^J-\d{2}$")
 SHADOW_REQ_RE = re.compile(r"^REQ-W\d")
 ABS_PATH_RE = re.compile(r"^(?:[A-Za-z]:[\\/]|/)")
 UNIT_AS_LIVE_RE = re.compile(
     r"(?i)^\s*(make\s+test|npm\s+test|yarn\s+test|pytest(\s|$)|go\s+test|"
     r"cargo\s+test|mvn\s+test|\{test_command\}|\$\{?test_command\}?)\b"
+)
+LOG_ONLY_OBS_RE = re.compile(
+    r"(?i)\b(grep\b|logfile|log\s*file|tail\s+-f|stdout|stderr|journalctl|"
+    r"cloudwatch\s+logs?|look\s+in\s+(the\s+)?logs?)\b"
 )
 VAGUE_EXIT_RE = re.compile(
     r"(?i)^\s*(done|complete|completed|works|working|ok|fine|looks\s+good|"
@@ -71,21 +77,37 @@ FENCE_RE = re.compile(
 COVERS_MARKER_RE = re.compile(r"prayog:covers:\s*([^\n\r]+)")
 
 
-def extract_declared_coverage(text: str) -> list[str] | None:
-    """Return the REQ-* ids self-declared by a ``prayog:covers:`` marker, or
-    None when the marker is absent (no evidence to check — not a mismatch).
+def _valid_cover_id(value: str) -> bool:
+    """True when value is CAP-{nn}, J-{nn}, or REQ-* (non-shadow)."""
+    if CAP_ID_RE.fullmatch(value) or JOURNEY_ID_RE.fullmatch(value):
+        return True
+    if REQ_ID_RE.fullmatch(value) and not SHADOW_REQ_RE.match(value):
+        return True
+    return False
 
-    Only keeps REQ-shaped tokens — the marker's trailing text often runs
-    into a comment closer (``-->``, ``*/``, ``#>``) depending on the host
-    file's native comment syntax; filtering by shape is more robust than
-    trying to enumerate every closer for every language."""
+
+def _covers_has_prove_rung(covers: list[Any]) -> bool:
+    """True when covers lists ≥1 capability or journey id."""
+    return any(
+        isinstance(c, str) and (CAP_ID_RE.fullmatch(c) or JOURNEY_ID_RE.fullmatch(c))
+        for c in covers
+    )
+
+
+def extract_declared_coverage(text: str) -> list[str] | None:
+    """Return CAP-*/J-*/REQ-* ids from a ``prayog:covers:`` marker, or None
+    when the marker is absent.
+
+    Only keeps cover-shaped tokens — the marker's trailing text often runs
+    into a comment closer (``-->``, ``*/``, ``#>``); filtering by shape is
+    more robust than enumerating every closer."""
     match = COVERS_MARKER_RE.search(text)
     if not match:
         return None
     return [
         item.strip()
         for item in re.split(r"[,\s]+", match.group(1).strip())
-        if REQ_ID_RE.fullmatch(item.strip())
+        if _valid_cover_id(item.strip())
     ]
 
 
@@ -537,11 +559,32 @@ def _validate_live(
 
     covers = live.get("covers")
     if not isinstance(covers, list) or not covers:
-        errors.append(_err("live_covers", "live.covers must be a non-empty REQ list", f"{path}.covers"))
+        errors.append(
+            _err(
+                "live_covers",
+                "live.covers must be a non-empty list of CAP-*/J-*/REQ-* ids",
+                f"{path}.covers",
+            )
+        )
     else:
-        for j, req in enumerate(covers):
-            if not isinstance(req, str) or not REQ_ID_RE.fullmatch(req) or SHADOW_REQ_RE.match(req):
-                errors.append(_err("live_covers", f"invalid REQ in covers: {req!r}", f"{path}.covers[{j}]"))
+        for j, cov in enumerate(covers):
+            if not isinstance(cov, str) or not _valid_cover_id(cov):
+                errors.append(
+                    _err(
+                        "live_covers",
+                        f"invalid cover id (want CAP-{{nn}}, J-{{nn}}, or REQ-*): {cov!r}",
+                        f"{path}.covers[{j}]",
+                    )
+                )
+        if covers and not _covers_has_prove_rung(covers):
+            errors.append(
+                _err(
+                    "live_covers_prove_rung",
+                    "live.covers must include ≥1 CAP-{nn} and/or J-{nn} "
+                    "(REQ-* alone is not a live prove rung)",
+                    f"{path}.covers",
+                )
+            )
         _check_declared_coverage(
             [c for c in covers if isinstance(c, str)],
             wave_id=wave_id,
@@ -567,6 +610,115 @@ def _validate_live(
                     f"live_{field}",
                     f"live.{field} entries must be non-empty strings",
                     f"{path}.{field}",
+                )
+            )
+
+    # dependencies optional; fixtures required when live applicable (P15 prove).
+    if "dependencies" in live:
+        value = live.get("dependencies")
+        if not isinstance(value, list) or not value:
+            errors.append(
+                _err(
+                    "live_dependencies",
+                    "live.dependencies when present must be a non-empty list",
+                    f"{path}.dependencies",
+                )
+            )
+        elif any(not isinstance(x, str) or not str(x).strip() for x in value):
+            errors.append(
+                _err(
+                    "live_dependencies",
+                    "live.dependencies entries must be non-empty strings",
+                    f"{path}.dependencies",
+                )
+            )
+
+    fixtures = live.get("fixtures")
+    if not isinstance(fixtures, list) or not fixtures:
+        errors.append(
+            _err(
+                "live_fixtures",
+                "live.fixtures must be a non-empty list of fixture paths "
+                "when live is applicable",
+                f"{path}.fixtures",
+            )
+        )
+    elif any(not isinstance(x, str) or not str(x).strip() for x in fixtures):
+        errors.append(
+            _err(
+                "live_fixtures",
+                "live.fixtures entries must be non-empty strings",
+                f"{path}.fixtures",
+            )
+        )
+
+    human_obs = live.get("human_observations")
+    if human_obs is not None:
+        if not isinstance(human_obs, list) or not human_obs:
+            errors.append(
+                _err(
+                    "live_human_observations",
+                    "live.human_observations when present must be a non-empty list",
+                    f"{path}.human_observations",
+                )
+            )
+        else:
+            for j, row in enumerate(human_obs):
+                row_path = f"{path}.human_observations[{j}]"
+                if not isinstance(row, dict):
+                    errors.append(
+                        _err(
+                            "live_human_observations",
+                            "each human_observation must be a mapping",
+                            row_path,
+                        )
+                    )
+                    continue
+                for key in ("locus", "expect"):
+                    val = row.get(key)
+                    if not isinstance(val, str) or not val.strip():
+                        errors.append(
+                            _err(
+                                "live_human_observations",
+                                f"human_observation.{key} must be a non-empty string",
+                                f"{row_path}.{key}",
+                            )
+                        )
+                cov = row.get("covers")
+                if not isinstance(cov, list) or not cov:
+                    errors.append(
+                        _err(
+                            "live_human_observations",
+                            "human_observation.covers must be a non-empty CAP/J/REQ list",
+                            f"{row_path}.covers",
+                        )
+                    )
+                else:
+                    for k, item in enumerate(cov):
+                        if not isinstance(item, str) or not _valid_cover_id(item):
+                            errors.append(
+                                _err(
+                                    "live_human_observations",
+                                    f"invalid cover id: {item!r}",
+                                    f"{row_path}.covers[{k}]",
+                                )
+                            )
+
+    # Log-only sole evidence: every expected_observation is log-shaped and
+    # neither human_observations nor fixtures provide an alternate prove path.
+    obs = live.get("expected_observations")
+    if isinstance(obs, list) and obs and all(
+        isinstance(x, str) and LOG_ONLY_OBS_RE.search(x) for x in obs
+    ):
+        has_fixtures = isinstance(fixtures, list) and bool(fixtures)
+        has_human = isinstance(human_obs, list) and bool(human_obs)
+        if not has_fixtures and not has_human:
+            errors.append(
+                _err(
+                    "live_log_only_evidence",
+                    "expected_observations are log/stdout-only with no fixtures "
+                    "or human_observations — not valid sole live evidence",
+                    f"{path}.expected_observations",
                 )
             )
 

@@ -21,9 +21,10 @@ package only.
 ## Non-negotiables (summary)
 1. ≥2 files — no singleton comparison.
 2. Blind first — score each file in isolation before comparison.
-3. Evidence on every bar — id + quote.
-4. Handover is the validate signal; rank (`Ci-wins`) is secondary.
-5. Do not invoke `/prd-think`, `/validate-requirements`, or forge from here.
+3. Evidence on every bar (B1–B15) — id + quote.
+4. Material bars include B14 (CAP↔J) and B15 (live cites CAP and/or J).
+5. Handover is the validate signal; rank (`Ci-wins`) is secondary.
+6. Do not invoke `/prd-think`, `/validate-requirements`, or forge from here.
 
 ## Envelope navigation (required)
 After choosing `outcome`, derive `next_candidates` and `human_checkpoint` from

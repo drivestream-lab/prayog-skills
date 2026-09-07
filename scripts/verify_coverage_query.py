@@ -26,7 +26,11 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
-from scripts.workmanifest_contract import extract_declared_coverage
+from scripts.workmanifest_contract import (
+    CAP_ID_RE,
+    JOURNEY_ID_RE,
+    extract_declared_coverage,
+)
 
 # Deliberately broad — a live-verify artifact may be any stack's script or a
 # markdown runbook. Skip obvious non-candidates only.
@@ -68,13 +72,12 @@ def _matches_req(entry: CoverageEntry, req: str) -> bool:
     return bool(entry.covers) and req in entry.covers
 
 
-def _matches_keyword(entry: CoverageEntry, keyword: str, root: Path) -> bool:
-    """Best-effort substring match against path + file content.
+def _matches_cover_id(entry: CoverageEntry, cover_id: str) -> bool:
+    return bool(entry.covers) and cover_id in entry.covers
 
-    Only `--req` is a structured match against the marker; `--capability`
-    and `--wave` have no dedicated marker field today, so this is a
-    heuristic, not a guarantee — stated plainly rather than pretending
-    otherwise."""
+
+def _matches_keyword(entry: CoverageEntry, keyword: str, root: Path) -> bool:
+    """Best-effort substring match against path + file content."""
     needle = keyword.lower()
     if needle in entry.path.lower():
         return True
@@ -88,16 +91,20 @@ def _matches_keyword(entry: CoverageEntry, keyword: str, root: Path) -> bool:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("live_verify_dir", type=Path, help="Directory to scan")
-    parser.add_argument("--req", help="Exact REQ-* id to match against the self-declared marker")
+    parser.add_argument("--req", help="Exact REQ-* id to match against the marker")
     parser.add_argument(
         "--capability",
-        help="Best-effort keyword match against file path/content (not a structured field)",
+        help="CAP-* id (marker match) or keyword against path/content",
+    )
+    parser.add_argument(
+        "--journey",
+        help="Exact J-{nn} id to match against the marker",
     )
     parser.add_argument(
         "--wave",
-        help="Best-effort keyword match against file path/content (not a structured field)",
+        help="Best-effort keyword match against file path/content",
     )
-    parser.add_argument("--dump", action="store_true", help="List every scanned artifact, no filter")
+    parser.add_argument("--dump", action="store_true", help="List every scanned artifact")
     parser.add_argument("--json", action="store_true", help="Emit results as JSON")
     args = parser.parse_args(argv)
 
@@ -107,17 +114,37 @@ def main(argv: list[str] | None = None) -> int:
 
     entries = scan_coverage(args.live_verify_dir)
 
-    if not (args.dump or args.req or args.capability or args.wave):
-        print("error: pass --req, --capability, --wave, or --dump", file=sys.stderr)
+    if not (args.dump or args.req or args.capability or args.journey or args.wave):
+        print(
+            "error: pass --req, --capability, --journey, --wave, or --dump",
+            file=sys.stderr,
+        )
         return 2
 
     if not args.dump:
         if args.req:
             entries = [e for e in entries if _matches_req(e, args.req)]
         if args.capability:
-            entries = [e for e in entries if _matches_keyword(e, args.capability, args.live_verify_dir)]
+            if CAP_ID_RE.fullmatch(args.capability):
+                entries = [e for e in entries if _matches_cover_id(e, args.capability)]
+            else:
+                entries = [
+                    e
+                    for e in entries
+                    if _matches_keyword(e, args.capability, args.live_verify_dir)
+                ]
+        if args.journey:
+            if not JOURNEY_ID_RE.fullmatch(args.journey):
+                print(
+                    f"error: --journey must look like J-01; got {args.journey!r}",
+                    file=sys.stderr,
+                )
+                return 2
+            entries = [e for e in entries if _matches_cover_id(e, args.journey)]
         if args.wave:
-            entries = [e for e in entries if _matches_keyword(e, args.wave, args.live_verify_dir)]
+            entries = [
+                e for e in entries if _matches_keyword(e, args.wave, args.live_verify_dir)
+            ]
 
     if args.json:
         print(json.dumps([{"path": e.path, "covers": e.covers} for e in entries], indent=2))

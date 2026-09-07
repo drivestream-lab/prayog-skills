@@ -51,6 +51,8 @@ PIN_ROOT_REFERENCE_BASENAMES = frozenset(
         "prompt-package-contract.md",
         "codegraph-tool-contract.md",
         "live-verify-coverage-contract.md",
+        "live-fixture-contract.md",
+        "quality-confidence-ladder.md",
     }
 )
 _PIN_BASENAME_ALT = "|".join(

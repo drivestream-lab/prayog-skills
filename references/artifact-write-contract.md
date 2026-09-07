@@ -28,7 +28,8 @@ See also: [id-conventions.md](id-conventions.md),
 Resolve from `.harness/profile.yaml` when present.
 
 **Also KEEP (not in the reports table):** meta `prd/INIT-*.md`; app Accepted ADRs;
-product source / unit tests / live-verify **scripts** (not Live-Verify report
+product source / unit tests / live-verify **scripts** / live **fixture packs** under
+`fixtures_dir` (not Live-Verify report
 prose). **Outside the tree:** programme board WorkManifest projection; Gate 1 /
 spec / wave / initiative-closure merge SHAs on PRs.
 
@@ -57,7 +58,7 @@ Working papers accumulate through all waves. **One mental model:** purge
 | Repo | KEEP (refuse delete) | PURGE allowlist |
 |------|----------------------|-----------------|
 | **meta** | `prd/INIT-*.md`, `Impact-Map-{INIT}.md` | `Validation-Report-{INIT}.md`, `Resolution-{INIT}.md` |
-| **app** | `product/INIT-*.md`, Accepted ADRs, source / unit / live-verify **scripts**, as-built index, `Implementation-Status-{INIT}.md` | Feas, TDD, Implementation-Plan, Pre-Implement-W*, Wave-Execution-W*, optional/legacy Live-Verify-W*, Ground-Report-W*, Learning-Extract-W*, Draft ADRs |
+| **app** | `product/INIT-*.md`, Accepted ADRs, source / unit / live-verify **scripts** / **fixture packs**, as-built index, `Implementation-Status-{INIT}.md` | Feas, TDD, Implementation-Plan, Pre-Implement-W*, Wave-Execution-W*, optional/legacy Live-Verify-W*, Ground-Report-W*, Learning-Extract-W*, Draft ADRs |
 
 **Lane (pin):** eng loop then PM loop, each self-contained:
 

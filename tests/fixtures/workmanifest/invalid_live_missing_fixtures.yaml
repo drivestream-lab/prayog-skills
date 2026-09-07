@@ -80,8 +80,6 @@ work:
         covers: [CAP-01, J-01, REQ-01]
         dependencies:
           - postgres
-        fixtures:
-          - tests/fixtures/cap-01-health/stimulus.json
         prerequisites:
           - "Local stack up via docker compose"
         safe_test_data:

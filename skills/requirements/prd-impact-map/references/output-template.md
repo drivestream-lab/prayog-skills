@@ -129,7 +129,11 @@ Every repository from the prior revision must have a row.
 
 | ID | Lane | Question | Owner | Blocking | Required by | Default if deferred | Status |
 |----|------|----------|-------|----------|-------------|---------------------|--------|
-| IM-{NN} | PM / PE / domain | {question} | {owner} | yes/no | {stage} | {safe default or none} | open/resolved |
+| IM-{nn} | PM / PE / domain | {question} | {owner} | yes/no | {stage} | {safe default or none} | open/resolved |
+
+> **Gate 1:** any row with `Blocking: yes` and `Status: open` **closes**
+> coding-readiness / Gate 1 until resolved or deferred with default
+> (`prayog-skills/references/id-conventions.md`). Spec-draft D1b fails closed.
 
 ## 11. PR readiness handoff
 

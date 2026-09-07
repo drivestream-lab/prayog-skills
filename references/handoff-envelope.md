@@ -190,10 +190,12 @@ Rules:
 | `loop-spec` | `pass` | `wave-pr-action` (`external-action`) | `false` (`external_action: true`) |
 | `wave-pr-action` | `pass` | `wave-acceptance` (`human-checkpoint`) | `true` |
 
-> At `wave-acceptance`, the human runs the wave's planned live script
-> (`verify_command` under `live_verify_dir`) or accepts P15 N/A, then signals
-> accept (`wave-accepted` on tip). That `pass` is **human approved** — not
-> unit/`make test` alone. There is **no** `/verify` content skill.
+> At `wave-acceptance`, the human runs the wave's planned live prove
+> (`verify_command` under `live_verify_dir` with fixture packs under
+> `fixtures_dir` for declared `CAP-*` / `J-*`) or accepts P15 N/A, completes
+> any `human_observations` look-ats, then signals accept (`wave-accepted` on tip).
+> That `pass` is **human approved** — including look-ats — not unit/`make test`
+> alone. There is **no** `/verify` content skill.
 | `learning-extract` | `pass` | `ground-spec` (`skill`) | `false` |
 | `ground-spec` | `pass` | `wave-done-action` (`external-action`) | `false` (`external_action: true`) |
 | `wave-done-action` | `pass` | `wave-signoff` (`human-checkpoint`) | `true` |

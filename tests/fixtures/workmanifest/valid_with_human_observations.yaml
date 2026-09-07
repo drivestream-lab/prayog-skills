@@ -77,22 +77,26 @@ work:
         applicable: true
         mode: smoke
         command: python tests/verify/verify_health.py
-        covers: [CAP-01, J-01, REQ-01]
+        covers: [CAP-01, REQ-01]
         dependencies:
           - postgres
         fixtures:
-          - tests/fixtures/cap-01-health/stimulus.json
+          - tests/fixtures/cap-01-publish/stimulus.json
         prerequisites:
           - "Local stack up via docker compose"
         safe_test_data:
-          - "no durable tenant mutation"
+          - "synthetic tenant TENANT-SMOKE-01"
         steps:
-          - "Run verify_health.py"
+          - "Run verify script then inspect cloud console"
         expected_observations:
-          - "Script exits 0 and prints PASS for /health"
+          - "Script exits 0 after stimulus"
+        human_observations:
+          - locus: "Cloud console → tenant TENANT-SMOKE-01 → deployments"
+            expect: "New revision visible within 2 minutes"
+            covers: [CAP-01, REQ-01]
         evidence_expected: "wave-accepted on tip"
         cleanup:
-          - "No durable resources created"
+          - "Remove TENANT-SMOKE-01"
         stop_conditions:
           - "Non-zero exit or unexpected 5xx → stop; do not start Pass-2"
     body: |

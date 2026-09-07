@@ -29,15 +29,15 @@ Run checks G1–G10 per [checks.md](checks.md). Findings use **`GF-*`**.
 |-------|--------|---------|
 | Unit | `{test_command}` / Wave-Execution proof | … |
 | Ground | `{ground_command}` or manual source+tests scan | … |
-| Accept | `wave-accepted` on tip / wave-acceptance (optional/legacy Live-Verify-* only) | … |
+| Accept | `wave-accepted` on tip / wave-acceptance (script + CAP/J look-ats when declared; optional/legacy Live-Verify-* only) | … |
 
 ## Automated ground check output
 (paste full output of `{ground_command}` when defined)
 
 ## REQ checklist (wave-assigned only)
-| REQ | Spec claim | Verified artifact | Status |
-|-----|-----------|-------------------|--------|
-| REQ-{nn} | {claim} | {entry point / test / verify script} | pass / fail / partial |
+| REQ | Spec claim | Verified artifact | CAP/J covers | Look-ats | Status |
+|-----|-----------|-------------------|--------------|----------|--------|
+| REQ-{nn} | {claim} | {entry point / test / verify + fixture} | CAP-… / J-… / N/A | locus→expect / N/A | pass / fail / partial |
 
 ## Boundary checks
 (Derived from domain-filtered ADRs and MDC rules for this repo — G5/G6.)

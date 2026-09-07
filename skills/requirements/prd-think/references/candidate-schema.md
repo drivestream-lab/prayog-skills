@@ -6,9 +6,10 @@ under `reports_dir`). Never overwrite an earlier think candidate. Never
 write `*-revN`. Score with `/prd-quality`, not this file.
 
 **Ids:** read `prayog-skills/references/id-conventions.md` and assign only
-product ids defined there (`CAP-*`, `REQ-*` canonical, `CTR-*`, `OQ-*`).
-Do not mint `FR-*` or `D-*`. Locked decisions are a numbered statement table
-until they become a CAP/REQ; unresolved product calls are `OQ-*`.
+product ids defined there (`CAP-*`, `J-{nn}`, `REQ-*` canonical, `CTR-*`,
+`OQ-*`). Do not mint `FR-*`, `D-*`, or bare `J1` (use `J-01`). Locked decisions
+are a numbered statement table until they become a CAP/REQ; unresolved product
+calls are `OQ-*`. **Mint only what downstream consumes.**
 
 ```markdown
 # {INIT}: {short name} (prd-think candidate)
@@ -54,7 +55,7 @@ Empty = T1 is not done — do not draft REQs.
 
 | ID | CAP | Requirement (WHAT) | Condition / event | Observable result | Evidence |
 |----|-----|--------------------|-------------------|-------------------|----------|
-| REQ-01 | CAP-01 | | | | unit / live / inspection |
+| REQ-01 | CAP-01 | | | | unit / live (cite CAP-* and/or J-*) / inspection |
 
 ## 7. Negative and failure paths
 
@@ -97,8 +98,12 @@ None — no cross-repo boundary.
 
 ## 12. Journeys
 
-Actor, trigger, main flow, primary edge, abandon. At least one path the
-brief did not list, or explicit "brief already complete" with T2 evidence.
+| ID | Actor | Trigger | Main flow | Primary edge | Abandon | Caps exercised |
+|----|-------|---------|-----------|--------------|---------|----------------|
+| J-01 | | | | | | CAP-01 |
+
+At least one path the brief did not list, or explicit "brief already complete"
+with T2 evidence. Journey ids are `J-01`, `J-02`, … only.
 
 ## 13. Domain terms
 
@@ -113,3 +118,10 @@ brief did not list, or explicit "brief already complete" with T2 evidence.
    not a REQ — `OQ-*` or drop.
 3. No `[TBD]` inside a REQ. Split: known REQ + `OQ-*`.
 4. Honest `OQ-*` beats fluent invention.
+5. Every `CAP-*` lists ≥1 `J-*` in “Journeys covered” **or** explicit defer
+   (capability prove may still apply without a journey).
+6. Evidence containing **live** must cite ≥1 `CAP-*` (capability rung) and/or
+   ≥1 `J-*` (journey rung) in the Evidence cell or a note — not bare “live”.
+7. Capability and journey are **separate prove rungs** — see
+   `prayog-skills/references/quality-confidence-ladder.md`.
+8. Mint `CTR-*` only when a real cross-repo seam exists.

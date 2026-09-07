@@ -9,6 +9,37 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 _(empty)_
 
+## [0.5.5] — 2026-09-07
+
+### Breaking
+
+- **WorkManifest live prove floor** — when `live.applicable: true`, `covers`
+  must include ≥1 `CAP-{nn}` and/or `J-{nn}` (REQ-only covers fail), and
+  `fixtures` must be a non-empty path list. `CAP`/`J` ids are **exactly two
+  digits** (`J-01` ok; `J-1` / `J1` / `CAP-1` rejected). Remounted programmes
+  must re-validate open live waves with the pinned
+  `scripts/workmanifest_contract.py`.
+- **Engg product questions** — `Q-NN` renamed to **`PQ-*`** (in-flight engg
+  maps need rename or regenerate).
+- **Spec-draft D1b** — open `IM-{nn}` with `Blocking: yes` fails closed for
+  Gate 1 / coding-readiness.
+
+### Added — Quality confidence ladder (upstream)
+
+- Ladder SSOT: [`references/quality-confidence-ladder.md`](references/quality-confidence-ladder.md)
+  (unit → capability → journey; real infra; fixtures; human look-ats).
+- Fixture contract: [`references/live-fixture-contract.md`](references/live-fixture-contract.md).
+- WorkManifest live fields: `covers` may list `CAP-{nn}` / `J-{nn}` / `REQ-*`;
+  optional `dependencies` / `human_observations`; forbid log-only sole evidence.
+- Profile layout key **`fixtures_dir: tests/fixtures`** on all product profiles.
+- Coverage query: `--capability` / `--journey` for overlap checks.
+
+### Changed
+
+- Requirements / spec / plan / pre-implement / loop-spec / ground / handoff
+  carry capability and journey as **separate prove rungs**; P15 co-ships
+  fixture packs; `wave-accepted` acks look-ats. No `/verify` pass skill.
+
 ## [0.5.4] — 2026-09-02
 
 ### Added — Think-first PM lane (authoring + scoring)

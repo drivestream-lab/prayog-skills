@@ -13,7 +13,7 @@ Governance detail: [governance.md](governance.md).
 |----|-------|-------------------|
 | F1 | **Baseline snapshot** | Current test layout, toolchain config, live verify script inventory (`live_verify_dir`), as-built state |
 | F2 | **Spec → code map** | Each spec capability/wave maps to a module under `source_roots` or SKIPPED if N/A |
-| F3 | **Spec → verify map** | Named live verify artifacts exist under `live_verify_dir`; coverage per `scripts/verify_coverage_query.py` (or self-declared markers) matches if spec claims it — not `tests/README.md` rows |
+| F3 | **Spec → verify map** | Named live verify / fixture artifacts exist or are planned under `live_verify_dir` / `fixtures_dir`; coverage for claimed `CAP-*` / `J-*` / `REQ-*` per `scripts/verify_coverage_query.py` (or self-declared markers) — not `tests/README.md` rows alone |
 | F4 | **Spec → unit map** | Planned unit areas vs existing `unit_tests_dir` |
 | F5 | **As-built drift** | Spec claims vs the as-built index row for this capability; open `Implementation-Status-{INIT}.md` for a prior initiative when deeper detail is needed |
 | F6 | **Docs drift** | `AGENTS.md`, `rules_glob`, `adr_dir` index vs spec. `tests_readme` is a fixed pointer, not a source of per-capability truth — do not flag its row count as drift |

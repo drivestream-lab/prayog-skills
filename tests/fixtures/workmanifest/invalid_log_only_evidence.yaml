@@ -77,11 +77,7 @@ work:
         applicable: true
         mode: smoke
         command: python tests/verify/verify_health.py
-        covers: [CAP-01, J-01, REQ-01]
-        dependencies:
-          - postgres
-        fixtures:
-          - tests/fixtures/cap-01-health/stimulus.json
+        covers: [REQ-01]
         prerequisites:
           - "Local stack up via docker compose"
         safe_test_data:
@@ -89,7 +85,8 @@ work:
         steps:
           - "Run verify_health.py"
         expected_observations:
-          - "Script exits 0 and prints PASS for /health"
+          - "grep logfile for SUCCESS"
+          - "check stdout for ok"
         evidence_expected: "wave-accepted on tip"
         cleanup:
           - "No durable resources created"

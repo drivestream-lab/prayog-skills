@@ -10,6 +10,7 @@ When `.harness/profile.yaml` is absent, use:
 | `source_roots` | `src/` |
 | `unit_tests_dir` | `tests/unit` |
 | `live_verify_dir` | `tests/verify` |
+| `fixtures_dir` | `tests/fixtures` |
 
 No purge report path — handoff only.
 Allowlist SSOT: `prayog-skills/references/artifact-write-contract.md`.
