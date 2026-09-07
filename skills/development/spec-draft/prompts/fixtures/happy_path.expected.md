@@ -18,10 +18,11 @@ Follow the full procedure in this skill's `SKILL.md` (and `references/` when pre
 ## Non-negotiables (summary)
 1. Write docs/specification/product/INIT-*.md in engineering terms (REQ-*), not PRD user-story prose.
 2. Scope this repo only; every REQ-* must trace to a named PRD CAP-*/REQ-* or section.
-3. Flag ambiguity — do not guess. Run the bounded clarification loop before `pass`; write answers into owning REQ rows and rerun D-checks.
-4. Spec owns observable behavior (condition/event + result + evidence); do not decide architecture — route those questions.
-5. Persist locally and fill `handoff.forge`; never commit, push, branch, open PRs, apply labels, create issues, or merge. Authorize `/commit-workspace` / `/open-draft-pr` separately.
-6. Select workflow outcome (`pass` / `needs-input` / `blocked` / `stale` / `failed`) from the stage rubric — not every FAIL is `failed`.
+3. Carry in-scope CAP-* and J-{nn} (or explicit out-of-repo N/A); live Evidence cites CAP and/or J.
+4. Flag ambiguity — do not guess. Run the bounded clarification loop before `pass`; write answers into owning REQ rows and rerun D-checks.
+5. Spec owns observable behavior (condition/event + result + evidence); do not decide architecture — route those questions.
+6. Persist locally and fill `handoff.forge`; never commit, push, branch, open PRs, apply labels, create issues, or merge. Authorize `/commit-workspace` / `/open-draft-pr` separately.
+7. Select workflow outcome (`pass` / `needs-input` / `blocked` / `stale` / `failed`) from the stage rubric — not every FAIL is `failed`.
 
 ## Envelope navigation (required)
 After choosing `outcome`, derive `next_candidates` and `human_checkpoint` from

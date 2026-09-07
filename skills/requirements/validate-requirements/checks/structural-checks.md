@@ -52,7 +52,10 @@ Verify all internal references resolve correctly:
 | **FR / REQ references** | `REQ-3` or legacy `FR-3` in user flows or error handling — does that requirement exist? Does it describe what the reference claims? Treat `FR-n` ≡ `REQ-n`. |
 | **Open Question references** | `OQ-2` — does it exist in the Open Questions table? |
 | **Capability references** | `CAP-2` — does it exist when the PRD uses capability ids? |
+| **Journey references** | `J-01` — does it exist in § Journeys? Shape must be `J-{nn}` not `J1` |
 | **Document references** | References to other documents — are the filenames/paths still correct? |
+
+Also: any REQ Evidence cell containing **live** should cite ≥1 `CAP-*` and/or `J-*` when those namespaces are in use — Gap if bare “live” only.
 
 ---
 
@@ -68,3 +71,5 @@ Verify all internal references resolve correctly:
 | **Unreferenced requirements** | `REQ-*` (or legacy `FR-*`) that appear in the requirement list but are never mentioned in User Flows, Visual States, or Error Handling |
 | **Orphaned error handling rows** | Error handling entries that reference REQs/FRs or flows that no longer exist |
 | **Missing product ids** | In-scope capabilities/requirements without `CAP-*` / `REQ-*` when the rest of the document uses id conventions — Gap suggesting assignment |
+| **CAP without journey or defer** | `CAP-*` with empty “Journeys covered” and no explicit defer — Gap |
+| **Journey without caps** | `J-*` missing Caps exercised — Gap |

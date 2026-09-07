@@ -43,7 +43,8 @@ This skill bridges the gap — it reads the PRD and drafts structured spec
 6. **Handoff gate first (Gate 1 / G1 + H1–H3).** The canonical impact-map
    artifact, source PRD digest (**H1**), current meta PR head SHA, and
    tech-lead APPROVED review must match. A label or old LGTM alone is not
-   approval.
+   approval. **Open `IM-{nn}` with `Blocking: yes` fails closed** (D1b) —
+   do not draft the spec until resolved or deferred with default.
 7. This repo must be `affected` in the latest map and not deferred or blocked.
    Record the repo's `scope_digest` (**H2**) and map revision (**H3**) in the
    spec header (**H4** citations). If any gate fails: stop.
@@ -70,6 +71,10 @@ This skill bridges the gap — it reads the PRD and drafts structured spec
     it for architecture/impact questions. Always fall back to direct
     `source_roots` reads when unavailable — never block or change outcome
     selection on its absence.
+13. **Carry Capabilities and Journeys.** In-scope PRD `CAP-*` and `J-{nn}`
+    appear in the spec tables (or explicit out-of-repo N/A). Do not drop
+    journeys silently. Live evidence REQs cite `CAP-*` and/or `J-*` when the
+    PRD defines those namespaces (`quality-confidence-ladder.md`).
 
 ## Prerequisites
 

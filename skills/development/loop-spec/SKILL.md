@@ -54,18 +54,19 @@ Canonical artifact after the wave is green:
 4. After each **TASK**, run `{check_command}` and `{test_command}` from the
    harness profile (or `tests_readme`) — **check/unit layers only**. Both must
    pass before recording the TASK complete. Implement co-shipped live **FILE**
-   TASKs (scripts under `live_verify_dir`) when the plan/manifest includes
-   them — deliver the planned artifact; do **not** execute live verify,
+   TASKs (scripts under `live_verify_dir` **and** fixture packs under
+   `fixtures_dir`) when the plan/manifest includes them — deliver stimulus +
+   probes per `live-fixture-contract.md`; do **not** execute live verify,
    `verify_all`, or `{verify_command}` as this skill's success bar, and
-   **never claim** human smoke/sandbox success.
+   **never claim** human smoke/sandbox success or opaque look-at pass.
 5. Fix failures before moving to the next TASK — do not accumulate failures.
 6. When all TASKs are green: write `Wave-Execution-{INIT}-W{N}.md`, emit
    completed `TASK-*` IDs/evidence (observed commands + results), fill
    `commit_workspace` readiness **and** complete `handoff.forge` for next
    `wave-pr-action` (`open_draft_pr` requires). Do **not** run `/ground-spec` or
    `/learning-extract` in this hop. Do not self-approve the wave. Handoff
-   **MUST** list the human `{verify_command}` (co-shipped live script
-   path/command).
+   **MUST** list human prove: `{verify_command}`, covered `CAP-*` / `J-*`,
+   fixture paths, and any `human_observations` look-ats.
 7. Do not skip check/test steps to save time.
 8. **Bind execution** — each iteration names `TASK-W{n}-{nn}`, the wave board
    issue URL/number, and `implements: [REQ-…]` from the **WorkManifest**
@@ -82,7 +83,7 @@ Canonical artifact after the wave is green:
 
 | Outcome | When |
 |---------|------|
-| `pass` | All wave TASKs green; `Wave-Execution-*` written; `commit_workspace` readiness filled; `handoff.forge` complete for `wave-pr-action` (`title`, `body_path`, `head_ref`, `base_ref`); handoff lists human `{verify_command}` |
+| `pass` | All wave TASKs green; `Wave-Execution-*` written; `commit_workspace` readiness filled; `handoff.forge` complete for `wave-pr-action` (`title`, `body_path`, `head_ref`, `base_ref`); handoff lists human prove (`verify_command`, CAP/J, fixtures, look-ats) |
 | `findings` | Check/test failure on a TASK that needs further local fix (keep `TASK-*` in blockers) |
 | `blocked` | Prerequisites fail or an authoritative gate prevents progress (e.g. missing pre-implement PASS, unbound wave head) |
 | `failed` | Execution error running commands or writing the execution artifact |
@@ -151,7 +152,10 @@ Happy path: `pass` → `wave-pr-action` → (after authorize) `wave-acceptance`.
 
 ## Live verify (human — not claimed here)
 - Planned script: `{verify_command}` under `live_verify_dir`
-- Agent created planned FILE: yes/no — **did not** run smoke/sandbox as success
+- Prove rungs: `CAP-*` / `J-*` from manifest `covers`
+- Fixtures: paths under `fixtures_dir`
+- Look-ats: `human_observations` (if any) — human completes; ack = `wave-accepted`
+- Agent created planned FILE + fixtures: yes/no — **did not** run smoke/sandbox or claim look-at success
 
 ## Forge readiness
 - After this hop: `commit_workspace` (code on bound `head_ref`)

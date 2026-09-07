@@ -59,7 +59,7 @@ Handoff: [../references/handoff-adjunct.md](../references/handoff-adjunct.md).
 
 ### Phase 1 — Setup
 
-- Parse § Product questions (`Q-NN`).
+- Parse § Product questions (`PQ-*`).
 - Summarize counts by delta.
 - Entry gate AskQuestion:
 

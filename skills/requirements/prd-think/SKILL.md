@@ -77,20 +77,24 @@ candidates are the evidence `/prd-quality` compares. Do not use `*-revN`.
 4. **WHAT not HOW.** No routes, payloads, token encoding, framework, cache, or
    module names in requirement text.
 5. **Ids.** Assign **only** product ids from
-   `prayog-skills/references/id-conventions.md` (`CAP-*`, `REQ-*` canonical,
-   `CTR-*`, `OQ-*`). Do not mint `FR-*`, `D-*`, or any other namespace.
-   Discovery locks are a numbered table of statements, or they stay `OQ-*`
-   until they become a CAP/REQ.
-6. **Silent gaps are failures.** If spec-draft would guess, emit `OQ-*` or
+   `prayog-skills/references/id-conventions.md` (`CAP-*`, `J-{nn}`, `REQ-*`
+   canonical, `CTR-*`, `OQ-*`). Do not mint `FR-*`, `D-*`, bare `J1`, or any
+   other namespace. Discovery locks are a numbered table of statements, or
+   they stay `OQ-*` until they become a CAP/REQ/J.
+6. **Capability + journey first-class.** Every `CAP-*` lists ≥1 `J-{nn}` or
+   explicit defer. Evidence containing **live** cites ≥1 `CAP-*` and/or
+   `J-*` — not bare “live”. Capability and journey are **separate prove
+   rungs** (`prayog-skills/references/quality-confidence-ladder.md`).
+7. **Silent gaps are failures.** If spec-draft would guess, emit `OQ-*` or
    grill. Do not invent a REQ; do not omit the gap.
-7. **One question at a time** in T1 (or one `/grilling` frontier round).
+8. **One question at a time** in T1 (or one `/grilling` frontier round).
    Recommend an answer every time. Wait.
-8. **Locks are outputs of this grill.** Confirm or reopen locks that are
+9. **Locks are outputs of this grill.** Confirm or reopen locks that are
    already in the brief. Do not copy another INIT's lock table.
-9. **Whole-product.** If the candidate TOC equals the brief's TOC, fail the
-   run. Consider at least one journey, actor, negative path, or adjacent
-   surface the brief did not list (keep / `OQ-*` / non-goal).
-10. **Do not score.** No delivery-bar table, no winner. Point at `/prd-quality`.
+10. **Whole-product.** If the candidate TOC equals the brief's TOC, fail the
+    run. Consider at least one journey, actor, negative path, or adjacent
+    surface the brief did not list (keep / `OQ-*` / non-goal).
+11. **Do not score.** No delivery-bar table, no winner. Point at `/prd-quality`.
 
 ## Companion skills (use if installed)
 

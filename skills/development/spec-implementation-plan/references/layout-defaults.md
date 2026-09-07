@@ -14,4 +14,5 @@ Used when `.harness/profile.yaml` is absent.
 | source_roots | src/ |
 | unit_tests_dir | tests/unit |
 | live_verify_dir | tests/verify |
+| fixtures_dir | tests/fixtures |
 | plan_prefix | Implementation-Plan |

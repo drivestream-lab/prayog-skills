@@ -48,7 +48,8 @@ Handover: yes / no
 | B11 WHAT not HOW | | | |
 | B12 Whole-product | | | |
 | B13 Impact-map ready | | | |
-| B14 Live-verify shaped | | | |
+| B14 CAP ↔ journey | | | |
+| B15 Live-prove shaped | | | |
 
 #### Spec-lane simulation
 
@@ -73,11 +74,12 @@ Rows `/spec-draft` cannot fill without guessing. Each must already be an
 | B12 | | | | |
 | B13 | | | | |
 | B14 | | | | |
+| B15 | | | | |
 | **Material FAILs** | | | | |
 | **Handover** | yes/no | yes/no | yes/no | |
 
-Rank rule: fewer material FAILs on B3/B4/B6/B9/B11, B12 PASS (or same N/A),
-B2 equal or better. Rank does not grant handover.
+Rank rule: fewer material FAILs on B3/B4/B6/B9/B11/B14/B15, B12 PASS (or same
+N/A), B2 equal or better. Rank does not grant handover.
 
 ## Secondary (prd-critic)
 

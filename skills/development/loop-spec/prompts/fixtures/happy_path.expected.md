@@ -22,7 +22,7 @@ Follow the full procedure in this skill's `SKILL.md` (and `references/` when pre
 ## Non-negotiables (summary)
 1. Prerequisites: pre-implement checklist PASS; plan on develop (spec package merged); wave head bound by Forge/human context; WorkManifest already contract-valid.
 2. Consume WorkManifest TASKs in dependency order; remain within declared file scope. Persist actual command/evidence in Wave-Execution/handoff — do not mutate approved WorkManifest intent.
-3. After each TASK run check_command and test_command only; fix before advancing. Implement planned live smoke FILE TASKs under live_verify_dir — never run smoke/sandbox or claim human live success.
+3. After each TASK run check_command and test_command only; fix before advancing. Implement planned live FILE TASKs under live_verify_dir **and** fixture packs under fixtures_dir (stimulus+probes) — never run smoke/sandbox or claim human live / look-at success. Handoff lists verify_command, CAP/J covers, fixtures, look-ats.
 4. Bind each iteration to TASK-* + wave issue + implements REQ-* from the manifest.
 5. When green: write Wave-Execution-*; fill commit_workspace readiness and
    wave-pr-action open_draft_pr slots; hand off pass → wave-pr-action with

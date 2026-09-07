@@ -6,7 +6,7 @@ these fields. Language must be **feature / user / product** — not modules, ADR
 or implementation plans.
 
 ```markdown
-### Q-{NN} — {short title}
+### PQ-{nn} — {short title}
 
 - **PRD ref:** {section / capability / bullet}
 - **Repos(s):** {org/repo list}

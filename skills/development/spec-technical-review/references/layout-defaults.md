@@ -14,6 +14,7 @@ Used when `.harness/profile.yaml` is absent.
 | source_roots | src/ |
 | unit_tests_dir | tests/unit |
 | live_verify_dir | tests/verify |
+| fixtures_dir | tests/fixtures |
 | debug_tests_dir | tests/debug |
 | feasibility_prefix | Initiative-Feasibility-Report |
 | technical_review_prefix | Technical-Review |

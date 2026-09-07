@@ -21,7 +21,7 @@ Follow the full procedure in this skill's `SKILL.md` (and `references/` when pre
 3. Technical review is REQUIRED input (pin always routes feasibility into `/spec-technical-review`) — a genuinely missing TDD file is `needs-input`, not "N/A". P13: re-verify every cited Accepted ADR's `changes_user_visible_behavior`/`spec_amendment_required` are false AND re-run `scripts/adr_boundary_lint.py` (vendored in this skill) against the ADR content at plan time — do not trust Accepted status or self-declared metadata alone.
 4. Persist plan locally and fill Forge readiness (`/commit-workspace`); never commit/push/open PRs/apply labels. Board seeding happens after merge via `/create-board-tickets`.
 5. Verify source freshness against canonical handoff before planning. Map outcomes: missing source → needs-input; Draft ADR / unaccepted TDD / failed ADR re-check → blocked; digest mismatch → stale; P4/P15/P16 contract failure or render failure → failed; clean → pass.
-6. P15: new/material product surface ⇒ co-ship unit TEST + FILE under `live_verify_dir`; `verify_command` / live block is smoke|sandbox (not unit / N/A when P15 applies). Map every acceptance criterion to a verification layer.
+6. P15: new/material product surface ⇒ co-ship unit TEST + FILE under `live_verify_dir` **and** fixture pack under `fixtures_dir`; `covers` include `CAP-*` and/or `J-*`; `verify_command` / live block is smoke|sandbox (not unit / N/A when P15 applies). Map every acceptance criterion to a verification layer; name CAP/J live rung in Verification Coverage.
 
 ## Envelope navigation (required)
 After choosing `outcome`, derive `next_candidates` and `human_checkpoint` from

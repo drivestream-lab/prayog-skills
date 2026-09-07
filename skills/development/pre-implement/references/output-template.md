@@ -26,14 +26,17 @@
 | Board seed (read-only) | Wave issue(s) from plan §9 exist; TASK ids present in wave body | [ ] seeded / partial / missing |
 | WorkManifest contract | `prayog/v1` §9 passes `scripts/workmanifest_contract.py` | [ ] pass / fail |
 | TASK exit proof | Every wave `TASK-*` has `exit.criteria` + `exit.proof` (kind/expected/evidence_expected) | [ ] complete / missing |
-| Live-verification contract | When P15 applies: `verification.live` applicable + script under `live_verify_dir` (not unit-as-live) | [ ] contract / N/A / missing |
+| Live-verification contract | When P15 applies: `verification.live` applicable + script under `live_verify_dir` + fixtures under `fixtures_dir`; `covers` include `CAP-*` and/or `J-*`; deps/preflight; look-ats when opaque | [ ] contract / N/A / missing |
+| Prove rungs (`CAP-*` / `J-*`) | Listed ids match plan/manifest live covers | [ ] listed / N/A / missing |
+| Fixture packs | Paths under `fixtures_dir` present in FILE list / `fixtures[]` | [ ] path / N/A / missing |
+| Human look-ats | `human_observations` when opaque; else N/A | [ ] listed / N/A / missing |
 | Plan source freshness | all upstream rows `CURRENT` | [ ] current / stale |
 | Impact-map repo scope | revision and scope digest match canonical handoff | [ ] match / stale |
 | `check_command` | resolved | [ ] command / missing |
 | `test_command` | resolved | [ ] command / missing |
 | `verify_command` | live script under `live_verify_dir` when P15 applies; else command or N/A with reason | [ ] command / N/A / missing |
 | `ground_command` | resolved or N/A with reason | [ ] command / N/A / missing |
-| Co-shipped live verify (P15) | If wave adds/changes product surface: FILE path under `live_verify_dir` listed | [ ] path / N/A (no surface) / missing |
+| Co-shipped live verify (P15) | If wave adds/changes product surface: FILE under `live_verify_dir` + pack under `fixtures_dir`; covers CAP/J | [ ] path / N/A (no surface) / missing |
 | Prior wave as-built row | `human_approved` (from prior `wave-acceptance`) | [ ] {wave id} = {status} |
 | Prior Ground Report exists | `reports/Ground-Report-{SPEC}-W{N-1}.md` | [ ] exists / missing |
 | Plan PE sign-off (W0 only) | Implementation-Plan §0 marked complete | [ ] complete / pending |
@@ -92,7 +95,7 @@ recommend `/create-board-tickets` or wave-head binding — do **not** mutate.
 - [ ] `as-built/implementation-status.md` — verification row for this wave
 - [ ] `tests_readme` — feature map row if verification coverage changes
 - [ ] Unit verification scope — edges and boundary behaviour (mocked dependencies)
-- [ ] Live verification — co-shipped script under `live_verify_dir` (human-run at `wave-acceptance`)
+- [ ] Live verification — co-shipped script under `live_verify_dir` + fixture pack under `fixtures_dir` (`CAP-*` / `J-*`); human-run + look-ats at `wave-acceptance`
 - [ ] ADR — update when this wave supersedes an Accepted ADR (requires PE review)
 
 ---
@@ -115,7 +118,7 @@ recommend `/create-board-tickets` or wave-head binding — do **not** mutate.
 |-------|----------------|---------------------------------------|
 | Static check | Formatting, linting, types, or equivalent repository checks | `{check_command}` |
 | Unit | Module logic, boundary behaviour, edge cases (no external I/O) | `{test_command}` |
-| Live verify | Product behaviour on running stack (human-run at `wave-acceptance`) | `{verify_command}` — path under `live_verify_dir` when P15; else N/A — reason |
+| Live verify | Capability and/or journey prove on **real** infra (human-run at `wave-acceptance`) | `{verify_command}` + fixtures; covers CAP/J; look-ats when opaque |
 | Ground check | Assigned wave REQs satisfied; boundaries respected | `{ground_command}` or N/A — reason |
 
 > When P15 applies: N/A or unit-only for live verify **blocks** the gate.

@@ -12,7 +12,7 @@ feasibility-owned `FF-*`.
 | G1 | **Wave scope** | Grounding covers only the completed wave `W{N}` and REQs assigned to that wave by the plan / WorkManifest TASK `implements` lists — not every future REQ in the full product spec |
 | G2 | **Ground command / evidence** | `{ground_command}` output included when defined; otherwise manual `source_roots` + `tests/**` scan documented. Unit (`{test_command}`) and human accept (`wave-accepted` / wave-acceptance; optional/legacy Live-Verify-*) are cited separately |
 | G3 | **Assigned-REQ coverage** | Every wave-assigned `REQ-*` appears in the REQ checklist with verifiable artifact (entry point, test, live script, module boundary) |
-| G4 | **Acceptance evidence** | Each assigned REQ maps to observable acceptance evidence from loop/unit artifacts and human accept (`Wave-Execution-*`, unit results, `wave-accepted`) — optional/legacy Live-Verify-* not required |
+| G4 | **Acceptance evidence** | Each assigned REQ maps to observable acceptance evidence from loop/unit artifacts and human accept (`Wave-Execution-*`, unit results, `wave-accepted`). When the wave declared `CAP-*` / `J-*` live covers or `human_observations`, cite those ids and look-at completion (ack = `wave-accepted`) — optional/legacy Live-Verify-* not required; logs alone are not sole evidence for opaque sinks |
 | G5 | **ADR boundaries** | Domain-filtered Accepted ADRs checked; no contradiction without an open `GF-*` |
 | G6 | **MDC boundaries** | Domain-filtered `rules_glob` checked; pattern contradictions recorded as `GF-*` |
 | G7 | **Contracts consumed / produced** | Consumed contracts match prior Ground Reports; §Contracts produced complete for next-wave `/pre-implement` |

@@ -98,11 +98,12 @@ wave-scoped shadow ids like `REQ-W{n}`.
 #### Verification Coverage (W0)
 
 Map every in-scope acceptance criterion / REQ for this wave to exactly one
-primary layer (and note secondary layers if needed):
+primary layer (and note secondary layers if needed). Live rows name the
+**capability** and/or **journey** prove rung when applicable:
 
-| REQ / criterion | unit | integration/contract | smoke | sandbox | Notes |
-|-----------------|------|----------------------|-------|---------|-------|
-| REQ-01 / … | TEST-W0-U | N/A | TEST-W0-L | N/A | |
+| REQ / criterion | CAP / J (live rung) | unit | integration/contract | smoke | sandbox | Notes |
+|-----------------|---------------------|------|----------------------|-------|---------|-------|
+| REQ-01 / … | CAP-01 or J-01 | TEST-W0-U | N/A | TEST-W0-L | N/A | |
 
 #### Live-verification intent (W0)
 
@@ -115,18 +116,22 @@ here.
 | Applicable | yes / no — {reason if no} |
 | Environment class | local-compose / staging-sandbox / … |
 | Mode | smoke \| sandbox |
+| Prove rungs | CAP-{nn} / J-{nn} (list) |
+| Fixture packs | `{fixtures_dir}/…` (create/modify) |
 | Runtime head binding | Bound at `wave-acceptance` against the wave PR head under test (not filled at planning) |
-| Prerequisites | |
+| Prerequisites / dependencies | |
 | Safe test data | |
 | Steps / command | `{live_verify_dir}/…` |
 | Expected observations | |
+| Human look-ats | `{locus}` → `{expect}` (opaque sinks; ack via `wave-accepted`) |
 | Expected evidence | `wave-accepted on tip` / human wave-acceptance |
 | Cleanup | |
 | Stop conditions | |
 
 > When the wave FILE list adds/changes a product surface (P15), include ≥1
-> `live_verify_dir` FILE in **Files** and a live row here. Agent implements the
-> script; human executes it at `wave-acceptance`.
+> `live_verify_dir` FILE **and** fixture pack under `fixtures_dir` in **Files**,
+> with `covers` including `CAP-*` and/or `J-*`. Agent implements; human
+> executes + look-ats at `wave-acceptance` (`wave-accepted` = ack).
 
 ---
 
@@ -150,8 +155,8 @@ here.
 
 #### Verification Coverage (W1)
 
-| REQ / criterion | unit | integration/contract | smoke | sandbox | Notes |
-|-----------------|------|----------------------|-------|---------|-------|
+| REQ / criterion | CAP / J (live rung) | unit | integration/contract | smoke | sandbox | Notes |
+|-----------------|---------------------|------|----------------------|-------|---------|-------|
 
 #### Live-verification intent (W1)
 
@@ -160,10 +165,17 @@ here.
 | Applicable | |
 | Environment class | |
 | Mode | |
+| Prove rungs | CAP-… / J-… |
+| Fixture packs | `{fixtures_dir}/…` |
 | Runtime head binding | Bound at `wave-acceptance` (not planning) |
-| Prerequisites | |
+| Prerequisites / dependencies | |
 | Safe test data | |
 | Steps / command | |
+| Expected observations | |
+| Human look-ats | |
+| Expected evidence | |
+| Cleanup | |
+| Stop conditions | |
 | Expected observations | |
 | Expected evidence | |
 | Cleanup | |
@@ -421,6 +433,8 @@ work:
         files:
           - path: {live_verify_dir/verify_….py}
             action: create
+          - path: {fixtures_dir/cap-01-…/}   # or j-01-… for journey rung
+            action: create
         exit:
           criteria:
             - "{observable engineering result}"
@@ -436,7 +450,12 @@ work:
         applicable: true
         mode: smoke
         command: {wave W0 live script under live_verify_dir}
-        covers: [REQ-01, REQ-02]
+        covers: [CAP-01, J-01, REQ-01, REQ-02]
+        dependencies:
+          - "{postgres up / redis reachable — real infra}"
+        fixtures:
+          - path: {fixtures_dir/cap-01-…/}
+          - path: {fixtures_dir/j-01-…/}
         prerequisites:
           - "{env up / secrets present}"
         safe_test_data:
@@ -445,6 +464,10 @@ work:
           - "Run live verify script"
         expected_observations:
           - "{observable pass signal}"
+        human_observations:
+          - locus: "{console / table / topic}"
+            expect: "{what human must see}"
+            covers: [CAP-01]
         evidence_expected: "wave-accepted on tip"
         cleanup:
           - "{remove synthetic data}"

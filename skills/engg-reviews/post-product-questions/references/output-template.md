@@ -38,7 +38,7 @@ Please:
 
 ## Questions
 
-### Q-01 — {short title}
+### PQ-01 — {short title}
 
 - **PRD ref:** …
 - **Repos(s):** …
@@ -53,7 +53,7 @@ Please:
 - **Evidence:** {repo} · {graph/as-built} · EXTRACTED|INFERRED
 - **PM response needed:** accept-recommendation / choose-alternative / custom / defer-as-open-question
 
-### Q-02 — …
+### PQ-02 — …
 
 ## Map artifact
 
