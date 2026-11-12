@@ -23,6 +23,11 @@ See also: [id-conventions.md](id-conventions.md),
 | Live verify report (optional/legacy) | `{reports_dir}/Live-Verify-{INIT}-W{N}.md` | per wave | PURGE (app) — **not** required for the gate; human accept is `wave-acceptance` / `wave-accepted` |
 | Ground report | `{reports_dir}/Ground-Report-{SPEC}-W{N}.md` | per wave | PURGE (app) |
 | Learning extract | `{reports_dir}/Learning-Extract-{INIT}-W{N}.md` | per wave | PURGE (app) |
+| QA requirements review | `{reports_dir}/QA-Requirements-Review-{INIT}.md` | `review_revision` | not purge-allowlisted — automation input |
+| QA test plan | `{reports_dir}/QA-Test-Plan-{INIT}.md` | `pack_revision` | not purge-allowlisted — automation input |
+| QA test cases | `{reports_dir}/QA-Test-Cases-{INIT}.md` | `pack_revision` | not purge-allowlisted — automation input |
+| QA acceptance criteria | `{reports_dir}/QA-Acceptance-Criteria-{INIT}.md` | `pack_revision` | not purge-allowlisted — automation input |
+| QA RTM | `{reports_dir}/QA-RTM-{INIT}.md` | `pack_revision` | not purge-allowlisted — automation input |
 
 `{reports_dir}` defaults: meta `prd/reports`; app `docs/specification/reports`.
 Resolve from `.harness/profile.yaml` when present.
@@ -59,6 +64,11 @@ Working papers accumulate through all waves. **One mental model:** purge
 |------|----------------------|-----------------|
 | **meta** | `prd/INIT-*.md`, `Impact-Map-{INIT}.md` | `Validation-Report-{INIT}.md`, `Resolution-{INIT}.md` |
 | **app** | `product/INIT-*.md`, Accepted ADRs, source / unit / live-verify **scripts** / **fixture packs**, as-built index, `Implementation-Status-{INIT}.md` | Feas, TDD, Implementation-Plan, Pre-Implement-W*, Wave-Execution-W*, optional/legacy Live-Verify-W*, Ground-Report-W*, Learning-Extract-W*, Draft ADRs |
+
+QA pack files (`QA-Requirements-Review-{INIT}.md`, `QA-Test-Plan-{INIT}.md`,
+`QA-Test-Cases-{INIT}.md`, `QA-Acceptance-Criteria-{INIT}.md`,
+`QA-RTM-{INIT}.md`) are not on the purge allowlist. They stay so a later
+automation-design agent can read them. Overwrite in place. No `*-revN`.
 
 **Lane (pin):** eng loop then PM loop, each self-contained:
 

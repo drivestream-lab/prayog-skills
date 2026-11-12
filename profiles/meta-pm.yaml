@@ -6,6 +6,8 @@ profile: meta-pm
 requirements_skills:
   - prd-think
   - prd-quality
+  - qa-requirements-review
+  - qa-test-design
   - validate-requirements
   - review-findings
   - update-documents

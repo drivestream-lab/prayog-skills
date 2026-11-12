@@ -7,7 +7,21 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ## [Unreleased]
 
-_(empty)_
+### Added — QA pack (PRD → automation input)
+
+- **`/qa-requirements-review`** — QA expert pass on one PRD: inventory,
+  testability gaps (`QG-*`), clarifying questions and follow-ups (`QQ-*`).
+  `ready_for_test_design: yes` only when every blocking question is answered.
+- **`/qa-test-design`** — test plan and strategy, test cases (`TC-*`),
+  enhanced acceptance criteria (`EAC-*`), and an RTM. The plan's
+  automation handoff (`prayog-qa-pack/v1`) is the brief for a later
+  UI / backend automation-design agent. Refuses while blocking questions
+  are open.
+- Both skills are off-graph (human-invoked) and listed on
+  `profiles/meta-pm.yaml`. They are not workflow nodes.
+- Operator guide: [`docs/qa-layer.md`](docs/qa-layer.md).
+- QA pack reports are canonical under `{reports_dir}` and are not on the
+  initiative-closure purge allowlist.
 
 ## [0.5.6] — 2026-09-28
 

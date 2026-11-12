@@ -20,6 +20,7 @@ and always links to pin SSOTs — it does **not** fork them.
 | Gateflow / orchestrator | [for-gateflow.md](for-gateflow.md) |
 | Tracing ids across artifacts | [id-map.md](id-map.md) |
 | PM lane — think-first authoring | [pm-lane-think-first.md](pm-lane-think-first.md) |
+| PM lane — QA pack for automation | [qa-layer.md](qa-layer.md) |
 
 ## Experimental packs
 

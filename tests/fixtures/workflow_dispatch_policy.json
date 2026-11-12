@@ -19,7 +19,9 @@
   ],
   "prompt_packages_off_graph": [
     "prd-think",
-    "prd-quality"
+    "prd-quality",
+    "qa-requirements-review",
+    "qa-test-design"
   ],
   "human_checkpoint_purposes": {
     "requirements-human-decision": "requirements-clarification",

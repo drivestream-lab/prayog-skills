@@ -29,6 +29,14 @@ PRD CAP-* / J-* / REQ-* / OQ-* / CTR-*
   → wave-signoff (merge only)
 ```
 
+Off-graph, optional, on the PRD (does not insert into the walk above):
+
+```text
+PRD → qa-requirements-review (QG-* / QQ-*)
+    → qa-test-design (EAC-* / TC-* / RTM)
+    → automation-design agent (consumer; not a pin skill)
+```
+
 ## Question namespaces (do not mix)
 
 | Id | Meaning |
@@ -37,10 +45,12 @@ PRD CAP-* / J-* / REQ-* / OQ-* / CTR-*
 | `IM-*` | **Impact** / programme / Gate-1 question |
 | `PQ-*` | **Product** question PE→PM after code evidence |
 | `Q-*` | **Spec** engineering question |
+| `QQ-*` | **QA** clarifying question on testability (not a product `OQ`) |
 
 ## Defaults
 
 - Prove keys: **`CAP-*`** (capability rung) and **`J-{nn}`** (journey rung); `REQ-*` on TASK/unit  
 - Board: TASK ids in **wave issue body**  
 - Learning: **`L-*`** in Learning-Extract artifact  
-- PM/dev reports: **overwrite** canonical paths only  
+- PM/dev reports: **overwrite** canonical paths only
+- QA pack: `QG-*` / `QQ-*` on the review; `EAC-*` / `TC-*` on the pack; RTM consumes both  

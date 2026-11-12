@@ -1,0 +1,5 @@
+ticket: FORGE-1001
+initiative: INIT-PRAYOG-SKILLS-004
+handoff_path: prd/reports/QA-Test-Plan-INIT-PRAYOG-SKILLS-004.md
+workspace: /workspace/example-meta
+skill_id: qa-test-design

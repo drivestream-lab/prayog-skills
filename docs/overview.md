@@ -73,6 +73,14 @@ Content skills do **not** treat local `gh` as automate success. See
 | **PM** | `*-meta` | `requirements_skills` + `forge_skills` |
 | **Dev** | App repos | `development_skills` + `forge_skills` |
 
+## QA pack (off-graph)
+
+`/qa-requirements-review` and `/qa-test-design` are human-invoked skills on
+the PM profile. They are not workflow nodes and do not change Gateflow
+hops. They turn one PRD into an automation-agent input pack: test plan,
+test cases, enhanced acceptance criteria, and an RTM. See
+[`qa-layer.md`](qa-layer.md).
+
 ## Implement lane — Pass-1 / Pass-2 (current pin)
 
 ```text

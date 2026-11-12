@@ -70,6 +70,16 @@ REQ-07 ──▶ TASK implements / unit and/or live
 | Product question (PE→PM) | `PQ-{nn}` | engg-reviews | Product/UX/scope question after code evidence | PM answer → PRD update |
 | Spec question (engineering) | `Q-{n}` | `spec-draft` | Engineering open question **in app spec** | feas / plan / TDD |
 | Learning | `L-{nn}` | `learning-extract` | Structured learning | ground-spec cite / handoff |
+| Quality gap | `QG-{nn}` | `qa-requirements-review` | One testability gap that needs a decision | Paired `QQ-*`; open blocking `QG` blocks `/qa-test-design` |
+| Quality question | `QQ-{nn}` | `qa-requirements-review` | One clarifying question | Human answer; `EAC` / `TC` cite answered ids; open blocking `QQ` is a handoff blocker |
+| Enhanced acceptance criterion | `EAC-{nn}` | `qa-test-design` | One observable pass condition sharpened from a quote | `TC-*` and the RTM |
+| Test case | `TC-{nn}` | `qa-test-design` | One automation-ready case in the QA pack | RTM and the automation-design agent named in the pack handoff |
+
+`QG-01`, `QQ-01`, `EAC-01`, `TC-01` — **exactly two digits**. Reject
+`QG-1`, `QQ-001`, `TC-1`.
+
+`TC-*` is the QA pack case. Plan-only `TEST-*` stays a delivery helper.
+Do not mix them. `QQ-*` is not `OQ-*`, `IM-*`, `PQ-*`, or `Q-*`.
 
 Rules:
 
@@ -85,6 +95,9 @@ Rules:
   **`IM-*`**. Do not mix registries.
 - Open `IM-*` with **Blocking: yes** closes Gate 1 / coding-readiness until
   resolved or deferred with an explicit default.
+- QA-review re-runs **keep** `QG-*` and `QQ-*`. Follow-ups take the next
+  free `QQ-*` and set `follows` to the parent. Do not recycle ids.
+- `/qa-test-design` mints `EAC-*` and `TC-*` only. It does not mint `QQ-*`.
 
 ---
 
@@ -122,6 +135,8 @@ product-id registry here.
 | create-board-tickets (forge) | `B1`…`B8` |
 | learning-extract | `L-01`…`L-{nn}` |
 | engg-reviews | `C0`…`C12` |
+| qa-requirements-review | `R1`…`R12` |
+| qa-test-design | `D1`…`D8` |
 
 Cite the check on a finding (`VF-04`, Check `7`) — never use the check number
 alone as a handoff blocker.
@@ -133,7 +148,7 @@ alone as a handoff blocker.
 `handoff.blockers` MUST use stable process or delivery ids, for example:
 
 - `VF-03`, `FF-02`, `GF-01`, `TF-01`, `L-01`
-- `OQ-04`, `IM-02`, `PQ-03`, `Q-06`
+- `OQ-04`, `IM-02`, `PQ-03`, `Q-06`, `QQ-01`
 - `TASK-W0-03`
 
 Not: `1`, `F-12`, `Critical #2`, free-text sentences.
@@ -143,7 +158,7 @@ Not: `1`, `F-12`, `Critical #2`, free-text sentences.
 ## Coherence bar
 
 1. Product ids (`CAP`, `J`, `REQ`, `CTR`, `OQ`, `IM`) are assigned once and never recycled.
-2. Process ids (`VF`, `FF`, `TF`, `GF`, `CHG`, `PQ`, `L`) are stable within a report revision chain.
+2. Process ids (`VF`, `FF`, `TF`, `GF`, `CHG`, `PQ`, `L`, `QG`, `QQ`, `EAC`, `TC`) are stable within a report revision chain.
 3. Delivery ids (`W`, `TASK`) never rename product ids.
 4. Check ids document which rule fired — not primary keys.
 5. Mint only if consumed (see top rule).
