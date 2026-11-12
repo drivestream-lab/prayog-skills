@@ -9,6 +9,14 @@ Format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 _(empty)_
 
+## [0.5.6] — 2026-09-28
+
+### Added
+
+- **`profiles/rust-device.yaml`** — SDD harness layout for long-running Rust
+  device daemons (`crates/` source roots). Used by DriveStream Keystone
+  (`autrio10x/keystone`) with `rust-device-rules` / `rust-device-foundation`.
+
 ## [0.5.5] — 2026-09-07
 
 ### Breaking

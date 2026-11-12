@@ -180,7 +180,9 @@ nodes:
     type: human-checkpoint
     purpose: spec-clarification
     outcomes:
-      pass: initiative-feasibility
+      # Always open Spec PRs after clarification — never skip to feasibility
+      # (Gate 2 / spec-merge require spec_pr_meta from spec-pr-action).
+      pass: spec-pr-action
       stale: prd-impact-map
       skipped: workflow-stop
 

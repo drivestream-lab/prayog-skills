@@ -9,10 +9,10 @@
 | B5 | `target.project` in §9 matches governance `project_board.name` when both set | yes |
 | B6 | `gh auth status` succeeds when execution requested | yes for apply |
 | B7 | EPIC exists or create plan defined; all waves parent-linked or create plan defined; seeded wave bodies retain TASK ids, REQ mappings, dependencies, exit criteria, and proof summary projected from the WorkManifest (board text is not a second authority) | yes for pass |
-| B8 | All seeded issues on programme Project (`--project` or verified) | warn pilot; block later |
+| B8 | All seeded issues on programme Project (`--project` or verified); each created issue has a `https://github.com/.../issues/N` URL printed in the seed summary | **yes** |
 
 ## Verdict
 
-- **PASS (seeded / already-seeded):** B1–B7 pass; tree complete for all waves in §9.
-- **BLOCKED:** auth, board access, or partial seed.
-- **FAIL:** missing plan, governance, invalid §9, or WorkManifest contract failure.
+- **PASS (seeded / already-seeded):** B1–B8 pass; tree complete for all waves in §9; issue URLs recorded.
+- **BLOCKED:** auth, board access, partial seed, or target repo `has_issues=false`.
+- **FAIL:** missing plan, governance, invalid §9, WorkManifest contract failure, or claim of seeded without issue URLs / project membership.
