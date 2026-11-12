@@ -65,7 +65,15 @@ be purged at initiative closure
 10. If tooling unavailable, print exact commands from
     [references/output-template.md](references/output-template.md) and stop —
     do not claim `seeded`.
-11. Ids: `prayog-skills/references/id-conventions.md`. Paths:
+11. **Hosting gate** — before create, verify every WorkManifest target repo
+    (`epic.repo` / wave `repo`) has GitHub Issues enabled. If
+    `has_issues=false`, print the exact enable-Issues fix and **stop** —
+    do not claim `seeded`.
+12. **Proof** — after create, print every created issue URL
+    (`https://github.com/<org>/<repo>/issues/<n>`) and verify each item is
+    on the governance programme Project. B8 is **blocking**. No URL list ⇒
+    not seeded.
+13. Ids: `prayog-skills/references/id-conventions.md`. Paths:
     `prayog-skills/references/artifact-write-contract.md`. Checks: **B1–B8**.
 
 ## Inputs
